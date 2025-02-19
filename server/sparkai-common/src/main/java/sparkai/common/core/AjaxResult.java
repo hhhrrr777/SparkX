@@ -17,9 +17,6 @@ public class AjaxResult<T> {
     /** 响应数据 **/
     private T data;
 
-    /** 是否显示错误信息 **/
-    private Integer show;
-
     /** 无参构造 **/
     protected AjaxResult() {}
 
@@ -35,7 +32,6 @@ public class AjaxResult<T> {
         this.code = code;
         this.msg = msg;
         this.data = data;
-        this.show = show;
     }
 
     /**
