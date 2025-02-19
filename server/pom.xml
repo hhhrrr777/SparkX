@@ -24,6 +24,11 @@
         <spark.version>1.0.0</spark.version>
         <lombok.version>1.18.24</lombok.version>
         <springboot.version>3.4.2</springboot.version>
+        <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
+        <postgresql.version>42.7.5</postgresql.version>
+        <mybatis-plus-join.version>1.2.4</mybatis-plus-join.version>
+        <pagehelper.version>1.4.5</pagehelper.version>
+        <logback.version>1.4.12</logback.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -42,6 +47,12 @@
                 <version>${spark.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>cn.sparkshop.sparkai</groupId>
+                <artifactId>sparkai-service</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+
             <!-- hutool -->
             <dependency>
                 <groupId>cn.hutool</groupId>
@@ -54,6 +65,34 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- mybatis-plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- postgresql -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+
+            <!-- MyBatis-Plus-Join -->
+            <dependency>
+                <groupId>com.github.yulichang</groupId>
+                <artifactId>mybatis-plus-join</artifactId>
+                <version>${mybatis-plus-join.version}</version>
+            </dependency>
+
+            <!-- MyBatis-PageHelper -->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
