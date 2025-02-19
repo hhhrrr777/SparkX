@@ -23,7 +23,6 @@
         <hutool.version>5.8.26</hutool.version>
         <spark.version>1.0.0</spark.version>
         <lombok.version>1.18.24</lombok.version>
-        <log4j2.version>2.16.0</log4j2.version>
         <springboot.version>3.4.2</springboot.version>
     </properties>
 
