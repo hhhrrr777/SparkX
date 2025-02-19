@@ -24,11 +24,18 @@
         <spark.version>1.0.0</spark.version>
         <lombok.version>1.18.24</lombok.version>
         <log4j2.version>2.16.0</log4j2.version>
+        <springboot.version>3.4.2</springboot.version>
     </properties>
 
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+
             <!-- 全局工具 -->
             <dependency>
                 <groupId>cn.sparkshop.sparkai</groupId>
