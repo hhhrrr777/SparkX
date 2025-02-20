@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.enums.ExceptionEnum;
-import sparkai.common.exception.BaseException;
+import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.ErrorUtil;
 
 import java.util.List;
@@ -23,13 +23,13 @@ public class ExceptionHandlerConfig {
      * 业务异常处理
      *
      * @param e 业务异常
-     * @return
+     * @return AjaxResult<Object>
      */
-    @ExceptionHandler(value = BaseException.class)
+    @ExceptionHandler(value = BusinessException.class)
     @ResponseBody
-    public AjaxResult<Object> exceptionHandler(BaseException e) {
-        log.error("系统异常" + e.getMsg());
-        return AjaxResult.failed(e.getCode(), e.getMsg());
+    public AjaxResult<Object> exceptionHandler(BusinessException e) {
+        log.info("业务信息" + e.getErrorMsg());
+        return AjaxResult.failed(e.getCode(), e.getErrorMsg());
     }
 
     /**

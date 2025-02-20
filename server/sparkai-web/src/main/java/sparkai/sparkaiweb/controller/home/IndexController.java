@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sparkai.common.core.AjaxResult;
-import sparkai.service.entity.UsersEntity;
-import sparkai.service.service.IUserService;
+import sparkai.service.entity.system.UsersEntity;
+import sparkai.service.service.interfaces.system.IUserService;
 
 import java.util.List;
 
