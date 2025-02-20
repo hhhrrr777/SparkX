@@ -3,7 +3,7 @@ package sparkai.service.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sparkai.service.entity.UserEntity;
+import sparkai.service.entity.UsersEntity;
 import sparkai.service.mapper.UserMapper;
 import sparkai.service.service.IUserService;
 
@@ -16,9 +16,9 @@ public class UserServiceImpl implements IUserService {
     UserMapper userMapper;
 
     @Override
-    public List<UserEntity> getUserList() {
+    public List<UsersEntity> getUserList() {
         System.out.println(userMapper);
-        QueryWrapper<UserEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<UsersEntity> queryWrapper = new QueryWrapper<>();
 
         return userMapper.selectList(queryWrapper);
     }

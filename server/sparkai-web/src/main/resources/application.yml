@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:6432/maxkb
-    username: maxkb
-    password: maxkb
+    url: jdbc:postgresql://127.0.0.1:6432/sparkai
+    username: sparkai
+    password: 123123
   jpa:
     hibernate:
       ddl-auto: update

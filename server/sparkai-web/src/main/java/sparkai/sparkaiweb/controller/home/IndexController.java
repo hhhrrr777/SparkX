@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sparkai.common.core.AjaxResult;
-import sparkai.service.entity.UserEntity;
+import sparkai.service.entity.UsersEntity;
 import sparkai.service.service.IUserService;
 
 import java.util.List;
@@ -18,9 +18,9 @@ public class IndexController {
     IUserService iUserService;
 
     @GetMapping("/index")
-    public AjaxResult<List<UserEntity>> index() {
+    public AjaxResult<List<UsersEntity>> index() {
 
-        List<UserEntity> res = iUserService.getUserList();
+        List<UsersEntity> res = iUserService.getUserList();
         return AjaxResult.success(res);
     }
 }

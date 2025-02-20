@@ -2,8 +2,8 @@ package sparkai.service.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import sparkai.common.core.IBaseMapper;
-import sparkai.service.entity.UserEntity;
+import sparkai.service.entity.UsersEntity;
 
 @Mapper
-public interface UserMapper extends IBaseMapper<UserEntity> {
+public interface UserMapper extends IBaseMapper<UsersEntity> {
 }
