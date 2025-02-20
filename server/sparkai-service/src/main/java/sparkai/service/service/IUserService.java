@@ -1,10 +1,10 @@
 package sparkai.service.service;
 
-import sparkai.service.entity.User;
+import sparkai.service.entity.UserEntity;
 
 import java.util.List;
 
 public interface IUserService {
 
-    List<User> getUserList();
+    List<UserEntity> getUserList();
 }

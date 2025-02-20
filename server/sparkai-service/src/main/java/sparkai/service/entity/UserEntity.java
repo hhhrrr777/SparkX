@@ -1,16 +1,16 @@
 package sparkai.service.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class User implements Serializable {
+@TableName("public.User")
+public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value="id")
     private String id;
 
     private String email;

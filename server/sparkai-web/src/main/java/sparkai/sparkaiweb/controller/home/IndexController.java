@@ -1,11 +1,11 @@
 package sparkai.sparkaiweb.controller.home;
 
-import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sparkai.common.core.AjaxResult;
-import sparkai.service.entity.User;
+import sparkai.service.entity.UserEntity;
 import sparkai.service.service.IUserService;
 
 import java.util.List;
@@ -14,13 +14,13 @@ import java.util.List;
 @RequestMapping("index")
 public class IndexController {
 
-    @Resource
-    IUserService userService;
+    @Autowired
+    IUserService iUserService;
 
     @GetMapping("/index")
-    public AjaxResult<List<User>> index() {
+    public AjaxResult<List<UserEntity>> index() {
 
-        List<User> res = userService.getUserList();
+        List<UserEntity> res = iUserService.getUserList();
         return AjaxResult.success(res);
     }
 }
