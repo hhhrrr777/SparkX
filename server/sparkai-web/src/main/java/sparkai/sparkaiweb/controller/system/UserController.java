@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/del")
-    public AjaxResult<Object> del(long id) {
+    public AjaxResult<Object> del(@RequestParam("id") long id) {
 
         iUserService.delUser(id);
         return AjaxResult.success();
