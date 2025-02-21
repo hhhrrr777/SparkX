@@ -10,7 +10,7 @@ public enum ExceptionEnum {
     INTERNAL_SERVER_ERROR(500, "服务器内部错误!"),
     SERVICE_UNAVAILABLE(503, "服务器正忙，请稍后再试!"),
     // 未知异常
-    UNKNOWN(10000, "系统忙!"),
+    UNKNOWN(10000, "服务器繁忙，请稍后再试"),
     // 自定义
     IS_NOT_NULL(10001,"%s不能为空");
 

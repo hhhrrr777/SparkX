@@ -22,7 +22,7 @@ public class UsersEntity implements Serializable {
      */
     @TableId(value="id", type= IdType.AUTO)
     @TableField(value = "id")
-    private Integer id;
+    private Long id;
 
     /**
      * 登录账号
@@ -49,10 +49,22 @@ public class UsersEntity implements Serializable {
     private String password;
 
     /**
+     * 加密盐
+     */
+    @TableField(value = "salt")
+    private String salt;
+
+    /**
      * 状态 1:正常 2:禁用
      */
     @TableField(value = "status")
     private Integer status;
+
+    /**
+     * 是否删除 1:正常 2:禁用
+     */
+    @TableField(value = "deleted")
+    private Integer deleted;
 
     /**
      * 头像

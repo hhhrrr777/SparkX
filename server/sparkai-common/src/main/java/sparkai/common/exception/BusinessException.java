@@ -25,6 +25,12 @@ public class BusinessException extends RuntimeException {
         this.errorMsg = errorMsg;
     }
 
+    public BusinessException(String errorMsg) {
+        super("{code:" + ExceptionEnum.BAD_REQUEST.getCode() + ",errorMsg:" + errorMsg + "}");
+        this.code = ExceptionEnum.BAD_REQUEST.getCode();
+        this.errorMsg = errorMsg;
+    }
+
     public BusinessException(Integer code, String errorMsg, Object... args) {
         super("{code:" + code + ",errorMsg:" + String.format(errorMsg, args) + "}");
         this.code = code;

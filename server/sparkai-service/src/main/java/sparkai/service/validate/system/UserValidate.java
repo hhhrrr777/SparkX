@@ -1,7 +1,5 @@
 package sparkai.service.validate.system;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
@@ -15,14 +13,12 @@ public class UserValidate implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
+    private long id;
 
     /**
      * 登录账号
      */
     @NotEmpty(message = "登录账号不能为空")
-    @Min(value = 6, message = "登录账号最少6个字符")
-    @Max(value = 55, message = "登录账号最大55个字符")
     private String name;
 
     /**
