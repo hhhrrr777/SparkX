@@ -9,10 +9,10 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.system;
 
-import sparkai.service.entity.system.UsersEntity;
+import sparkai.common.core.PageResult;
 import sparkai.service.validate.system.UserValidate;
-
-import java.util.List;
+import sparkai.service.vo.system.UserQueryVo;
+import sparkai.service.vo.system.UsersVo;
 
 public interface IUserService {
 
@@ -20,7 +20,7 @@ public interface IUserService {
      * 用户列表
      * @return List<UsersEntity>
      */
-    List<UsersEntity> getUserList();
+    PageResult<UsersVo> getUserList(UserQueryVo query);
 
     /**
      * 添加用户

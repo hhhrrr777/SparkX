@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
+import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.system.IUserService;
 import sparkai.service.validate.system.UserValidate;
-import sparkai.service.vo.system.UserVo;
-
-import java.util.List;
+import sparkai.service.vo.system.UserQueryVo;
+import sparkai.service.vo.system.UsersVo;
 
 @RequestMapping("api/user")
 @RestController
@@ -27,8 +27,9 @@ public class UserController {
     IUserService iUserService;
 
     @GetMapping("/index")
-    public AjaxResult<List<UserVo>> index() {
-        return null;
+    public AjaxResult<PageResult<UsersVo>> index(UserQueryVo queryVo) {
+
+        return AjaxResult.success(iUserService.getUserList(queryVo));
     }
 
     @PostMapping("/add")

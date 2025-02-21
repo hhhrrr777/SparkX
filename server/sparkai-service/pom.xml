@@ -35,12 +35,6 @@
             <artifactId>mybatis-plus-join</artifactId>
         </dependency>
 
-        <!-- MyBatis-Page-Helper -->
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>cn.sparkshop.sparkai</groupId>
             <artifactId>sparkai-common</artifactId>
@@ -49,6 +43,11 @@
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
 

@@ -27,8 +27,9 @@
         <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
         <postgresql.version>42.7.5</postgresql.version>
         <mybatis-plus-join.version>1.2.4</mybatis-plus-join.version>
-        <pagehelper.version>1.4.5</pagehelper.version>
+        <pagehelper.version>3.5.10.1</pagehelper.version>
         <validator.version>9.0.0.CR1</validator.version>
+        <jackson.version>2.18.2</jackson.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -88,10 +89,10 @@
                 <version>${mybatis-plus-join.version}</version>
             </dependency>
 
-            <!-- MyBatis-PageHelper -->
+            <!-- 分页插件 -->
             <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${pagehelper.version}</version>
             </dependency>
 
@@ -100,6 +101,13 @@
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${validator.version}</version>
+            </dependency>
+
+            <!-- jackson-databind -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
