@@ -5,8 +5,6 @@ const menu = [{
 	"auth": "",
 	"path": "/home",
 	"icon": "el-icon-chat-dot-square",
-	"hidden": 2,
-	"is_menu": 2,
 	"meta": {
 		"icon": "el-icon-chat-dot-square",
 		"title": "应用",
@@ -21,8 +19,6 @@ const menu = [{
 		"path": "/index/home",
 		"icon": "el-icon-Histogram",
 		"component": "index/home",
-		"hidden": 2,
-		"is_menu": 2,
 		"meta": {
 			"icon": "el-icon-chat-dot-square",
 			"title": "应用",
@@ -36,9 +32,7 @@ const menu = [{
 		"auth": "/store/index",
 		"path": "/store/index",
 		"icon": "el-icon-Coin",
-		"component": "census/goods",
-		"hidden": 2,
-		"is_menu": 2,
+		"component": "store",
 		"meta": {
 			"icon": "el-icon-Coin",
 			"title": "知识库",
@@ -52,9 +46,7 @@ const menu = [{
 		"auth": "/tools/index",
 		"path": "/tools/index",
 		"icon": "el-icon-Box",
-		"component": "census/goods",
-		"hidden": 2,
-		"is_menu": 2,
+		"component": "tools",
 		"meta": {
 			"icon": "el-icon-Box",
 			"title": "工具箱",
@@ -68,9 +60,7 @@ const menu = [{
 		"auth": "/setting/index",
 		"path": "/setting/index",
 		"icon": "el-icon-Setting",
-		"component": "census/goods",
-		"hidden": 2,
-		"is_menu": 2,
+		"component": "setting",
 		"meta": {
 			"icon": "el-icon-Setting",
 			"title": "系统",

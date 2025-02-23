@@ -11,6 +11,6 @@ public class LoginController {
 
     @PostMapping("/doLogin")
     public AjaxResult<Object> login() {
-
+        return AjaxResult.success();
     }
 }

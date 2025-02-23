@@ -3,9 +3,10 @@
 		<el-alert title="无子集菜单" center type="info" :closable="false"></el-alert>
 	</div>
 	<template v-for="navMenu in navMenus" v-bind:key="navMenu">
-		<el-menu-item v-if="!hasChildren(navMenu)" :index="navMenu.path">
+		<el-menu-item v-if="!hasChildren(navMenu)" :index="navMenu.path" class="menu-flex">
 			<a v-if="navMenu.meta&&navMenu.meta.type=='link'" :href="navMenu.path" target="_blank" @click.stop='()=>{}'></a>
 			<el-icon v-if="navMenu.meta&&navMenu.meta.icon"><component :is="navMenu.meta.icon || 'el-icon-menu'"/></el-icon>
+			<span style="margin-top: -12px;font-size: 14px;">{{navMenu.meta.title}}</span>
 			<template #title>
 				<span>{{navMenu.meta.title}}</span>
 				<span v-if="navMenu.meta.tag" class="menu-tag">{{navMenu.meta.tag}}</span>
@@ -36,3 +37,18 @@
 		}
 	}
 </script>
+
+<style>
+	.menu-flex {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin-top: 20px;
+	}
+	.menu-flex .el-tooltip__trigger {
+		display: flex;
+		flex-direction: column;
+		top: 8px !important;
+	}
+</style>
