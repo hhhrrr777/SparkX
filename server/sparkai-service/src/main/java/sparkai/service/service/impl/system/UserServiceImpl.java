@@ -47,7 +47,7 @@ public class UserServiceImpl implements IUserService {
         QueryWrapper<UsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("deleted", StatusEnum.YES.getCode());
 
-        if (queryVo.getName().isBlank()) {
+        if (!queryVo.getName().isBlank()) {
             queryWrapper.like("nickname", queryVo.getName());
         }
 

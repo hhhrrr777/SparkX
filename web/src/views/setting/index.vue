@@ -29,8 +29,18 @@
 						</el-menu>
 					</div>
 				</el-col>
-				<el-col :span="22">
-					<div class="pages"></div>
+				<el-col :span="1"></el-col>
+				<el-col :span="21">
+					<div class="pages">
+						<Suspense>
+							<template #default>
+								<component :is="page"/>
+							</template>
+							<template #fallback>
+								<el-skeleton :rows="3" />
+							</template>
+						</Suspense>
+					</div>
 				</el-col>
 			</el-row>
 		</el-card>
@@ -38,12 +48,21 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+
 export default {
 	data() {
 		return {
 			userIcon: 'el-icon-user',
-			filesIcon: 'el-icon-files'
+			filesIcon: 'el-icon-files',
+			components: {
+				users: defineAsyncComponent(() => import('./pages/users.vue')),
+			},
+			page: ''
 		}
+	},
+	mounted() {
+		this.page = this.components.users
 	}
 }
 </script>
@@ -61,15 +80,19 @@ export default {
 	}
 	.menu {
 		width: 100%;
-		height: 400px;
+		height: calc(100vh - 300px);
 		padding: 20px;
 		background: #f5f5f5;
 		border-radius: 10px;
-		margin-top: 40px;
+		margin-top: 20px;
+		padding-top: 40px;
 	}
 	.pages {
 		width: 100%;
-		height: 100%;
-		padding: 20px;
+		height: calc(100vh - 300px);
+		padding: 40px;
+		background: #f5f5f5;
+		border-radius: 10px;
+		margin-top: 20px;
 	}
 </style>

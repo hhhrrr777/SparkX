@@ -4,6 +4,7 @@ import scui from './scui'
 import i18n from './locales'
 import router from './router'
 import App from './App.vue'
+import 'element-plus/dist/index.css';
 
 import {createPinia} from "pinia";
 

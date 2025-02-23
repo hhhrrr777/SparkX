@@ -136,6 +136,7 @@ declare module 'vue' {
     Multiple: typeof import('./src/components/scUpload/multiple.vue')['default']
     My: typeof import('./src/components/scFilterBar/my.vue')['default']
     NodeWrap: typeof import('./src/components/scWorkflow/nodeWrap.vue')['default']
+    Pages: typeof import('./src/components/pages/index.vue')['default']
     Promoter: typeof import('./src/components/scWorkflow/nodes/promoter.vue')['default']
     PySelect: typeof import('./src/components/scFilterBar/pySelect.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

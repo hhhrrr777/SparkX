@@ -6,7 +6,7 @@
 		<el-menu-item v-if="!hasChildren(navMenu)" :index="navMenu.path" class="menu-flex">
 			<a v-if="navMenu.meta&&navMenu.meta.type=='link'" :href="navMenu.path" target="_blank" @click.stop='()=>{}'></a>
 			<el-icon v-if="navMenu.meta&&navMenu.meta.icon"><component :is="navMenu.meta.icon || 'el-icon-menu'"/></el-icon>
-			<span style="margin-top: -12px;font-size: 14px;">{{navMenu.meta.title}}</span>
+			<span style="margin-top: -12px;">{{navMenu.meta.title}}</span>
 			<template #title>
 				<span>{{navMenu.meta.title}}</span>
 				<span v-if="navMenu.meta.tag" class="menu-tag">{{navMenu.meta.tag}}</span>

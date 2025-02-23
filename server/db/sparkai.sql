@@ -21,7 +21,7 @@ CREATE TABLE "public"."users" (
     "deleted" int2 DEFAULT 1,
     "status" int2 DEFAULT 1,
     "create_time" timestamp(6),
-    "update_time" date,
+    "update_time" timestamp(6),
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 

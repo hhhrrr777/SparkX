@@ -32,7 +32,7 @@
 						<el-menu :default-active="active" router :collapse="globalStore?.menuIsCollapse"
 								 :unique-opened="config.MENU_UNIQUE_OPENED">
 							<div style="text-align: center;margin-top: 20px;margin-bottom: 40px;">
-								<img class="logo" src="/img/logo.png" style="width: 30px;height: 100%;" />
+								<img class="logo" src="/img/logo.png" style="width: 40px;height: auto;" />
 							</div>
 							<NavMenu :navMenus="nextMenu"></NavMenu>
 						</el-menu>
