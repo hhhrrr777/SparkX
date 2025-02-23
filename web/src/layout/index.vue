@@ -38,12 +38,12 @@
 						</el-menu>
 					</el-scrollbar>
 				</div>
-				<div class="adminui-side-bottom" @click="globalStore.TOGGLE_menuIsCollapse()">
+				<!--<div class="adminui-side-bottom" @click="globalStore.TOGGLE_menuIsCollapse()">
 					<el-icon>
 						<el-icon-expand v-if="globalStore?.menuIsCollapse"/>
 						<el-icon-fold v-else/>
 					</el-icon>
-				</div>
+				</div>-->
 			</div>
 			<Side-m v-if="globalStore?.ismobile"></Side-m>
 			<div class="aminui-body el-container">
