@@ -160,7 +160,7 @@ export default{
 		},
 		// 知识库详情
 		goDetail(uuid) {
-			this.$router.push('/dataset/detail?uid=' + uuid)
+			this.$router.push('/dataset/detail?uuid=' + uuid)
 		}
 	}
 }
