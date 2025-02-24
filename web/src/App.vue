@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import '@/assets/alifont/iconfont.css'
 import colorTool from '@/utils/color'
 
 export default {
@@ -42,5 +43,13 @@ export default {
 </script>
 
 <style lang="scss">
+.line1 {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.el-card {
+	border-radius: 10px !important;
+}
 @import '@/style/style.scss';
 </style>

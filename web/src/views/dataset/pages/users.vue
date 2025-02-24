@@ -1,16 +1,23 @@
 <template>
 	<div style="background: #fff;border-radius: 10px;padding: 10px 5px">
 		<div class="search-box">
+			<div>
+				<el-button type="primary" icon="el-icon-UploadFilled" @click="addUser" style="margin-top: -10px;">上传文档</el-button>
+				<el-button type="primary" icon="el-icon-Switch" @click="addUser" style="margin-top: -10px;">迁移文档</el-button>
+				<el-button type="primary" icon="el-icon-Refresh" @click="addUser" style="margin-top: -10px;">向量文档</el-button>
+				<el-button type="primary" icon="el-icon-QuestionFilled" @click="addUser" style="margin-top: -10px;">生成问题</el-button>
+				<el-button type="primary" icon="el-icon-Setting" @click="addUser" style="margin-top: -10px;">设置</el-button>
+				<el-button type="primary" icon="el-icon-Delete" @click="addUser" style="margin-top: -10px;">删除</el-button>
+			</div>
+
 			<el-form :inline="true" :model="searchForm" class="demo-form-inline">
-				<el-form-item label="登录账号">
-					<el-input v-model="searchForm.name" placeholder="" clearable></el-input>
+				<el-form-item>
+					<el-input v-model="searchForm.name" placeholder="文档名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="onSubmit" icon="el-icon-search">查询</el-button>
 				</el-form-item>
 			</el-form>
-
-			<el-button type="primary" icon="el-icon-plus" @click="addUser" style="margin-top: -10px;margin-right: 20px">添加用户</el-button>
 		</div>
 		<div style="border-radius: 10px;background: #fff;padding: 0 5px 5px 5px">
 			<el-table

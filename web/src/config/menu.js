@@ -14,14 +14,14 @@ const menu = [{
 	"children": [{
 		"id": 2,
 		"pid": 1,
-		"name": "应用",
+		"name": "智能体",
 		"auth": "index/home",
 		"path": "/index/home",
-		"icon": "el-icon-Histogram",
+		"icon": "el-icon-Service",
 		"component": "index/home",
 		"meta": {
-			"icon": "el-icon-chat-dot-square",
-			"title": "应用",
+			"icon": "el-icon-Service",
+			"title": "智能体",
 			"type": "menu",
 			"hidden": false
 		}

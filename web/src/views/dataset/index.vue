@@ -25,8 +25,8 @@
 				</el-col>
 
 				<el-col :span="6" class="store-item" v-for="item in storeList" :key="item.code">
-					<el-card style="height: 170px;padding: 10px" shadow="never" @click="goDetail(item.uuid)">
-						<div class="title-box">
+					<el-card style="height: 170px;padding: 10px" shadow="never">
+						<div class="title-box" @click="goDetail(item.uuid)">
 							<div class="title-left">
 								<div class="title-label">{{ item.title.substring(0, 1) }}</div>
 								<div class="title-info">
@@ -38,11 +38,11 @@
 								<el-tag type="primary">通用</el-tag>
 							</div>
 						</div>
-						<div class="desc-box">
+						<div class="desc-box" @click="goDetail(item.uuid)">
 							{{ item.description }}
 						</div>
 						<div class="tool-box">
-							<div class="tool-box-left">
+							<div class="tool-box-left" @click="goDetail(item.uuid)">
 								<div class="box-item">
 									<span class="num">1</span>
 									<span class="num-label">文档数</span>
@@ -66,22 +66,16 @@
 									<template #dropdown>
 										<el-dropdown-menu>
 											<el-dropdown-item>
-												<el-icon>
-													<component :is="embedingIcon"></component>
-												</el-icon> 向量化
+												<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量化
 											</el-dropdown-item>
 											<el-dropdown-item>
 												<el-icon>
 													<component :is="settingIcon"></component>
 												</el-icon> 设置</el-dropdown-item>
 											<el-dropdown-item>
-												<el-icon>
-													<component :is="downloadIcon"></component>
-												</el-icon> 导出Excel</el-dropdown-item>
+												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出Excel</el-dropdown-item>
 											<el-dropdown-item>
-												<el-icon>
-													<component :is="downloadIcon"></component>
-												</el-icon> 导出ZIP</el-dropdown-item>
+												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出ZIP</el-dropdown-item>
 											<el-dropdown-item>
 												<el-icon>
 													<component :is="delIcon"></component>
@@ -122,7 +116,6 @@ export default{
 			},
 			plusIcon: 'el-icon-plus',
 			menusIcon: 'el-icon-MoreFilled',
-			embedingIcon: 'el-icon-Switch',
 			settingIcon: 'el-icon-setting',
 			downloadIcon: 'el-icon-Download',
 			delIcon: 'el-icon-Delete',
@@ -213,11 +206,6 @@ export default{
 .knowledge-title {
 	margin-left: 10px;
 	width: 250px;
-}
-.line1 {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
 }
 .author {
 	margin-left: 10px;
