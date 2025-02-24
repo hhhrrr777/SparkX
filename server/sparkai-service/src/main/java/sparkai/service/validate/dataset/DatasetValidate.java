@@ -7,57 +7,16 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.vo.system;
+package sparkai.service.validate.dataset;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
-public class UsersVo implements Serializable {
+public class DatasetValidate implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    private Long id;
-
-    /**
-     * 登录账号
-     */
-    private String name;
-
-    /**
-     * 用户标识
-     */
-    private String code;
-
-    /**
-     * 昵称
-     */
-    private String nickname;
-
-    /**
-     * 状态 1:正常 2:禁用
-     */
-    private Integer status;
-
-    /**
-     * 头像
-     */
-    private String avatar;
-
-    /**
-     * 创建时间
-     */
-    @JsonProperty("create_time")
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    @JsonProperty("update_time")
-    private LocalDateTime updateTime;
 }

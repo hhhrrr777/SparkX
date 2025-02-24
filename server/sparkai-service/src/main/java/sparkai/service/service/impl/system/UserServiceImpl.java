@@ -44,6 +44,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public PageResult<UsersVo> getUserList(UserQueryVo queryVo) {
 
+        long pageNo   = queryVo.getPage();
+        long pageSize = queryVo.getLimit();
+
         QueryWrapper<UsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("deleted", StatusEnum.YES.getCode());
 
@@ -56,9 +59,6 @@ public class UserServiceImpl implements IUserService {
         }
 
         queryWrapper.orderByDesc("id");
-
-        long pageNo   = queryVo.getPage();
-        long pageSize = queryVo.getLimit();
 
         IPage<UsersEntity> userListRes = userMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
         List<UsersVo> usersList = new LinkedList<>();

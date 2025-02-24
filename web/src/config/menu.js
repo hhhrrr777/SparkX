@@ -29,10 +29,10 @@ const menu = [{
 		"id": 3,
 		"pid": 1,
 		"name": "知识库",
-		"auth": "/store/index",
-		"path": "/store/index",
+		"auth": "/dataset/index",
+		"path": "/dataset/index",
 		"icon": "el-icon-Coin",
-		"component": "store",
+		"component": "dataset",
 		"meta": {
 			"icon": "el-icon-Coin",
 			"title": "知识库",

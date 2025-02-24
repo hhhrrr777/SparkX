@@ -7,7 +7,7 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.vo.system;
+package sparkai.service.vo.dataset;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -17,47 +17,51 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class UsersVo implements Serializable {
+public class DatasetVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    /**
+    * id
+    */
+    private Integer id;
 
     /**
-     * 登录账号
-     */
-    private String name;
+    * uuid
+    */
+    private Object uuid;
 
     /**
-     * 用户标识
-     */
-    private String code;
+    * 知识库标题
+    */
+    private String title;
 
     /**
-     * 昵称
-     */
-    private String nickname;
+    * 知识库描述
+    */
+    private String description;
 
     /**
-     * 状态 1:正常 2:禁用
-     */
-    private Integer status;
+    * 类型 1:通用 2:web站点
+    */
+    private Integer type;
 
     /**
-     * 头像
-     */
-    private String avatar;
+    * 模型的uuid
+    */
+    @JsonProperty(value = "embedding_mode_id")
+    private Object embeddingModeId;
 
     /**
-     * 创建时间
-     */
-    @JsonProperty("create_time")
+    * 创建时间
+    */
+    @JsonProperty(value = "create_time")
     private LocalDateTime createTime;
 
     /**
-     * 更新时间
-     */
-    @JsonProperty("update_time")
+    * 更新时间
+    */
+    @JsonProperty(value = "update_time")
     private LocalDateTime updateTime;
 }

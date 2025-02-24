@@ -4,7 +4,7 @@
 			<div class="title">知识库</div>
 			<el-form :inline="true" :model="searchForm" class="demo-form-inline" style="float: right;margin-top: 10px">
 				<el-form-item>
-					<el-input v-model="searchForm.name" placeholder="知识库标题" clearable></el-input>
+					<el-input v-model="searchForm.title" placeholder="知识库标题" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="onSubmit" icon="el-icon-search">查询</el-button>
@@ -12,7 +12,7 @@
 			</el-form>
 			<el-row class="store-list">
 				<el-col :span="6" class="store-item">
-					<el-card class="add-box" shadow="never">
+					<el-card class="add-box" shadow="never" @click="addDataset">
 						<div class="add-item-box">
 							<div class="add-icon">
 								<el-icon class="icon-color">
@@ -107,7 +107,7 @@ export default{
 	data() {
 		return {
 			searchForm: {
-				name: '',
+				title: '',
 				page: 1,
 				limit: 15
 			},
@@ -123,8 +123,16 @@ export default{
 			storeList: []
 		}
 	},
+	mounted() {
+		this.getList()
+	},
 	methods: {
-		getList() {
+		async getList() {
+			let res = await this.$API.dataset.list.get(this.searchForm)
+			this.storeList = res.data.data
+			this.page.total = res.data.total
+		},
+		addDataset() {
 
 		},
 		handlePageChange() {
