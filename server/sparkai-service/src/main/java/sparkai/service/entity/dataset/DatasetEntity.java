@@ -37,7 +37,7 @@ public class DatasetEntity implements Serializable {
     * uuid
     */
     @TableField(value = "uuid")
-    private Object uuid;
+    private String uuid;
 
     /**
     * 知识库标题
@@ -67,7 +67,7 @@ public class DatasetEntity implements Serializable {
     * 模型的uuid
     */
     @TableField(value = "embedding_mode_id")
-    private Object embeddingModeId;
+    private String embeddingModeId;
 
     /**
     * 创建时间

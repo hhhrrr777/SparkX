@@ -1,12 +1,12 @@
 package sparkai.sparkaiweb.controller.dataset;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.dataset.IDatasetService;
+import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
 
@@ -21,5 +21,12 @@ public class DatasetController {
     public AjaxResult<PageResult<DatasetVo>> index(DatasetQueryVo queryVo) {
 
         return AjaxResult.success(iDatasetService.getDatasetList(queryVo));
+    }
+
+    @PostMapping("/add")
+    public AjaxResult<Object> add(@RequestBody @Validated DatasetValidate validate) {
+
+        iDatasetService.addDataset(validate);
+        return AjaxResult.success();
     }
 }

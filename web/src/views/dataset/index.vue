@@ -25,13 +25,13 @@
 				</el-col>
 
 				<el-col :span="6" class="store-item" v-for="item in storeList" :key="item.code">
-					<el-card style="height: 170px;padding: 10px" shadow="never">
+					<el-card style="height: 170px;padding: 10px" shadow="never" @click="goDetail(item.uuid)">
 						<div class="title-box">
 							<div class="title-left">
-								<div class="title-label">知</div>
+								<div class="title-label">{{ item.title.substring(0, 1) }}</div>
 								<div class="title-info">
-									<div class="line1 knowledge-title">这是一个测试的知识库</div>
-									<div class="author">创建者： admin</div>
+									<div class="line1 knowledge-title">{{ item.title }}</div>
+									<div class="author">创建者: {{ item.author }}</div>
 								</div>
 							</div>
 							<div class="title-right">
@@ -39,7 +39,7 @@
 							</div>
 						</div>
 						<div class="desc-box">
-							这是一段关于知识库的描述
+							{{ item.description }}
 						</div>
 						<div class="tool-box">
 							<div class="tool-box-left">
@@ -97,13 +97,19 @@
 		</el-card>
 		<Pages :form="searchForm" :page-obj="page" @pageChange="handlePageChange" @pageJump="getList"></Pages>
 	</el-container>
+
+	<save-dialog v-if="dialogVisible" ref="saveDialog" @success="handleSuccess" @closed="dialogVisible=false" :close-on-click-modal="false"></save-dialog>
 </template>
 
 <script>
+import saveDialog from '@/views/dataset/save.vue';
 import Pages from "@/components/pages/index.vue";
 
 export default{
-	components: {Pages},
+	components: {
+		saveDialog,
+		Pages
+	},
 	data() {
 		return {
 			searchForm: {
@@ -120,7 +126,8 @@ export default{
 			settingIcon: 'el-icon-setting',
 			downloadIcon: 'el-icon-Download',
 			delIcon: 'el-icon-Delete',
-			storeList: []
+			storeList: [],
+			dialogVisible: false
 		}
 	},
 	mounted() {
@@ -134,12 +141,26 @@ export default{
 		},
 		addDataset() {
 
-		},
-		handlePageChange() {
+			this.dialogVisible = true
 
+			this.$nextTick(() => {
+				this.$refs.saveDialog.open('add')
+			})
+		},
+		handleSuccess() {
+			this.dialogVisible = false
+			this.getList()
+		},
+		handlePageChange(page) {
+			this.searchForm.page = page
+			this.getList()
 		},
 		onSubmit() {
-
+			this.getList()
+		},
+		// 知识库详情
+		goDetail(uuid) {
+			this.$router.push('/dataset/detail?uid=' + uuid)
 		}
 	}
 }
@@ -201,15 +222,18 @@ export default{
 .author {
 	margin-left: 10px;
 	color: #646a73;
+	margin-top: 5px;
+	font-size: 12px;
 }
 .title-label {
 	background: #5E17EB;
 	color: #fff;
 	border-radius: 10px;
-	height: 30px;
-	width: 30px;
-	line-height: 30px;
+	height: 40px;
+	width: 40px;
+	line-height: 40px;
 	text-align: center;
+	font-weight: bold;
 }
 .add-store-name {
 	font-size: 16px;margin-left: 10px

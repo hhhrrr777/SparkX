@@ -10,10 +10,9 @@
 package sparkai.service.service.interfaces.dataset;
 
 import sparkai.common.core.PageResult;
+import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
-
-import java.util.List;
 
 public interface IDatasetService {
 
@@ -23,4 +22,10 @@ public interface IDatasetService {
      * @return PageResult<List<DatasetVo>>
      */
     PageResult<DatasetVo> getDatasetList(DatasetQueryVo queryVo);
+
+    /**
+     * 添加知识库模型
+     * @param validate DatasetValidate
+     */
+    void addDataset(DatasetValidate validate);
 }

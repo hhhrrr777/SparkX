@@ -26,6 +26,15 @@
 // 	}
 // ]
 
-const routes = []
+const routes = [
+	{
+		name: 'datasetDetail',
+		path: "/dataset/detail",
+		component: "dataset/detail",
+		meta: {
+			title: "知识库详情"
+		}
+	}
+]
 
 export default routes;

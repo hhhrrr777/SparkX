@@ -50,12 +50,12 @@ CREATE TABLE "public"."dataset" (
         START 1
         CACHE 1
     ),
-    "uuid" uuid,
+    "uuid" varchar(64) COLLATE "pg_catalog"."default",
     "title" varchar(155) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "description" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "user_id" int4 DEFAULT 0,
     "type" int2 DEFAULT 1,
-    "embedding_mode_id" uuid,
+    "embedding_mode_id" varchar(64) COLLATE "pg_catalog"."default",
     "create_time" timestamp(6),
     "update_time" timestamp(6),
     CONSTRAINT "dataset_pkey" PRIMARY KEY ("id")

@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.impl.dataset;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,9 +17,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sparkai.common.core.PageResult;
+import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.DatasetEntity;
+import sparkai.service.entity.system.UsersEntity;
 import sparkai.service.mapper.dataset.DatasetMapper;
+import sparkai.service.mapper.system.UserMapper;
 import sparkai.service.service.interfaces.dataset.IDatasetService;
+import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
 
@@ -30,6 +35,9 @@ public class DatasetServiceImpl implements IDatasetService {
 
     @Autowired
     DatasetMapper datasetMapper;
+
+    @Autowired
+    UserMapper userMapper;
 
     /**
      * 获取知识库列表
@@ -56,13 +64,35 @@ public class DatasetServiceImpl implements IDatasetService {
         List<DatasetVo> datasetVoList = new LinkedList<>();
 
         for (DatasetEntity entity : datasetListRes.getRecords()) {
-
             DatasetVo vo = new DatasetVo();
             BeanUtils.copyProperties(entity, vo);
+
+            UsersEntity userInfo = userMapper.selectById(entity.getUserId());
+            vo.setAuthor(userInfo.getNickname());
 
             datasetVoList.add(vo);
         }
 
         return PageResult.iPageHandle(datasetListRes.getTotal(), pageNo, pageSize, datasetVoList);
+    }
+
+    /**
+     * 添加知识库模型
+     * @param validate DatasetValidate
+     */
+    @Override
+    public void addDataset(DatasetValidate validate) {
+
+        DatasetEntity datasetEntity = new DatasetEntity();
+        BeanUtils.copyProperties(validate, datasetEntity);
+
+        // TODO 此处的uuid随机生成
+        datasetEntity.setType(1); // 写死通用类型
+        datasetEntity.setUserId(1);
+        datasetEntity.setUuid(IdUtil.randomUUID());
+        datasetEntity.setEmbeddingModeId(IdUtil.randomUUID());
+        datasetEntity.setCreateTime(Tool.nowDateTime());
+
+        datasetMapper.insert(datasetEntity);
     }
 }

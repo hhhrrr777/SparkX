@@ -30,7 +30,7 @@ public class DatasetVo implements Serializable {
     /**
     * uuid
     */
-    private Object uuid;
+    private String uuid;
 
     /**
     * 知识库标题
@@ -51,17 +51,10 @@ public class DatasetVo implements Serializable {
     * 模型的uuid
     */
     @JsonProperty(value = "embedding_mode_id")
-    private Object embeddingModeId;
+    private String embeddingModeId;
 
     /**
-    * 创建时间
-    */
-    @JsonProperty(value = "create_time")
-    private LocalDateTime createTime;
-
-    /**
-    * 更新时间
-    */
-    @JsonProperty(value = "update_time")
-    private LocalDateTime updateTime;
+     * 创建人
+     */
+    private String author;
 }
