@@ -1,63 +1,67 @@
 <template>
-	<div class="search-box">
-		<el-form :inline="true" :model="searchForm" class="demo-form-inline">
-			<el-form-item label="登录账号">
-				<el-input v-model="searchForm.name" placeholder="" clearable></el-input>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" @click="onSubmit" icon="el-icon-search">查询</el-button>
-			</el-form-item>
-		</el-form>
+	<div style="background: #fff;border-radius: 10px;padding: 10px 5px">
+		<div class="search-box">
+			<el-form :inline="true" :model="searchForm" class="demo-form-inline">
+				<el-form-item label="登录账号">
+					<el-input v-model="searchForm.name" placeholder="" clearable></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="onSubmit" icon="el-icon-search">查询</el-button>
+				</el-form-item>
+			</el-form>
 
-		<el-button type="primary" icon="el-icon-plus" @click="addUser" style="margin-top: -10px;margin-right: 20px">添加用户</el-button>
-	</div>
-	<div style="border-radius: 10px;background: #fff;padding: 0 5px 5px 5px">
-		<el-table
-			:data="tableData"
-			style="width: 100%">
-			<el-table-column
-				prop="id"
-				label="ID">
-			</el-table-column>
-			<el-table-column
-				prop="name"
-				label="登录名">
-			</el-table-column>
-			<el-table-column
-				prop="nickname"
-				label="昵称">
-			</el-table-column>
-			<el-table-column
-				prop="code"
-				label="标识">
-			</el-table-column>
-			<el-table-column
-				label="状态">
-				<template #default="scope">
-					<el-tag type="success" v-if="scope.row.status == 1">正常</el-tag>
-					<el-tag type="danger" v-else>禁用</el-tag>
-				</template>
-			</el-table-column>
-			<el-table-column
-				prop="operation"
-				label="操作">
-				<template #default="scope">
-					<el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
-					<el-button @click="handleDel(scope.row)" type="text" size="small">删除</el-button>
-				</template>
-			</el-table-column>
-		</el-table>
-	</div>
+			<el-button type="primary" icon="el-icon-plus" @click="addUser" style="margin-top: -10px;margin-right: 20px">添加用户</el-button>
+		</div>
+		<div style="border-radius: 10px;background: #fff;padding: 0 5px 5px 5px">
+			<el-table
+				:header-cell-style="{background:'#f4f4f4'}"
+				:data="tableData"
+				style="width: 100%">
+				<el-table-column
+					prop="id"
+					label="ID">
+				</el-table-column>
+				<el-table-column
+					prop="name"
+					label="登录名">
+				</el-table-column>
+				<el-table-column
+					prop="nickname"
+					label="昵称">
+				</el-table-column>
+				<el-table-column
+					prop="code"
+					width="300"
+					label="标识">
+				</el-table-column>
+				<el-table-column
+					label="状态">
+					<template #default="scope">
+						<el-tag type="success" v-if="scope.row.status == 1">正常</el-tag>
+						<el-tag type="danger" v-else>禁用</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column
+					prop="operation"
+					label="操作">
+					<template #default="scope">
+						<el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+						<el-button @click="handleDel(scope.row)" type="text" size="small">删除</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+		</div>
 
-	<Pages :form="searchForm" :page-obj="page" @pageChange="handlePageChange" @pageJump="getList"></Pages>
+		<Pages :form="searchForm" :page-obj="page" @pageChange="handlePageChange" @pageJump="getList"></Pages>
+	</div>
 
 	<el-dialog :title="title" v-model="dialogVisible" width="500px" destroy-on-close :close-on-click-modal="false">
 		<el-form :model="form" :rules="rules" ref="ruleForm" label-width="80px">
 			<el-form-item label="登录账号" prop="name">
-				<el-input v-model="form.name" placeholder="建议字母+数字"></el-input>
+				<el-input v-model="form.name" placeholder="建议字母+数字" maxlength="20" show-word-limit></el-input>
 			</el-form-item>
 			<el-form-item label="昵称" prop="nickname">
-				<el-input v-model="form.nickname"></el-input>
+				<el-input v-model="form.nickname" maxlength="30" show-word-limit></el-input>
 			</el-form-item>
 			<el-form-item label="密码" prop="password" v-if="title == '添加用户'">
 				<el-input v-model="form.password" placeholder="请输入密码"></el-input>
@@ -204,9 +208,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 	.search-box {
-		background: #fff;
 		border-radius: 10px;
 		margin-bottom: 20px;
 		padding-top: 20px;
@@ -214,8 +217,5 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-	}
-	.msg-style {
-		z-index: 999999 !important;
 	}
 </style>
