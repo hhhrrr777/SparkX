@@ -2,10 +2,10 @@
 	<el-container style="padding: 20px">
 		<el-card shadow="never">
 			<el-row class="detail-box">
-				<el-col :span="4" class="box-height-left">
+				<el-col :span="3" class="box-height-left">
 
 				</el-col>
-				<el-col :span="20" class="box-height-right">
+				<el-col :span="21" class="box-height-right">
 
 				</el-col>
 			</el-row>
