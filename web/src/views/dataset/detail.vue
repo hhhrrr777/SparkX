@@ -4,7 +4,7 @@
 			<el-row class="detail-box">
 				<el-col :span="2" class="box-height-left">
 					<div class="menu-bar">
-						<el-icon style="font-size: 18px">
+						<el-icon style="font-size: 18px" @click="goBack">
 							<component :is="backIcon"/>
 						</el-icon>
 						<el-popover placement="bottom" :width="250" trigger="click">
@@ -104,6 +104,11 @@ export default {
 	},
 	mounted() {
 		this.page = this.components.users
+	},
+	methods: {
+		goBack() {
+			this.$router.go(-1)
+		}
 	}
 }
 
