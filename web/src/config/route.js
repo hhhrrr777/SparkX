@@ -34,7 +34,8 @@ menu[0].children.push({
 	"component": "dataset/detail",
 	"meta": {
 		"title": "知识库详情",
-		"hidden": true
+		"hidden": true,
+		"active": "/dataset/index",
 	}
 })
 
