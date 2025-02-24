@@ -25,16 +25,19 @@
 // 		}]
 // 	}
 // ]
-
-const routes = [
-	{
-		name: 'datasetDetail',
-		path: "/dataset/detail",
-		component: "dataset/detail",
-		meta: {
-			title: "知识库详情"
-		}
+import menu from '@/config/menu.js'
+menu[0].children.push({
+	"id": 100,
+	"pid": 1,
+	"name": '知识库详情',
+	"path": "/dataset/detail",
+	"component": "dataset/detail",
+	"meta": {
+		"title": "知识库详情",
+		"hidden": true
 	}
-]
+})
+
+const routes = menu
 
 export default routes;

@@ -1,6 +1,6 @@
 <template>
 	<el-container style="padding: 20px">
-		<el-card>
+		<el-card shadow="never">
 			<div class="title">系统设置</div>
 			<el-row class="tac">
 				<el-col :span="2">

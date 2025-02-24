@@ -1,32 +1,10 @@
 <template>
 	<!-- 通栏布局 -->
 	<template v-if="globalStore?.layout=='header'">
-		<!--<header class="adminui-header">
-			<div class="adminui-header-left">
-				<div class="logo-bar">
-					<img class="logo" src="/img/logo.png">
-					<span>{{ config.APP_NAME }}</span>
-				</div>
-				<ul v-if="!globalStore?.ismobile" class="nav">
-					<li v-for="item in menu" :key="item" :class="pmenu.path==item.path?'active':''"
-						@click="showMenu(item)">
-						<el-icon>
-							<component :is="item.meta.icon || 'el-icon-menu'"/>
-						</el-icon>
-						<span>{{ item.meta.title }}</span>
-					</li>
-				</ul>
-			</div>
-			<div class="adminui-header-right">
-				<userbar></userbar>
-			</div>
-		</header>-->
 		<section class="aminui-wrapper">
 			<div v-if="!globalStore?.ismobile && nextMenu.length>0 || !pmenu.component"
 				 :class="globalStore?.menuIsCollapse?'aminui-side isCollapse':'aminui-side'">
-				<!--<div v-if="!globalStore?.menuIsCollapse" class="adminui-side-top">
-					<h2>{{ pmenu.meta.title }}</h2>
-				</div>-->
+
 				<div class="adminui-side-scroll">
 					<el-scrollbar>
 						<el-menu :default-active="active" router :collapse="globalStore?.menuIsCollapse"
@@ -47,8 +25,6 @@
 			</div>
 			<Side-m v-if="globalStore?.ismobile"></Side-m>
 			<div class="aminui-body el-container">
-				<!--<Topbar v-if="!globalStore?.ismobile"></Topbar>-->
-				<!--<Tags v-if="!globalStore?.ismobile && globalStore?.layoutTags"></Tags>-->
 				<div class="adminui-main" id="adminui-main">
 					<router-view v-slot="{ Component }">
 						<keep-alive :include="keepAliveStore?.keepLiveRoute">
