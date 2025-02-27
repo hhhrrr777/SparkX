@@ -132,15 +132,15 @@ export default {
 	height: 40px;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	padding-right: 10px;
 	cursor: pointer;
 }
 .dataset-title {
 	font-weight: bold;
-	width: 110px;
+	width: 100%;
 	font-size: 14px;
 	margin-top: -6px;
+	margin-left: 10px;
 }
 .dataset-item {
 	display: flex;

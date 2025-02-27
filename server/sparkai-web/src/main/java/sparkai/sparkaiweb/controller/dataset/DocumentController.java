@@ -10,32 +10,25 @@
 package sparkai.sparkaiweb.controller.dataset;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.core.AjaxResult;
-import sparkai.common.core.PageResult;
-import sparkai.service.service.interfaces.dataset.IDatasetService;
-import sparkai.service.validate.dataset.DatasetValidate;
-import sparkai.service.vo.dataset.DatasetQueryVo;
-import sparkai.service.vo.dataset.DatasetVo;
+import sparkai.service.service.interfaces.dataset.IDocumentService;
 
-@RequestMapping("/api/dataset")
+@RequestMapping("/api/document")
 @RestController
-public class DatasetController {
+public class DocumentController {
 
     @Autowired
-    IDatasetService iDatasetService;
+    IDocumentService iDocumentService;
 
-    @GetMapping("/index")
-    public AjaxResult<PageResult<DatasetVo>> index(DatasetQueryVo queryVo) {
+    @PostMapping("/upload")
+    public AjaxResult<Object> upload(@RequestParam("file") MultipartFile file) {
 
-        return AjaxResult.success(iDatasetService.getDatasetList(queryVo));
-    }
-
-    @PostMapping("/add")
-    public AjaxResult<Object> add(@RequestBody @Validated DatasetValidate validate) {
-
-        iDatasetService.addDataset(validate);
+        iDocumentService.uploadFile(file);
         return AjaxResult.success();
     }
 }

@@ -25,11 +25,13 @@
 				</div>
 
 				<el-upload
-					v-model="fileList"
+					v-model:file-list="fileList"
+					ref="upload"
 					style="margin-top: 20px"
 					class="upload-demo"
 					:limit="50"
 					accept=".txt,.md,.pdf,.docx,.html,.xls,.xlsx,.csv,.zip"
+					:action="uploadUrl"
 					:auto-upload="false"
 					:show-file-list="false"
 					:on-change="onChange"
@@ -46,12 +48,12 @@
 				</el-upload>
 
 				<div class="file-list">
-					<div class="file-item" v-for="(item, index) in showFileList" :key="index">
+					<div class="file-item" v-for="(item, index) in fileList" :key="index">
 						<div class="file-info">
-							<img :src="`/src/assets/files_icon/` + item.ext + `.svg`" style="width: 30px;">
+							<img :src="`/src/assets/files_icon/` + getExtByName(item.name) + `.svg`" style="width: 30px;">
 							<div class="file-data">
 								<div class="file-data-title line1">{{ item.name }}</div>
-								<div class="file-data-size">{{ item.size }}</div>
+								<div class="file-data-size">{{ formatBytes(item.size) }}</div>
 							</div>
 						</div>
 						<el-icon size="16" style="cursor: pointer" @click="delFile(index)">
@@ -64,13 +66,13 @@
 
 		<div class="tool-bar">
 			<el-button>取消</el-button>
-			<el-button type="primary">下一步</el-button>
+			<el-button type="primary" @click="nextStep">下一步</el-button>
 		</div>
 	</el-container>
 </template>
 
 <script>
-
+import config from "@/config"
 export default {
 	data() {
 		return {
@@ -78,8 +80,9 @@ export default {
 			backIcon: 'el-icon-Back',
 			uploadIcon: 'el-icon-UploadFilled',
 			delIcon: 'el-icon-delete',
-			showFileList: [],
 			fileList: [],
+			uploadUrl: config.API_URL + '/document/upload',
+			isUpload: false
 		}
 	},
 	mounted() {
@@ -93,16 +96,10 @@ export default {
 		},
 		onChange(file) {
 			const fileSize = file.size / 1024 / 1024
-			if (fileSize > 50) {
-				this.$message.error('上传的文件不得超过50M')
+			if (fileSize > 100) {
+				this.$message.error('上传的文件不得超过100M')
 				return false
 			}
-
-			this.showFileList.push({
-				name: file.name,
-				size: this.formatBytes(file.size),
-				ext: file.name.split('.')[1].toLowerCase(),
-			});
 		},
 		formatBytes(bytes, decimals = 2) {
 
@@ -114,9 +111,20 @@ export default {
 
 			return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 		},
+		getExtByName(name) {
+			return name.split('.')[1]
+		},
 		delFile(index) {
-			this.showFileList.splice(index, 1)
 			this.fileList.splice(index, 1)
+		},
+		// 下一步
+		nextStep() {
+			// 上传文件
+			if (this.active === 0) {
+				this.active = 1
+
+				this.$refs.upload.submit()
+			}
 		}
 	}
 }
