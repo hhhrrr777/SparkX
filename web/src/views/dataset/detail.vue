@@ -11,7 +11,7 @@
 							<template #reference>
 								<div style="display: flex">
 									<div class="dataset-title line1">
-										<el-icon style="font-size: 18px;margin-right: 5px">
+										<el-icon style="font-size: 18px;margin-right: 5px;margin-top: 5px;top:4px;">
 											<component :is="datasetIcon"/>
 										</el-icon>这是一个测文档
 									</div>
@@ -138,10 +138,9 @@ export default {
 }
 .dataset-title {
 	font-weight: bold;
-	width: 130px;
-	display: flex;
-	align-items: center;
+	width: 110px;
 	font-size: 14px;
+	margin-top: -6px;
 }
 .dataset-item {
 	display: flex;

@@ -38,6 +38,18 @@ menu[0].children.push({
 		"active": "/dataset/index",
 	}
 })
+menu[0].children.push({
+	"id": 101,
+	"pid": 1,
+	"name": '上传文档',
+	"path": "/dataset/upload",
+	"component": "dataset/upload",
+	"meta": {
+		"title": "上传文档",
+		"hidden": true,
+		"active": "/dataset/index",
+	}
+})
 
 const routes = menu
 

@@ -2,7 +2,7 @@
 	<div style="background: #fff;border-radius: 10px;padding: 10px 5px">
 		<div class="search-box">
 			<div>
-				<el-button type="primary" icon="el-icon-UploadFilled" @click="addUser" style="margin-top: -10px;">上传文档</el-button>
+				<el-button type="primary" icon="el-icon-UploadFilled" @click="uploadFile" style="margin-top: -10px;">上传文档</el-button>
 				<el-button type="primary" icon="el-icon-Switch" @click="addUser" style="margin-top: -10px;">迁移文档</el-button>
 				<el-button type="primary" icon="el-icon-Refresh" @click="addUser" style="margin-top: -10px;">向量文档</el-button>
 				<el-button type="primary" icon="el-icon-QuestionFilled" @click="addUser" style="margin-top: -10px;">生成问题</el-button>
@@ -129,11 +129,13 @@ export default {
 				status: [
 					{required: true, message: '请选择状态', trigger: 'blur'}
 				],
-			}
+			},
+			uuid: ''
 		}
 	},
 	mounted() {
 		this.getList()
+		this.uuid = this.$route.query.uuid;
 	},
 	methods: {
 		async getList() {
@@ -210,6 +212,9 @@ export default {
 					}
 				}
 			});
+		},
+		uploadFile() {
+			this.$router.push('/dataset/upload?uuid=' + this.uuid)
 		}
 	}
 }
