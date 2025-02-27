@@ -25,6 +25,7 @@
 				</div>
 
 				<el-upload
+					v-model="fileList"
 					style="margin-top: 20px"
 					class="upload-demo"
 					:limit="50"
@@ -45,7 +46,7 @@
 				</el-upload>
 
 				<div class="file-list">
-					<div class="file-item" v-for="(item, index) in fileList" :key="index">
+					<div class="file-item" v-for="(item, index) in showFileList" :key="index">
 						<div class="file-info">
 							<img :src="`/src/assets/files_icon/` + item.ext + `.svg`" style="width: 30px;">
 							<div class="file-data">
@@ -53,7 +54,7 @@
 								<div class="file-data-size">{{ item.size }}</div>
 							</div>
 						</div>
-						<el-icon size="16" style="cursor: pointer">
+						<el-icon size="16" style="cursor: pointer" @click="delFile(index)">
 							<component :is="delIcon"/>
 						</el-icon>
 					</div>
@@ -77,7 +78,8 @@ export default {
 			backIcon: 'el-icon-Back',
 			uploadIcon: 'el-icon-UploadFilled',
 			delIcon: 'el-icon-delete',
-			fileList: []
+			showFileList: [],
+			fileList: [],
 		}
 	},
 	mounted() {
@@ -96,7 +98,7 @@ export default {
 				return false
 			}
 
-			this.fileList.push({
+			this.showFileList.push({
 				name: file.name,
 				size: this.formatBytes(file.size),
 				ext: file.name.split('.')[1].toLowerCase(),
@@ -111,6 +113,10 @@ export default {
 			const i = Math.floor(Math.log(bytes) / Math.log(k));
 
 			return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+		},
+		delFile(index) {
+			this.showFileList.splice(index, 1)
+			this.fileList.splice(index, 1)
 		}
 	}
 }
