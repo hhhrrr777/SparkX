@@ -11,11 +11,14 @@ package sparkai.service.service.interfaces.dataset;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface IDocumentService {
 
     /**
      * 上传文件
-     * @param file MultipartFile
+     * @param files MultipartFile[]
+     * @return List<String>
      */
-    void uploadFile(MultipartFile file);
+    List<String> uploadFile(MultipartFile[] files);
 }

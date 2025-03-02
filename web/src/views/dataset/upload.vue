@@ -118,12 +118,19 @@ export default {
 			this.fileList.splice(index, 1)
 		},
 		// 下一步
-		nextStep() {
+		async nextStep() {
 			// 上传文件
 			if (this.active === 0) {
 				this.active = 1
 
-				this.$refs.upload.submit()
+				let formData = new FormData();
+				// 将上传的文件放到数据对象中
+				this.fileList.forEach(file => {
+					formData.append('files', file.raw);
+				});
+
+				let res = await this.$API.document.upload.post(formData)
+				console.log('xx', res)
 			}
 		}
 	}
