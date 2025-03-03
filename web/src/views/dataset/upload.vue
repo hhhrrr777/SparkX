@@ -109,7 +109,7 @@
 						</el-radio-group>
 
 						<el-checkbox v-model="checked" style="margin-left: 13px;margin-top: 20px"> 导入时添加分段标题为关联问题（适用于标题为问题的问答对） </el-checkbox>
-						<el-button class="preview-btn">生成预览</el-button>
+						<el-button class="preview-btn">重新预览</el-button>
 					</div>
 				</div>
 				<div class="document-preview">
