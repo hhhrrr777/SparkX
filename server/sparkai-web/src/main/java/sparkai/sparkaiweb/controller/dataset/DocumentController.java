@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.core.AjaxResult;
 import sparkai.service.service.interfaces.dataset.IDocumentService;
+import sparkai.service.vo.document.DocumentSplitVo;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class DocumentController {
     IDocumentService iDocumentService;
 
     @PostMapping("/upload")
-    public AjaxResult<List<String>> upload(@RequestParam("files") MultipartFile[] file) {
+    public AjaxResult<List<DocumentSplitVo>> upload(@RequestParam("files") MultipartFile[] file) {
 
         return AjaxResult.success(iDocumentService.uploadFile(file));
     }

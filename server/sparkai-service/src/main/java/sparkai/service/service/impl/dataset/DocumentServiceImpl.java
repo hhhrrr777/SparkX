@@ -2,76 +2,66 @@ package sparkai.service.service.impl.dataset;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
-import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
 import dev.langchain4j.data.document.parser.TextDocumentParser;
 import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
 import dev.langchain4j.data.segment.TextSegment;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.exception.BusinessException;
 import sparkai.service.service.interfaces.dataset.IDocumentService;
+import sparkai.service.vo.document.DocumentItemVo;
+import sparkai.service.vo.document.DocumentSplitVo;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class DocumentServiceImpl implements IDocumentService {
 
     @Override
-    public List<String> uploadFile(MultipartFile[] files) {
-        for (MultipartFile file : files) {
-            System.out.println("---------------------");
-            System.out.println(file.getOriginalFilename());
-            System.out.println("---------------------");
-        }
-        return null;
-        /*try {
+    public List<DocumentSplitVo> uploadFile(MultipartFile[] files) {
 
-            // TODO 校验文件大小
+        try {
 
-            // 获取文件名
-            String originalFilename = file.getOriginalFilename();
-            // 获取文件后缀名
-            String suffixName = originalFilename.substring(originalFilename.lastIndexOf("."));
+            List<DocumentSplitVo> splitList = new LinkedList<>();
+            for (MultipartFile file : files) {
 
-            // 设置文件上传绝对路径
-            String filePath = ResourceUtils.getFile("classpath:").getAbsolutePath() + "uploadFiles/";
-            System.out.println(ResourceUtils.getFile("classpath:").getAbsolutePath() );
-            // 获取UUID名称
-            String fileName = UUID.randomUUID() + suffixName;
+                DocumentSplitVo vo = new DocumentSplitVo();
+                // 文本标题
+                String originalFilename = file.getOriginalFilename();
+                vo.setName(originalFilename);
 
-            // 获取上传文件的File对象
-            File dest = new File(filePath + fileName);
+                byte[] bytes = file.getBytes(); // 获取文件的字节数组
+                InputStream inputStream = new ByteArrayInputStream(bytes);
 
-            // 开始上传
-            if (!dest.getParentFile().exists()) {
-                dest.getParentFile().mkdirs();
+                // 解析文本
+                TextDocumentParser parser = new TextDocumentParser();
+                Document document = parser.parse(inputStream);
+
+                // 500个字符 10个重合度拆分文本
+                DocumentSplitter splitter = new DocumentByParagraphSplitter(500, 10);
+                List<TextSegment> segments = splitter.split(document);
+
+                List<DocumentItemVo> itemListVo = new LinkedList<>();
+                segments.forEach(segment -> {
+                    DocumentItemVo itemVo = new DocumentItemVo();
+                    itemVo.setTitle("");
+                    itemVo.setContent(segment.text());
+
+                    itemListVo.add(itemVo);
+                });
+                vo.setContent(itemListVo);
+
+                splitList.add(vo);
             }
 
-            file.transferTo(dest);
-
-            // 转换成文档对象
-            String path = filePath + fileName;
-            Document document = FileSystemDocumentLoader.loadDocument(path, new TextDocumentParser());
-
-            // postgresql不支持\u0000
-            // String content = document.text().replace("\u0000", "");
-            DocumentSplitter splitter = new DocumentByParagraphSplitter(500, 10);
-            List<TextSegment> segments = splitter.split(document);
-
-            List<String> res = new LinkedList<>();
-            segments.forEach(segment -> {
-                res.add(segment.text());
-            });
-
-            return res;
+            return splitList;
 
         } catch (IllegalStateException | IOException e) {
             throw new BusinessException("上传失败" + e.getMessage());
-        }*/
+        }
     }
 }

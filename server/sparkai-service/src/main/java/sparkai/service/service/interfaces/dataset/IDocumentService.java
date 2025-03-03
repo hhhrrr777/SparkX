@@ -10,7 +10,9 @@
 package sparkai.service.service.interfaces.dataset;
 
 import org.springframework.web.multipart.MultipartFile;
+import sparkai.service.vo.document.DocumentSplitVo;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface IDocumentService {
@@ -18,7 +20,7 @@ public interface IDocumentService {
     /**
      * 上传文件
      * @param files MultipartFile[]
-     * @return List<String>
+     * @return List<DocumentSplitVo>
      */
-    List<String> uploadFile(MultipartFile[] files);
+    List<DocumentSplitVo> uploadFile(MultipartFile[] files);
 }
