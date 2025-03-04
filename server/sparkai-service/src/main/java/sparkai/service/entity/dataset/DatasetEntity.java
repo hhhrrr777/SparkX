@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("public.dataset")
+@TableName("public.knowledge_dataset")
 public class DatasetEntity implements Serializable {
 
     @Serial

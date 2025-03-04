@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("public.users")
+@TableName("public.system_users")
 public class UsersEntity implements Serializable {
 
     @Serial

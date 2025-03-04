@@ -43,6 +43,9 @@ export default {
 </script>
 
 <style lang="scss">
+body {
+	font-family: PingFang SC, AlibabaPuHuiTi !important;
+}
 .line1 {
 	overflow: hidden;
 	white-space: nowrap;

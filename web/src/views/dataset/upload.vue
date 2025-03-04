@@ -108,8 +108,8 @@
 							</el-radio>
 						</el-radio-group>
 
-						<el-checkbox v-model="checked" style="margin-left: 13px;margin-top: 20px"> 导入时添加分段标题为关联问题（适用于标题为问题的问答对） </el-checkbox>
-						<el-button class="preview-btn">重新预览</el-button>
+						<el-checkbox v-model="diyForm.addTitle" style="margin-left: 13px;margin-top: 20px"> 导入时添加分段标题为关联问题（适用于标题为问题的问答对） </el-checkbox>
+						<el-button class="preview-btn" @click="preview">重新预览</el-button>
 					</div>
 				</div>
 				<div class="document-preview">
@@ -138,15 +138,15 @@
 								</div>
 							</div>
 							<div class="item-title">
-								<div class="label">标题</div>
-								<div class="title-body">{{ segmentTitle[nowFileIndex] }}</div>
+								<div class="label">分段标题</div>
+								<div class="title-body">{{ item.title === '' ? '-' : item.title }}</div>
 							</div>
 							<div class="item-content" style="margin-top: 10px">
 								<div class="label">分段内容</div>
 								<div class="content-body">
-									{{ item }}
+									{{ item.content }}
 								</div>
-								<div class="label-num">588 个字符</div>
+								<div class="label-num">{{ (item.title + item.content).length }} 个字符</div>
 							</div>
 						</div>
 
@@ -157,7 +157,7 @@
 
 		<div class="tool-bar">
 			<el-button>取消</el-button>
-			<el-button type="primary" @click="nextStep">上一步</el-button>
+			<el-button type="primary" @click="preStep" v-if="active > 0">上一步</el-button>
 			<el-button type="primary" @click="nextStep">下一步</el-button>
 		</div>
 	</el-container>
@@ -181,7 +181,8 @@ export default {
 			diyForm: {
 				patternList: [],
 				splitLen: 512,
-				autoClean: true
+				autoClean: true,
+				addTitle: false
 			},
 			options: [{
 				value: '选项1',
@@ -235,8 +236,36 @@ export default {
 		delFile(index) {
 			this.fileList.splice(index, 1)
 		},
+		// 预览
+		async preview() {
+			let formData = new FormData()
+			// 将上传的文件放到数据对象中
+			this.fileList.forEach(file => {
+				formData.append('files', file.raw)
+			})
+			formData.append('patternList', this.diyForm.patternList)
+			formData.append('splitLen', this.diyForm.splitLen)
+			formData.append('autoClean', this.diyForm.autoClean)
+			formData.append('addTitle', this.diyForm.addTitle)
+
+			this.active = 1
+			let res = await this.$API.document.upload.post(formData)
+			let documentList = res.data
+			this.nowFileIndex = 0
+			this.segmentTitle = []
+			this.segmentData = []
+
+			documentList.forEach(doc => {
+				this.segmentTitle.push(doc.name)
+				this.segmentData.push(doc.content)
+			})
+		},
+		// 上一步
+		preStep() {
+			this.active -= 1
+		},
 		// 下一步
-		async nextStep() {
+		nextStep() {
 			// 上传文件
 			if (this.active === 0) {
 				if (this.fileList.length === 0) {
@@ -244,14 +273,7 @@ export default {
 					return
 				}
 
-				let formData = new FormData();
-				// 将上传的文件放到数据对象中
-				this.fileList.forEach(file => {
-					formData.append('files', file.raw);
-				});
-
-				this.active = 1
-				let res = await this.$API.document.upload.post(formData)
+				this.preview()
 			}
 		}
 	}
@@ -444,7 +466,7 @@ export default {
 	width: 0 !important;
 }
 .preview-item {
-	background: #f4f4f4;
+	background: #f5f6f7;;
 	margin-top: 10px;
 	width: 100%;
 	min-height: 200px;
@@ -476,5 +498,10 @@ export default {
 .item-no {
 	font-weight: bold;
 	font-size: 13px;
+}
+.content-body {
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 23px;
 }
 </style>
