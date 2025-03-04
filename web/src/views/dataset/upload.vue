@@ -113,7 +113,44 @@
 					</div>
 				</div>
 				<div class="document-preview">
-					<div class="title">分段预览(2组)</div>
+					<div class="title">分段预览</div>
+					<div class="file-title-list scrollbar-flex-content">
+						<div class="file-title-item active" v-for="(item, index) in segmentTitle" :key="index">
+							<el-icon size="16">
+								<component :is="fileIcon"/>
+							</el-icon>
+							<span style="margin-left: 5px">{{ item }}</span>
+						</div>
+					</div>
+
+					<div class="preview-list">
+						<div class="item-count">共 {{ segmentData[nowFileIndex]?.length }} 个片段</div>
+						<div class="preview-item" v-for="(item, index) in segmentData[nowFileIndex]" :key="index">
+							<div class="too-bar">
+								<div class="item-no">#{{ index + 1 }}</div>
+								<div class="tool-box">
+									<el-icon size="16">
+										<component :is="editIcon"/>
+									</el-icon>
+									<el-icon size="16" style="margin-left: 10px">
+										<component :is="delIcon"/>
+									</el-icon>
+								</div>
+							</div>
+							<div class="item-title">
+								<div class="label">标题</div>
+								<div class="title-body">{{ segmentTitle[nowFileIndex] }}</div>
+							</div>
+							<div class="item-content" style="margin-top: 10px">
+								<div class="label">分段内容</div>
+								<div class="content-body">
+									{{ item }}
+								</div>
+								<div class="label-num">588 个字符</div>
+							</div>
+						</div>
+
+					</div>
 				</div>
 			</div>
 		</el-card>
@@ -131,10 +168,12 @@ import config from "@/config"
 export default {
 	data() {
 		return {
-			active: 1,
+			active: 0,
 			backIcon: 'el-icon-Back',
 			uploadIcon: 'el-icon-UploadFilled',
 			delIcon: 'el-icon-delete',
+			fileIcon: 'el-icon-Document',
+			editIcon: 'el-icon-Edit',
 			fileList: [],
 			uploadUrl: config.API_URL + '/document/upload',
 			isUpload: false,
@@ -160,7 +199,10 @@ export default {
 				value: '选项5',
 				label: '北京烤鸭'
 			}],
-			checked: false
+			checked: false,
+			nowFileIndex: 0,
+			segmentTitle: [],
+			segmentData: [],
 		}
 	},
 	mounted() {
@@ -319,7 +361,7 @@ export default {
 	border-right: 1px solid var(--el-card-border-color);
 }
 .document-preview {
-	width: calc(100vh - 600px);
+	width: calc(100% - 600px);
 	height: 100%;
 	overflow-y: scroll;
 	padding-left: 20px;
@@ -363,5 +405,76 @@ export default {
 	position: relative;
 	top: 40px;
 	left: 42px;
+}
+.file-title-list {
+	width: 100%;
+	height: 57px;
+	display: flex;
+	align-items: center;
+	margin-top: 10px;
+	overflow-x: scroll;
+	padding: 12px 0;
+}
+.file-title-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid #909399;
+	margin-right: 10px;
+	cursor: pointer;
+}
+.file-title-item:hover {
+	border: 1px solid #5E17EB;
+	color: #5E17EB;
+}
+.file-title-list .active {
+	border: 1px solid #5E17EB;
+	background: #5E17EB;
+	color: #fff;
+}
+.preview-list {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	overflow-y: scroll;
+}
+.preview-list::-webkit-scrollbar { /* WebKit */
+	width: 0 !important;
+}
+.preview-item {
+	background: #f4f4f4;
+	margin-top: 10px;
+	width: 100%;
+	min-height: 200px;
+	border-radius: 5px;
+	color: #303133;
+	padding: 10px 20px;
+	cursor: pointer;
+}
+.preview-item .label {
+	font-size: 13px;
+	font-weight: bold;
+	color: #5E17EB;
+	margin-bottom: 5px;
+}
+.label-num {
+	margin-top: 10px;
+	color: #909399;
+}
+.too-bar {
+	width: 100%;
+	margin-right: 10px;
+	height: 20px;
+	display: flex;
+	justify-content: space-between;
+}
+.item-count {
+	margin-top: 5px;
+}
+.item-no {
+	font-weight: bold;
+	font-size: 13px;
 }
 </style>
