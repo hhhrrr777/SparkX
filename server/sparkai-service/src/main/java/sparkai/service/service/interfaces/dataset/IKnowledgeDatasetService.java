@@ -9,18 +9,23 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.dataset;
 
-import org.springframework.web.multipart.MultipartFile;
-import sparkai.service.vo.document.DocumentSplitVo;
+import sparkai.common.core.PageResult;
+import sparkai.service.validate.dataset.DatasetValidate;
+import sparkai.service.vo.dataset.DatasetQueryVo;
+import sparkai.service.vo.dataset.DatasetVo;
 
-import java.io.IOException;
-import java.util.List;
-
-public interface IDocumentService {
+public interface IKnowledgeDatasetService {
 
     /**
-     * 上传文件
-     * @param files MultipartFile[]
-     * @return List<DocumentSplitVo>
+     * 获取知识库列表
+     * @param queryVo DatasetQueryVo
+     * @return PageResult<List<DatasetVo>>
      */
-    List<DocumentSplitVo> uploadFile(MultipartFile[] files);
+    PageResult<DatasetVo> getDatasetList(DatasetQueryVo queryVo);
+
+    /**
+     * 添加知识库模型
+     * @param validate DatasetValidate
+     */
+    void addDataset(DatasetValidate validate);
 }

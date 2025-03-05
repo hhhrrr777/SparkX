@@ -22,7 +22,7 @@ import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.mapper.dataset.DatasetMapper;
 import sparkai.service.mapper.system.UserMapper;
-import sparkai.service.service.interfaces.dataset.IDatasetService;
+import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
 import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
@@ -31,7 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class DatasetServiceImpl implements IDatasetService {
+public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
 
     @Autowired
     DatasetMapper datasetMapper;

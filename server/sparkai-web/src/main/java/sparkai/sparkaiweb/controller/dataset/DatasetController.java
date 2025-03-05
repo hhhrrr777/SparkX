@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
-import sparkai.service.service.interfaces.dataset.IDatasetService;
+import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
 import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
@@ -24,18 +24,18 @@ import sparkai.service.vo.dataset.DatasetVo;
 public class DatasetController {
 
     @Autowired
-    IDatasetService iDatasetService;
+    IKnowledgeDatasetService iKnowledgeDatasetService;
 
     @GetMapping("/index")
     public AjaxResult<PageResult<DatasetVo>> index(DatasetQueryVo queryVo) {
 
-        return AjaxResult.success(iDatasetService.getDatasetList(queryVo));
+        return AjaxResult.success(iKnowledgeDatasetService.getDatasetList(queryVo));
     }
 
     @PostMapping("/add")
     public AjaxResult<Object> add(@RequestBody @Validated DatasetValidate validate) {
 
-        iDatasetService.addDataset(validate);
+        iKnowledgeDatasetService.addDataset(validate);
         return AjaxResult.success();
     }
 }

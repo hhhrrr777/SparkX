@@ -8,7 +8,7 @@ import dev.langchain4j.data.segment.TextSegment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.exception.BusinessException;
-import sparkai.service.service.interfaces.dataset.IDocumentService;
+import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
 import sparkai.service.vo.document.DocumentItemVo;
 import sparkai.service.vo.document.DocumentSplitVo;
 
@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class DocumentServiceImpl implements IDocumentService {
+public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
     @Override
     public List<DocumentSplitVo> uploadFile(MultipartFile[] files) {
