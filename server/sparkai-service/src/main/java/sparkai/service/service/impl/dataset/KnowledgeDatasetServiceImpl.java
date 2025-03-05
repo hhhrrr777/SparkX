@@ -19,9 +19,9 @@ import org.springframework.stereotype.Service;
 import sparkai.common.core.PageResult;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
-import sparkai.service.entity.system.SystemUsersEntity;
-import sparkai.service.mapper.dataset.DatasetMapper;
-import sparkai.service.mapper.system.UserMapper;
+import sparkai.service.entity.system.KnowledgeUsersEntity;
+import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
+import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
 import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
@@ -34,10 +34,10 @@ import java.util.List;
 public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
 
     @Autowired
-    DatasetMapper datasetMapper;
+    KnowledgeDatasetMapper datasetMapper;
 
     @Autowired
-    UserMapper userMapper;
+    SystemUserMapper userMapper;
 
     /**
      * 获取知识库列表
@@ -67,7 +67,7 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
             DatasetVo vo = new DatasetVo();
             BeanUtils.copyProperties(entity, vo);
 
-            SystemUsersEntity userInfo = userMapper.selectById(entity.getUserId());
+            KnowledgeUsersEntity userInfo = userMapper.selectById(entity.getUserId());
             vo.setAuthor(userInfo.getNickname());
 
             datasetVoList.add(vo);

@@ -14,11 +14,11 @@ import sparkai.service.validate.system.UserValidate;
 import sparkai.service.vo.system.UserQueryVo;
 import sparkai.service.vo.system.UsersVo;
 
-public interface IUserService {
+public interface ISystemUserService {
 
     /**
      * 用户列表
-     * @return List<UsersEntity>
+     * @return List<KnowledgeUsersEntity>
      */
     PageResult<UsersVo> getUserList(UserQueryVo query);
 

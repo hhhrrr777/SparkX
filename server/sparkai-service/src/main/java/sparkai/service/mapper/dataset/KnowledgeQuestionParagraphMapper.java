@@ -7,12 +7,16 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.mapper.system;
+package sparkai.service.mapper.dataset;
 
 import org.apache.ibatis.annotations.Mapper;
 import sparkai.common.core.IBaseMapper;
-import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
 
+/**
+ * 段落问题关联表 Mapper
+ */
 @Mapper
-public interface UserMapper extends IBaseMapper<SystemUsersEntity> {
+public interface KnowledgeQuestionParagraphMapper extends IBaseMapper<KnowledgeQuestionParagraphEntity> {
+
 }

@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
-import sparkai.service.service.interfaces.system.IUserService;
+import sparkai.service.service.interfaces.system.ISystemUserService;
 import sparkai.service.validate.system.UserValidate;
 import sparkai.service.vo.system.UserQueryVo;
 import sparkai.service.vo.system.UsersVo;
@@ -24,32 +24,32 @@ import sparkai.service.vo.system.UsersVo;
 public class UserController {
 
     @Autowired
-    IUserService iUserService;
+    ISystemUserService iSystemUserService;
 
     @GetMapping("/index")
     public AjaxResult<PageResult<UsersVo>> index(UserQueryVo queryVo) {
 
-        return AjaxResult.success(iUserService.getUserList(queryVo));
+        return AjaxResult.success(iSystemUserService.getUserList(queryVo));
     }
 
     @PostMapping("/add")
     public AjaxResult<Object> add(@RequestBody @Validated UserValidate validate) {
 
-        iUserService.addUser(validate);
+        iSystemUserService.addUser(validate);
         return AjaxResult.success();
     }
 
     @PostMapping("/edit")
     public AjaxResult<Object> edit(@RequestBody @Validated UserValidate validate) {
 
-        iUserService.editUser(validate);
+        iSystemUserService.editUser(validate);
         return AjaxResult.success();
     }
 
     @GetMapping("/del")
     public AjaxResult<Object> del(@RequestParam("id") long id) {
 
-        iUserService.delUser(id);
+        iSystemUserService.delUser(id);
         return AjaxResult.success();
     }
 }

@@ -7,25 +7,12 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.sparkaiweb.controller.home;
+package sparkai.service.mapper.system;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import sparkai.common.core.AjaxResult;
-import sparkai.service.service.interfaces.system.ISystemUserService;
+import org.apache.ibatis.annotations.Mapper;
+import sparkai.common.core.IBaseMapper;
+import sparkai.service.entity.system.KnowledgeUsersEntity;
 
-@RestController
-@RequestMapping("index")
-public class IndexController {
-
-    @Autowired
-    ISystemUserService iUserService;
-
-    @GetMapping("/index")
-    public AjaxResult<Object> index() {
-
-        return AjaxResult.success();
-    }
+@Mapper
+public interface SystemUserMapper extends IBaseMapper<KnowledgeUsersEntity> {
 }

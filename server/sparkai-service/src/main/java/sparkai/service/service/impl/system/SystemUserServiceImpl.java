@@ -21,9 +21,9 @@ import sparkai.common.core.PageResult;
 import sparkai.common.enums.StatusEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.system.SystemUsersEntity;
-import sparkai.service.mapper.system.UserMapper;
-import sparkai.service.service.interfaces.system.IUserService;
+import sparkai.service.entity.system.KnowledgeUsersEntity;
+import sparkai.service.mapper.system.SystemUserMapper;
+import sparkai.service.service.interfaces.system.ISystemUserService;
 import sparkai.service.validate.system.UserValidate;
 import sparkai.service.vo.system.UserQueryVo;
 import sparkai.service.vo.system.UsersVo;
@@ -32,14 +32,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class SystemUserServiceImpl implements ISystemUserService {
 
     @Autowired
-    UserMapper userMapper;
+    SystemUserMapper userMapper;
 
     /**
      * 获取用户列表
-     * @return List<UsersEntity>
+     * @return List<KnowledgeUsersEntity>
      */
     @Override
     public PageResult<UsersVo> getUserList(UserQueryVo queryVo) {
@@ -47,7 +47,7 @@ public class UserServiceImpl implements IUserService {
         long pageNo   = queryVo.getPage();
         long pageSize = queryVo.getLimit();
 
-        QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<KnowledgeUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("deleted", StatusEnum.YES.getCode());
 
         if (!queryVo.getName().isBlank()) {
@@ -60,10 +60,10 @@ public class UserServiceImpl implements IUserService {
 
         queryWrapper.orderByDesc("id");
 
-        IPage<SystemUsersEntity> userListRes = userMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
+        IPage<KnowledgeUsersEntity> userListRes = userMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
         List<UsersVo> usersList = new LinkedList<>();
 
-        for (SystemUsersEntity entity : userListRes.getRecords()) {
+        for (KnowledgeUsersEntity entity : userListRes.getRecords()) {
             UsersVo vo = new UsersVo();
             BeanUtils.copyProperties(entity, vo);
 
@@ -90,14 +90,14 @@ public class UserServiceImpl implements IUserService {
         }
 
         // 检测账号
-        QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<KnowledgeUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", validate.getName());
-        SystemUsersEntity userRes = userMapper.selectOne(queryWrapper);
+        KnowledgeUsersEntity userRes = userMapper.selectOne(queryWrapper);
         if (userRes != null) {
             throw new BusinessException("该账号已经被使用");
         }
 
-        SystemUsersEntity usersEntity = new SystemUsersEntity();
+        KnowledgeUsersEntity usersEntity = new KnowledgeUsersEntity();
         usersEntity.setName(validate.getName());
         usersEntity.setNickname(validate.getNickname());
         usersEntity.setAvatar(validate.getAvatar());
@@ -118,14 +118,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void editUser(UserValidate validate) {
 
-        SystemUsersEntity usersEntity = new SystemUsersEntity();
+        KnowledgeUsersEntity usersEntity = new KnowledgeUsersEntity();
         BeanUtils.copyProperties(validate, usersEntity);
 
         // 检测账号
-        QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<KnowledgeUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", validate.getName());
         queryWrapper.ne("id", validate.getId());
-        SystemUsersEntity userRes = userMapper.selectOne(queryWrapper);
+        KnowledgeUsersEntity userRes = userMapper.selectOne(queryWrapper);
         if (userRes != null) {
             throw new BusinessException("该账号已经被使用");
         }
@@ -155,7 +155,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void delUser(long id) {
 
-        SystemUsersEntity usersEntity = new SystemUsersEntity();
+        KnowledgeUsersEntity usersEntity = new KnowledgeUsersEntity();
         usersEntity.setId(id);
         usersEntity.setDeleted(StatusEnum.NO.getCode());
 

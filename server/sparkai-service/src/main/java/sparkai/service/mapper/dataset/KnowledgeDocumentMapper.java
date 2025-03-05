@@ -11,12 +11,12 @@ package sparkai.service.mapper.dataset;
 
 import org.apache.ibatis.annotations.Mapper;
 import sparkai.common.core.IBaseMapper;
-import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
+import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 
 /**
- * 知识库表 Mapper
+ * 知识库文档表 Mapper
  */
 @Mapper
-public interface DatasetMapper extends IBaseMapper<KnowledgeDatasetEntity> {
+public interface KnowledgeDocumentMapper extends IBaseMapper<KnowledgeDocumentEntity> {
 
 }
