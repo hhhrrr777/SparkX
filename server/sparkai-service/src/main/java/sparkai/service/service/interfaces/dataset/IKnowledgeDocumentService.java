@@ -11,6 +11,7 @@ package sparkai.service.service.interfaces.dataset;
 
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.service.vo.document.DocumentSplitVo;
+import sparkai.service.vo.document.PreviewVo;
 
 import java.util.List;
 
@@ -24,5 +25,5 @@ import java.util.List;
  */
 public interface IKnowledgeDocumentService {
 
-    List<DocumentSplitVo> uploadFile(MultipartFile[] files);
+    List<DocumentSplitVo> uploadFile(PreviewVo previewVo);
 }

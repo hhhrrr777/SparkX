@@ -69,25 +69,26 @@
 					<div class="title">分段设置</div>
 
 					<div class="tool-list">
-						<el-radio-group v-model="radio" class="too-radio-list">
+						<el-radio-group v-model="diyForm.splitType" class="too-radio-list">
 							<el-radio :label="1" border class="radio-item">
 								<div class="radio-title">默认分段</div>
 								<div class="radio-desc">系统会根据换行符以512个字符为一块，自动拆分文本</div>
 							</el-radio>
-							<el-radio :label="2" border class="radio-item" :class="{'active-radio': radio === 2}">
+							<el-radio :label="2" border class="radio-item" :class="{'active-radio': diyForm.splitType === 2}">
 								<div class="radio-title">自定义分段</div>
 								<div class="radio-desc">根据用户自定义的规则拆分文本</div>
-								<div class="tool-radio-box" v-if="radio === 2">
+								<div class="tool-radio-box" v-if="diyForm.splitType === 2">
 									<el-form label-position="top" label-width="80px" :model="diyForm" style="width: 450px;">
-										<el-form-item label="分段标识">
-											<el-select v-model="diyForm.patternList" multiple placeholder="请选择" style="width: 450px;">
-												<el-option
-													v-for="item in options"
-													:key="item.value"
-													:label="item.label"
-													:value="item.value">
-												</el-option>
-											</el-select>
+										<el-form-item>
+											<template #label>
+												<span>自定义分隔符</span>
+												<el-tooltip class="item" effect="dark" content="通常用于已处理好的数据，使用特定的分隔符来精确分块。" placement="bottom">
+													<el-icon>
+														<component :is="infoIcon"></component>
+													</el-icon>
+												</el-tooltip>
+											</template>
+											<el-input v-model="diyForm.patternList" placeholder="\n;======;==SPLIT=="></el-input>
 										</el-form-item>
 										<el-form-item label="分段长度">
 											<el-slider
@@ -174,32 +175,17 @@ export default {
 			delIcon: 'el-icon-delete',
 			fileIcon: 'el-icon-Document',
 			editIcon: 'el-icon-Edit',
+			infoIcon: 'el-icon-InfoFilled',
 			fileList: [],
-			uploadUrl: config.API_URL + '/document/upload',
+			uploadUrl: config.API_URL + '/document/preview',
 			isUpload: false,
-			radio: 1,
 			diyForm: {
-				patternList: [],
+				splitType: 1,
+				patternList: "",
 				splitLen: 512,
 				autoClean: true,
 				addTitle: false
 			},
-			options: [{
-				value: '选项1',
-				label: '黄金糕'
-			}, {
-				value: '选项2',
-				label: '双皮奶'
-			}, {
-				value: '选项3',
-				label: '蚵仔煎'
-			}, {
-				value: '选项4',
-				label: '龙须面'
-			}, {
-				value: '选项5',
-				label: '北京烤鸭'
-			}],
 			checked: false,
 			nowFileIndex: 0,
 			segmentTitle: [],
@@ -245,8 +231,9 @@ export default {
 			})
 			formData.append('patternList', this.diyForm.patternList)
 			formData.append('splitLen', this.diyForm.splitLen)
-			formData.append('autoClean', this.diyForm.autoClean)
 			formData.append('addTitle', this.diyForm.addTitle)
+			formData.append('splitType', this.diyForm.splitType)
+			formData.append('autoClean', this.diyForm.autoClean)
 
 			this.active = 1
 			let res = await this.$API.document.upload.post(formData)

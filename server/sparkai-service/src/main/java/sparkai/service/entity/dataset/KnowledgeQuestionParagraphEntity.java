@@ -29,8 +29,6 @@ public class KnowledgeQuestionParagraphEntity implements Serializable {
     /**
     * id
     */
-    @TableId(value="id", type= IdType.AUTO)
-    @TableField(value = "id")
     private Integer id;
 
     /**

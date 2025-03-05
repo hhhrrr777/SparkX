@@ -11,6 +11,7 @@ import sparkai.common.exception.BusinessException;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
 import sparkai.service.vo.document.DocumentItemVo;
 import sparkai.service.vo.document.DocumentSplitVo;
+import sparkai.service.vo.document.PreviewVo;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,12 +23,12 @@ import java.util.List;
 public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
     @Override
-    public List<DocumentSplitVo> uploadFile(MultipartFile[] files) {
+    public List<DocumentSplitVo> uploadFile(PreviewVo previewVo) {
 
         try {
 
             List<DocumentSplitVo> splitList = new LinkedList<>();
-            for (MultipartFile file : files) {
+            for (MultipartFile file : previewVo.getFiles()) {
 
                 DocumentSplitVo vo = new DocumentSplitVo();
                 // 文本标题
