@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sparkai.common.core.PageResult;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.dataset.DatasetEntity;
-import sparkai.service.entity.system.UsersEntity;
+import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
+import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.mapper.dataset.DatasetMapper;
 import sparkai.service.mapper.system.UserMapper;
 import sparkai.service.service.interfaces.dataset.IDatasetService;
@@ -50,7 +50,7 @@ public class DatasetServiceImpl implements IDatasetService {
         long pageNo   = queryVo.getPage();
         long pageSize = queryVo.getLimit();
 
-        QueryWrapper<DatasetEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<KnowledgeDatasetEntity> queryWrapper = new QueryWrapper<>();
 
         if (!queryVo.getTitle().isBlank()) {
             queryWrapper.like("title", queryVo.getTitle());
@@ -60,14 +60,14 @@ public class DatasetServiceImpl implements IDatasetService {
         queryWrapper.eq("user_id", 1);
 
         queryWrapper.orderByDesc("id");
-        IPage<DatasetEntity> datasetListRes = datasetMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
+        IPage<KnowledgeDatasetEntity> datasetListRes = datasetMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
         List<DatasetVo> datasetVoList = new LinkedList<>();
 
-        for (DatasetEntity entity : datasetListRes.getRecords()) {
+        for (KnowledgeDatasetEntity entity : datasetListRes.getRecords()) {
             DatasetVo vo = new DatasetVo();
             BeanUtils.copyProperties(entity, vo);
 
-            UsersEntity userInfo = userMapper.selectById(entity.getUserId());
+            SystemUsersEntity userInfo = userMapper.selectById(entity.getUserId());
             vo.setAuthor(userInfo.getNickname());
 
             datasetVoList.add(vo);
@@ -83,7 +83,7 @@ public class DatasetServiceImpl implements IDatasetService {
     @Override
     public void addDataset(DatasetValidate validate) {
 
-        DatasetEntity datasetEntity = new DatasetEntity();
+        KnowledgeDatasetEntity datasetEntity = new KnowledgeDatasetEntity();
         BeanUtils.copyProperties(validate, datasetEntity);
 
         // TODO 此处的uuid随机生成

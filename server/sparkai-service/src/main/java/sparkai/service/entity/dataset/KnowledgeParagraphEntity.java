@@ -1,0 +1,87 @@
+package sparkai.service.entity.dataset;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+@Data
+@TableName("public.knowledge_paragraph")
+public class KnowledgeParagraphEntity implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+    * id
+    */
+    @TableId(value="id", type= IdType.AUTO)
+    @TableField(value = "id")
+    private Integer id;
+
+    /**
+    * 唯一标识
+    */
+    @TableField(value = "uuid")
+    private String uuid;
+
+    /**
+    * 段落标题
+    */
+    @TableField(value = "title")
+    private String title;
+
+    /**
+    * 段落内容
+    */
+    @TableField(value = "content")
+    private String content;
+
+    /**
+    * 知识库id
+    */
+    @TableField(value = "dataset_id")
+    private String datasetId;
+
+    /**
+    * 文档id
+    */
+    @TableField(value = "document_id")
+    private String documentId;
+
+    /**
+    * 状态 1:待索引 2:索引中 3:索引完成
+    */
+    @TableField(value = "status")
+    private Short status;
+
+    /**
+    * 状态 1:正常 2:禁用
+    */
+    @TableField(value = "active")
+    private Short active;
+
+    /**
+    * 状态数据
+    */
+    @TableField(value = "status_meta")
+    private Object statusMeta;
+
+    /**
+    * 创建时间
+    */
+    @TableField(value = "create_time")
+    private LocalDateTime createTime;
+
+    /**
+    * 更新时间
+    */
+    @TableField(value = "update_time")
+    private LocalDateTime updateTime;
+
+}

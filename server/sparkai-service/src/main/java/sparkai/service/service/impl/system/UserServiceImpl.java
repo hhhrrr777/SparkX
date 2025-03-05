@@ -21,7 +21,7 @@ import sparkai.common.core.PageResult;
 import sparkai.common.enums.StatusEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.system.UsersEntity;
+import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.mapper.system.UserMapper;
 import sparkai.service.service.interfaces.system.IUserService;
 import sparkai.service.validate.system.UserValidate;
@@ -47,7 +47,7 @@ public class UserServiceImpl implements IUserService {
         long pageNo   = queryVo.getPage();
         long pageSize = queryVo.getLimit();
 
-        QueryWrapper<UsersEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("deleted", StatusEnum.YES.getCode());
 
         if (!queryVo.getName().isBlank()) {
@@ -60,10 +60,10 @@ public class UserServiceImpl implements IUserService {
 
         queryWrapper.orderByDesc("id");
 
-        IPage<UsersEntity> userListRes = userMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
+        IPage<SystemUsersEntity> userListRes = userMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
         List<UsersVo> usersList = new LinkedList<>();
 
-        for (UsersEntity entity : userListRes.getRecords()) {
+        for (SystemUsersEntity entity : userListRes.getRecords()) {
             UsersVo vo = new UsersVo();
             BeanUtils.copyProperties(entity, vo);
 
@@ -90,14 +90,14 @@ public class UserServiceImpl implements IUserService {
         }
 
         // 检测账号
-        QueryWrapper<UsersEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", validate.getName());
-        UsersEntity userRes = userMapper.selectOne(queryWrapper);
+        SystemUsersEntity userRes = userMapper.selectOne(queryWrapper);
         if (userRes != null) {
             throw new BusinessException("该账号已经被使用");
         }
 
-        UsersEntity usersEntity = new UsersEntity();
+        SystemUsersEntity usersEntity = new SystemUsersEntity();
         usersEntity.setName(validate.getName());
         usersEntity.setNickname(validate.getNickname());
         usersEntity.setAvatar(validate.getAvatar());
@@ -118,14 +118,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void editUser(UserValidate validate) {
 
-        UsersEntity usersEntity = new UsersEntity();
+        SystemUsersEntity usersEntity = new SystemUsersEntity();
         BeanUtils.copyProperties(validate, usersEntity);
 
         // 检测账号
-        QueryWrapper<UsersEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", validate.getName());
         queryWrapper.ne("id", validate.getId());
-        UsersEntity userRes = userMapper.selectOne(queryWrapper);
+        SystemUsersEntity userRes = userMapper.selectOne(queryWrapper);
         if (userRes != null) {
             throw new BusinessException("该账号已经被使用");
         }
@@ -155,7 +155,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void delUser(long id) {
 
-        UsersEntity usersEntity = new UsersEntity();
+        SystemUsersEntity usersEntity = new SystemUsersEntity();
         usersEntity.setId(id);
         usersEntity.setDeleted(StatusEnum.NO.getCode());
 

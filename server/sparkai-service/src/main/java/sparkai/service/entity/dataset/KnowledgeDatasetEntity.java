@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("public.knowledge_dataset")
-public class DatasetEntity implements Serializable {
+public class KnowledgeDatasetEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

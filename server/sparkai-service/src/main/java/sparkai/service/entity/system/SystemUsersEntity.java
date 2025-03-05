@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("public.system_users")
-public class UsersEntity implements Serializable {
+public class SystemUsersEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
