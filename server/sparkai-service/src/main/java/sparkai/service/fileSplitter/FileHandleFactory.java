@@ -2,6 +2,8 @@ package sparkai.service.fileSplitter;
 
 import sparkai.service.fileSplitter.handle.DefaultHandle;
 import sparkai.service.fileSplitter.handle.MarkdownHandle;
+import sparkai.service.fileSplitter.handle.OfficeHandle;
+import sparkai.service.fileSplitter.handle.PdfHandle;
 
 public class FileHandleFactory {
 
@@ -16,11 +18,13 @@ public class FileHandleFactory {
             case "md":
                 return new MarkdownHandle();
             case "pdf":
+                return new PdfHandle();
             case "xls":
             case "xlsx":
-            case "html":
             case "docx":
             case "csv":
+                return new OfficeHandle();
+            case "html":
         }
 
         return new DefaultHandle();
