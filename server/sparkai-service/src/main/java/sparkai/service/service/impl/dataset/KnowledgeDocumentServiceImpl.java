@@ -8,6 +8,7 @@ import dev.langchain4j.data.segment.TextSegment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.exception.BusinessException;
+import sparkai.common.utils.MarkdownSplitter;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
 import sparkai.service.vo.document.DocumentItemVo;
 import sparkai.service.vo.document.DocumentSplitVo;
@@ -23,7 +24,7 @@ import java.util.List;
 public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
     @Override
-    public List<DocumentSplitVo> uploadFile(PreviewVo previewVo) {
+    public List<DocumentSplitVo> previewFile(PreviewVo previewVo) {
 
         try {
 
@@ -38,25 +39,44 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
                 byte[] bytes = file.getBytes(); // 获取文件的字节数组
                 InputStream inputStream = new ByteArrayInputStream(bytes);
 
-                // 解析文本
-                TextDocumentParser parser = new TextDocumentParser();
-                Document document = parser.parse(inputStream);
+                // 文件类型识别
+                String ext = originalFilename.split("\\.")[1];
+                if (ext.equals("md")) {
 
-                // 500个字符 10个重合度拆分文本
-                DocumentSplitter splitter = new DocumentByParagraphSplitter(500, 10);
-                List<TextSegment> segments = splitter.split(document);
+                    List<DocumentItemVo> itemListVo = new LinkedList<>();
+                    List<MarkdownSplitter.Section> markDownList = MarkdownSplitter.parseMarkdown(new String(bytes));
+                    markDownList.forEach(item -> {
+                        DocumentItemVo itemVo = new DocumentItemVo();
+                        itemVo.setTitle(item.getTitle());
+                        itemVo.setContent(item.getContent());
 
-                List<DocumentItemVo> itemListVo = new LinkedList<>();
-                segments.forEach(segment -> {
-                    DocumentItemVo itemVo = new DocumentItemVo();
-                    itemVo.setTitle("");
-                    itemVo.setContent(segment.text());
+                        itemListVo.add(itemVo);
+                    });
+                    vo.setContent(itemListVo);
 
-                    itemListVo.add(itemVo);
-                });
-                vo.setContent(itemListVo);
+                    splitList.add(vo);
 
-                splitList.add(vo);
+                } else {
+                    // 解析文本
+                    TextDocumentParser parser = new TextDocumentParser();
+                    Document document = parser.parse(inputStream);
+
+                    // 512个字符 10个重合度拆分文本
+                    DocumentSplitter splitter = new DocumentByParagraphSplitter(previewVo.getSplitLen(), 10);
+                    List<TextSegment> segments = splitter.split(document);
+
+                    List<DocumentItemVo> itemListVo = new LinkedList<>();
+                    segments.forEach(segment -> {
+                        DocumentItemVo itemVo = new DocumentItemVo();
+                        itemVo.setTitle("");
+                        itemVo.setContent(segment.text());
+
+                        itemListVo.add(itemVo);
+                    });
+                    vo.setContent(itemListVo);
+
+                    splitList.add(vo);
+                }
             }
 
             return splitList;

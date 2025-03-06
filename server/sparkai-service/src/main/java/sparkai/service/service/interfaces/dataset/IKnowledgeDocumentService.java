@@ -24,5 +24,5 @@ import java.util.List;
  */
 public interface IKnowledgeDocumentService {
 
-    List<DocumentSplitVo> uploadFile(PreviewVo previewVo);
+    List<DocumentSplitVo> previewFile(PreviewVo previewVo);
 }

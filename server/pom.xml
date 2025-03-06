@@ -32,6 +32,7 @@
         <validator.version>9.0.0.CR1</validator.version>
         <jackson.version>2.18.2</jackson.version>
         <langchain4j.version>1.0.0-beta1</langchain4j.version>
+        <markdown.version>0.64.8</markdown.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -117,6 +118,13 @@
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j</artifactId>
                 <version>${langchain4j.version}</version>
+            </dependency>
+
+            <!-- markdown -->
+            <dependency>
+                <groupId>com.vladsch.flexmark</groupId>
+                <artifactId>flexmark-all</artifactId>
+                <version>${markdown.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

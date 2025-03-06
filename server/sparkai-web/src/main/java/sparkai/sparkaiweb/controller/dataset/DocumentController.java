@@ -30,7 +30,7 @@ public class DocumentController {
     @PostMapping("/preview")
     public AjaxResult<List<DocumentSplitVo>> preview(PreviewVo previewVo) {
 
-        return AjaxResult.success(iKnowledgeDocumentService.uploadFile(previewVo));
+        return AjaxResult.success(iKnowledgeDocumentService.previewFile(previewVo));
     }
 
     @PostMapping("/save")
