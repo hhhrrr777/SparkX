@@ -1,16 +1,39 @@
-package sparkai.common.utils;
+package sparkai.service.fileSplitter.handle;
 
 import com.vladsch.flexmark.util.ast.Node;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
+import sparkai.service.fileSplitter.FileHandleInterface;
+import sparkai.service.vo.document.DocumentItemVo;
+import sparkai.service.vo.document.PreviewVo;
 
-public class MarkdownSplitter {
+/**
+ * 解析markdown
+ */
+public class MarkdownHandle implements FileHandleInterface {
+
+    @Override
+    public List<DocumentItemVo> handle(byte[] bytes, PreviewVo previewVo) {
+
+        List<DocumentItemVo> itemListVo = new LinkedList<>();
+        List<MarkdownHandle.Section> markDownList = MarkdownHandle.parseMarkdown(new String(bytes));
+        markDownList.forEach(item -> {
+            DocumentItemVo itemVo = new DocumentItemVo();
+            itemVo.setTitle(item.getTitle());
+            itemVo.setContent(item.getContent());
+
+            itemListVo.add(itemVo);
+        });
+
+        return itemListVo;
+    }
 
     @Data
     public static class Section {

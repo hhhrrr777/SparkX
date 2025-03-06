@@ -31,7 +31,7 @@
 					style="margin-top: 20px"
 					class="upload-demo"
 					:limit="50"
-					accept=".txt,.md,.pdf,.docx,.html,.xls,.xlsx,.csv,.zip"
+					accept=".txt,.md,.pdf,.docx,.html,.xls,.xlsx,.csv"
 					:action="uploadUrl"
 					:auto-upload="false"
 					:show-file-list="false"
@@ -44,7 +44,7 @@
 					</el-icon>
 					<div class="el-upload__text">
 						拖拽文件至此上传或 <em>选择文件</em>
-						<p style="margin-top: 5px;font-size: 12px">支持格式：TXT、Markdown、PDF、DOCX、HTML、XLS、XLSX、CSV、ZIP </p>
+						<p style="margin-top: 5px;font-size: 12px">支持格式：TXT、Markdown、PDF、DOCX、HTML、XLS、XLSX、CSV </p>
 					</div>
 				</el-upload>
 
@@ -82,13 +82,13 @@
 										<el-form-item>
 											<template #label>
 												<span>自定义分隔符</span>
-												<el-tooltip class="item" effect="dark" content="通常用于已处理好的数据，使用特定的分隔符来精确分块。" placement="bottom">
+												<el-tooltip class="item" effect="dark" content="填写你的文档的特殊的分段标识，来提高分段的精确性。" placement="bottom">
 													<el-icon>
 														<component :is="infoIcon"></component>
 													</el-icon>
 												</el-tooltip>
 											</template>
-											<el-input v-model="diyForm.patternList" placeholder="\n;======;==SPLIT=="></el-input>
+											<el-input v-model="diyForm.patternList" placeholder="==SPLIT=="></el-input>
 										</el-form-item>
 										<el-form-item label="分段长度">
 											<el-slider

@@ -29,8 +29,6 @@ public class KnowledgeUsersEntity implements Serializable {
     /**
      * id
      */
-    @TableId(value="id", type= IdType.AUTO)
-    @TableField(value = "id")
     private Long id;
 
     /**
