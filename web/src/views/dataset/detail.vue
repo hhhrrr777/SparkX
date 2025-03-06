@@ -2,7 +2,7 @@
 	<el-container style="padding: 20px">
 		<el-card shadow="never">
 			<el-row class="detail-box">
-				<el-col :span="2" class="box-height-left">
+				<el-col :span="3" class="box-height-left">
 					<div class="menu-bar">
 						<el-icon style="font-size: 18px" @click="goBack">
 							<component :is="backIcon"/>
@@ -66,7 +66,7 @@
 						</el-menu-item>
 					</el-menu>
 				</el-col>
-				<el-col :span="22" class="box-height-right">
+				<el-col :span="21" class="box-height-right">
 					<div class="pages">
 						<Suspense>
 							<template #default>

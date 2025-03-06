@@ -1,10 +1,10 @@
 <template>
 	<el-container style="padding: 20px">
-		<div class="go-back"  @click="goBack">
+		<div class="go-back"  @click="goBack" style="cursor: pointer">
 			<el-icon style="font-size: 18px">
 				<component :is="backIcon"/>
 			</el-icon>
-			<span style="margin-left: 10px;font-size: 16px;cursor: pointer">返回</span>
+			<span style="margin-left: 10px;font-size: 16px;">返回</span>
 		</div>
 
 		<el-card shadow="never" class="custom-card">
