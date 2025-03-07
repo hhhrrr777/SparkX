@@ -23,11 +23,6 @@ public class DatasetVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-    * id
-    */
-    private Integer id;
-
-    /**
     * uuid
     */
     private String uuid;

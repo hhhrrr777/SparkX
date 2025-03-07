@@ -27,9 +27,10 @@ public class KnowledgeQuestionParagraphEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-    * id
-    */
-    private Integer id;
+     * 唯一标识
+     */
+    @TableId(value = "uuid")
+    private String uuid;
 
     /**
     * 关联的知识库

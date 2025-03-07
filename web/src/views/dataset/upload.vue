@@ -192,11 +192,13 @@ export default {
 			nowFileIndex: 0,
 			segmentTitle: [],
 			segmentData: [],
-			documentList: []
+			documentList: [],
+			datasetId: ''
 		}
 	},
 	mounted() {
-		this.uuid = this.$route.query.uuid;
+		this.datasetId = this.$route.query.datasetId;
+		console.log('xxx', this.datasetId)
 	},
 	methods: {
 		goBack() {
@@ -270,10 +272,10 @@ export default {
 		},
 		// 上传文件
 		async uploadDocument() {
-			let res = await this.$API.document.save.post({documentList: this.documentList, uuid: this.uuid})
+			let res = await this.$API.document.save.post({documentList: this.documentList, datasetId: this.datasetId})
 			if (res.code === 0) {
 				this.$message.success('上传成功')
-				this.$router.push(this.$router.push('/dataset/detail?uuid=' + this.uuid))
+				this.$router.push('/dataset/detail?datasetId=' + this.datasetId)
 			} else {
 				this.$message.error(res.msg)
 			}

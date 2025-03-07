@@ -9,7 +9,6 @@
 // +----------------------------------------------------------------------
 package sparkai.service.entity.system;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -21,27 +20,22 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("public.system_users")
-public class KnowledgeUsersEntity implements Serializable {
+public class SystemUsersEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
+     * 唯一标识
      */
-    private Long id;
+    @TableId(value = "uuid")
+    private String uuid;
 
     /**
      * 登录账号
      */
     @TableField(value = "name")
     private String name;
-
-    /**
-     * 用户标识
-     */
-    @TableField(value = "code")
-    private String code;
 
     /**
      * 昵称

@@ -13,7 +13,7 @@ public class DocumentSaveVo {
     private List<DocumentSplitVo> documentList;
 
     /**
-     * 知识库uuid
+     * 知识库datasetId
      */
-    private String uuid;
+    private String datasetId;
 }

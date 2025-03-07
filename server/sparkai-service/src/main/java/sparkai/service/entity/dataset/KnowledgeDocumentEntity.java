@@ -9,7 +9,6 @@
 // +----------------------------------------------------------------------
 package sparkai.service.entity.dataset;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -27,11 +26,6 @@ public class KnowledgeDocumentEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-    * id
-    */
-    private Integer id;
-
-    /**
     * 文件名称
     */
     @TableField(value = "name")
@@ -40,14 +34,14 @@ public class KnowledgeDocumentEntity implements Serializable {
     /**
     * 唯一标识
     */
-    @TableField(value = "uuid")
+    @TableId(value = "uuid")
     private String uuid;
 
     /**
     * 字符长度
     */
-    @TableField(value = "char_length")
-    private Integer charLength;
+    @TableField(value = "file_size")
+    private long fileSize;
 
     /**
     * 状态 1:待索引 2:索引中 3:索引完成
@@ -77,7 +71,7 @@ public class KnowledgeDocumentEntity implements Serializable {
     * 状态json数据
     */
     @TableField(value = "status_meta")
-    private Object statusMeta;
+    private String statusMeta;
 
     /**
     * 创建时间

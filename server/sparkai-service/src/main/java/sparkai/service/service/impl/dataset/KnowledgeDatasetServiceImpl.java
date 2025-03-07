@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import sparkai.common.core.PageResult;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
-import sparkai.service.entity.system.KnowledgeUsersEntity;
+import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
@@ -57,9 +57,9 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
         }
 
         // TODO 查询属于自己的知识库
-        queryWrapper.eq("user_id", 1);
+        queryWrapper.eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616");
 
-        queryWrapper.orderByDesc("id");
+        queryWrapper.orderByDesc("create_time");
         IPage<KnowledgeDatasetEntity> datasetListRes = datasetMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
         List<DatasetVo> datasetVoList = new LinkedList<>();
 
@@ -67,7 +67,7 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
             DatasetVo vo = new DatasetVo();
             BeanUtils.copyProperties(entity, vo);
 
-            KnowledgeUsersEntity userInfo = userMapper.selectById(entity.getUserId());
+            SystemUsersEntity userInfo = userMapper.selectById(entity.getUserId());
             vo.setAuthor(userInfo.getNickname());
 
             datasetVoList.add(vo);
@@ -88,7 +88,7 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
 
         // TODO 此处的uuid随机生成
         datasetEntity.setType(1); // 写死通用类型
-        datasetEntity.setUserId(1);
+        datasetEntity.setUserId("TEST");
         datasetEntity.setUuid(IdUtil.randomUUID());
         datasetEntity.setEmbeddingModeId(IdUtil.randomUUID());
         datasetEntity.setCreateTime(Tool.nowDateTime());

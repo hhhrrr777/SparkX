@@ -21,7 +21,7 @@ import sparkai.common.core.PageResult;
 import sparkai.common.enums.StatusEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.system.KnowledgeUsersEntity;
+import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.system.ISystemUserService;
 import sparkai.service.validate.system.UserValidate;
@@ -47,7 +47,7 @@ public class SystemUserServiceImpl implements ISystemUserService {
         long pageNo   = queryVo.getPage();
         long pageSize = queryVo.getLimit();
 
-        QueryWrapper<KnowledgeUsersEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("deleted", StatusEnum.YES.getCode());
 
         if (!queryVo.getName().isBlank()) {
@@ -58,12 +58,12 @@ public class SystemUserServiceImpl implements ISystemUserService {
             queryWrapper.eq("status", queryVo.getStatus());
         }
 
-        queryWrapper.orderByDesc("id");
+        queryWrapper.orderByDesc("create_time");
 
-        IPage<KnowledgeUsersEntity> userListRes = userMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
+        IPage<SystemUsersEntity> userListRes = userMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
         List<UsersVo> usersList = new LinkedList<>();
 
-        for (KnowledgeUsersEntity entity : userListRes.getRecords()) {
+        for (SystemUsersEntity entity : userListRes.getRecords()) {
             UsersVo vo = new UsersVo();
             BeanUtils.copyProperties(entity, vo);
 
@@ -90,14 +90,15 @@ public class SystemUserServiceImpl implements ISystemUserService {
         }
 
         // 检测账号
-        QueryWrapper<KnowledgeUsersEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", validate.getName());
-        KnowledgeUsersEntity userRes = userMapper.selectOne(queryWrapper);
+        SystemUsersEntity userRes = userMapper.selectOne(queryWrapper);
         if (userRes != null) {
             throw new BusinessException("该账号已经被使用");
         }
 
-        KnowledgeUsersEntity usersEntity = new KnowledgeUsersEntity();
+        SystemUsersEntity usersEntity = new SystemUsersEntity();
+        usersEntity.setUuid(IdUtil.randomUUID());
         usersEntity.setName(validate.getName());
         usersEntity.setNickname(validate.getNickname());
         usersEntity.setAvatar(validate.getAvatar());
@@ -105,7 +106,6 @@ public class SystemUserServiceImpl implements ISystemUserService {
         String salt = ObjectId.next();
         usersEntity.setPassword(Tool.makePassword(validate.getPassword(), salt));
         usersEntity.setSalt(salt);
-        usersEntity.setCode(IdUtil.randomUUID());
         usersEntity.setCreateTime(Tool.nowDateTime());
 
         userMapper.insert(usersEntity);
@@ -118,14 +118,14 @@ public class SystemUserServiceImpl implements ISystemUserService {
     @Override
     public void editUser(UserValidate validate) {
 
-        KnowledgeUsersEntity usersEntity = new KnowledgeUsersEntity();
+        SystemUsersEntity usersEntity = new SystemUsersEntity();
         BeanUtils.copyProperties(validate, usersEntity);
 
         // 检测账号
-        QueryWrapper<KnowledgeUsersEntity> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", validate.getName());
-        queryWrapper.ne("id", validate.getId());
-        KnowledgeUsersEntity userRes = userMapper.selectOne(queryWrapper);
+        queryWrapper.ne("uuid", validate.getUuid());
+        SystemUsersEntity userRes = userMapper.selectOne(queryWrapper);
         if (userRes != null) {
             throw new BusinessException("该账号已经被使用");
         }
@@ -145,20 +145,20 @@ public class SystemUserServiceImpl implements ISystemUserService {
 
         usersEntity.setUpdateTime(Tool.nowDateTime());
 
-        userMapper.updateById(usersEntity);
+        userMapper.update(usersEntity, new QueryWrapper<SystemUsersEntity>().eq("uuid", validate.getUuid()));
     }
 
     /**
      * 删除用户
-     * @param id long
+     * @param uuid String
      */
     @Override
-    public void delUser(long id) {
+    public void delUser(String uuid) {
 
-        KnowledgeUsersEntity usersEntity = new KnowledgeUsersEntity();
-        usersEntity.setId(id);
+        SystemUsersEntity usersEntity = new SystemUsersEntity();
+        usersEntity.setUuid(uuid);
         usersEntity.setDeleted(StatusEnum.NO.getCode());
 
-        userMapper.updateById(usersEntity);
+        userMapper.update(usersEntity, new QueryWrapper<SystemUsersEntity>().eq("uuid", uuid));
     }
 }

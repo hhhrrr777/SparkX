@@ -22,7 +22,10 @@ public class UserValidate implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private long id;
+    /**
+     * 唯一标识
+     */
+    private String uuid;
 
     /**
      * 登录账号

@@ -27,14 +27,9 @@ public class KnowledgeEmbeddingEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-    * id
-    */
-    private Integer id;
-
-    /**
     * 唯一标识
     */
-    @TableField(value = "uuid")
+    @TableId(value = "uuid")
     private String uuid;
 
     /**

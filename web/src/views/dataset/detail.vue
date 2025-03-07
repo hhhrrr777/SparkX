@@ -97,17 +97,17 @@ export default {
 			datasetIcon: 'el-icon-Collection',
 			plusIcon: 'el-icon-Plus',
 			components: {
-				users: defineAsyncComponent(() => import('./pages/users.vue')),
+				document: defineAsyncComponent(() => import('./pages/document.vue')),
 			},
 			page: ''
 		}
 	},
 	mounted() {
-		this.page = this.components.users
+		this.page = this.components.document
 	},
 	methods: {
 		goBack() {
-			this.$router.go(-1)
+			this.$router.push("/dataset/index")
 		}
 	}
 }

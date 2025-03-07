@@ -1,10 +1,19 @@
 package sparkai.service.service.impl.dataset;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.exception.BusinessException;
+import sparkai.common.utils.Tool;
+import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
+import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
 import sparkai.service.fileSplitter.FileHandleFactory;
 import sparkai.service.fileSplitter.FileHandleInterface;
+import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
+import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
 import sparkai.service.vo.document.DocumentItemVo;
 import sparkai.service.vo.document.DocumentSaveVo;
@@ -17,6 +26,12 @@ import java.util.List;
 
 @Service
 public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
+
+    @Autowired
+    KnowledgeDocumentMapper knowledgeDocumentMapper;
+
+    @Autowired
+    KnowledgeParagraphMapper knowledgeParagraphMapper;
 
     /**
      * 预览文件
@@ -66,5 +81,43 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
     @Override
     public void saveDocument(DocumentSaveVo documentSaveVo) {
 
+        for (DocumentSplitVo document : documentSaveVo.getDocumentList()) {
+
+            // 写入文档
+            KnowledgeDocumentEntity knowledgeDocument = new KnowledgeDocumentEntity();
+            knowledgeDocument.setName(document.getName());
+            String documentId = IdUtil.simpleUUID();
+            knowledgeDocument.setUuid(documentId);
+            knowledgeDocument.setFileSize(document.getFileSize());
+            knowledgeDocument.setStatus(1);
+            knowledgeDocument.setQuestionStatus(1);
+            knowledgeDocument.setActive(1);
+            knowledgeDocument.setDatasetId(documentSaveVo.getDatasetId());
+
+            JSONObject statusMeta = JSONUtil.createObj()
+                    .put("paragraph_num", document.getContent().size())
+                    .put("embedding_time", "")
+                    .put("question_time", "");
+            knowledgeDocument.setStatusMeta(statusMeta.toString());
+            knowledgeDocument.setCreateTime(Tool.nowDateTime());
+
+            knowledgeDocumentMapper.insert(knowledgeDocument);
+
+            // 写入段落
+            for (DocumentItemVo content : document.getContent()) {
+
+                KnowledgeParagraphEntity paragraph = new KnowledgeParagraphEntity();
+                paragraph.setUuid(IdUtil.randomUUID());
+                paragraph.setTitle(content.getTitle());
+                paragraph.setContent(content.getContent());
+                paragraph.setDatasetId(documentSaveVo.getDatasetId());
+                paragraph.setDocumentId(documentId);
+                paragraph.setStatus(1);
+                paragraph.setActive(1);
+                paragraph.setCreateTime(Tool.nowDateTime());
+
+                knowledgeParagraphMapper.insert(paragraph);
+            }
+        }
     }
 }

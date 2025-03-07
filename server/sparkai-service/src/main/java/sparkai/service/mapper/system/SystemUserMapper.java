@@ -11,8 +11,8 @@ package sparkai.service.mapper.system;
 
 import org.apache.ibatis.annotations.Mapper;
 import sparkai.common.core.IBaseMapper;
-import sparkai.service.entity.system.KnowledgeUsersEntity;
+import sparkai.service.entity.system.SystemUsersEntity;
 
 @Mapper
-public interface SystemUserMapper extends IBaseMapper<KnowledgeUsersEntity> {
+public interface SystemUserMapper extends IBaseMapper<SystemUsersEntity> {
 }

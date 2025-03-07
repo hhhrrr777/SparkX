@@ -27,14 +27,9 @@ public class KnowledgeDatasetEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-    * id
-    */
-    private Integer id;
-
-    /**
     * uuid
     */
-    @TableField(value = "uuid")
+    @TableId(value = "uuid")
     private String uuid;
 
     /**
@@ -53,7 +48,7 @@ public class KnowledgeDatasetEntity implements Serializable {
     * 创建人id
     */
     @TableField(value = "user_id")
-    private Integer userId;
+    private String userId;
 
     /**
     * 类型 1:通用 2:web站点

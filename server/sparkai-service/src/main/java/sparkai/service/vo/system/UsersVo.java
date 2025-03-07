@@ -22,17 +22,12 @@ public class UsersVo implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private String uuid;
 
     /**
      * 登录账号
      */
     private String name;
-
-    /**
-     * 用户标识
-     */
-    private String code;
 
     /**
      * 昵称

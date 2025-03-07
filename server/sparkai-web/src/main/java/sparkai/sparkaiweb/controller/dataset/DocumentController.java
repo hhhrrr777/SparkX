@@ -11,10 +11,12 @@ package sparkai.sparkaiweb.controller.dataset;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sparkai.common.core.AjaxResult;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
+import sparkai.service.vo.document.DocumentSaveVo;
 import sparkai.service.vo.document.DocumentSplitVo;
 import sparkai.service.vo.document.PreviewVo;
 
@@ -34,7 +36,9 @@ public class DocumentController {
     }
 
     @PostMapping("/save")
-    public AjaxResult<Object> save() {
+    public AjaxResult<Object> save(@RequestBody DocumentSaveVo saveVo) {
+
+        iKnowledgeDocumentService.saveDocument(saveVo);
         return AjaxResult.success();
     }
 }

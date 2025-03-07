@@ -18,7 +18,7 @@
 				:data="tableData"
 				style="width: 100%">
 				<el-table-column
-					prop="id"
+					prop="uuid"
 					label="ID">
 				</el-table-column>
 				<el-table-column
@@ -30,14 +30,9 @@
 					label="昵称">
 				</el-table-column>
 				<el-table-column
-					prop="code"
-					width="320"
-					label="标识">
-				</el-table-column>
-				<el-table-column
 					label="状态">
 					<template #default="scope">
-						<el-tag type="success" v-if="scope.row.status == 1">正常</el-tag>
+						<el-tag type="success" v-if="scope.row.status === 1">正常</el-tag>
 						<el-tag type="danger" v-else>禁用</el-tag>
 					</template>
 				</el-table-column>
