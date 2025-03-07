@@ -37,8 +37,6 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
                 byte[] bytes = file.getBytes(); // 获取文件的字节数组
                 FileHandleFactory fileHandleFactory = new FileHandleFactory();
-                // 文件类型识别
-                assert originalFilename != null;
 
                 // 选择文件处理器
                 String ext = originalFilename.split("\\.")[1];

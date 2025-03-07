@@ -15,6 +15,7 @@ import cn.hutool.crypto.SecureUtil;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class Tool {
 
@@ -57,4 +58,28 @@ public class Tool {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.parse(time, df);
     }
+
+    /**
+     * 清理文本杂质
+     * @param input String
+     * @return String
+     */
+    public static String cleanText(String input) {
+        String result = input;
+        for (int i = 0; i < PATTERNS.length; i++) {
+            result = PATTERNS[i].matcher(result).replaceAll(REPLACEMENTS[i]);
+        }
+        return result;
+    }
+
+    private static final Pattern[] PATTERNS = {
+            Pattern.compile("\\n+"),  // 合并多个换行
+            Pattern.compile(" +"),    // 合并多个空格
+            Pattern.compile("#+"),    // 移除所有井号
+            Pattern.compile("\\t+")   // 移除所有制表符
+    };
+
+    private static final String[] REPLACEMENTS = {
+            "\n", " ", "", ""
+    };
 }

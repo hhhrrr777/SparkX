@@ -5,6 +5,7 @@ import dev.langchain4j.data.document.DocumentParser;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
 import dev.langchain4j.data.segment.TextSegment;
+import sparkai.common.utils.Tool;
 import sparkai.service.vo.document.DocumentItemVo;
 import sparkai.service.vo.document.PreviewVo;
 
@@ -33,7 +34,13 @@ public class SparkDocumentSplitter {
         segments.forEach(segment -> {
             DocumentItemVo itemVo = new DocumentItemVo();
             itemVo.setTitle("");
-            itemVo.setContent(segment.text());
+
+            // 自动清理
+            String content = segment.text();
+            if (previewVo.getAutoClean().equals(1)) {
+                content = Tool.cleanText(content);
+            }
+            itemVo.setContent(content);
 
             itemListVo.add(itemVo);
         });

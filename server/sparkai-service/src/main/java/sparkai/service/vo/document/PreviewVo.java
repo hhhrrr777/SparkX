@@ -30,7 +30,7 @@ public class PreviewVo implements Serializable {
     /**
      * 导入时把标题关联成问题
      */
-    private boolean addTitle;
+    private Boolean addTitle;
 
     /**
      * 查分类型 1:默认 2:自定义
@@ -40,5 +40,5 @@ public class PreviewVo implements Serializable {
     /**
      * 自动清洗
      */
-    private boolean autoClean;
+    private Integer autoClean;
 }
