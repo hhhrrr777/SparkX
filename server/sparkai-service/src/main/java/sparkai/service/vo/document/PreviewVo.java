@@ -20,7 +20,7 @@ public class PreviewVo implements Serializable {
     /**
      * 拆分规则
      */
-    private String patternList;
+    private String pattern;
 
     /**
      * 切割长度

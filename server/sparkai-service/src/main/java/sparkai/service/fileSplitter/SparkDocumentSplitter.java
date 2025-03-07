@@ -4,6 +4,7 @@ import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentParser;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
+import dev.langchain4j.data.document.splitter.DocumentByRegexSplitter;
 import dev.langchain4j.data.segment.TextSegment;
 import sparkai.common.utils.Tool;
 import sparkai.service.vo.document.DocumentItemVo;
@@ -24,10 +25,19 @@ public class SparkDocumentSplitter {
      */
     public static List<DocumentItemVo> splitter(DocumentParser parser, InputStream inputStream, PreviewVo previewVo) {
 
+        // 文本解析器
         Document document = parser.parse(inputStream);
+        DocumentSplitter splitter = null;
+        // 如果是自定义拆分
+        if (previewVo.getSplitType().equals(2) && !previewVo.getPattern().isBlank()) {
 
-        // 512个字符 10个重合度拆分文本
-        DocumentSplitter splitter = new DocumentByParagraphSplitter(previewVo.getSplitLen(), 10);
+            DocumentSplitter subSplitter = new DocumentByParagraphSplitter(previewVo.getSplitLen(), 10);
+            splitter = new DocumentByRegexSplitter("[" + previewVo.getPattern() + "]", "\n", previewVo.getSplitLen(), 10, subSplitter);
+        } else {
+            // 512个字符 10个重合度拆分文本
+            splitter = new DocumentByParagraphSplitter(previewVo.getSplitLen(), 10);
+        }
+
         List<TextSegment> segments = splitter.split(document);
 
         List<DocumentItemVo> itemListVo = new LinkedList<>();

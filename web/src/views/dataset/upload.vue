@@ -88,7 +88,7 @@
 													</el-icon>
 												</el-tooltip>
 											</template>
-											<el-input v-model="diyForm.patternList" placeholder="==SPLIT=="></el-input>
+											<el-input v-model="diyForm.pattern" placeholder="==SPLIT=="></el-input>
 										</el-form-item>
 										<el-form-item label="分段长度">
 											<el-slider
@@ -100,6 +100,8 @@
 										</el-form-item>
 										<el-form-item label="自动清洗">
 											<el-switch
+												:active-value="1"
+												:inactive-value="2"
 												v-model="diyForm.autoClean">
 											</el-switch>
 										</el-form-item>
@@ -181,15 +183,16 @@ export default {
 			isUpload: false,
 			diyForm: {
 				splitType: 1,
-				patternList: "",
+				pattern: "",
 				splitLen: 512,
-				autoClean: true,
+				autoClean: 1,
 				addTitle: false
 			},
 			checked: false,
 			nowFileIndex: 0,
 			segmentTitle: [],
 			segmentData: [],
+			documentList: []
 		}
 	},
 	mounted() {
@@ -229,20 +232,20 @@ export default {
 			this.fileList.forEach(file => {
 				formData.append('files', file.raw)
 			})
-			formData.append('patternList', this.diyForm.patternList)
+			formData.append('pattern', this.diyForm.pattern)
 			formData.append('splitLen', this.diyForm.splitLen)
 			formData.append('addTitle', this.diyForm.addTitle)
 			formData.append('splitType', this.diyForm.splitType)
 			formData.append('autoClean', this.diyForm.autoClean)
 
 			this.active = 1
-			let res = await this.$API.document.upload.post(formData)
-			let documentList = res.data
+			let res = await this.$API.document.preview.post(formData)
+			this.documentList = res.data
 			this.nowFileIndex = 0
 			this.segmentTitle = []
 			this.segmentData = []
 
-			documentList.forEach(doc => {
+			this.documentList.forEach(doc => {
 				this.segmentTitle.push(doc.name)
 				this.segmentData.push(doc.content)
 			})
@@ -253,7 +256,7 @@ export default {
 		},
 		// 下一步
 		nextStep() {
-			// 上传文件
+			// 预览文件
 			if (this.active === 0) {
 				if (this.fileList.length === 0) {
 					this.$message.error('请上传文件')
@@ -261,6 +264,18 @@ export default {
 				}
 
 				this.preview()
+			} else if (this.active === 1) { // 上传文件
+				this.uploadDocument()
+			}
+		},
+		// 上传文件
+		async uploadDocument() {
+			let res = await this.$API.document.save.post({documentList: this.documentList, uuid: this.uuid})
+			if (res.code === 0) {
+				this.$message.success('上传成功')
+				this.$router.push(this.$router.push('/dataset/detail?uuid=' + this.uuid))
+			} else {
+				this.$message.error(res.msg)
 			}
 		}
 	}

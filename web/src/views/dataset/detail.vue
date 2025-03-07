@@ -9,7 +9,7 @@
 						</el-icon>
 						<el-popover placement="bottom" :width="250" trigger="click">
 							<template #reference>
-								<div style="display: flex">
+								<div style="display: flex;width: calc(100% - 20px)">
 									<div class="dataset-title line1">
 										<el-icon style="font-size: 18px;margin-right: 5px;margin-top: 5px;top:4px;">
 											<component :is="datasetIcon"/>

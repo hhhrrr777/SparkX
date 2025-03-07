@@ -86,7 +86,7 @@ CREATE TABLE "public"."knowledge_document" (
     ),
     "name" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "uuid" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "char_length" int4 DEFAULT 0,
+    "file_size" int4 DEFAULT 0,
     "status" int2 DEFAULT 1,
     "question_status" int2 DEFAULT 1,
     "active" int2 DEFAULT 1,
@@ -107,7 +107,7 @@ CREATE INDEX "idx_dataset" ON "public"."knowledge_document" USING btree (
 COMMENT ON COLUMN "public"."knowledge_document"."id" IS 'id';
 COMMENT ON COLUMN "public"."knowledge_document"."name" IS '文件名称';
 COMMENT ON COLUMN "public"."knowledge_document"."uuid" IS '唯一标识';
-COMMENT ON COLUMN "public"."knowledge_document"."char_length" IS '字符长度';
+COMMENT ON COLUMN "public"."knowledge_document"."file_size" IS '文本大小';
 COMMENT ON COLUMN "public"."knowledge_document"."status" IS '状态 1:待索引 2:索引中 3:索引完成';
 COMMENT ON COLUMN "public"."knowledge_document"."question_status" IS '生成问题状态 1:待生成 2:生成中 3:生成完成';
 COMMENT ON COLUMN "public"."knowledge_document"."active" IS '状态 1:正常 2:禁用';

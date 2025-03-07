@@ -21,4 +21,9 @@ public class DocumentSplitVo implements Serializable {
      * 文件标题
      */
     private String name;
+
+    /**
+     * 文本字符数
+     */
+    private long fileSize;
 }

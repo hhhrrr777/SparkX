@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.dataset;
 
+import sparkai.service.vo.document.DocumentSaveVo;
 import sparkai.service.vo.document.DocumentSplitVo;
 import sparkai.service.vo.document.PreviewVo;
 
@@ -24,5 +25,16 @@ import java.util.List;
  */
 public interface IKnowledgeDocumentService {
 
+    /**
+     * 预览文件
+     * @param previewVo PreviewVo
+     * @return List<DocumentSplitVo>
+     */
     List<DocumentSplitVo> previewFile(PreviewVo previewVo);
+
+    /**
+     * 保存文档
+     * @param documentSaveVo DocumentSaveVo
+     */
+    void saveDocument(DocumentSaveVo documentSaveVo);
 }

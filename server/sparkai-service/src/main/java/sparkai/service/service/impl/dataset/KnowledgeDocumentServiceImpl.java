@@ -7,6 +7,7 @@ import sparkai.service.fileSplitter.FileHandleFactory;
 import sparkai.service.fileSplitter.FileHandleInterface;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
 import sparkai.service.vo.document.DocumentItemVo;
+import sparkai.service.vo.document.DocumentSaveVo;
 import sparkai.service.vo.document.DocumentSplitVo;
 import sparkai.service.vo.document.PreviewVo;
 
@@ -36,6 +37,10 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
                 vo.setName(originalFilename);
 
                 byte[] bytes = file.getBytes(); // 获取文件的字节数组
+
+                // 文本大小
+                vo.setFileSize(file.getSize());
+
                 FileHandleFactory fileHandleFactory = new FileHandleFactory();
 
                 // 选择文件处理器
@@ -52,5 +57,14 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
         } catch (IllegalStateException | IOException e) {
             throw new BusinessException("上传失败" + e.getMessage());
         }
+    }
+
+    /**
+     * 保存文档
+     * @param documentSaveVo DocumentSaveVo
+     */
+    @Override
+    public void saveDocument(DocumentSaveVo documentSaveVo) {
+
     }
 }
