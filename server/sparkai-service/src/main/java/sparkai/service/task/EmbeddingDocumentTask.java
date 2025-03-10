@@ -96,6 +96,8 @@ public class EmbeddingDocumentTask {
 
                     knowledgeEmbeddingMapper.insert(embeddingEntity);
                 }
+
+                // TODO 段落关联的问题，也得重新索引
             }
 
             // 标记向量化完成
