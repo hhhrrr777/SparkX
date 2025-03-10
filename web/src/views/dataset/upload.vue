@@ -54,7 +54,7 @@
 							<img :src="`/src/assets/files_icon/` + getExtByName(item.name) + `.png`" style="width: 30px;">
 							<div class="file-data">
 								<div class="file-data-title line1">{{ item.name }}</div>
-								<div class="file-data-size">{{ formatBytes(item.size) }}</div>
+								<div class="file-data-size">{{ $TOOL.formatBytes(item.size) }}</div>
 							</div>
 						</div>
 						<el-icon size="16" style="cursor: pointer" @click="delFile(index)">
@@ -168,6 +168,7 @@
 
 <script>
 import config from "@/config"
+
 export default {
 	data() {
 		return {
@@ -198,7 +199,6 @@ export default {
 	},
 	mounted() {
 		this.datasetId = this.$route.query.datasetId;
-		console.log('xxx', this.datasetId)
 	},
 	methods: {
 		goBack() {
@@ -210,16 +210,6 @@ export default {
 				this.$message.error('上传的文件不得超过100M')
 				return false
 			}
-		},
-		formatBytes(bytes, decimals = 2) {
-
-			if (bytes === 0) return '0 Bytes';
-			const k = 1024;
-			const dm = decimals < 0 ? 0 : decimals;
-			const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-			const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-			return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 		},
 		getExtByName(name) {
 			return name.split('.')[1]

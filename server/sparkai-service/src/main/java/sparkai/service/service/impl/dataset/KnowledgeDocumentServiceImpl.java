@@ -61,6 +61,12 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             DocumentListVo vo = new DocumentListVo();
             BeanUtils.copyProperties(entity, vo);
 
+            // 分段数
+            long num = knowledgeParagraphMapper.selectCount(new QueryWrapper<KnowledgeParagraphEntity>()
+                            .eq("dataset_id", entity.getDatasetId())
+                            .eq("document_id", entity.getUuid()));
+            vo.setParagraphNum(num);
+
             datasetVoList.add(vo);
         }
 

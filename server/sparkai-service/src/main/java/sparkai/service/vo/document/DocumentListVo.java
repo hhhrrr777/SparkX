@@ -48,7 +48,17 @@ public class DocumentListVo implements Serializable {
     private String statusMeta;
 
     /**
+     * 分段数
+     */
+    private Long paragraphNum;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;
+
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updateTime;
 }
