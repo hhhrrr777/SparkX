@@ -21,7 +21,7 @@ import sparkai.service.fileSplitter.FileHandleInterface;
 import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
-import sparkai.service.task.EmbeddingTask;
+import sparkai.service.task.EmbeddingDocumentTask;
 import sparkai.service.vo.document.*;
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
     KnowledgeParagraphMapper knowledgeParagraphMapper;
 
     @Autowired
-    EmbeddingTask task;
+    EmbeddingDocumentTask task;
 
     /**
      * 知识库下文档列表
@@ -70,6 +70,9 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             String statusMeta = entity.getStatusMeta();
             JSONObject jsonObject = JSONUtil.parseObj(statusMeta);
             vo.setParagraphNum((Integer) jsonObject.get("paragraph_num"));
+
+            // 命中处理方式
+            vo.setHitDealType((String)jsonObject.get("answer_type"));
 
             datasetVoList.add(vo);
         }
@@ -141,7 +144,9 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             JSONObject statusMeta = JSONUtil.createObj()
                     .put("paragraph_num", document.getContent().size())
                     .put("embedding_time", "")
-                    .put("question_time", "");
+                    .put("question_time", "")
+                    .put("answer_type", "model")
+                    .put("redirect_similar", 0.900);
             knowledgeDocument.setStatusMeta(statusMeta.toString());
             knowledgeDocument.setCreateTime(Tool.nowDateTime());
 

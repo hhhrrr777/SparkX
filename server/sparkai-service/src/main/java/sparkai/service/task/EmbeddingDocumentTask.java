@@ -11,6 +11,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import sparkai.common.enums.DocumentStatusEnum;
+import sparkai.common.enums.SourceType;
+import sparkai.common.enums.StatusEnum;
 import sparkai.common.utils.MarkChunk;
 import sparkai.common.utils.Tool;
 import sparkai.common.utils.TsVectorGenerator;
@@ -25,7 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class EmbeddingTask {
+public class EmbeddingDocumentTask {
 
     @Autowired
     KnowledgeParagraphMapper knowledgeParagraphMapper;
@@ -39,6 +41,10 @@ public class EmbeddingTask {
     @Autowired
     MarkChunk markChunk;
 
+    /**
+     * 向量化文本
+     * @param documentId String
+     */
     @Async
     public void executeAsyncTask(String documentId) {
 
@@ -47,10 +53,12 @@ public class EmbeddingTask {
 
         // 查询文档所属的段落
         List<KnowledgeParagraphEntity> paragraphEntityList = knowledgeParagraphMapper.selectList(new QueryWrapper<KnowledgeParagraphEntity>()
-                .eq("document_id", documentId));
+                .eq("document_id", documentId).eq("active", StatusEnum.YES.getCode()));
 
         if (!CollectionUtils.isEmpty(paragraphEntityList)) {
-            System.out.println("正式开始 embedding ...");
+            // 默认的内存型的embedding模型
+            EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+
             // 删除已经向量化的数据
             knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>().eq("document_id", documentId));
 
@@ -59,9 +67,6 @@ public class EmbeddingTask {
             updateEntity.setStatus(DocumentStatusEnum.RUNNING.getCode());
             updateEntity.setUpdateTime(Tool.nowDateTime());
             knowledgeDocumentMapper.update(updateEntity, new QueryWrapper<KnowledgeDocumentEntity>().eq("uuid", documentId));
-
-            // 默认的内存型的embedding模型
-            EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
 
             for (KnowledgeParagraphEntity paragraph : paragraphEntityList) {
 
@@ -85,9 +90,9 @@ public class EmbeddingTask {
                     embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
                     embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
                     embeddingEntity.setActive(1);
+                    embeddingEntity.setSourceType(SourceType.DOCUMENT.getCode()); // 来源文本
+                    embeddingEntity.setSourceId(paragraph.getUuid()); // 来源id
                     embeddingEntity.setCreateTime(Tool.nowDateTime());
-
-                    System.out.println(embeddingEntity);
 
                     knowledgeEmbeddingMapper.insert(embeddingEntity);
                 }

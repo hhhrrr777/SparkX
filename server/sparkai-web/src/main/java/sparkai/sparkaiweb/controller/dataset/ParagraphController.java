@@ -7,26 +7,28 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.service.interfaces.dataset;
+package sparkai.sparkaiweb.controller.dataset;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
+import sparkai.service.service.interfaces.dataset.IKnowledgeParagraphService;
 import sparkai.service.vo.paragraph.ParagraphListVo;
 import sparkai.service.vo.paragraph.ParagraphQueryVo;
 
-/**
- * <p>
- * 文档段落表 服务类
- * </p>
- *
- * @author NickBai
- * @since 2025-03-05
- */
-public interface IKnowledgeParagraphService {
+@RequestMapping("/api/paragraph")
+@RestController
+public class ParagraphController {
 
-    /**
-     * 段落列表
-     * @param queryVo ParagraphQueryVo
-     * @return PageResult<ParagraphListVo>
-     */
-    PageResult<ParagraphListVo> getParagraphList(ParagraphQueryVo queryVo);
+    @Autowired
+    IKnowledgeParagraphService iKnowledgeParagraphService;
+
+    @GetMapping("/list")
+    public AjaxResult<PageResult<ParagraphListVo>> list(ParagraphQueryVo queryVo) {
+
+        return AjaxResult.success(iKnowledgeParagraphService.getParagraphList(queryVo));
+    }
 }

@@ -7,47 +7,42 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.vo.document;
+package sparkai.common.enums;
 
-import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+public enum SourceType {
 
-import java.io.Serial;
-import java.io.Serializable;
-
-@Data
-public class PreviewVo implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+    DOCUMENT(1, "文档"),
+    QUESTION(2, "问题");
 
     /**
-     * 上传的文件
+     * 构造方法
      */
-    private MultipartFile[] files;
+    private final int code;
+    private final String msg;
+
+    SourceType(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
 
     /**
-     * 拆分规则
+     * 获取状态码
+     *
+     * @author fzr
+     * @return Long
      */
-    private String pattern;
+    public int getCode() {
+        return this.code;
+    }
 
     /**
-     * 切割长度
+     * 获取提示
+     *
+     * @author fzr
+     * @return String
      */
-    private Integer splitLen;
-
-    /**
-     * 导入时把标题关联成问题
-     */
-    private Boolean addTitle;
-
-    /**
-     * 查分类型 1:默认 2:自定义
-     */
-    private Integer splitType;
-
-    /**
-     * 自动清洗
-     */
-    private Integer autoClean;
+    public String getMsg() {
+        return this.msg;
+    }
 }

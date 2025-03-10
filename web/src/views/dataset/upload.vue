@@ -149,7 +149,7 @@
 								<div class="content-body">
 									{{ item.content }}
 								</div>
-								<div class="label-num">{{ (item.content).length }} 个字符</div>
+								<div class="label-num">{{ (item.content).length }} 字符</div>
 							</div>
 						</div>
 
