@@ -166,7 +166,7 @@ export default {
 			settingIcon: 'el-icon-Setting',
 			questionIcon: 'el-icon-QuestionFilled',
 			delIcon: 'el-icon-Delete',
-			switchIcon: 'el-icon-Switch',
+			switchIcon: 'el-icon-Switch'
 		}
 	},
 	mounted() {
@@ -207,7 +207,7 @@ export default {
 			} else {
 				this.$message.error(res.msg)
 			}
-		}
+		},
 	}
 }
 </script>
