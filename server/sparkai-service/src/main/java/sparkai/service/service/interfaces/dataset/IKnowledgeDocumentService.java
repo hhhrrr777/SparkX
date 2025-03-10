@@ -9,9 +9,8 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.dataset;
 
-import sparkai.service.vo.document.DocumentSaveVo;
-import sparkai.service.vo.document.DocumentSplitVo;
-import sparkai.service.vo.document.PreviewVo;
+import sparkai.common.core.PageResult;
+import sparkai.service.vo.document.*;
 
 import java.util.List;
 
@@ -24,6 +23,13 @@ import java.util.List;
  * @since 2025-03-05
  */
 public interface IKnowledgeDocumentService {
+
+    /**
+     * 获取文档列表
+     * @param queryVo QueryVo
+     * @return PageResult<DocumentListVo>
+     */
+    PageResult<DocumentListVo> getDocumentList(DocumentQueryVo queryVo);
 
     /**
      * 预览文件

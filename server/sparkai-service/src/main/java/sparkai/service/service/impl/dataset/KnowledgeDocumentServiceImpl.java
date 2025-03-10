@@ -3,9 +3,14 @@ package sparkai.service.service.impl.dataset;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sparkai.common.core.PageResult;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
@@ -15,10 +20,7 @@ import sparkai.service.fileSplitter.FileHandleInterface;
 import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
-import sparkai.service.vo.document.DocumentItemVo;
-import sparkai.service.vo.document.DocumentSaveVo;
-import sparkai.service.vo.document.DocumentSplitVo;
-import sparkai.service.vo.document.PreviewVo;
+import sparkai.service.vo.document.*;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -32,6 +34,38 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
     @Autowired
     KnowledgeParagraphMapper knowledgeParagraphMapper;
+
+    /**
+     * 知识库下文档列表
+     * @param queryVo DocumentQueryVo
+     * @return PageResult<DocumentListVo>
+     */
+    @Override
+    public PageResult<DocumentListVo> getDocumentList(DocumentQueryVo queryVo) {
+
+        long pageNo   = queryVo.getPage();
+        long pageSize = queryVo.getLimit();
+
+        QueryWrapper<KnowledgeDocumentEntity> queryWrapper = new QueryWrapper<>();
+
+        if (!queryVo.getName().isBlank()) {
+            queryWrapper.like("name", queryVo.getName());
+        }
+        queryWrapper.eq("dataset_id", queryVo.getDatasetId());
+
+        queryWrapper.orderByDesc("create_time");
+        IPage<KnowledgeDocumentEntity> datasetListRes = knowledgeDocumentMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
+
+        List<DocumentListVo> datasetVoList = new LinkedList<>();
+        for (KnowledgeDocumentEntity entity : datasetListRes.getRecords()) {
+            DocumentListVo vo = new DocumentListVo();
+            BeanUtils.copyProperties(entity, vo);
+
+            datasetVoList.add(vo);
+        }
+
+        return PageResult.iPageHandle(datasetListRes.getTotal(), pageNo, pageSize, datasetVoList);
+    }
 
     /**
      * 预览文件

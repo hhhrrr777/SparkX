@@ -25,16 +25,12 @@
 				:data="tableData"
 				style="width: 100%">
 				<el-table-column
-					prop="uuid"
-					label="ID">
-				</el-table-column>
-				<el-table-column
 					prop="name"
-					label="登录名">
+					label="文档名称">
 				</el-table-column>
 				<el-table-column
-					prop="nickname"
-					label="昵称">
+					prop="fileSize"
+					label="文件大小">
 				</el-table-column>
 				<el-table-column
 					label="状态">
@@ -42,6 +38,10 @@
 						<el-tag type="success" v-if="scope.row.status === 1">正常</el-tag>
 						<el-tag type="danger" v-else>禁用</el-tag>
 					</template>
+				</el-table-column>
+				<el-table-column
+					prop="createTime"
+					label="创建时间">
 				</el-table-column>
 				<el-table-column
 					prop="operation"
@@ -68,7 +68,7 @@ export default {
 			tableData: [],
 			searchForm: {
 				name: '',
-				status: '',
+				datasetId: '',
 				page: 1,
 				limit: 10
 			},
@@ -79,12 +79,17 @@ export default {
 		}
 	},
 	mounted() {
-		this.getList()
+
 		this.datasetId = this.$route.query.datasetId;
+		this.searchForm.datasetId = this.datasetId
+
+		this.getList()
 	},
 	methods: {
 		async getList() {
-
+			let res = await this.$API.document.getList.get(this.searchForm)
+			this.tableData = res.data.data
+			this.page.total = res.data.total
 		},
 		onSubmit() {
 

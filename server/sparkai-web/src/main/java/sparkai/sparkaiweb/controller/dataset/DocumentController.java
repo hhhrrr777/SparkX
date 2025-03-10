@@ -10,15 +10,12 @@
 package sparkai.sparkaiweb.controller.dataset;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
+import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
-import sparkai.service.vo.document.DocumentSaveVo;
-import sparkai.service.vo.document.DocumentSplitVo;
-import sparkai.service.vo.document.PreviewVo;
+import sparkai.service.vo.common.QueryVo;
+import sparkai.service.vo.document.*;
 
 import java.util.List;
 
@@ -28,6 +25,12 @@ public class DocumentController {
 
     @Autowired
     IKnowledgeDocumentService iKnowledgeDocumentService;
+
+    @GetMapping("/list")
+    public AjaxResult<PageResult<DocumentListVo>> list(DocumentQueryVo queryVo) {
+
+        return AjaxResult.success(iKnowledgeDocumentService.getDocumentList(queryVo));
+    }
 
     @PostMapping("/preview")
     public AjaxResult<List<DocumentSplitVo>> preview(PreviewVo previewVo) {

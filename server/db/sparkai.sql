@@ -70,6 +70,8 @@ CREATE TABLE "public"."knowledge_embedding" (
     "embedding" "public"."vector",
     "search_vector" tsvector,
     "active" int2 DEFAULT 1,
+    "source_type" int2,
+    "source_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "create_time" timestamp(6),
     "update_time" timestamp(6)
 );
@@ -96,6 +98,8 @@ COMMENT ON COLUMN "public"."knowledge_embedding"."paragraph_id" IS '所属段落
 COMMENT ON COLUMN "public"."knowledge_embedding"."embedding" IS '向量数据';
 COMMENT ON COLUMN "public"."knowledge_embedding"."search_vector" IS '全文索引';
 COMMENT ON COLUMN "public"."knowledge_embedding"."active" IS '状态 1:正常 2:禁用';
+COMMENT ON COLUMN "public"."knowledge_embedding"."source_type" IS '来源 1:文档 2:问题';
+COMMENT ON COLUMN "public"."knowledge_embedding"."source_id" IS '来源id';
 COMMENT ON COLUMN "public"."knowledge_embedding"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."knowledge_embedding"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."knowledge_embedding" IS '向量索引表';

@@ -69,6 +69,18 @@ public class KnowledgeEmbeddingEntity implements Serializable {
     private Integer active;
 
     /**
+     * 来源类型 1:文档 2:问题
+     */
+    @TableField(value = "source_type")
+    private Integer sourceType;
+
+    /**
+     * 来源id
+     */
+    @TableField(value = "source_id")
+    private String sourceId;
+
+    /**
     * 创建时间
     */
     @TableField(value = "create_time")
