@@ -3,6 +3,7 @@ package sparkai.common.utils;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.dictionary.CustomDictionary;
 import com.hankcs.hanlp.seg.common.Term;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 /**
  * 全文索引拆词
  */
+@Component
 public class TsVectorGenerator {
     private static final String[] JIEBA_WORD_LIST_CACHE = generateCharCache();
     private static final List<Pattern> WORD_PATTERNS = Arrays.asList(

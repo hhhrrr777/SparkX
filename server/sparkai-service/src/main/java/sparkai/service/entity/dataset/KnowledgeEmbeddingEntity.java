@@ -9,15 +9,18 @@
 // +----------------------------------------------------------------------
 package sparkai.service.entity.dataset;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.pgvector.PGvector;
 import lombok.Data;
+import sparkai.service.task.TsVectorTypeHandler;
+import sparkai.service.task.VectorTypeHandler;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @TableName("public.knowledge_embedding")
@@ -53,14 +56,14 @@ public class KnowledgeEmbeddingEntity implements Serializable {
     /**
     * 向量数据
     */
-    @TableField(value = "embedding")
-    private Object embedding;
+    @TableField(value = "embedding", typeHandler= VectorTypeHandler.class)
+    private List<Float> embedding;
 
     /**
     * 全文索引
     */
-    @TableField(value = "search_vector")
-    private Object searchVector;
+    @TableField(value = "search_vector", typeHandler= TsVectorTypeHandler.class)
+    private String searchVector;
 
     /**
     * 状态 1:正常 2:禁用

@@ -22,5 +22,12 @@ export default {
 		post: async function(data={}){
 			return await http.post(this.url, data);
 		}
+	},
+	embedding: {
+		url: `${config.API_URL}/document/embedding`,
+		name: "文本向量化",
+		get: async function(data={}){
+			return await http.get(this.url, data);
+		}
 	}
 }

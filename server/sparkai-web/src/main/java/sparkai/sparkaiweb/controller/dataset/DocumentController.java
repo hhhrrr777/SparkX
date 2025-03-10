@@ -44,4 +44,11 @@ public class DocumentController {
         iKnowledgeDocumentService.saveDocument(saveVo);
         return AjaxResult.success();
     }
+
+    @GetMapping("/embedding")
+    public AjaxResult<Object> embeddings(@RequestParam("documentId") String documentId) {
+
+        iKnowledgeDocumentService.doEmbedding(documentId);
+        return AjaxResult.success();
+    }
 }

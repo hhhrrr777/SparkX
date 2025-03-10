@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface IChunkInterface {
 
-    List<String> handle(List<String> chunkList);
+    List<String> handle(String chunk);
 }

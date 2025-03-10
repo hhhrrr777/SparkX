@@ -43,4 +43,10 @@ public interface IKnowledgeDocumentService {
      * @param documentSaveVo DocumentSaveVo
      */
     void saveDocument(DocumentSaveVo documentSaveVo);
+
+    /**
+     * 向量化文本
+     * @param documentId String
+     */
+    void doEmbedding(String documentId);
 }

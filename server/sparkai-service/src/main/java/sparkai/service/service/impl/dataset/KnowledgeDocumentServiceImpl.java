@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.core.PageResult;
+import sparkai.common.enums.DocumentStatusEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
@@ -20,6 +21,7 @@ import sparkai.service.fileSplitter.FileHandleInterface;
 import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
+import sparkai.service.task.EmbeddingTask;
 import sparkai.service.vo.document.*;
 
 import java.io.IOException;
@@ -34,6 +36,9 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
     @Autowired
     KnowledgeParagraphMapper knowledgeParagraphMapper;
+
+    @Autowired
+    EmbeddingTask task;
 
     /**
      * 知识库下文档列表
@@ -62,10 +67,9 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             BeanUtils.copyProperties(entity, vo);
 
             // 分段数
-            long num = knowledgeParagraphMapper.selectCount(new QueryWrapper<KnowledgeParagraphEntity>()
-                            .eq("dataset_id", entity.getDatasetId())
-                            .eq("document_id", entity.getUuid()));
-            vo.setParagraphNum(num);
+            String statusMeta = entity.getStatusMeta();
+            JSONObject jsonObject = JSONUtil.parseObj(statusMeta);
+            vo.setParagraphNum((Integer) jsonObject.get("paragraph_num"));
 
             datasetVoList.add(vo);
         }
@@ -152,12 +156,22 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
                 paragraph.setContent(content.getContent());
                 paragraph.setDatasetId(documentSaveVo.getDatasetId());
                 paragraph.setDocumentId(documentId);
-                paragraph.setStatus(1);
-                paragraph.setActive(1);
+                paragraph.setStatus(DocumentStatusEnum.PENDING.getCode());
+                paragraph.setActive(DocumentStatusEnum.PENDING.getCode());
                 paragraph.setCreateTime(Tool.nowDateTime());
 
                 knowledgeParagraphMapper.insert(paragraph);
             }
         }
+    }
+
+    /**
+     * 向量化文本
+     * @param documentId String
+     */
+    @Override
+    public void doEmbedding(String documentId) {
+
+        task.executeAsyncTask(documentId);
     }
 }

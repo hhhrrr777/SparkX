@@ -50,7 +50,7 @@ public class DocumentListVo implements Serializable {
     /**
      * 分段数
      */
-    private Long paragraphNum;
+    private Integer paragraphNum;
 
     /**
      * 创建时间

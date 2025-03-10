@@ -46,14 +46,14 @@
 				<el-table-column
 					label="向量化">
 					<template #default="scope">
-						<span v-if="scope.row.status === 1" style="color: #999;cursor: pointer">待向量化</span>
+						<span v-if="scope.row.status === 1" style="color: #999;cursor: pointer">待生成</span>
 						<span v-if="scope.row.status === 2" style="display: flex;align-items: center;color: #409EFF;cursor: pointer">
 							<el-icon class="custom-loading-icon">
 								<component :is="embeddingIcon" />
 							</el-icon>
-							向量化中
+							向量中
 						</span>
-						<span v-if="scope.row.status === 3" style="color: #67C23A;cursor: pointer">向量化完成</span>
+						<span v-if="scope.row.status === 3" style="color: #67C23A;cursor: pointer">已完成</span>
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -94,7 +94,7 @@
 					label="操作">
 					<template #default="scope">
 						<div style="display: flex;align-items: center;color: #5E17EB;cursor: pointer">
-							<div style="margin-right: 8px;display: flex;align-items: center">
+							<div style="margin-right: 8px;display: flex;align-items: center" @click="embedding(scope.row)">
 								<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>
 							</div>
 							<div style="margin-right: 8px;display: flex;align-items: center">
@@ -197,6 +197,16 @@ export default {
 		// 多选
 		handleSelectionChange(row) {
 			console.log('xxx', row)
+		},
+		// 向量化文本
+		async embedding(row) {
+			let res = await this.$API.document.embedding.get({documentId: row.uuid})
+			if (res.code === 0) {
+				this.$message.success(res.msg)
+				this.getList()
+			} else {
+				this.$message.error(res.msg)
+			}
 		}
 	}
 }
@@ -223,5 +233,6 @@ export default {
 	}
 	.el-table .cell {
 		font-size: 13px; /* 或者你想要的任何大小 */
+		color: #172329;
 	}
 </style>
