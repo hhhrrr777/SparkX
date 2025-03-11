@@ -25,16 +25,32 @@ public class ParagraphController {
     @Autowired
     IKnowledgeParagraphService iKnowledgeParagraphService;
 
+    /**
+     * 段落列表
+     */
     @GetMapping("/list")
     public AjaxResult<PageResult<ParagraphListVo>> list(ParagraphQueryVo queryVo) {
 
         return AjaxResult.success(iKnowledgeParagraphService.getParagraphList(queryVo));
     }
 
+    /**
+     * 激活、关闭段落
+     */
     @PostMapping("/active")
     public AjaxResult<Object> active(@RequestBody ParagraphVo paragraphVo) {
 
         iKnowledgeParagraphService.activeParagraph(paragraphVo);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 编辑段落
+     */
+    @PostMapping("/edit")
+    public AjaxResult<Object> edit(@RequestBody ParagraphVo paragraphVo) {
+
+        iKnowledgeParagraphService.editParagraph(paragraphVo);
         return AjaxResult.success();
     }
 }

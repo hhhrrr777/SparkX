@@ -9,6 +9,9 @@ import sparkai.common.core.AjaxResult;
 @RestController
 public class LoginController {
 
+    /**
+     * 登录
+     */
     @PostMapping("/doLogin")
     public AjaxResult<Object> login() {
         return AjaxResult.success();

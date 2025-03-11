@@ -26,12 +26,18 @@ public class DatasetController {
     @Autowired
     IKnowledgeDatasetService iKnowledgeDatasetService;
 
+    /**
+     * 知识库列表
+     */
     @GetMapping("/index")
     public AjaxResult<PageResult<DatasetVo>> index(DatasetQueryVo queryVo) {
 
         return AjaxResult.success(iKnowledgeDatasetService.getDatasetList(queryVo));
     }
 
+    /**
+     * 创建知识库
+     */
     @PostMapping("/add")
     public AjaxResult<Object> add(@RequestBody @Validated DatasetValidate validate) {
 

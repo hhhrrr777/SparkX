@@ -26,18 +26,27 @@ public class DocumentController {
     @Autowired
     IKnowledgeDocumentService iKnowledgeDocumentService;
 
+    /**
+     * 知识库文档列表
+     */
     @GetMapping("/list")
     public AjaxResult<PageResult<DocumentListVo>> list(DocumentQueryVo queryVo) {
 
         return AjaxResult.success(iKnowledgeDocumentService.getDocumentList(queryVo));
     }
 
+    /**
+     * 文档分段预览
+     */
     @PostMapping("/preview")
     public AjaxResult<List<DocumentSplitVo>> preview(PreviewVo previewVo) {
 
         return AjaxResult.success(iKnowledgeDocumentService.previewFile(previewVo));
     }
 
+    /**
+     * 保存文档入库
+     */
     @PostMapping("/save")
     public AjaxResult<Object> save(@RequestBody DocumentSaveVo saveVo) {
 
@@ -45,6 +54,9 @@ public class DocumentController {
         return AjaxResult.success();
     }
 
+    /**
+     * 向量化文档
+     */
     @GetMapping("/embedding")
     public AjaxResult<Object> embeddings(@RequestParam("documentId") String documentId) {
 

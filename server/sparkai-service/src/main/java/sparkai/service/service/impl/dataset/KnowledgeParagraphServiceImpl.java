@@ -75,4 +75,13 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
 
         knowledgeParagraphMapper.updateById(paragraph);
     }
+
+    /**
+     * 编辑段落
+     * @param paragraphVo ParagraphVo
+     */
+    @Override
+    public void editParagraph(ParagraphVo paragraphVo) {
+
+    }
 }

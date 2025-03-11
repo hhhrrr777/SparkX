@@ -26,12 +26,18 @@ public class UserController {
     @Autowired
     ISystemUserService iSystemUserService;
 
+    /**
+     * 用户列表
+     */
     @GetMapping("/index")
     public AjaxResult<PageResult<UsersVo>> index(UserQueryVo queryVo) {
 
         return AjaxResult.success(iSystemUserService.getUserList(queryVo));
     }
 
+    /**
+     * 添加用户
+     */
     @PostMapping("/add")
     public AjaxResult<Object> add(@RequestBody @Validated UserValidate validate) {
 
@@ -39,6 +45,9 @@ public class UserController {
         return AjaxResult.success();
     }
 
+    /**
+     * 编辑用户
+     */
     @PostMapping("/edit")
     public AjaxResult<Object> edit(@RequestBody @Validated UserValidate validate) {
 
@@ -46,6 +55,9 @@ public class UserController {
         return AjaxResult.success();
     }
 
+    /**
+     * 删除用户
+     */
     @GetMapping("/del")
     public AjaxResult<Object> del(@RequestParam("uuid") String uuid) {
 
