@@ -29,7 +29,7 @@ public class DocumentListVo implements Serializable {
     /**
      * 唯一标识
      */
-    private String uuid;
+    private String documentId;
 
     /**
      * 文件大小

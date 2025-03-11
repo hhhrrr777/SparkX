@@ -28,8 +28,8 @@ public class KnowledgeParagraphEntity implements Serializable {
     /**
     * 唯一标识
     */
-    @TableId(value = "uuid")
-    private String uuid;
+    @TableId(value = "paragraph_id")
+    private String paragraphId;
 
     /**
     * 段落标题

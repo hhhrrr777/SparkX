@@ -9,7 +9,6 @@
 // +----------------------------------------------------------------------
 package sparkai.service.entity.dataset;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -29,8 +28,8 @@ public class KnowledgeDatasetEntity implements Serializable {
     /**
     * uuid
     */
-    @TableId(value = "uuid")
-    private String uuid;
+    @TableId(value = "dataset_id")
+    private String datasetId;
 
     /**
     * 知识库标题

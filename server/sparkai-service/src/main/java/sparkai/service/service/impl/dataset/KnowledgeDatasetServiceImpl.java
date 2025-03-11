@@ -89,7 +89,7 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
         // TODO 此处的uuid随机生成
         datasetEntity.setType(1); // 写死通用类型
         datasetEntity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
-        datasetEntity.setUuid(IdUtil.randomUUID());
+        datasetEntity.setDatasetId(IdUtil.randomUUID());
         datasetEntity.setEmbeddingModeId(IdUtil.randomUUID());
         datasetEntity.setCreateTime(Tool.nowDateTime());
 

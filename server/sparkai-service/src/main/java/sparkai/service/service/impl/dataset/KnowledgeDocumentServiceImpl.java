@@ -131,7 +131,7 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             KnowledgeDocumentEntity knowledgeDocument = new KnowledgeDocumentEntity();
             knowledgeDocument.setName(document.getName());
             String documentId = IdUtil.simpleUUID();
-            knowledgeDocument.setUuid(documentId);
+            knowledgeDocument.setDocumentId(documentId);
             knowledgeDocument.setFileSize(document.getFileSize());
             knowledgeDocument.setStatus(1);
             knowledgeDocument.setQuestionStatus(1);
@@ -148,7 +148,7 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             for (DocumentItemVo content : document.getContent()) {
 
                 KnowledgeParagraphEntity paragraph = new KnowledgeParagraphEntity();
-                paragraph.setUuid(IdUtil.randomUUID());
+                paragraph.setParagraphId(IdUtil.randomUUID());
                 paragraph.setTitle(content.getTitle());
                 paragraph.setContent(content.getContent());
                 paragraph.setDatasetId(documentSaveVo.getDatasetId());

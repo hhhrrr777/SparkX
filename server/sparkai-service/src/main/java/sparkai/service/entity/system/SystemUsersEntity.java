@@ -28,8 +28,8 @@ public class SystemUsersEntity implements Serializable {
     /**
      * 唯一标识
      */
-    @TableId(value = "uuid")
-    private String uuid;
+    @TableId(value = "user_id")
+    private String userId;
 
     /**
      * 登录账号

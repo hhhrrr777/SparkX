@@ -26,7 +26,7 @@
 
 				<el-col :span="6" class="store-item" v-for="item in storeList" :key="item.code">
 					<el-card style="height: 170px;padding: 10px" shadow="never">
-						<div class="title-box" @click="goDetail(item.uuid)">
+						<div class="title-box" @click="goDetail(item.datasetId)">
 							<div class="title-left">
 								<div class="title-label">{{ item.title.substring(0, 1) }}</div>
 								<div class="title-info">
@@ -38,11 +38,11 @@
 								<el-tag type="primary">通用</el-tag>
 							</div>
 						</div>
-						<div class="desc-box" @click="goDetail(item.uuid)">
+						<div class="desc-box" @click="goDetail(item.datasetId)">
 							{{ item.description }}
 						</div>
 						<div class="tool-box">
-							<div class="tool-box-left" @click="goDetail(item.uuid)">
+							<div class="tool-box-left" @click="goDetail(item.datasetId)">
 								<div class="box-item">
 									<span class="num">1</span>
 									<span class="num-label">文档数</span>
@@ -152,8 +152,8 @@ export default{
 			this.getList()
 		},
 		// 知识库详情
-		goDetail(uuid) {
-			this.$router.push('/dataset/detail?datasetId=' + uuid)
+		goDetail(datasetId) {
+			this.$router.push('/dataset/detail?datasetId=' + datasetId)
 		}
 	}
 }

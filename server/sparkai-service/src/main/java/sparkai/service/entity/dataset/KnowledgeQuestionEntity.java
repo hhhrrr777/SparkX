@@ -29,8 +29,8 @@ public class KnowledgeQuestionEntity implements Serializable {
     /**
     * 唯一标识
     */
-    @TableId(value = "uuid")
-    private String uuid;
+    @TableId(value = "question_id")
+    private String questionId;
 
     /**
     * 问题内容

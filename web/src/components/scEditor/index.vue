@@ -91,6 +91,9 @@ export default {
 				image_caption: true,
 				image_advtab: true,
 				convert_urls: false,
+				paste_preprocess: function(plugin, args) {
+					args.content = args.content.replace(/<[^>]*>/g, ''); // 移除所有HTML标签
+				},
 				images_upload_handler: function(blobInfo) {
 					return new Promise((resolve, reject) => {
 						const data = new FormData();

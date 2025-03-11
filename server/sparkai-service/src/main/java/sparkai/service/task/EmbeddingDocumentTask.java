@@ -115,15 +115,15 @@ public class EmbeddingDocumentTask {
 
             // 开始向量化，并入库
             KnowledgeEmbeddingEntity embeddingEntity = new KnowledgeEmbeddingEntity();
-            embeddingEntity.setUuid(IdUtil.randomUUID());
+            embeddingEntity.setEmbeddingId(IdUtil.randomUUID());
             embeddingEntity.setDatasetId(paragraph.getDatasetId());
             embeddingEntity.setDocumentId(paragraph.getDocumentId());
-            embeddingEntity.setParagraphId(paragraph.getUuid());
+            embeddingEntity.setParagraphId(paragraph.getParagraphId());
             embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
             embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
             embeddingEntity.setActive(StatusEnum.YES.getCode());
             embeddingEntity.setSourceType(SourceType.DOCUMENT.getCode()); // 来源文本
-            embeddingEntity.setSourceId(paragraph.getUuid()); // 来源id
+            embeddingEntity.setSourceId(paragraph.getParagraphId()); // 来源id
             embeddingEntity.setCreateTime(Tool.nowDateTime());
 
             knowledgeEmbeddingMapper.insert(embeddingEntity);

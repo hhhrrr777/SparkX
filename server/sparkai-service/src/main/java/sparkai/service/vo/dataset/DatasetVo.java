@@ -25,7 +25,7 @@ public class DatasetVo implements Serializable {
     /**
     * uuid
     */
-    private String uuid;
+    private String datesetId;
 
     /**
     * 知识库标题

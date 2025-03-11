@@ -36,7 +36,7 @@ public interface ISystemUserService {
 
     /**
      * 删除用户
-     * @param uuid String
+     * @param userId String
      */
-    void delUser(String uuid);
+    void delUser(String userId);
 }

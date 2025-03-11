@@ -5,7 +5,7 @@ SET client_encoding = 'UTF8';
 CREATE SCHEMA public;
 
 CREATE TABLE "public"."knowledge_dataset" (
-    "uuid" varchar(64) COLLATE "pg_catalog"."default",
+    "dataset_id" varchar(64) COLLATE "pg_catalog"."default",
     "title" varchar(155) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "description" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "user_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT 0,
@@ -18,7 +18,7 @@ CREATE TABLE "public"."knowledge_dataset" (
 ALTER TABLE "public"."knowledge_dataset"
     OWNER TO "postgres";
 
-COMMENT ON COLUMN "public"."knowledge_dataset"."uuid" IS 'uuid';
+COMMENT ON COLUMN "public"."knowledge_dataset"."dataset_id" IS '唯一标识';
 COMMENT ON COLUMN "public"."knowledge_dataset"."title" IS '知识库标题';
 COMMENT ON COLUMN "public"."knowledge_dataset"."description" IS '知识库描述';
 COMMENT ON COLUMN "public"."knowledge_dataset"."user_id" IS '创建人id';
@@ -30,7 +30,7 @@ COMMENT ON TABLE "public"."knowledge_dataset" IS '知识库表';
 
 
 CREATE TABLE "public"."knowledge_document" (
-    "uuid" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "document_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "name" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "file_size" int4 DEFAULT 0,
     "status" int2 DEFAULT 1,
@@ -48,11 +48,12 @@ CREATE TABLE "public"."knowledge_document" (
 
 ALTER TABLE "public"."knowledge_document"
     OWNER TO "postgres";
+
 CREATE INDEX "idx_dataset" ON "public"."knowledge_document" USING btree (
     "dataset_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
     );
 
-COMMENT ON COLUMN "public"."knowledge_document"."uuid" IS '唯一标识';
+COMMENT ON COLUMN "public"."knowledge_document"."document_id" IS '唯一标识';
 COMMENT ON COLUMN "public"."knowledge_document"."name" IS '文件名称';
 COMMENT ON COLUMN "public"."knowledge_document"."file_size" IS '字符长度';
 COMMENT ON COLUMN "public"."knowledge_document"."status" IS '状态 1:待索引 2:索引中 3:索引完成';
@@ -70,7 +71,7 @@ COMMENT ON TABLE "public"."knowledge_document" IS '知识库文档表';
 
 
 CREATE TABLE "public"."knowledge_embedding" (
-    "uuid" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "embedding_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "dataset_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "document_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "paragraph_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
@@ -98,7 +99,7 @@ CREATE INDEX "idx_paragraph_y" ON "public"."knowledge_embedding" USING btree (
     "paragraph_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
     );
 
-COMMENT ON COLUMN "public"."knowledge_embedding"."uuid" IS '唯一标识';
+COMMENT ON COLUMN "public"."knowledge_embedding"."embedding_id" IS '唯一标识';
 COMMENT ON COLUMN "public"."knowledge_embedding"."dataset_id" IS '所属的知识库';
 COMMENT ON COLUMN "public"."knowledge_embedding"."document_id" IS '所属文档';
 COMMENT ON COLUMN "public"."knowledge_embedding"."paragraph_id" IS '所属段落';
@@ -113,7 +114,7 @@ COMMENT ON TABLE "public"."knowledge_embedding" IS '向量索引表';
 
 
 CREATE TABLE "public"."knowledge_paragraph" (
-    "uuid" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "paragraph_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "title" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "content" varchar(8000) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "dataset_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
@@ -135,7 +136,7 @@ CREATE INDEX "idx_document" ON "public"."knowledge_paragraph" USING btree (
     "document_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
     );
 
-COMMENT ON COLUMN "public"."knowledge_paragraph"."uuid" IS '唯一标识';
+COMMENT ON COLUMN "public"."knowledge_paragraph"."paragraph_id" IS '唯一标识';
 COMMENT ON COLUMN "public"."knowledge_paragraph"."title" IS '段落标题';
 COMMENT ON COLUMN "public"."knowledge_paragraph"."content" IS '段落内容';
 COMMENT ON COLUMN "public"."knowledge_paragraph"."dataset_id" IS '知识库id';
@@ -148,7 +149,7 @@ COMMENT ON TABLE "public"."knowledge_paragraph" IS '文档段落表';
 
 
 CREATE TABLE "public"."knowledge_question" (
-    "uuid" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "question_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "content" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "hit_nums" int4 DEFAULT 0,
     "dataset_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
@@ -163,7 +164,7 @@ CREATE INDEX "idx_dataset_z" ON "public"."knowledge_question" USING btree (
     "dataset_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
     );
 
-COMMENT ON COLUMN "public"."knowledge_question"."uuid" IS '唯一标识';
+COMMENT ON COLUMN "public"."knowledge_question"."question_id" IS '唯一标识';
 COMMENT ON COLUMN "public"."knowledge_question"."content" IS '问题内容';
 COMMENT ON COLUMN "public"."knowledge_question"."hit_nums" IS '命中次数';
 COMMENT ON COLUMN "public"."knowledge_question"."dataset_id" IS '所属知识库';
@@ -212,8 +213,8 @@ COMMENT ON TABLE "public"."knowledge_question_paragraph" IS '段落问题关联�
 
 
 CREATE TABLE "public"."system_users" (
+    "user_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "name" varchar(155) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "uuid" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "nickname" varchar(155) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "avatar" varchar(155) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "password" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
@@ -222,13 +223,14 @@ CREATE TABLE "public"."system_users" (
     "status" int2 DEFAULT 1,
     "create_time" timestamp(6),
     "update_time" timestamp(0)
-);
+)
+;
 
 ALTER TABLE "public"."system_users"
     OWNER TO "postgres";
 
+COMMENT ON COLUMN "public"."system_users"."user_id" IS '唯一编码';
 COMMENT ON COLUMN "public"."system_users"."name" IS '登录账号';
-COMMENT ON COLUMN "public"."system_users"."uuid" IS '唯一编码';
 COMMENT ON COLUMN "public"."system_users"."nickname" IS '昵称';
 COMMENT ON COLUMN "public"."system_users"."avatar" IS '头像';
 COMMENT ON COLUMN "public"."system_users"."password" IS '密码';

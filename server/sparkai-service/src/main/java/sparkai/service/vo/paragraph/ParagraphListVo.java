@@ -23,7 +23,7 @@ public class ParagraphListVo implements Serializable {
     /**
      * 唯一标识
      */
-    private String uuid;
+    private String paragraphId;
 
     /**
      * 段落标题

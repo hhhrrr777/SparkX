@@ -59,9 +59,9 @@ public class UserController {
      * 删除用户
      */
     @GetMapping("/del")
-    public AjaxResult<Object> del(@RequestParam("uuid") String uuid) {
+    public AjaxResult<Object> del(@RequestParam("userId") String userId) {
 
-        iSystemUserService.delUser(uuid);
+        iSystemUserService.delUser(userId);
         return AjaxResult.success();
     }
 }

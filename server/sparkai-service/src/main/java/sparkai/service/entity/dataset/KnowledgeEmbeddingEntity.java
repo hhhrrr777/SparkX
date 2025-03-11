@@ -32,8 +32,8 @@ public class KnowledgeEmbeddingEntity implements Serializable {
     /**
     * 唯一标识
     */
-    @TableId(value = "uuid")
-    private String uuid;
+    @TableId(value = "embedding_id")
+    private String embeddingId;
 
     /**
     * 所属的知识库

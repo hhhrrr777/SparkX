@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparkai.common.core.PageResult;
 import sparkai.common.enums.StatusEnum;
+import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
@@ -107,6 +108,10 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
     @Override
     public void editParagraph(ParagraphVo paragraphVo) {
 
+        if (paragraphVo.getContent().isBlank()) {
+            throw new BusinessException("内容不允许为空");
+        }
+
         KnowledgeParagraphEntity paragraph = knowledgeParagraphMapper.selectById(paragraphVo.getParagraphId());
         boolean editFlag = false;
         // 是否做了修改
@@ -127,7 +132,7 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
             KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(paragraph.getDocumentId());
             if (documentInfo.getAnswerType().equals("model")) {
                 // 执行向量化
-                task.executeAsyncParagraphTask(paragraph.getUuid());
+                task.executeAsyncParagraphTask(paragraph.getParagraphId());
             }
         }
     }
@@ -166,9 +171,13 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
     @Override
     public void addParagraph(ParagraphAddVo paragraphAddVo) {
 
+        if (paragraphAddVo.getContent().isBlank()) {
+            throw new BusinessException("内容不允许为空");
+        }
+
         // 添加段落
         KnowledgeParagraphEntity paragraph = new KnowledgeParagraphEntity();
-        paragraph.setUuid(IdUtil.simpleUUID());
+        paragraph.setParagraphId(IdUtil.simpleUUID());
         paragraph.setTitle(paragraphAddVo.getTitle());
         paragraph.setContent(paragraphAddVo.getContent());
         paragraph.setDatasetId(paragraphAddVo.getDatasetId());
@@ -182,7 +191,14 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
         KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(paragraph.getDocumentId());
         if (documentInfo.getAnswerType().equals("model")) {
             // 执行向量化
-            task.executeAsyncParagraphTask(paragraph.getUuid());
+            task.executeAsyncParagraphTask(paragraph.getParagraphId());
         }
+
+        // 文档内容改变
+        documentInfo.setParagraphNum(documentInfo.getParagraphNum() + 1);
+        documentInfo.setFileSize(paragraphAddVo.getContent().length() + documentInfo.getFileSize());
+        documentInfo.setUpdateTime(Tool.nowDateTime());
+
+        knowledgeDocumentMapper.updateById(documentInfo);
     }
 }

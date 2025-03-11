@@ -28,8 +28,8 @@ public class KnowledgeDocumentEntity implements Serializable {
     /**
      * 唯一标识
      */
-    @TableId(value = "uuid")
-    private String uuid;
+    @TableId(value = "document_id")
+    private String documentId;
 
     /**
     * 文件名称

@@ -175,7 +175,7 @@
 	>
 		<el-button type="primary" icon="el-icon-plus" @click="add" style="margin-bottom: 10px;">添加分段</el-button>
 		<div class="paragraph-list">
-			<div class="paragraph-item" v-for="item in paragraphList" :key="item.uuid">
+			<div class="paragraph-item" v-for="item in paragraphList" :key="item.paragraphId">
 				<div class="paragraph-title">
 					<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 					<div class="title-left line1" v-else>--</div>
@@ -221,20 +221,18 @@
 	<el-dialog v-model="editorVisible" width="1000px" ref="saveDialog" :close-on-click-modal="false">
 		<el-form :model="contentForm" label-width="10px" v-if="modeType === 'edit'">
 			<el-form-item>
-				<el-input v-model="contentForm.title" show-word-limit></el-input>
+				<el-input v-model="contentForm.title" placeholder="标题" maxlength="255" show-word-limit></el-input>
 			</el-form-item>
 			<el-form-item>
-				<scEditor :model-value="contentForm.content" style="width: 100%" @update:modelValue="contentChange"></scEditor><br/>
-				<div id="word-count">字符数: {{ contentForm.content.length }}</div>
+				<el-input type="textarea" :rows="8" v-model="contentForm.content"  placeholder="内容" style="width: 100%" maxlength="8000" show-word-limit></el-input>
 			</el-form-item>
 		</el-form>
 		<el-form :model="addForm" label-width="10px" v-if="modeType === 'add'">
 			<el-form-item>
-				<el-input v-model="addForm.title" show-word-limit></el-input>
+				<el-input v-model="addForm.title" placeholder="标题" maxlength="255" show-word-limit></el-input>
 			</el-form-item>
 			<el-form-item>
-				<scEditor :model-value="addForm.content" style="width: 100%" @update:modelValue="contentChange"></scEditor><br/>
-				<div id="word-count">字符数: {{ addForm.content.length }}</div>
+				<el-input type="textarea" :rows="8" placeholder="内容" v-model="addForm.content" style="width: 100%" maxlength="8000" show-word-limit></el-input>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -249,10 +247,9 @@
 
 <script>
 import Pages from "@/components/pages/index.vue";
-import scEditor from "@/components/scEditor/index.vue";
 
 export default {
-	components: {Pages, scEditor},
+	components: {Pages},
 	data() {
 		return {
 			tableData: [],
@@ -343,14 +340,6 @@ export default {
 			this.searchForm.page = page
 			this.getList()
 		},
-		// editor内容变化
-		contentChange(content) {
-			if (this.modeType === 'edit') {
-				this.contentForm.content = content
-			} else {
-				this.addForm.content = content
-			}
-		},
 		uploadFile() {
 			this.$router.push('/dataset/upload?datasetId=' + this.datasetId)
 		},
@@ -358,12 +347,12 @@ export default {
 		handleSelectionChange(row) {
 			this.selectedDocumentIds = []
 			row.forEach(item => {
-				this.selectedDocumentIds.push(item.uuid)
+				this.selectedDocumentIds.push(item.paragraphId)
 			})
 		},
 		// 向量化文本
 		async embedding(row) {
-			let res = await this.$API.document.embedding.get({documentIds: row.uuid})
+			let res = await this.$API.document.embedding.get({documentIds: row.documentId})
 			if (res.code === 0) {
 				this.getList()
 			} else {
@@ -374,8 +363,8 @@ export default {
 		showParagraph(row) {
 			this.documentTitle = row.name
 			this.paragraphForm.page = 1
-			this.paragraphForm.documentId = row.uuid
-			this.addForm.documentId = row.uuid
+			this.paragraphForm.documentId = row.documentId
+			this.addForm.documentId = row.documentId
 			this.drawer = true
 
 			this.getParagraphList()
@@ -395,7 +384,7 @@ export default {
 		showEditor(row) {
 
 			this.modeType = 'edit'
-			this.contentForm.paragraphId = row.uuid
+			this.contentForm.paragraphId = row.paragraphId
 			this.contentForm.title = row.title
 			this.contentForm.content = row.content
 			this.editorVisible = true
@@ -420,7 +409,7 @@ export default {
 		// 激活、关闭段落
 		async activeParagraph(row) {
 			let res = await this.$API.paragraph.active.post({
-				paragraphId: row.uuid,
+				paragraphId: row.paragraphId,
 				active: row.active
 			})
 
@@ -445,7 +434,7 @@ export default {
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(async () => {
-				let res = await this.$API.paragraph.del.post({paragraphId: row.uuid})
+				let res = await this.$API.paragraph.del.post({paragraphId: row.paragraphId})
 				if (res.code == 0) {
 					this.$message.success(res.msg)
 					this.getParagraphList()

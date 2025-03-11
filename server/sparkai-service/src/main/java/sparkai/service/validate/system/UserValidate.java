@@ -25,7 +25,7 @@ public class UserValidate implements Serializable {
     /**
      * 唯一标识
      */
-    private String uuid;
+    private String userId;
 
     /**
      * 登录账号

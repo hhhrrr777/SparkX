@@ -98,7 +98,7 @@ public class SystemUserServiceImpl implements ISystemUserService {
         }
 
         SystemUsersEntity usersEntity = new SystemUsersEntity();
-        usersEntity.setUuid(IdUtil.randomUUID());
+        usersEntity.setUserId(IdUtil.randomUUID());
         usersEntity.setName(validate.getName());
         usersEntity.setNickname(validate.getNickname());
         usersEntity.setAvatar(validate.getAvatar());
@@ -124,7 +124,7 @@ public class SystemUserServiceImpl implements ISystemUserService {
         // 检测账号
         QueryWrapper<SystemUsersEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("name", validate.getName());
-        queryWrapper.ne("uuid", validate.getUuid());
+        queryWrapper.ne("user_id", validate.getUserId());
         SystemUsersEntity userRes = userMapper.selectOne(queryWrapper);
         if (userRes != null) {
             throw new BusinessException("该账号已经被使用");
@@ -145,20 +145,20 @@ public class SystemUserServiceImpl implements ISystemUserService {
 
         usersEntity.setUpdateTime(Tool.nowDateTime());
 
-        userMapper.update(usersEntity, new QueryWrapper<SystemUsersEntity>().eq("uuid", validate.getUuid()));
+        userMapper.update(usersEntity, new QueryWrapper<SystemUsersEntity>().eq("user_id", validate.getUserId()));
     }
 
     /**
      * 删除用户
-     * @param uuid String
+     * @param userId String
      */
     @Override
-    public void delUser(String uuid) {
+    public void delUser(String userId) {
 
-        SystemUsersEntity usersEntity = new SystemUsersEntity();
-        usersEntity.setUuid(uuid);
+        SystemUsersEntity usersEntity = userMapper.selectById(userId);
+        usersEntity.setUserId(userId);
         usersEntity.setDeleted(StatusEnum.NO.getCode());
 
-        userMapper.update(usersEntity, new QueryWrapper<SystemUsersEntity>().eq("uuid", uuid));
+        userMapper.update(usersEntity, new QueryWrapper<SystemUsersEntity>().eq("user_id", userId));
     }
 }
