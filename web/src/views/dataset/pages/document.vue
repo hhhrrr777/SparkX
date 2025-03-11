@@ -171,24 +171,24 @@
 					</div>
 					<div class="paragraph-bottom">
 						<span>{{ (item.content).length }} 字符</span>
-						<el-dropdown trigger="click">
+						<el-dropdown trigger="click" @command="handleCommand($event, item)">
 							<el-icon color="#5E17EB">
 								<component :is="menusIcon"></component>
 							</el-icon>
 							<template #dropdown>
 								<el-dropdown-menu>
-									<el-dropdown-item>
+									<el-dropdown-item command="question">
 										<el-icon>
 											<component :is="questionIcon"></component>
 										</el-icon>
 										生成问题
 									</el-dropdown-item>
-									<el-dropdown-item>
+									<el-dropdown-item command="transfer">
 										<el-icon>
 											<component :is="switchIcon"></component>
 										</el-icon> 迁移
 									</el-dropdown-item>
-									<el-dropdown-item>
+									<el-dropdown-item command="del">
 										<el-icon>
 											<component :is="delIcon"></component>
 										</el-icon> 删除</el-dropdown-item>
@@ -368,6 +368,31 @@ export default {
 			} else {
 				this.$message.error(res.msg)
 			}
+		},
+		// 操作栏
+		handleCommand(event, row) {
+			switch (event) {
+				case 'del':
+					this.handleDel(row)
+					break;
+			}
+		},
+		// 删除段落
+		handleDel(row) {
+			this.$confirm('此操作将永久删除该段落 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(async () => {
+				let res = await this.$API.paragraph.del.post({paragraphId: row.uuid})
+				if (res.code == 0) {
+					this.$message.success(res.msg)
+					this.getParagraphList()
+				} else {
+					this.$message.error(res.msg)
+				}
+			}).catch(() => {
+			});
 		}
 	}
 }

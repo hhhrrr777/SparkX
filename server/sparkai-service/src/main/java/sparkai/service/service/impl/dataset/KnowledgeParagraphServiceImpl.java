@@ -15,9 +15,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sparkai.common.core.PageResult;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
+import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
+import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
+import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeParagraphService;
 import sparkai.service.task.EmbeddingDocumentTask;
@@ -33,6 +38,12 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
 
     @Autowired
     KnowledgeParagraphMapper knowledgeParagraphMapper;
+
+    @Autowired
+    KnowledgeDocumentMapper knowledgeDocumentMapper;
+
+    @Autowired
+    KnowledgeEmbeddingMapper knowledgeEmbeddingMapper;
 
     @Autowired
     EmbeddingDocumentTask task;
@@ -107,5 +118,28 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
             // 执行向量化
             task.executeAsyncParagraphTask(paragraph.getUuid());
         }
+    }
+
+    /**
+     * 删除段落
+     * @param paragraphVo ParagraphVo
+     */
+    @Override
+    @Transactional
+    public void delParagraph(ParagraphVo paragraphVo) {
+
+        KnowledgeParagraphEntity info = knowledgeParagraphMapper.selectById(paragraphVo.getParagraphId());
+        // 段落表删除
+        knowledgeParagraphMapper.deleteById(paragraphVo.getParagraphId());
+
+        // 文档表段落 -1
+        KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(info.getDocumentId());
+        documentInfo.setParagraphNum(documentInfo.getParagraphNum() - 1);
+
+        knowledgeDocumentMapper.updateById(documentInfo);
+
+        // 向量表属于这个段落的全删
+        knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>()
+                .eq("paragraph_id", paragraphVo.getParagraphId()));
     }
 }

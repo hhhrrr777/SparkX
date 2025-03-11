@@ -22,5 +22,12 @@ export default {
 		post: async function(data={}){
 			return await http.post(this.url, data);
 		}
+	},
+	del: {
+		url: `${config.API_URL}/paragraph/del`,
+		name: "删除段落",
+		post: async function(data={}){
+			return await http.post(this.url, data);
+		}
 	}
 }

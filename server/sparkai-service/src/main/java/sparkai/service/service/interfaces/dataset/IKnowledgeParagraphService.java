@@ -39,8 +39,13 @@ public interface IKnowledgeParagraphService {
 
     /**
      * 编辑段落
-     *
      * @param paragraphVo ParagraphVo
      */
     void editParagraph(ParagraphVo paragraphVo);
+
+    /**
+     * 删除段落
+     * @param paragraphVo ParagraphVo
+     */
+    void delParagraph(ParagraphVo paragraphVo);
 }

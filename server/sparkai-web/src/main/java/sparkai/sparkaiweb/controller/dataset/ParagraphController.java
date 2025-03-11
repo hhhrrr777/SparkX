@@ -53,4 +53,14 @@ public class ParagraphController {
         iKnowledgeParagraphService.editParagraph(paragraphVo);
         return AjaxResult.success();
     }
+
+    /**
+     * 删除段落
+     */
+    @PostMapping("/del")
+    public AjaxResult<Object> del(@RequestBody ParagraphVo paragraphVo) {
+
+        iKnowledgeParagraphService.delParagraph(paragraphVo);
+        return AjaxResult.success();
+    }
 }
