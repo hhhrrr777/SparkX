@@ -39,6 +39,7 @@ public interface IKnowledgeParagraphService {
 
     /**
      * 编辑段落
+     *
      * @param paragraphVo ParagraphVo
      */
     void editParagraph(ParagraphVo paragraphVo);

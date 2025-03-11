@@ -30,33 +30,40 @@ COMMENT ON TABLE "public"."knowledge_dataset" IS '知识库表';
 
 
 CREATE TABLE "public"."knowledge_document" (
-    "name" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "uuid" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "name" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "file_size" int4 DEFAULT 0,
     "status" int2 DEFAULT 1,
     "question_status" int2 DEFAULT 1,
     "active" int2 DEFAULT 1,
     "dataset_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "status_meta" varchar(500) COLLATE "pg_catalog"."default",
+    "paragraph_num" int4 DEFAULT 0,
+    "embedding_time" timestamp(6),
+    "question_time" timestamp(6),
+    "answer_type" varchar(55) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "redirect_similar" numeric(10,3) DEFAULT 0.900,
     "create_time" timestamp(6),
     "update_time" timestamp(6)
 );
 
 ALTER TABLE "public"."knowledge_document"
     OWNER TO "postgres";
-
 CREATE INDEX "idx_dataset" ON "public"."knowledge_document" USING btree (
     "dataset_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
     );
 
-COMMENT ON COLUMN "public"."knowledge_document"."name" IS '文件名称';
 COMMENT ON COLUMN "public"."knowledge_document"."uuid" IS '唯一标识';
+COMMENT ON COLUMN "public"."knowledge_document"."name" IS '文件名称';
 COMMENT ON COLUMN "public"."knowledge_document"."file_size" IS '字符长度';
 COMMENT ON COLUMN "public"."knowledge_document"."status" IS '状态 1:待索引 2:索引中 3:索引完成';
 COMMENT ON COLUMN "public"."knowledge_document"."question_status" IS '生成问题状态 1:待生成 2:生成中 3:生成完成';
 COMMENT ON COLUMN "public"."knowledge_document"."active" IS '状态 1:正常 2:禁用';
 COMMENT ON COLUMN "public"."knowledge_document"."dataset_id" IS '所属知识库';
-COMMENT ON COLUMN "public"."knowledge_document"."status_meta" IS '状态json数据';
+COMMENT ON COLUMN "public"."knowledge_document"."paragraph_num" IS '段落数';
+COMMENT ON COLUMN "public"."knowledge_document"."embedding_time" IS '向量化时间';
+COMMENT ON COLUMN "public"."knowledge_document"."question_time" IS '生成问题时间';
+COMMENT ON COLUMN "public"."knowledge_document"."answer_type" IS '命中处理方式';
+COMMENT ON COLUMN "public"."knowledge_document"."redirect_similar" IS '返回相似度';
 COMMENT ON COLUMN "public"."knowledge_document"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."knowledge_document"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."knowledge_document" IS '知识库文档表';
@@ -113,7 +120,6 @@ CREATE TABLE "public"."knowledge_paragraph" (
     "document_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "status" int2 DEFAULT 1,
     "active" int2 DEFAULT 1,
-    "status_meta" varchar(500) COLLATE "pg_catalog"."default",
     "create_time" timestamp(6),
     "update_time" timestamp(6)
 );
@@ -136,7 +142,6 @@ COMMENT ON COLUMN "public"."knowledge_paragraph"."dataset_id" IS '知识库id';
 COMMENT ON COLUMN "public"."knowledge_paragraph"."document_id" IS '文档id';
 COMMENT ON COLUMN "public"."knowledge_paragraph"."status" IS '状态 1:待索引 2:索引中 3:索引完成';
 COMMENT ON COLUMN "public"."knowledge_paragraph"."active" IS '状态 1:正常 2:禁用';
-COMMENT ON COLUMN "public"."knowledge_paragraph"."status_meta" IS '状态数据';
 COMMENT ON COLUMN "public"."knowledge_paragraph"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."knowledge_paragraph"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."knowledge_paragraph" IS '文档段落表';

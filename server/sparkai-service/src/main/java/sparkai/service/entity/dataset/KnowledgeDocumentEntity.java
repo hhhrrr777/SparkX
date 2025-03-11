@@ -26,16 +26,16 @@ public class KnowledgeDocumentEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 唯一标识
+     */
+    @TableId(value = "uuid")
+    private String uuid;
+
+    /**
     * 文件名称
     */
     @TableField(value = "name")
     private String name;
-
-    /**
-    * 唯一标识
-    */
-    @TableId(value = "uuid")
-    private String uuid;
 
     /**
     * 字符长度
@@ -68,10 +68,34 @@ public class KnowledgeDocumentEntity implements Serializable {
     private String datasetId;
 
     /**
-    * 状态json数据
+    * 段落数量
     */
-    @TableField(value = "status_meta")
-    private String statusMeta;
+    @TableField(value = "paragraph_num")
+    private Integer paragraphNum;
+
+    /**
+     * 上次向量化时间
+     */
+    @TableField(value = "embedding_time")
+    private LocalDateTime embeddingTime;
+
+    /**
+     * 上次添加问题时间
+     */
+    @TableField(value = "question_time")
+    private LocalDateTime questionTime;
+
+    /**
+     * 命中处理方式
+     */
+    @TableField(value = "answer_type")
+    private String answerType;
+
+    /**
+     * 直接返回的相似度
+     */
+    @TableField(value = "redirect_similar")
+    private double redirectSimilar;
 
     /**
     * 创建时间

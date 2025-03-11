@@ -50,9 +50,6 @@ public class EmbeddingDocumentTask {
     @Async
     public void executeAsyncTask(String documentId) {
 
-        // 所属段落信息
-        KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(documentId);
-
         // 查询文档所属的段落
         List<KnowledgeParagraphEntity> paragraphEntityList = knowledgeParagraphMapper.selectList(new QueryWrapper<KnowledgeParagraphEntity>()
                 .eq("document_id", documentId).eq("active", StatusEnum.YES.getCode()));
@@ -62,10 +59,10 @@ public class EmbeddingDocumentTask {
             knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>().eq("document_id", documentId));
 
             // 标记开始向量化
-            KnowledgeDocumentEntity updateEntity = new KnowledgeDocumentEntity();
+            KnowledgeDocumentEntity updateEntity = knowledgeDocumentMapper.selectById(documentId);
             updateEntity.setStatus(DocumentStatusEnum.RUNNING.getCode());
             updateEntity.setUpdateTime(Tool.nowDateTime());
-            knowledgeDocumentMapper.update(updateEntity, new QueryWrapper<KnowledgeDocumentEntity>().eq("uuid", documentId));
+            knowledgeDocumentMapper.updateById(updateEntity);
 
             // 默认的内存型的embedding模型
             embeddingModel = new AllMiniLmL6V2EmbeddingModel();
@@ -75,15 +72,11 @@ public class EmbeddingDocumentTask {
             }
 
             // 标记向量化完成
-            String statusMeta = documentInfo.getStatusMeta();
-            JSONObject jsonObject = JSONUtil.parseObj(statusMeta);
-            jsonObject.put("embedding_time", Tool.nowDateTime());
-
-            KnowledgeDocumentEntity finalUpdateEntity = new KnowledgeDocumentEntity();
+            KnowledgeDocumentEntity finalUpdateEntity = knowledgeDocumentMapper.selectById(documentId);
             finalUpdateEntity.setStatus(DocumentStatusEnum.COMPLETE.getCode());
-            finalUpdateEntity.setStatusMeta(statusMeta.toString());
+            finalUpdateEntity.setEmbeddingTime(Tool.nowDateTime());
             finalUpdateEntity.setUpdateTime(Tool.nowDateTime());
-            knowledgeDocumentMapper.update(finalUpdateEntity, new QueryWrapper<KnowledgeDocumentEntity>().eq("uuid", documentId));
+            knowledgeDocumentMapper.updateById(finalUpdateEntity);
         }
     }
 

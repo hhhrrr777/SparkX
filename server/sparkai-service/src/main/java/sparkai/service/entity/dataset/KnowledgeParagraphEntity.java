@@ -9,7 +9,6 @@
 // +----------------------------------------------------------------------
 package sparkai.service.entity.dataset;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -67,12 +66,6 @@ public class KnowledgeParagraphEntity implements Serializable {
     */
     @TableField(value = "active")
     private Integer active;
-
-    /**
-    * 状态数据
-    */
-    @TableField(value = "status_meta")
-    private String statusMeta;
 
     /**
     * 创建时间

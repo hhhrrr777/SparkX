@@ -56,7 +56,7 @@
 							<el-icon class="custom-loading-icon">
 								<component :is="embeddingIcon" />
 							</el-icon>
-							向量中
+							向量化中
 						</span>
 						<span v-if="scope.row.status === 3" style="color: #67C23A;cursor: pointer">已完成</span>
 					</template>
@@ -265,7 +265,7 @@ export default {
 			active: 1,
 			editorVisible: false,
 			contentForm: {
-				uuid: "",
+				paragraphId: "",
 				title: "",
 				content: ""
 			},
@@ -340,14 +340,21 @@ export default {
 		// 显示内容编辑
 		showEditor(row) {
 
-			this.contentForm.uuid = row.uuid
+			this.contentForm.paragraphId = row.uuid
 			this.contentForm.title = row.title
 			this.contentForm.content = row.content
 			this.editorVisible = true
 		},
 		// 编辑单个段落
 		async optSubmit() {
-
+			let res = await this.$API.paragraph.edit.post(this.contentForm)
+			if (res.code === 0) {
+				this.$message.success('操作成功')
+				this.getParagraphList()
+				this.editorVisible = false
+			} else {
+				this.$message.error(res.msg)
+			}
 		},
 		// 激活、关闭段落
 		async activeParagraph(row) {

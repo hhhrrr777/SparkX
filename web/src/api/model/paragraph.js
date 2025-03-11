@@ -15,5 +15,12 @@ export default {
 		post: async function(data={}){
 			return await http.post(this.url, data);
 		}
+	},
+	edit: {
+		url: `${config.API_URL}/paragraph/edit`,
+		name: "段落编辑",
+		post: async function(data={}){
+			return await http.post(this.url, data);
+		}
 	}
 }

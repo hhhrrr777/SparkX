@@ -67,12 +67,9 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             BeanUtils.copyProperties(entity, vo);
 
             // 分段数
-            String statusMeta = entity.getStatusMeta();
-            JSONObject jsonObject = JSONUtil.parseObj(statusMeta);
-            vo.setParagraphNum((Integer) jsonObject.get("paragraph_num"));
-
+            vo.setParagraphNum(entity.getParagraphNum());
             // 命中处理方式
-            vo.setHitDealType((String)jsonObject.get("answer_type"));
+            vo.setHitDealType(entity.getAnswerType());
 
             datasetVoList.add(vo);
         }
@@ -140,14 +137,9 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             knowledgeDocument.setQuestionStatus(1);
             knowledgeDocument.setActive(1);
             knowledgeDocument.setDatasetId(documentSaveVo.getDatasetId());
-
-            JSONObject statusMeta = JSONUtil.createObj()
-                    .put("paragraph_num", document.getContent().size())
-                    .put("embedding_time", "")
-                    .put("question_time", "")
-                    .put("answer_type", "model")
-                    .put("redirect_similar", 0.900);
-            knowledgeDocument.setStatusMeta(statusMeta.toString());
+            knowledgeDocument.setParagraphNum(document.getContent().size());
+            knowledgeDocument.setAnswerType("model");
+            knowledgeDocument.setRedirectSimilar(0.900);
             knowledgeDocument.setCreateTime(Tool.nowDateTime());
 
             knowledgeDocumentMapper.insert(knowledgeDocument);

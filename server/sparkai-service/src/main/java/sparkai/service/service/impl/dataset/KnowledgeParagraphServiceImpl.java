@@ -20,6 +20,7 @@ import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeParagraphService;
+import sparkai.service.task.EmbeddingDocumentTask;
 import sparkai.service.vo.paragraph.ParagraphListVo;
 import sparkai.service.vo.paragraph.ParagraphQueryVo;
 import sparkai.service.vo.paragraph.ParagraphVo;
@@ -32,6 +33,9 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
 
     @Autowired
     KnowledgeParagraphMapper knowledgeParagraphMapper;
+
+    @Autowired
+    EmbeddingDocumentTask task;
 
     /**
      * 段落列表
@@ -48,7 +52,8 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
         queryWrapper.eq("document_id", queryVo.getDocumentId());
         queryWrapper.orderByDesc("create_time");
 
-        IPage<KnowledgeParagraphEntity> paragraphListRes = knowledgeParagraphMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
+        IPage<KnowledgeParagraphEntity> paragraphListRes =
+                knowledgeParagraphMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
 
         List<ParagraphListVo> paragraphListVoList = new LinkedList<>();
         for (KnowledgeParagraphEntity entity : paragraphListRes.getRecords()) {
@@ -68,8 +73,7 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
     @Override
     public void activeParagraph(ParagraphVo paragraphVo) {
 
-        KnowledgeParagraphEntity paragraph = new KnowledgeParagraphEntity();
-        paragraph.setUuid(paragraphVo.getParagraphId());
+        KnowledgeParagraphEntity paragraph = knowledgeParagraphMapper.selectById(paragraphVo.getParagraphId());
         paragraph.setActive(paragraphVo.getActive());
         paragraph.setUpdateTime(Tool.nowDateTime());
 
@@ -78,10 +82,30 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
 
     /**
      * 编辑段落
+     *
      * @param paragraphVo ParagraphVo
      */
     @Override
     public void editParagraph(ParagraphVo paragraphVo) {
 
+        KnowledgeParagraphEntity paragraph = knowledgeParagraphMapper.selectById(paragraphVo.getParagraphId());
+        boolean editFlag = false;
+        // 是否做了修改
+        if (!paragraph.getTitle().equals(paragraphVo.getTitle()) ||
+                !paragraph.getContent().equals(paragraphVo.getContent())) {
+            editFlag = true;
+        }
+
+        if (editFlag) {
+            // 编辑内容
+            paragraph.setTitle(paragraphVo.getTitle());
+            paragraph.setContent(paragraphVo.getContent());
+            paragraph.setUpdateTime(Tool.nowDateTime());
+
+            knowledgeParagraphMapper.updateById(paragraph);
+
+            // 执行向量化
+            task.executeAsyncParagraphTask(paragraph.getUuid());
+        }
     }
 }
