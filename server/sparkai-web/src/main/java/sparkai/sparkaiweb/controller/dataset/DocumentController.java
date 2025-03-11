@@ -58,9 +58,9 @@ public class DocumentController {
      * 向量化文档
      */
     @GetMapping("/embedding")
-    public AjaxResult<Object> embeddings(@RequestParam("documentId") String documentId) {
+    public AjaxResult<Object> embeddings(@RequestParam("documentIds") String documentIds) {
 
-        iKnowledgeDocumentService.doEmbedding(documentId);
+        iKnowledgeDocumentService.doEmbedding(documentIds);
         return AjaxResult.success();
     }
 }

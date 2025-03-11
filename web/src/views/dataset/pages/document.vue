@@ -4,7 +4,7 @@
 			<div>
 				<el-button type="primary" icon="el-icon-UploadFilled" @click="uploadFile" style="margin-top: -10px;">上传文档</el-button>
 				<el-button type="primary" icon="el-icon-Switch" @click="uploadFile" style="margin-top: -10px;">迁移文档</el-button>
-				<el-button type="primary" @click="uploadFile" style="margin-top: -10px;"><span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量文档</el-button>
+				<el-button type="primary" @click="embeddingAll" style="margin-top: -10px;"><span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量文档</el-button>
 				<el-button type="primary" icon="el-icon-QuestionFilled" @click="uploadFile" style="margin-top: -10px;">生成问题</el-button>
 				<el-button type="primary" icon="el-icon-Setting" @click="uploadFile" style="margin-top: -10px;">设置</el-button>
 				<el-button type="primary" icon="el-icon-Delete" @click="uploadFile" style="margin-top: -10px;">删除</el-button>
@@ -84,8 +84,8 @@
 				<el-table-column
 					label="命中处理">
 					<template #default="scope">
-						<el-tag type="success" v-if="scope.row.hitDealType == 'model'">模型优化</el-tag>
-						<el-tag type="danger" v-if="scope.row.hitDealType == 'direct'">直接返回</el-tag>
+						<el-tag type="success" v-if="scope.row.hitDealType === 'model'">模型优化</el-tag>
+						<el-tag type="danger" v-if="scope.row.hitDealType === 'direct'">直接返回</el-tag>
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -258,7 +258,6 @@ export default {
 			delIcon: 'el-icon-Delete',
 			switchIcon: 'el-icon-Switch',
 			editIcon: 'el-icon-Edit',
-			timeInterval: null,
 			direction: "rtl",
 			drawer: false,
 			documentTitle: "",
@@ -269,7 +268,8 @@ export default {
 				title: "",
 				content: ""
 			},
-			loading: false
+			loading: false,
+			selectedDocumentIds: []
 		}
 	},
 	mounted() {
@@ -287,6 +287,20 @@ export default {
 			let res = await this.$API.document.getList.get(this.searchForm)
 			this.tableData = res.data.data
 			this.page.total = res.data.total
+
+			// 没有在向量化的文档，则清理定时器
+			let running = false
+			res.data.data.forEach(item => {
+				if (item.status === 2) {
+					running = true
+				}
+			})
+
+			if (running) {
+				setTimeout(() => {
+					this.getList()
+				}, 2000)
+			}
 		},
 		onSubmit() {
 			this.getList()
@@ -303,16 +317,16 @@ export default {
 		},
 		// 多选
 		handleSelectionChange(row) {
-			console.log('xxx', row)
+			this.selectedDocumentIds = []
+			row.forEach(item => {
+				this.selectedDocumentIds.push(item.uuid)
+			})
 		},
 		// 向量化文本
 		async embedding(row) {
-			let res = await this.$API.document.embedding.get({documentId: row.uuid})
+			let res = await this.$API.document.embedding.get({documentIds: row.uuid})
 			if (res.code === 0) {
 				this.getList()
-				this.timeInterval = setInterval(() => {
-					this.getList()
-				}, 2000)
 			} else {
 				this.$message.error(res.msg)
 			}
@@ -393,6 +407,20 @@ export default {
 				}
 			}).catch(() => {
 			});
+		},
+		// 批量进化
+		async embeddingAll() {
+			if (this.selectedDocumentIds.length === 0) {
+				this.$message.error('请勾选文档')
+				return false
+			}
+
+			let res = await this.$API.document.embedding.get({documentIds: this.selectedDocumentIds.join(",")})
+			if (res.code === 0) {
+				this.getList()
+			} else {
+				this.$message.error(res.msg)
+			}
 		}
 	}
 }

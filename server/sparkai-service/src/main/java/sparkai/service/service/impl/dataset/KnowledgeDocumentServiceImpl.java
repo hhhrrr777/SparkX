@@ -164,11 +164,14 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
     /**
      * 向量化文本
-     * @param documentId String
+     * @param documentIds String
      */
     @Override
-    public void doEmbedding(String documentId) {
+    public void doEmbedding(String documentIds) {
 
-        task.executeAsyncTask(documentId);
+        String[] documentMap = documentIds.split(",");
+        for (String documentId : documentMap) {
+            task.executeAsyncTask(documentId);
+        }
     }
 }

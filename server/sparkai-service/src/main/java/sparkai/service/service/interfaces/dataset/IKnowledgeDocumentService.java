@@ -46,7 +46,7 @@ public interface IKnowledgeDocumentService {
 
     /**
      * 向量化文本
-     * @param documentId String
+     * @param documentIds String
      */
-    void doEmbedding(String documentId);
+    void doEmbedding(String documentIds);
 }
