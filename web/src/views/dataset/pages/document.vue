@@ -39,16 +39,19 @@
 					</template>
 				</el-table-column>
 				<el-table-column
+					width="100"
 					label="文件大小">
 					<template #default="scope">
 						<span>{{ $TOOL.formatBytes(scope.row.fileSize) }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column
+					width="80"
 					prop="paragraphNum"
 					label="分段数">
 				</el-table-column>
 				<el-table-column
+					width="100"
 					label="向量化">
 					<template #default="scope">
 						<span v-if="scope.row.status === 1" style="color: #999;cursor: pointer">待生成</span>
@@ -62,6 +65,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column
+					width="100"
 					label="生成问题">
 					<template #default="scope">
 						<span v-if="scope.row.questionStatus === 1" style="color: #999;cursor: pointer">待生成</span>
@@ -75,6 +79,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column
+					width="100"
 					label="状态">
 					<template #default="scope">
 						<el-tag type="success" v-if="scope.row.active === 1">正常</el-tag>
@@ -82,6 +87,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column
+					width="100"
 					label="命中处理">
 					<template #default="scope">
 						<el-tag type="success" v-if="scope.row.hitDealType === 'model'">模型优化</el-tag>
@@ -89,12 +95,14 @@
 					</template>
 				</el-table-column>
 				<el-table-column
+					width="160"
 					label="创建时间">
 					<template #default="scope">
 						{{ scope.row.createTime.replace('T', " ") }}
 					</template>
 				</el-table-column>
 				<el-table-column
+					width="160"
 					label="更新时间">
 					<template #default="scope">
 						{{ scope.row.updateTime && scope.row.updateTime.replace('T', " ") }}
