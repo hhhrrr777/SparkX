@@ -130,7 +130,7 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             // 写入文档
             KnowledgeDocumentEntity knowledgeDocument = new KnowledgeDocumentEntity();
             knowledgeDocument.setName(document.getName());
-            String documentId = IdUtil.simpleUUID();
+            String documentId = IdUtil.randomUUID();
             knowledgeDocument.setDocumentId(documentId);
             knowledgeDocument.setFileSize(document.getFileSize());
             knowledgeDocument.setStatus(1);

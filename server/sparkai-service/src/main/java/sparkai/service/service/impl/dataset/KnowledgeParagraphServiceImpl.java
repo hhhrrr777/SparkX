@@ -177,7 +177,10 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
 
         // 添加段落
         KnowledgeParagraphEntity paragraph = new KnowledgeParagraphEntity();
-        paragraph.setParagraphId(IdUtil.simpleUUID());
+        System.out.println("-----------------------------------");
+        System.out.println(IdUtil.randomUUID());
+        System.out.println("-----------------------------------");
+        paragraph.setParagraphId(IdUtil.randomUUID());
         paragraph.setTitle(paragraphAddVo.getTitle());
         paragraph.setContent(paragraphAddVo.getContent());
         paragraph.setDatasetId(paragraphAddVo.getDatasetId());
