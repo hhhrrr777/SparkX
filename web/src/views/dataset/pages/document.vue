@@ -115,12 +115,16 @@
 					<template #default="scope">
 						<div style="display: flex;align-items: center;color: #5E17EB;cursor: pointer">
 							<div style="margin-right: 8px;display: flex;align-items: center" @click="embedding(scope.row)">
-								<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>
+								<el-tooltip class="item" content="向量化文档">
+									<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>
+								</el-tooltip>
 							</div>
 							<div style="margin-right: 8px;display: flex;align-items: center">
-								<el-icon size="14">
-									<component :is="settingIcon" />
-								</el-icon>
+								<el-tooltip class="item" content="设置">
+									<el-icon size="14">
+										<component :is="settingIcon" />
+									</el-icon>
+								</el-tooltip>
 							</div>
 							<div style="display: flex;align-items: center;color: #5E17EB">
 								<el-dropdown trigger="click">
