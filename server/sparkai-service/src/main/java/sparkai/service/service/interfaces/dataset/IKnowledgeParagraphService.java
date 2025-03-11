@@ -12,6 +12,7 @@ package sparkai.service.service.interfaces.dataset;
 import sparkai.common.core.PageResult;
 import sparkai.service.vo.paragraph.ParagraphListVo;
 import sparkai.service.vo.paragraph.ParagraphQueryVo;
+import sparkai.service.vo.paragraph.ParagraphVo;
 
 /**
  * <p>
@@ -29,4 +30,10 @@ public interface IKnowledgeParagraphService {
      * @return PageResult<ParagraphListVo>
      */
     PageResult<ParagraphListVo> getParagraphList(ParagraphQueryVo queryVo);
+
+    /**
+     * 激活、关闭段落
+     * @param paragraphVo ParagraphVo
+     */
+    void activeParagraph(ParagraphVo paragraphVo);
 }

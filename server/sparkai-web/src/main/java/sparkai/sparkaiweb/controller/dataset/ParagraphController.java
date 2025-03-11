@@ -10,14 +10,13 @@
 package sparkai.sparkaiweb.controller.dataset;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.dataset.IKnowledgeParagraphService;
 import sparkai.service.vo.paragraph.ParagraphListVo;
 import sparkai.service.vo.paragraph.ParagraphQueryVo;
+import sparkai.service.vo.paragraph.ParagraphVo;
 
 @RequestMapping("/api/paragraph")
 @RestController
@@ -30,5 +29,12 @@ public class ParagraphController {
     public AjaxResult<PageResult<ParagraphListVo>> list(ParagraphQueryVo queryVo) {
 
         return AjaxResult.success(iKnowledgeParagraphService.getParagraphList(queryVo));
+    }
+
+    @PostMapping("/active")
+    public AjaxResult<Object> active(@RequestBody ParagraphVo paragraphVo) {
+
+        iKnowledgeParagraphService.activeParagraph(paragraphVo);
+        return AjaxResult.success();
     }
 }

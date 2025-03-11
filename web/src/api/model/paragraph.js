@@ -8,5 +8,12 @@ export default {
 		get: async function(data={}){
 			return await http.get(this.url, data);
 		}
+	},
+	active: {
+		url: `${config.API_URL}/paragraph/active`,
+		name: "激活、关闭段落",
+		post: async function(data={}){
+			return await http.post(this.url, data);
+		}
 	}
 }

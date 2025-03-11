@@ -18,10 +18,6 @@
 				:data="tableData"
 				style="width: 100%">
 				<el-table-column
-					prop="uuid"
-					label="ID">
-				</el-table-column>
-				<el-table-column
 					prop="name"
 					label="登录名">
 				</el-table-column>

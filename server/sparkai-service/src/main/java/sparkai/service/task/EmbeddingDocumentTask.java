@@ -41,6 +41,8 @@ public class EmbeddingDocumentTask {
     @Autowired
     MarkChunk markChunk;
 
+    private EmbeddingModel embeddingModel;
+
     /**
      * 向量化文本
      * @param documentId String
@@ -56,9 +58,6 @@ public class EmbeddingDocumentTask {
                 .eq("document_id", documentId).eq("active", StatusEnum.YES.getCode()));
 
         if (!CollectionUtils.isEmpty(paragraphEntityList)) {
-            // 默认的内存型的embedding模型
-            EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
-
             // 删除已经向量化的数据
             knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>().eq("document_id", documentId));
 
@@ -68,36 +67,11 @@ public class EmbeddingDocumentTask {
             updateEntity.setUpdateTime(Tool.nowDateTime());
             knowledgeDocumentMapper.update(updateEntity, new QueryWrapper<KnowledgeDocumentEntity>().eq("uuid", documentId));
 
+            // 默认的内存型的embedding模型
+            embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+
             for (KnowledgeParagraphEntity paragraph : paragraphEntityList) {
-
-                // 拆分段落长度，防止截取256的长度，去进行向量化，有一些embedding模型要求的最大上下文是256
-                String paragraphStr = paragraph.getTitle() + paragraph.getContent();
-                List<String> subParagraph = new LinkedList<>();
-                if (paragraphStr.length() > 256) {
-                   subParagraph = markChunk.handle(paragraphStr);
-                } else {
-                    subParagraph.add(paragraphStr);
-                }
-
-                for (String content : subParagraph) {
-
-                    // 开始向量化，并入库
-                    KnowledgeEmbeddingEntity embeddingEntity = new KnowledgeEmbeddingEntity();
-                    embeddingEntity.setUuid(IdUtil.randomUUID());
-                    embeddingEntity.setDatasetId(documentInfo.getDatasetId());
-                    embeddingEntity.setDocumentId(documentId);
-                    embeddingEntity.setParagraphId(paragraph.getUuid());
-                    embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
-                    embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
-                    embeddingEntity.setActive(1);
-                    embeddingEntity.setSourceType(SourceType.DOCUMENT.getCode()); // 来源文本
-                    embeddingEntity.setSourceId(paragraph.getUuid()); // 来源id
-                    embeddingEntity.setCreateTime(Tool.nowDateTime());
-
-                    knowledgeEmbeddingMapper.insert(embeddingEntity);
-                }
-
-                // TODO 段落关联的问题，也得重新索引
+                this.embeddingSingleParagraph(paragraph);
             }
 
             // 标记向量化完成
@@ -111,5 +85,57 @@ public class EmbeddingDocumentTask {
             finalUpdateEntity.setUpdateTime(Tool.nowDateTime());
             knowledgeDocumentMapper.update(finalUpdateEntity, new QueryWrapper<KnowledgeDocumentEntity>().eq("uuid", documentId));
         }
+    }
+
+    /**
+     * 向量化单个段落
+     * @param paragraphId String
+     */
+    @Async
+    public void executeAsyncParagraphTask(String paragraphId) {
+
+        KnowledgeParagraphEntity paragraphInfo = knowledgeParagraphMapper.selectById(paragraphId);
+        // 删除已经向量化的数据
+        knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>().eq("paragraph_id", paragraphId));
+
+        // 默认的内存型的embedding模型
+        embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+        this.embeddingSingleParagraph(paragraphInfo);
+    }
+
+    /**
+     * 处理数据向量化
+     * @param paragraph KnowledgeParagraphEntity
+     */
+    private void embeddingSingleParagraph(KnowledgeParagraphEntity paragraph) {
+
+        // 拆分段落长度，防止截取256的长度，去进行向量化，有一些embedding模型要求的最大上下文是256
+        String paragraphStr = paragraph.getTitle() + paragraph.getContent();
+        List<String> subParagraph = new LinkedList<>();
+        if (paragraphStr.length() > 256) {
+            subParagraph = markChunk.handle(paragraphStr);
+        } else {
+            subParagraph.add(paragraphStr);
+        }
+
+        for (String content : subParagraph) {
+
+            // 开始向量化，并入库
+            KnowledgeEmbeddingEntity embeddingEntity = new KnowledgeEmbeddingEntity();
+            embeddingEntity.setUuid(IdUtil.randomUUID());
+            embeddingEntity.setDatasetId(paragraph.getDatasetId());
+            embeddingEntity.setDocumentId(paragraph.getDocumentId());
+            embeddingEntity.setParagraphId(paragraph.getUuid());
+            embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
+            embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
+            embeddingEntity.setActive(1);
+            embeddingEntity.setSourceType(SourceType.DOCUMENT.getCode()); // 来源文本
+            embeddingEntity.setSourceId(paragraph.getUuid()); // 来源id
+            embeddingEntity.setCreateTime(Tool.nowDateTime());
+
+            knowledgeEmbeddingMapper.insert(embeddingEntity);
+        }
+
+        // TODO 段落关联的问题，也得重新索引
     }
 }

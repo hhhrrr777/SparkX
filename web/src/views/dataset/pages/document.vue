@@ -33,6 +33,9 @@
 					label="文档名称">
 					<template #default="scope">
 						<span style="cursor: pointer" @click="showParagraph(scope.row)">{{ scope.row.name }}</span>
+						<el-icon style="margin-left: 5px;">
+							<component :is="editIcon" />
+						</el-icon>
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -161,9 +164,9 @@
 					<div class="paragraph-title">
 						<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 						<div class="title-left line1" v-else>--</div>
-						<el-switch v-model="item.active" :active-value="1" :inactive-value="2"/>
+						<el-switch v-model="item.active" :active-value="1" :inactive-value="2" @change="activeParagraph(item)"/>
 					</div>
-					<div class="paragraph-doc">
+					<div class="paragraph-doc" @click="showEditor(item)">
 						{{ item.content }}
 					</div>
 					<div class="paragraph-bottom">
@@ -200,13 +203,32 @@
 		</el-drawer>
 	</div>
 
+	<!-- 文本编辑 -->
+	<el-dialog v-model="editorVisible" width="1000px" ref="saveDialog" :close-on-click-modal="false">
+		<el-form :model="contentForm" label-width="10px">
+			<el-form-item>
+				<el-input v-model="contentForm.title" show-word-limit></el-input>
+			</el-form-item>
+			<el-form-item>
+				<scEditor :model-value="contentForm.content" style="width: 100%"></scEditor><br/>
+				<div id="word-count">字符数: {{ contentForm.content.length }}</div>
+			</el-form-item>
+		</el-form>
+		<template #footer>
+			<div class="dialog-footer">
+				<el-button @click="editorVisible = false">取 消</el-button>
+				<el-button type="primary" @click="optSubmit()" :loading="loading">确 定</el-button>
+			</div>
+		</template>
+	</el-dialog >
 </template>
 
 <script>
 import Pages from "@/components/pages/index.vue";
+import scEditor from "@/components/scEditor/index.vue";
 
 export default {
-	components: {Pages},
+	components: {Pages, scEditor},
 	data() {
 		return {
 			tableData: [],
@@ -235,11 +257,19 @@ export default {
 			questionIcon: 'el-icon-QuestionFilled',
 			delIcon: 'el-icon-Delete',
 			switchIcon: 'el-icon-Switch',
+			editIcon: 'el-icon-Edit',
 			timeInterval: null,
 			direction: "rtl",
 			drawer: false,
 			documentTitle: "",
-			active: 1
+			active: 1,
+			editorVisible: false,
+			contentForm: {
+				uuid: "",
+				title: "",
+				content: ""
+			},
+			loading: false
 		}
 	},
 	mounted() {
@@ -306,6 +336,31 @@ export default {
 		handleParagraphPageChange(page) {
 			this.paragraphForm.page = page
 			this.getParagraphList()
+		},
+		// 显示内容编辑
+		showEditor(row) {
+
+			this.contentForm.uuid = row.uuid
+			this.contentForm.title = row.title
+			this.contentForm.content = row.content
+			this.editorVisible = true
+		},
+		// 编辑单个段落
+		async optSubmit() {
+
+		},
+		// 激活、关闭段落
+		async activeParagraph(row) {
+			let res = await this.$API.paragraph.active.post({
+				paragraphId: row.uuid,
+				active: row.active
+			})
+
+			if (res.code === 0) {
+				this.$message.success('操作成功')
+			} else {
+				this.$message.error(res.msg)
+			}
 		}
 	}
 }
@@ -369,7 +424,7 @@ export default {
 	}
 	.paragraph-doc {
 		width: 100%;
-		height: calc(100% - 70px);
+		height: calc(100% - 71px);
 		padding: 5px 0;
 		overflow: hidden;
 		color: #606266;
@@ -382,5 +437,9 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+	}
+	#word-count {
+		font-size: 13px;
+		margin-top: 5px;
 	}
 </style>

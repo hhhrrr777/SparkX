@@ -120,7 +120,7 @@ export default{
 			downloadIcon: 'el-icon-Download',
 			delIcon: 'el-icon-Delete',
 			storeList: [],
-			dialogVisible: false
+			dialogVisible: false,
 		}
 	},
 	mounted() {

@@ -16,11 +16,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sparkai.common.core.PageResult;
+import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeParagraphService;
 import sparkai.service.vo.paragraph.ParagraphListVo;
 import sparkai.service.vo.paragraph.ParagraphQueryVo;
+import sparkai.service.vo.paragraph.ParagraphVo;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -57,5 +59,20 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
         }
 
         return PageResult.iPageHandle(paragraphListRes.getTotal(), pageNo, pageSize, paragraphListVoList);
+    }
+
+    /**
+     * 激活、关闭段落
+     * @param paragraphVo ParagraphVo
+     */
+    @Override
+    public void activeParagraph(ParagraphVo paragraphVo) {
+
+        KnowledgeParagraphEntity paragraph = new KnowledgeParagraphEntity();
+        paragraph.setUuid(paragraphVo.getParagraphId());
+        paragraph.setActive(paragraphVo.getActive());
+        paragraph.setUpdateTime(Tool.nowDateTime());
+
+        knowledgeParagraphMapper.updateById(paragraph);
     }
 }
