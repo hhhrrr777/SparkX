@@ -23,6 +23,13 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
+	add: {
+		url: `${config.API_URL}/paragraph/add`,
+		name: "段落添加",
+		post: async function(data={}){
+			return await http.post(this.url, data);
+		}
+	},
 	del: {
 		url: `${config.API_URL}/paragraph/del`,
 		name: "删除段落",

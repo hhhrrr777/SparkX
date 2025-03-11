@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.dataset.IKnowledgeParagraphService;
+import sparkai.service.vo.paragraph.ParagraphAddVo;
 import sparkai.service.vo.paragraph.ParagraphListVo;
 import sparkai.service.vo.paragraph.ParagraphQueryVo;
 import sparkai.service.vo.paragraph.ParagraphVo;
@@ -61,6 +62,16 @@ public class ParagraphController {
     public AjaxResult<Object> del(@RequestBody ParagraphVo paragraphVo) {
 
         iKnowledgeParagraphService.delParagraph(paragraphVo);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 添加段落
+     */
+    @PostMapping("/add")
+    public AjaxResult<Object> add(@RequestBody ParagraphAddVo paragraphAddVo) {
+
+        iKnowledgeParagraphService.addParagraph(paragraphAddVo);
         return AjaxResult.success();
     }
 }

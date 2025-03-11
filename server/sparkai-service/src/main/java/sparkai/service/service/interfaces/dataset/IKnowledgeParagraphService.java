@@ -10,6 +10,7 @@
 package sparkai.service.service.interfaces.dataset;
 
 import sparkai.common.core.PageResult;
+import sparkai.service.vo.paragraph.ParagraphAddVo;
 import sparkai.service.vo.paragraph.ParagraphListVo;
 import sparkai.service.vo.paragraph.ParagraphQueryVo;
 import sparkai.service.vo.paragraph.ParagraphVo;
@@ -48,4 +49,10 @@ public interface IKnowledgeParagraphService {
      * @param paragraphVo ParagraphVo
      */
     void delParagraph(ParagraphVo paragraphVo);
+
+    /**
+     * 添加段落
+     * @param paragraphAddVo ParagraphAddVo
+     */
+    void addParagraph(ParagraphAddVo paragraphAddVo);
 }

@@ -121,7 +121,7 @@ public class EmbeddingDocumentTask {
             embeddingEntity.setParagraphId(paragraph.getUuid());
             embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
             embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
-            embeddingEntity.setActive(1);
+            embeddingEntity.setActive(StatusEnum.YES.getCode());
             embeddingEntity.setSourceType(SourceType.DOCUMENT.getCode()); // 来源文本
             embeddingEntity.setSourceId(paragraph.getUuid()); // 来源id
             embeddingEntity.setCreateTime(Tool.nowDateTime());

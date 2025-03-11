@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.impl.dataset;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,15 +18,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparkai.common.core.PageResult;
+import sparkai.common.enums.StatusEnum;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
+import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
 import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
 import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
+import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeParagraphService;
 import sparkai.service.task.EmbeddingDocumentTask;
+import sparkai.service.vo.paragraph.ParagraphAddVo;
 import sparkai.service.vo.paragraph.ParagraphListVo;
 import sparkai.service.vo.paragraph.ParagraphQueryVo;
 import sparkai.service.vo.paragraph.ParagraphVo;
@@ -44,6 +49,9 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
 
     @Autowired
     KnowledgeEmbeddingMapper knowledgeEmbeddingMapper;
+
+    @Autowired
+    KnowledgeQuestionParagraphMapper knowledgeQuestionParagraphMapper;
 
     @Autowired
     EmbeddingDocumentTask task;
@@ -115,8 +123,12 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
 
             knowledgeParagraphMapper.updateById(paragraph);
 
-            // 执行向量化
-            task.executeAsyncParagraphTask(paragraph.getUuid());
+            // 检测应答模式
+            KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(paragraph.getDocumentId());
+            if (documentInfo.getAnswerType().equals("model")) {
+                // 执行向量化
+                task.executeAsyncParagraphTask(paragraph.getUuid());
+            }
         }
     }
 
@@ -141,5 +153,36 @@ public class KnowledgeParagraphServiceImpl implements IKnowledgeParagraphService
         // 向量表属于这个段落的全删
         knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>()
                 .eq("paragraph_id", paragraphVo.getParagraphId()));
+
+        // 删掉问题关联的段落
+        knowledgeQuestionParagraphMapper.delete(new QueryWrapper<KnowledgeQuestionParagraphEntity>()
+                .eq("paragraph_id", paragraphVo.getParagraphId()));
+    }
+
+    /**
+     * 添加段落
+     * @param paragraphAddVo ParagraphAddVo
+     */
+    @Override
+    public void addParagraph(ParagraphAddVo paragraphAddVo) {
+
+        // 添加段落
+        KnowledgeParagraphEntity paragraph = new KnowledgeParagraphEntity();
+        paragraph.setUuid(IdUtil.simpleUUID());
+        paragraph.setTitle(paragraphAddVo.getTitle());
+        paragraph.setContent(paragraphAddVo.getContent());
+        paragraph.setDatasetId(paragraphAddVo.getDatasetId());
+        paragraph.setDocumentId(paragraphAddVo.getDocumentId());
+        paragraph.setActive(StatusEnum.YES.getCode());
+        paragraph.setCreateTime(Tool.nowDateTime());
+
+        knowledgeParagraphMapper.insert(paragraph);
+
+        // 检测应答模式
+        KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(paragraph.getDocumentId());
+        if (documentInfo.getAnswerType().equals("model")) {
+            // 执行向量化
+            task.executeAsyncParagraphTask(paragraph.getUuid());
+        }
     }
 }

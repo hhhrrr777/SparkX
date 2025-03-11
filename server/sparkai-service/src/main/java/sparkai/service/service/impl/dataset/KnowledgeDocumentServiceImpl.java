@@ -171,7 +171,12 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
         String[] documentMap = documentIds.split(",");
         for (String documentId : documentMap) {
-            task.executeAsyncTask(documentId);
+            // 检测应答模式
+            KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(documentId);
+            if (documentInfo.getAnswerType().equals("model")) {
+                // 执行向量化
+                task.executeAsyncTask(documentId);
+            }
         }
     }
 }
