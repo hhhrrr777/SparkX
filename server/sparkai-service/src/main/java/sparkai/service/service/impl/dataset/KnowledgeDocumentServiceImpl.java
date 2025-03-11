@@ -174,6 +174,13 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             // 检测应答模式
             KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(documentId);
             if (documentInfo.getAnswerType().equals("model")) {
+
+                // 标记开始向量化
+                KnowledgeDocumentEntity updateEntity = knowledgeDocumentMapper.selectById(documentId);
+                updateEntity.setStatus(DocumentStatusEnum.RUNNING.getCode());
+                updateEntity.setUpdateTime(Tool.nowDateTime());
+                knowledgeDocumentMapper.updateById(updateEntity);
+
                 // 执行向量化
                 task.executeAsyncTask(documentId);
             }

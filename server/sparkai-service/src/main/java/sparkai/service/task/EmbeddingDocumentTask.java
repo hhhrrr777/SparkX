@@ -58,12 +58,6 @@ public class EmbeddingDocumentTask {
             // 删除已经向量化的数据
             knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>().eq("document_id", documentId));
 
-            // 标记开始向量化
-            KnowledgeDocumentEntity updateEntity = knowledgeDocumentMapper.selectById(documentId);
-            updateEntity.setStatus(DocumentStatusEnum.RUNNING.getCode());
-            updateEntity.setUpdateTime(Tool.nowDateTime());
-            knowledgeDocumentMapper.updateById(updateEntity);
-
             // 默认的内存型的embedding模型
             embeddingModel = new AllMiniLmL6V2EmbeddingModel();
 

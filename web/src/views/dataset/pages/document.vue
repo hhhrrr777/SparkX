@@ -233,7 +233,7 @@ export default {
 			if (running) {
 				setTimeout(() => {
 					this.getList()
-				}, 2000)
+				}, 1500)
 			}
 		},
 		onSubmit() {
@@ -250,7 +250,7 @@ export default {
 		handleSelectionChange(row) {
 			this.selectedDocumentIds = []
 			row.forEach(item => {
-				this.selectedDocumentIds.push(item.paragraphId)
+				this.selectedDocumentIds.push(item.documentId)
 			})
 		},
 		// 向量化文本
@@ -280,7 +280,9 @@ export default {
 
 			let res = await this.$API.document.embedding.get({documentIds: this.selectedDocumentIds.join(",")})
 			if (res.code === 0) {
-				this.getList()
+				setTimeout(() => {
+					this.getList()
+				}, 1000)
 			} else {
 				this.$message.error(res.msg)
 			}
