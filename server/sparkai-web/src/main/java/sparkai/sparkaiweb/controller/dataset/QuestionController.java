@@ -10,38 +10,37 @@
 package sparkai.sparkaiweb.controller.dataset;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
-import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
-import sparkai.service.validate.dataset.DatasetValidate;
-import sparkai.service.vo.dataset.DatasetQueryVo;
-import sparkai.service.vo.dataset.DatasetVo;
+import sparkai.service.service.interfaces.dataset.IKnowledgeQuestionService;
+import sparkai.service.vo.question.QuestionListVo;
+import sparkai.service.vo.question.QuestionQueryVo;
+import sparkai.service.vo.question.QuestionSaveVo;
 
-@RequestMapping("/api/dataset")
+@RequestMapping("/api/question")
 @RestController
-public class DatasetController {
+public class QuestionController {
 
     @Autowired
-    IKnowledgeDatasetService iKnowledgeDatasetService;
+    IKnowledgeQuestionService iKnowledgeQuestionService;
 
     /**
-     * 知识库列表
+     * 问题列表
      */
     @GetMapping("/list")
-    public AjaxResult<PageResult<DatasetVo>> list(DatasetQueryVo queryVo) {
+    public AjaxResult<PageResult<QuestionListVo>> list(QuestionQueryVo queryVo) {
 
-        return AjaxResult.success(iKnowledgeDatasetService.getDatasetList(queryVo));
+        return AjaxResult.success(iKnowledgeQuestionService.getQuestionList(queryVo));
     }
 
     /**
-     * 创建知识库
+     * 添加问题
      */
     @PostMapping("/add")
-    public AjaxResult<Object> add(@RequestBody @Validated DatasetValidate validate) {
+    public AjaxResult<Object> add(@RequestBody QuestionSaveVo questionSaveVo) {
 
-        iKnowledgeDatasetService.addDataset(validate);
+        iKnowledgeQuestionService.addQuestion(questionSaveVo);
         return AjaxResult.success();
     }
 }

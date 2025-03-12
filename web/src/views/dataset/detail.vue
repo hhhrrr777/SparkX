@@ -42,23 +42,23 @@
 					<el-menu
 						style="margin-top: 20px"
 						default-active="1">
-						<el-menu-item index="1">
+						<el-menu-item index="1" @click="handleClick(1)">
 							<el-icon>
 								<component :is="documentIcon"/>
 							</el-icon>
 							<span>文档管理</span>
 						</el-menu-item>
-						<el-menu-item index="2">
+						<el-menu-item index="2" @click="handleClick(2)">
 							<el-icon>
 								<component :is="questionIcon"/>
 							</el-icon>
 							<span>问题管理</span>
 						</el-menu-item>
-						<el-menu-item index="3">
+						<el-menu-item index="3" @click="handleClick(3)">
 							<span class="iconfont icon-mingzhong" style="font-size: 18px;margin-right: 10px"></span>
 							<span>命中测试</span>
 						</el-menu-item>
-						<el-menu-item index="4">
+						<el-menu-item index="4" @click="handleClick(4)">
 							<el-icon>
 								<component :is="settingIcon"/>
 							</el-icon>
@@ -98,6 +98,7 @@ export default {
 			plusIcon: 'el-icon-Plus',
 			components: {
 				document: defineAsyncComponent(() => import('./pages/document.vue')),
+				question: defineAsyncComponent(() => import('./pages/question.vue')),
 			},
 			page: ''
 		}
@@ -108,6 +109,14 @@ export default {
 	methods: {
 		goBack() {
 			this.$router.push("/dataset/index")
+		},
+		// 菜单选择
+		handleClick(index) {
+			if (index === 1) {
+				this.page = this.components.document
+			} else if (index === 2) {
+				this.page = this.components.question
+			}
 		}
 	}
 }
