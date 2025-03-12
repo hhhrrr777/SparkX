@@ -9,9 +9,13 @@
 // +----------------------------------------------------------------------
 package sparkai.service.mapper.dataset;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import sparkai.common.core.IBaseMapper;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
+
+import java.util.List;
 
 /**
  * 知识库文档表 Mapper
@@ -19,4 +23,14 @@ import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 @Mapper
 public interface KnowledgeDocumentMapper extends IBaseMapper<KnowledgeDocumentEntity> {
 
+    @Delete({
+            "<script>",
+            "DELETE FROM knowledge_document",
+            "WHERE document_id IN",
+            "<foreach item='id' collection='list' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deleteByIds(@Param("list") List<String> documentIds);
 }

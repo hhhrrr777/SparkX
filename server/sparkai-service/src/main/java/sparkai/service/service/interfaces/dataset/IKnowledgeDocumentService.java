@@ -55,4 +55,10 @@ public interface IKnowledgeDocumentService {
      * @param settingVo DocumentSettingVo
      */
     void setDocument(DocumentSettingVo settingVo);
+
+    /**
+     * 删除文档
+     * @param documentIds String
+     */
+    void delDocumentByIds(String documentIds);
 }

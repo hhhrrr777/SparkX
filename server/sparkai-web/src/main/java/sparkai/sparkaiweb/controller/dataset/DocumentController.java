@@ -73,4 +73,14 @@ public class DocumentController {
         iKnowledgeDocumentService.setDocument(settingVo);
         return AjaxResult.success();
     }
+
+    /**
+     * 删除文档
+     */
+    @GetMapping("/del")
+    public AjaxResult<Object> del(@RequestParam("documentIds") String documentIds) {
+
+        iKnowledgeDocumentService.delDocumentByIds(documentIds);
+        return AjaxResult.success();
+    }
 }

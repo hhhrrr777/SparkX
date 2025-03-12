@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.core.PageResult;
 import sparkai.common.enums.DocumentStatusEnum;
@@ -19,12 +20,16 @@ import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
 import sparkai.service.fileSplitter.FileHandleFactory;
 import sparkai.service.fileSplitter.FileHandleInterface;
 import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
+import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
+import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
 import sparkai.service.task.EmbeddingDocumentTask;
 import sparkai.service.vo.document.*;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +41,12 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
     @Autowired
     KnowledgeParagraphMapper knowledgeParagraphMapper;
+
+    @Autowired
+    KnowledgeEmbeddingMapper knowledgeEmbeddingMapper;
+
+    @Autowired
+    KnowledgeQuestionParagraphMapper knowledgeQuestionParagraphMapper;
 
     @Autowired
     EmbeddingDocumentTask task;
@@ -198,5 +209,25 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
             knowledgeDocumentMapper.updateById(documentInfo);
         }
+    }
+
+    /**
+     * 删除文档
+     * @param documentIds String
+     */
+    @Override
+    @Transactional
+    public void delDocumentByIds(String documentIds) {
+
+        List<String> documentIdsList = Collections.singletonList(documentIds);
+
+        // 删除文档
+        knowledgeDocumentMapper.deleteByIds(documentIdsList);
+        // 删除文档段落
+        knowledgeParagraphMapper.deleteByDocumentIds(documentIdsList);
+        // 删除文档embedding数据
+        knowledgeEmbeddingMapper.deleteByDocumentIds(documentIdsList);
+        // 删除文档下问题数据
+        knowledgeQuestionParagraphMapper.deleteByDocumentIds(documentIdsList);
     }
 }

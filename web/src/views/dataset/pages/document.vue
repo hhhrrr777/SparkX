@@ -11,7 +11,7 @@
 						   :disabled="selectedDocumentIds.length === 0">生成问题</el-button>
 				<el-button type="primary" icon="el-icon-Setting" @click="setting" style="margin-top: -10px;"
 						   :disabled="selectedDocumentIds.length === 0">设置</el-button>
-				<el-button type="primary" icon="el-icon-Delete" @click="uploadFile" style="margin-top: -10px;"
+				<el-button type="primary" icon="el-icon-Delete" @click="delDocument" style="margin-top: -10px;"
 						   :disabled="selectedDocumentIds.length === 0">删除</el-button>
 			</div>
 
@@ -132,27 +132,27 @@
 								</el-tooltip>
 							</div>
 							<div style="display: flex;align-items: center;color: #5E17EB">
-								<el-dropdown trigger="click">
+								<el-dropdown trigger="click" @command="handleCommand($event, scope.row)">
 									<el-icon color="#5E17EB">
 										<component :is="menusIcon"></component>
 									</el-icon>
 									<template #dropdown>
 										<el-dropdown-menu>
-											<el-dropdown-item>
+											<el-dropdown-item command="question">
 												<el-icon>
 													<component :is="questionIcon"></component>
 												</el-icon>
 												生成问题
 											</el-dropdown-item>
-											<el-dropdown-item>
+											<el-dropdown-item command="transfer">
 												<el-icon>
 													<component :is="switchIcon"></component>
 												</el-icon> 迁移</el-dropdown-item>
-											<el-dropdown-item>
+											<el-dropdown-item command="exportExcel">
 												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出Excel</el-dropdown-item>
-											<el-dropdown-item>
+											<el-dropdown-item command="exportZip">
 												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出ZIP</el-dropdown-item>
-											<el-dropdown-item>
+											<el-dropdown-item command="del">
 												<el-icon>
 													<component :is="delIcon"></component>
 												</el-icon> 删除</el-dropdown-item>
@@ -318,6 +318,15 @@ export default {
 				this.$message.error(res.msg)
 			}
 		},
+		// 操作栏
+		handleCommand(event, row) {
+			switch (event) {
+				case 'del':
+					this.selectedDocumentIds = [row.documentId]
+					this.delDocument()
+					break;
+			}
+		},
 		// 设置单个文档
 		settingOne(row) {
 			console.log(row)
@@ -346,6 +355,26 @@ export default {
 			} else {
 				this.$message.error(res.msg)
 			}
+		},
+		// 删除文档
+		async delDocument() {
+			if (this.selectedDocumentIds.length === 0) {
+				this.$message.error('请勾选文档')
+				return false
+			}
+
+			this.$confirm('此操作将永久删除这些文档 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(async () => {
+				let res = await this.$API.document.del.get({documentIds: this.selectedDocumentIds.join(",")})
+				if (res.code === 0) {
+					this.getList()
+				} else {
+					this.$message.error(res.msg)
+				}
+			}).catch(() => {});
 		}
 	}
 }

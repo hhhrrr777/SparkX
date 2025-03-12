@@ -9,9 +9,13 @@
 // +----------------------------------------------------------------------
 package sparkai.service.mapper.dataset;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import sparkai.common.core.IBaseMapper;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
+
+import java.util.List;
 
 /**
  * 文档段落表 Mapper
@@ -19,4 +23,14 @@ import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
 @Mapper
 public interface KnowledgeParagraphMapper extends IBaseMapper<KnowledgeParagraphEntity> {
 
+    @Delete({
+            "<script>",
+            "DELETE FROM knowledge_paragraph",
+            "WHERE document_id IN",
+            "<foreach item='id' collection='list' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void deleteByDocumentIds(@Param("list") List<String> documentIds);
 }

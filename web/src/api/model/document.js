@@ -37,4 +37,11 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
+	del: {
+		url: `${config.API_URL}/document/del`,
+		name: "删除文档",
+		get: async function(data={}){
+			return await http.get(this.url, data);
+		}
+	},
 }
