@@ -29,5 +29,12 @@ export default {
 		get: async function(data={}){
 			return await http.get(this.url, data);
 		}
-	}
+	},
+	setting: {
+		url: `${config.API_URL}/document/setting`,
+		name: "设置文档",
+		post: async function(data={}){
+			return await http.post(this.url, data);
+		}
+	},
 }

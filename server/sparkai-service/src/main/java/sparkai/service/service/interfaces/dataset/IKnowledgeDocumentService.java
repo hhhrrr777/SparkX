@@ -49,4 +49,10 @@ public interface IKnowledgeDocumentService {
      * @param documentIds String
      */
     void doEmbedding(String documentIds);
+
+    /**
+     * 设置模型
+     * @param settingVo DocumentSettingVo
+     */
+    void setDocument(DocumentSettingVo settingVo);
 }

@@ -66,11 +66,6 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             DocumentListVo vo = new DocumentListVo();
             BeanUtils.copyProperties(entity, vo);
 
-            // 分段数
-            vo.setParagraphNum(entity.getParagraphNum());
-            // 命中处理方式
-            vo.setHitDealType(entity.getAnswerType());
-
             datasetVoList.add(vo);
         }
 
@@ -184,6 +179,24 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
                 // 执行向量化
                 task.executeAsyncTask(documentId);
             }
+        }
+    }
+
+    /**
+     * 设置模型
+     * @param settingVo DocumentSettingVo
+     */
+    @Override
+    public void setDocument(DocumentSettingVo settingVo) {
+
+        String[] documentIds = settingVo.getDocumentIds().split(",");
+        for (String documentId : documentIds) {
+
+            KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(documentId);
+            documentInfo.setAnswerType(settingVo.getAnswerType());
+            documentInfo.setRedirectSimilar(settingVo.getRedirectSimilar());
+
+            knowledgeDocumentMapper.updateById(documentInfo);
         }
     }
 }

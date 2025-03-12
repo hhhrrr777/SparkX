@@ -3,11 +3,16 @@
 		<div class="search-box">
 			<div>
 				<el-button type="primary" icon="el-icon-UploadFilled" @click="uploadFile" style="margin-top: -10px;">上传文档</el-button>
-				<el-button type="primary" icon="el-icon-Switch" @click="uploadFile" style="margin-top: -10px;">迁移文档</el-button>
-				<el-button type="primary" @click="embeddingAll" style="margin-top: -10px;"><span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量文档</el-button>
-				<el-button type="primary" icon="el-icon-QuestionFilled" @click="uploadFile" style="margin-top: -10px;">生成问题</el-button>
-				<el-button type="primary" icon="el-icon-Setting" @click="uploadFile" style="margin-top: -10px;">设置</el-button>
-				<el-button type="primary" icon="el-icon-Delete" @click="uploadFile" style="margin-top: -10px;">删除</el-button>
+				<el-button type="primary" icon="el-icon-Switch" @click="uploadFile" style="margin-top: -10px;"
+						   :disabled="selectedDocumentIds.length === 0">迁移文档</el-button>
+				<el-button type="primary" @click="embeddingAll" style="margin-top: -10px;" :disabled="selectedDocumentIds.length === 0">
+					<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量文档</el-button>
+				<el-button type="primary" icon="el-icon-QuestionFilled" @click="uploadFile" style="margin-top: -10px;"
+						   :disabled="selectedDocumentIds.length === 0">生成问题</el-button>
+				<el-button type="primary" icon="el-icon-Setting" @click="setting" style="margin-top: -10px;"
+						   :disabled="selectedDocumentIds.length === 0">设置</el-button>
+				<el-button type="primary" icon="el-icon-Delete" @click="uploadFile" style="margin-top: -10px;"
+						   :disabled="selectedDocumentIds.length === 0">删除</el-button>
 			</div>
 
 			<el-form :inline="true" :model="searchForm" class="demo-form-inline">
@@ -90,8 +95,8 @@
 					width="100"
 					label="命中处理">
 					<template #default="scope">
-						<el-tag type="success" v-if="scope.row.hitDealType === 'model'">模型优化</el-tag>
-						<el-tag type="danger" v-if="scope.row.hitDealType === 'direct'">直接返回</el-tag>
+						<el-tag type="success" v-if="scope.row.answerType === 'model'">模型优化</el-tag>
+						<el-tag type="danger" v-if="scope.row.answerType === 'direct'">直接返回</el-tag>
 					</template>
 				</el-table-column>
 				<el-table-column
@@ -119,7 +124,7 @@
 									<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>
 								</el-tooltip>
 							</div>
-							<div style="margin-right: 8px;display: flex;align-items: center">
+							<div style="margin-right: 8px;display: flex;align-items: center" @click="settingOne(scope.row)">
 								<el-tooltip class="item" content="设置">
 									<el-icon size="14">
 										<component :is="settingIcon" />
@@ -172,9 +177,27 @@
 		:title="documentTitle"
 		:direction="direction"
 	>
-		<paragraph :document-id="nowDocumentId" :dataset-id="datasetId"></paragraph>
+		<paragraph :document-id="nowDocumentId" :dataset-id="datasetId" :key="nowDocumentId"></paragraph>
 	</el-drawer>
 
+	<!-- 设置 -->
+	<el-dialog title="设置命中模式" v-model="dialogVisible" width="500px" destroy-on-close :close-on-click-modal="false">
+		<el-form :model="settingForm" label-width="10px">
+			<el-form-item label="">
+				<el-radio v-model="settingForm.answerType" label="model">模型优化</el-radio>
+				<el-radio v-model="settingForm.answerType" label="direct">直接回答</el-radio>
+			</el-form-item>
+			<el-form-item v-if="settingForm.answerType === 'direct'">
+				相似度高于&nbsp;&nbsp;<el-input-number v-model="settingForm.redirectSimilar" :min="0" :precision="3"></el-input-number>&nbsp;&nbsp; 直接返回分段内容
+			</el-form-item>
+		</el-form>
+		<template #footer>
+			<div class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="optSubmit" :loading="loading">确 定</el-button>
+			</div>
+		</template>
+	</el-dialog>
 </template>
 
 <script>
@@ -207,6 +230,14 @@ export default {
 			drawer: false,
 			documentTitle: "",
 			nowDocumentId: "",
+			selectedDocumentIds: [], // 已选择的文档
+			dialogVisible: false,
+			loading: false,
+			settingForm: {
+				documentIds: "",
+				answerType: "model",
+				redirectSimilar: 0.900
+			}
 		}
 	},
 	mounted() {
@@ -283,6 +314,35 @@ export default {
 				setTimeout(() => {
 					this.getList()
 				}, 1000)
+			} else {
+				this.$message.error(res.msg)
+			}
+		},
+		// 设置单个文档
+		settingOne(row) {
+			console.log(row)
+			this.settingForm.documentIds = row.documentId
+			this.settingForm.answerType = row.answerType
+			this.settingForm.redirectSimilar = row.redirectSimilar
+			this.dialogVisible = true
+		},
+		// 设置文档
+		setting() {
+			if (this.selectedDocumentIds.length === 0) {
+				this.$message.error('请勾选文档')
+				return false
+			}
+
+			this.settingForm.documentIds = this.selectedDocumentIds.join(",")
+			this.dialogVisible = true
+		},
+		// 提交设置
+		async optSubmit() {
+			let res = await this.$API.document.setting.post(this.settingForm)
+			if (res.code === 0) {
+				this.$message.success(res.msg)
+				this.getList()
+				this.dialogVisible = false
 			} else {
 				this.$message.error(res.msg)
 			}

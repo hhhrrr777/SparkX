@@ -118,7 +118,11 @@
 				<div class="document-preview">
 					<div class="title">分段预览</div>
 					<div class="file-title-list scrollbar-flex-content">
-						<div class="file-title-item active" v-for="(item, index) in segmentTitle" :key="index">
+						<div class="file-title-item" :class="{active: index === nowFileIndex}"
+							 v-for="(item, index) in segmentTitle" :key="index"
+							 @click="
+							 nowFileIndex = index;
+							 nowSegmentData = segmentData[nowFileIndex]">
 							<el-icon size="16">
 								<component :is="fileIcon"/>
 							</el-icon>
@@ -127,8 +131,9 @@
 					</div>
 
 					<div class="preview-list">
-						<div class="item-count">共 {{ segmentData[nowFileIndex]?.length }} 个片段</div>
-						<div class="preview-item" v-for="(item, index) in segmentData[nowFileIndex]" :key="index">
+						<div class="item-count">共 {{ nowSegmentData.length }} 个片段</div>
+
+						<div class="preview-item" v-for="(item, index) in nowSegmentData" :key="index">
 							<div class="too-bar">
 								<div class="item-no">#{{ index + 1 }}</div>
 								<div class="tool-box">
@@ -194,7 +199,8 @@ export default {
 			segmentTitle: [],
 			segmentData: [],
 			documentList: [],
-			datasetId: ''
+			datasetId: '',
+			nowSegmentData: []
 		}
 	},
 	mounted() {
@@ -241,6 +247,8 @@ export default {
 				this.segmentTitle.push(doc.name)
 				this.segmentData.push(doc.content)
 			})
+
+			this.nowSegmentData = this.segmentData[this.nowFileIndex]
 		},
 		// 上一步
 		preStep() {

@@ -108,7 +108,6 @@ export default {
 				content: ""
 			},
 			loading: false,
-			selectedDocumentIds: [],
 			modeType: 'add',
 			menusIcon: 'el-icon-MoreFilled',
 			settingIcon: 'el-icon-Setting',

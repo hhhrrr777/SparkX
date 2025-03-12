@@ -223,8 +223,7 @@ CREATE TABLE "public"."system_users" (
     "status" int2 DEFAULT 1,
     "create_time" timestamp(6),
     "update_time" timestamp(0)
-)
-;
+);
 
 ALTER TABLE "public"."system_users"
     OWNER TO "postgres";

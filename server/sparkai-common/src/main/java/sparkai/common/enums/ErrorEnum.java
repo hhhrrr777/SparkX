@@ -13,8 +13,8 @@ public enum ErrorEnum {
 
     SHOW_MSG(1, "显示信息"),
     HIDE_MSG(0, "隐藏信息"),
-    SUCCESS(0, "成功"),
-    FAILED(-1, "失败"),
+    SUCCESS(0, "操作成功"),
+    FAILED(-1, "操作失败"),
     PARAMS_VALID_ERROR(0, "参数校验错误"),
     PARAMS_TYPE_ERROR(0, "参数类型错误"),
     REQUEST_METHOD_ERROR(0, "请求方法错误"),

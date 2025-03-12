@@ -63,4 +63,14 @@ public class DocumentController {
         iKnowledgeDocumentService.doEmbedding(documentIds);
         return AjaxResult.success();
     }
+
+    /**
+     * 设置应答模式
+     */
+    @PostMapping("/setting")
+    public AjaxResult<Object> setting(@RequestBody DocumentSettingVo settingVo) {
+
+        iKnowledgeDocumentService.setDocument(settingVo);
+        return AjaxResult.success();
+    }
 }
