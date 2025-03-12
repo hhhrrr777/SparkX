@@ -15,11 +15,11 @@
 			</el-steps>
 			<div class="upload-box" v-if="active === 0">
 				<h4 class="title">上传文档</h4>
-				<el-button-group :round="true" class="btn-group">
-					<el-button type="primary">文本文件</el-button>
-					<el-button>Excel表格</el-button>
-					<el-button>QA 问答对</el-button>
-				</el-button-group>
+				<el-radio-group v-model="fileType" class="btn-group">
+					<el-radio-button label="txt">文本文件</el-radio-button>
+					<el-radio-button label="table">Excel表格</el-radio-button>
+					<el-radio-button label="QA">QA 问答对</el-radio-button>
+				</el-radio-group>
 				<div class="notice-box">
 					<p>1、文件上传前，建议规范文件的分段标识</p>
 					<p>2、每次最多上传 50 个文件，每个文件不超过 100MB</p>
@@ -200,7 +200,8 @@ export default {
 			segmentData: [],
 			documentList: [],
 			datasetId: '',
-			nowSegmentData: []
+			nowSegmentData: [],
+			fileType: 'txt'
 		}
 	},
 	mounted() {
@@ -282,7 +283,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .go-back {
 	width: 200px;
 	height: 30px;
@@ -302,6 +303,25 @@ export default {
 }
 .btn-group {
 	margin-top: 20px;
+	border: 1px solid #bbbfc4;
+	border-radius: 4px;
+}
+.btn-group .el-radio-button {
+	padding: 3px;
+}
+.btn-group .el-radio-button__inner {
+	border: none !important;
+	border-radius: 4px !important;
+	padding: 5px 8px;
+	font-weight: 400;
+	font-size: 13px !important;
+}
+.btn-group .el-radio-button__original-radio:checked + .el-radio-button__inner {
+	color: #5E17EB !important;
+	background: #EEE7FD !important;
+	border: none !important;
+	box-shadow: none !important;
+	font-weight: 500;
 }
 .notice-box {
 	background: #eee7fd;
