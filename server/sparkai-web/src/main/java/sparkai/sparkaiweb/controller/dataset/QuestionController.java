@@ -63,4 +63,14 @@ public class QuestionController {
         iKnowledgeQuestionService.doRelation(relationVo);
         return AjaxResult.success();
     }
+
+    /**
+     * 问题关联的文档、段落
+     */
+    @GetMapping("/getRelationData")
+    public AjaxResult<List<QuestionParagraphDataVo>> getRelationData(@RequestParam("questionId") String questionId,
+                                                                @RequestParam("datasetId") String datasetId) {
+
+        return AjaxResult.success(iKnowledgeQuestionService.getRelationDataList(questionId, datasetId));
+    }
 }

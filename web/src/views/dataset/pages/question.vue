@@ -71,21 +71,21 @@
                         <div style="display: flex;align-items: center;color: #5E17EB;cursor: pointer">
                             <div style="margin-right: 8px;display: flex;align-items: center" @click="linkParagraph(scope.row)">
                                 <el-tooltip class="item" content="关联">
-                                    <el-icon size="14">
+                                    <el-icon size="16">
                                         <component :is="linkIcon" />
                                     </el-icon>
                                 </el-tooltip>
                             </div>
                             <div style="margin-right: 8px;display: flex;align-items: center">
                                 <el-tooltip class="item" content="编辑">
-                                    <el-icon size="14">
+                                    <el-icon size="16">
                                         <component :is="editIcon" />
                                     </el-icon>
                                 </el-tooltip>
                             </div>
                             <div style="margin-right: 8px;display: flex;align-items: center">
                                 <el-tooltip class="item" content="删除">
-                                    <el-icon size="14">
+                                    <el-icon size="16">
                                         <component :is="delIcon" />
                                     </el-icon>
                                 </el-tooltip>
@@ -115,18 +115,30 @@
         </template>
     </el-dialog>
 
-	<!-- 关联问题 -->
-	<el-dialog title="关联分段" v-model="linkVisible" width="1000px" ref="save2Dialog" :close-on-click-modal="false">
-		<link-paragraph :dataset-id="linkForm.datasetId" :question-ids="linkForm.questionIds" :key="randomKey"></link-paragraph>
-	</el-dialog>
+    <!-- 关联问题 -->
+    <el-dialog title="关联分段" v-model="linkVisible" width="1000px" ref="save2Dialog" :close-on-click-modal="false">
+        <link-paragraph :dataset-id="linkForm.datasetId" :question-ids="linkForm.questionIds" :key="randomKey"></link-paragraph>
+    </el-dialog>
+
+    <!-- 关联的段落 -->
+    <el-drawer
+        size="1000"
+        v-model="drawer"
+        title="问题关联信息"
+        :direction="direction"
+    >
+        <question-link :question-id="nowQuestionId" :dataset-id="form.datasetId" :title="title" :key="nowQuestionId"></question-link>
+    </el-drawer>
 </template>
 
 <script>
 import Pages from "@/components/pages/index.vue";
 import linkParagraph from "@/components/linkParagraph/index.vue";
+import Paragraph from "@/views/dataset/pages/docsub/paragraph.vue";
+import questionLink from "@/views/dataset/pages/docsub/questionLink.vue"
 
 export default {
-    components: {Pages, linkParagraph},
+    components: {Paragraph, Pages, linkParagraph, questionLink},
     data() {
         return {
             searchForm: {
@@ -154,7 +166,11 @@ export default {
                 questionIds: "",
                 datasetId: ""
             },
-            randomKey: 0
+            randomKey: 0,
+            drawer: false,
+            direction: "rtl",
+            nowQuestionId: "",
+            title: ""
         }
     },
     mounted() {
@@ -186,7 +202,9 @@ export default {
         },
         // 显示问题
         showQuestion(row) {
-
+            this.nowQuestionId = row.questionId
+            this.title = row.content
+            this.drawer = true
         },
         // 添加问题
         async optSubmit() {
@@ -203,7 +221,7 @@ export default {
         handleSelectionChange(row) {
             this.selectedQuestionId = []
             row.forEach(item => {
-                this.selectedQuestionId.push(item.question_id)
+                this.selectedQuestionId.push(item.questionId)
             })
         },
         // 翻页

@@ -33,5 +33,13 @@ export default {
 
 			return await http.post(this.url, data);
 		}
-	}
+	},
+	getRelationData: {
+		url: `${config.API_URL}/question/getRelationData`,
+		name: "获取问题关联信息",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
+	},
 }

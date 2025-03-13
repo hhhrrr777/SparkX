@@ -12,9 +12,11 @@ import sparkai.common.enums.SourceType;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
+import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
 import sparkai.service.entity.dataset.KnowledgeQuestionEntity;
 import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
 import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
+import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
 import sparkai.service.mapper.dataset.KnowledgeQuestionMapper;
 import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeQuestionService;
@@ -24,6 +26,7 @@ import sparkai.service.vo.question.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
@@ -39,6 +42,8 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
 
     @Autowired
     EmbeddingQuestionTask questionTask;
+    @Autowired
+    private KnowledgeParagraphMapper knowledgeParagraphMapper;
 
     @Override
     public PageResult<QuestionListVo> getQuestionList(QuestionQueryVo queryVo) {
@@ -165,5 +170,39 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
                         .eq("paragraph_id", relationVo.getParagraphId()));
             }
         }
+    }
+
+    /**
+     * 获取问题关联信息
+     * @param questionId String
+     * @param datasetId String
+     * @return List<QuestionParagraphDataVo>
+     */
+    @Override
+    public List<QuestionParagraphDataVo> getRelationDataList(String questionId, String datasetId) {
+
+        List<KnowledgeQuestionParagraphEntity> relationList = knowledgeQuestionParagraphMapper.selectList(
+                new QueryWrapper<KnowledgeQuestionParagraphEntity>()
+                .eq("question_id", questionId)
+                .eq("dataset_id", datasetId));
+
+        List<String> questionIdsList = relationList.stream().map(KnowledgeQuestionParagraphEntity::getParagraphId)
+                .collect(Collectors.toList());
+
+        List<QuestionParagraphDataVo> returnList = new LinkedList<>();
+        if (questionIdsList. size() > 0) {
+            List<KnowledgeParagraphEntity> questionList = knowledgeParagraphMapper.selectByIds(questionIdsList);
+            for (KnowledgeParagraphEntity entity : questionList) {
+
+                QuestionParagraphDataVo vo = new QuestionParagraphDataVo();
+                vo.setTitle(entity.getTitle());
+                vo.setContent(entity.getContent());
+                vo.setParagraphId(entity.getParagraphId());
+
+                returnList.add(vo);
+            }
+        }
+
+        return returnList;
     }
 }
