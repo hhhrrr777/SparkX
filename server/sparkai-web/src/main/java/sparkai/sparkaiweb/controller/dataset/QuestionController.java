@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.dataset.IKnowledgeQuestionService;
-import sparkai.service.vo.question.QuestionListVo;
-import sparkai.service.vo.question.QuestionQueryVo;
-import sparkai.service.vo.question.QuestionRelationVo;
-import sparkai.service.vo.question.QuestionSaveVo;
+import sparkai.service.vo.question.*;
 
 import java.util.List;
 
@@ -51,9 +48,10 @@ public class QuestionController {
      * 问题关联的文档、段落
      */
     @GetMapping("/getRelation")
-    public AjaxResult<List<QuestionRelationVo>> getRelation(@RequestParam("questionId") String questionId) {
+    public AjaxResult<List<QuestionRelationListVo>> getRelation(@RequestParam("questionIds") String questionIds,
+                                                                @RequestParam("datasetId") String datasetId) {
 
-        return AjaxResult.success(iKnowledgeQuestionService.getRelationList(questionId));
+        return AjaxResult.success(iKnowledgeQuestionService.getRelationList(questionIds, datasetId));
     }
 
     /**

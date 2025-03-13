@@ -4,7 +4,7 @@
             <div>
                 <el-button icon="el-icon-plus" style="margin-top: -10px;" type="primary" @click="add">创建问题
                 </el-button>
-                <el-button :disabled="selectedQuestionIds.length === 0" icon="el-icon-Setting"
+                <el-button :disabled="selectedQuestionIds.length === 0" icon="el-icon-link"
                            style="margin-top: -10px;"
                            type="primary"
                            @click="setting">关联分段
@@ -117,7 +117,7 @@
 
 	<!-- 关联问题 -->
 	<el-dialog title="关联分段" v-model="linkVisible" width="1000px" ref="save2Dialog" :close-on-click-modal="false">
-		<link-paragraph :dataset-id="linkForm.datasetId" :question-id="linkForm.questionId" :key="randomKey"></link-paragraph>
+		<link-paragraph :dataset-id="linkForm.datasetId" :question-ids="linkForm.questionIds" :key="randomKey"></link-paragraph>
 	</el-dialog>
 </template>
 
@@ -149,12 +149,12 @@ export default {
             editIcon: "el-icon-edit",
             linkIcon: "el-icon-link",
             delIcon: "el-icon-delete",
-			linkVisible: false,
-			linkForm: {
-				questionId: "",
-				datasetId: ""
-			},
-			randomKey: 0
+            linkVisible: false,
+            linkForm: {
+                questionIds: "",
+                datasetId: ""
+            },
+            randomKey: 0
         }
     },
     mounted() {
@@ -211,13 +211,13 @@ export default {
             this.searchForm.page = page;
             this.getList();
         },
-		// 链接
-		linkParagraph(row) {
-			this.randomKey = Math.random()
-			this.linkForm.datasetId = this.$route.query.datasetId
-			this.linkForm.questionId = row.questionId
-			this.linkVisible = true
-		}
+        // 链接
+        linkParagraph(row) {
+            this.randomKey = Math.random()
+            this.linkForm.datasetId = this.$route.query.datasetId
+            this.linkForm.questionIds = row.questionId
+            this.linkVisible = true
+        }
     }
 }
 </script>

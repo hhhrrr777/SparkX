@@ -19,11 +19,9 @@ import sparkai.service.mapper.dataset.KnowledgeQuestionMapper;
 import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeQuestionService;
 import sparkai.service.task.EmbeddingQuestionTask;
-import sparkai.service.vo.question.QuestionListVo;
-import sparkai.service.vo.question.QuestionQueryVo;
-import sparkai.service.vo.question.QuestionRelationVo;
-import sparkai.service.vo.question.QuestionSaveVo;
+import sparkai.service.vo.question.*;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -83,6 +81,13 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
         }
 
         String[] questionList = questionSaveVo.getContent().split("\n");
+        // 长度检测
+        for (String question : questionList) {
+            if (question.length() > 255) {
+                throw new BusinessException("问题长度不得超过255个字符");
+            }
+        }
+
         for (String question : questionList) {
 
             KnowledgeQuestionEntity questionEntity = new KnowledgeQuestionEntity();
@@ -98,20 +103,23 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
 
     /**
      * 获取关联信息
-     * @param questionId String
-     * @return List<QuestionRelationVo>
+     * @param questionIds String
+     * @param datasetId String
+     * @return List<QuestionRelationListVo>
      */
     @Override
-    public List<QuestionRelationVo> getRelationList(String questionId) {
+    public List<QuestionRelationListVo> getRelationList(String questionIds, String datasetId) {
 
+        List<String> questionIdsList = Arrays.asList(questionIds.split(","));
         List<KnowledgeQuestionParagraphEntity> relationList =
                 knowledgeQuestionParagraphMapper.selectList(new QueryWrapper<KnowledgeQuestionParagraphEntity>()
-                        .eq("question_id", questionId));
+                                .eq("dataset_id", datasetId)
+                                .in("question_id", questionIdsList));
 
-        List<QuestionRelationVo> returnList = new LinkedList<>();
+        List<QuestionRelationListVo> returnList = new LinkedList<>();
         for (KnowledgeQuestionParagraphEntity entity : relationList) {
 
-            QuestionRelationVo vo = new QuestionRelationVo();
+            QuestionRelationListVo vo = new QuestionRelationListVo();
             BeanUtils.copyProperties(entity, vo);
 
             returnList.add(vo);
@@ -127,31 +135,35 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
     @Override
     public void doRelation(QuestionRelationVo relationVo) {
 
-        // 新增段落关联
-        if (relationVo.getType().equals(1)) {
-            KnowledgeQuestionParagraphEntity questionParagraph = new KnowledgeQuestionParagraphEntity();
-            questionParagraph.setUuid(IdUtil.randomUUID());
-            questionParagraph.setDatasetId(relationVo.getDatasetId());
-            questionParagraph.setDocumentId(relationVo.getDocumentId());
-            questionParagraph.setParagraphId(relationVo.getParagraphId());
-            questionParagraph.setQuestionId(relationVo.getQuestionId());
-            questionParagraph.setCreateTime(Tool.nowDateTime());
+        String[] questionList = relationVo.getQuestionIds().split(",");
 
-            knowledgeQuestionParagraphMapper.insert(questionParagraph);
+        for (String questionId : questionList) {
+            // 新增段落关联
+            if (relationVo.getType().equals(1)) {
+                KnowledgeQuestionParagraphEntity questionParagraph = new KnowledgeQuestionParagraphEntity();
+                questionParagraph.setUuid(IdUtil.randomUUID());
+                questionParagraph.setDatasetId(relationVo.getDatasetId());
+                questionParagraph.setDocumentId(relationVo.getDocumentId());
+                questionParagraph.setParagraphId(relationVo.getParagraphId());
+                questionParagraph.setQuestionId(questionId);
+                questionParagraph.setCreateTime(Tool.nowDateTime());
 
-            // 向量化问题
-            questionTask.executeAsyncTask(relationVo.getQuestionId(), relationVo.getParagraphId(), relationVo.getDocumentId());
-        } else { // 删除关联
+                knowledgeQuestionParagraphMapper.insert(questionParagraph);
 
-            knowledgeQuestionParagraphMapper.delete(new QueryWrapper<KnowledgeQuestionParagraphEntity>()
-                    .eq("question_id", relationVo.getQuestionId())
-                    .eq("paragraph_id", relationVo.getParagraphId()));
+                // 向量化问题
+                questionTask.executeAsyncTask(questionId, relationVo.getParagraphId(), relationVo.getDocumentId());
+            } else { // 删除关联
 
-            // 删除embedding数据
-            knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>()
-                    .eq("source_type", SourceType.QUESTION.getCode())
-                    .eq("source_id", relationVo.getQuestionId())
-                    .eq("paragraph_id", relationVo.getParagraphId()));
+                knowledgeQuestionParagraphMapper.delete(new QueryWrapper<KnowledgeQuestionParagraphEntity>()
+                        .eq("question_id", questionId)
+                        .eq("paragraph_id", relationVo.getParagraphId()));
+
+                // 删除embedding数据
+                knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>()
+                        .eq("source_type", SourceType.QUESTION.getCode())
+                        .eq("source_id", questionId)
+                        .eq("paragraph_id", relationVo.getParagraphId()));
+            }
         }
     }
 }

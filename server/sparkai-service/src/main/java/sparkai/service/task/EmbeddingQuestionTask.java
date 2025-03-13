@@ -22,9 +22,6 @@ import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
 public class EmbeddingQuestionTask {
 
     @Autowired
-    KnowledgeQuestionParagraphMapper knowledgeQuestionParagraphMapper;
-
-    @Autowired
     KnowledgeQuestionMapper knowledgeQuestionMapper;
 
     @Autowired
@@ -48,7 +45,7 @@ public class EmbeddingQuestionTask {
             // 删除旧的关联
             knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>()
                     .eq("source_type", SourceType.QUESTION.getCode())
-                    .eq("question_id", questionId)
+                    .eq("source_id", questionId)
                     .eq("paragraph_id", paragraphId));
 
             // 开始向量化，并入库

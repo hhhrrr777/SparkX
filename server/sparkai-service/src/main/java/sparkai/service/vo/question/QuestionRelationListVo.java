@@ -6,7 +6,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
-public class QuestionRelationVo implements Serializable {
+public class QuestionRelationListVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -29,10 +29,5 @@ public class QuestionRelationVo implements Serializable {
     /**
      * 关联的问题
      */
-    private String questionIds;
-
-    /**
-     * 操作类型 1:新增 2:删除
-     */
-    private Integer type;
+    private String questionId;
 }

@@ -16,15 +16,10 @@ import sparkai.common.enums.StatusEnum;
 import sparkai.common.utils.MarkChunk;
 import sparkai.common.utils.Tool;
 import sparkai.common.utils.TsVectorGenerator;
-import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
-import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
-import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
-import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
-import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
-import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
-import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
-import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
+import sparkai.service.entity.dataset.*;
+import sparkai.service.mapper.dataset.*;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +38,9 @@ public class EmbeddingDocumentTask {
 
     @Autowired
     KnowledgeQuestionParagraphMapper knowledgeQuestionParagraphMapper;
+
+    @Autowired
+    private KnowledgeQuestionMapper knowledgeQuestionMapper;
 
     @Autowired
     MarkChunk markChunk;
@@ -134,10 +132,33 @@ public class EmbeddingDocumentTask {
         List<KnowledgeQuestionParagraphEntity> relationList = knowledgeQuestionParagraphMapper.selectList(
                 new QueryWrapper<KnowledgeQuestionParagraphEntity>()
                         .eq("paragraph_id", paragraph.getParagraphId()));
+
+        // 查出段落问题信息
         List<String> questionIds = relationList.stream().map(KnowledgeQuestionParagraphEntity::getQuestionId).toList();
+        List<KnowledgeQuestionEntity> questionList = knowledgeQuestionMapper.selectByIds(questionIds);
 
-        for (String questionId : questionIds) {
+        HashMap<String, KnowledgeQuestionEntity> questionId2Info = new HashMap<>();
+        for (KnowledgeQuestionEntity question : questionList) {
+            questionId2Info.put(question.getQuestionId(), question);
+        }
 
+        for (KnowledgeQuestionParagraphEntity relation : relationList) {
+
+            // 开始向量化，并入库
+            KnowledgeEmbeddingEntity embeddingEntity = new KnowledgeEmbeddingEntity();
+            embeddingEntity.setEmbeddingId(IdUtil.randomUUID());
+            embeddingEntity.setDatasetId(relation.getDatasetId());
+            embeddingEntity.setDocumentId(relation.getDocumentId());
+            embeddingEntity.setParagraphId(relation.getParagraphId());
+            String content = questionId2Info.get(relation.getQuestionId()).getContent();
+            embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
+            embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
+            embeddingEntity.setActive(StatusEnum.YES.getCode());
+            embeddingEntity.setSourceType(SourceType.QUESTION.getCode()); // 来源问题
+            embeddingEntity.setSourceId(relation.getQuestionId()); // 来源id
+            embeddingEntity.setCreateTime(Tool.nowDateTime());
+
+            knowledgeEmbeddingMapper.insert(embeddingEntity);
         }
     }
 }

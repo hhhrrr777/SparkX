@@ -11,8 +11,8 @@
 				@select="handleSelect"
 			></el-autocomplete>
 			<div class="document-item"
-				 @click="selectDocument(item)"
-				 v-for="item in documentList" :key="item.documentId"
+				 @click="selectDocument(item, index)"
+				 v-for="(item, index) in documentList" :key="item.documentId"
 				 :class="{'document-active': item.documentId === this.selectedDocumentId}">
 				<span style="width: 200px;" class="line1">{{ item.name }}</span>
 				<span class="label" v-if="item.linkNum > 0">{{ item.linkNum }}</span>
@@ -43,7 +43,7 @@ export default {
 			type: String,
 			default: ''
 		},
-		questionId: {
+		questionIds: {
 			type: String,
 			default: ''
 		}
@@ -53,7 +53,8 @@ export default {
 			documentList: [],
 			paragraphList: [],
 			selectedDocumentId: "",
-			searchTitle: ""
+			searchTitle: "",
+			nowDocumentIndex: 0
 		}
 	},
 	mounted() {
@@ -62,9 +63,37 @@ export default {
 	methods: {
 		// 获取关联
 		async getRelationList() {
-			let res = await this.$API.question.getRelation.get({questionId: this.questionId})
+			let res = await this.$API.question.getRelation.get({questionIds: this.questionIds, datasetId: this.datasetId})
 			let relationData = res.data
 			// 计算信息
+			let document2Map = new Map();
+			relationData.forEach(item => {
+				let arr = document2Map.get(item.documentId)
+				if (arr && arr.length > 0) {
+					arr.push(item.paragraphId)
+					document2Map.set(item.documentId, arr)
+				} else {
+					arr = []
+					arr.push(item.paragraphId)
+					document2Map.set(item.documentId, arr)
+				}
+			});
+
+			// 确定文档关联的段落数
+			this.documentList.forEach((item, index) => {
+				this.documentList[index].linkNum = 0
+				if (document2Map.get(item.documentId)) {
+					this.documentList[index].linkNum = document2Map.get(item.documentId).length
+				}
+			})
+
+			// 确定选择的段落
+			let documentId = this.documentList[this.nowDocumentIndex].documentId
+			let selectedParagraph = document2Map.get(documentId)
+
+			this.paragraphList.forEach((item, index) => {
+				this.paragraphList[index].relationed = !!selectedParagraph?.includes(item.paragraphId);
+			})
 		},
 		// 获取文档列表
 		async getDocumentList() {
@@ -96,6 +125,7 @@ export default {
 
 			let type = 1
 			if (this.paragraphList[index].relationed) {
+				type = 2
 				this.paragraphList[index].relationed = false
 			} else {
 				this.paragraphList[index].relationed = true
@@ -111,7 +141,7 @@ export default {
 
 			let res = await this.$API.question.doRelation.post({
 				datasetId: this.datasetId,
-				questionId: this.questionId,
+				questionIds: this.questionIds,
 				documentId: this.selectedDocumentId,
 				paragraphId: row.paragraphId,
 				type: type, // 1:新增 2:删除
@@ -125,7 +155,8 @@ export default {
 			}
 		},
 		// 选择文档
-		selectDocument(row) {
+		selectDocument(row, index) {
+			this.nowDocumentIndex = index
 			this.selectedDocumentId = row.documentId
 			this.getParagraphList()
 		},

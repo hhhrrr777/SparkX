@@ -10,10 +10,7 @@
 package sparkai.service.service.interfaces.dataset;
 
 import sparkai.common.core.PageResult;
-import sparkai.service.vo.question.QuestionListVo;
-import sparkai.service.vo.question.QuestionQueryVo;
-import sparkai.service.vo.question.QuestionRelationVo;
-import sparkai.service.vo.question.QuestionSaveVo;
+import sparkai.service.vo.question.*;
 
 import java.util.List;
 
@@ -42,10 +39,11 @@ public interface IKnowledgeQuestionService {
 
     /**
      * 获取关联信息
-     * @param questionId String
-     * @return List<QuestionRelationVo>
+     * @param questionIds String
+     * @param datasetId String
+     * @return List<QuestionRelationListVo>
      */
-    List<QuestionRelationVo> getRelationList(String questionId);
+    List<QuestionRelationListVo> getRelationList(String questionIds, String datasetId);
 
     /**
      * 关联问题-段落
