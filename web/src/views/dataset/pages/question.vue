@@ -152,9 +152,7 @@ export default {
 			linkVisible: false,
 			linkForm: {
 				questionId: "",
-				datasetId: "",
-				documentId: "",
-				paragraphId: ""
+				datasetId: ""
 			},
 			randomKey: 0
         }

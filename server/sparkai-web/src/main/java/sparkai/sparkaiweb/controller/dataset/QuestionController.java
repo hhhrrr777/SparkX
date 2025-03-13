@@ -50,9 +50,19 @@ public class QuestionController {
     /**
      * 问题关联的文档、段落
      */
-    @GetMapping("/relation")
+    @GetMapping("/getRelation")
     public AjaxResult<List<QuestionRelationVo>> getRelation(@RequestParam("questionId") String questionId) {
 
         return AjaxResult.success(iKnowledgeQuestionService.getRelationList(questionId));
+    }
+
+    /**
+     * 问题关联的文档、段落
+     */
+    @PostMapping("/doRelation")
+    public AjaxResult<Object> doRelation(@RequestBody QuestionRelationVo relationVo) {
+
+        iKnowledgeQuestionService.doRelation(relationVo);
+        return AjaxResult.success();
     }
 }

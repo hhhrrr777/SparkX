@@ -46,4 +46,10 @@ public interface IKnowledgeQuestionService {
      * @return List<QuestionRelationVo>
      */
     List<QuestionRelationVo> getRelationList(String questionId);
+
+    /**
+     * 关联问题-段落
+     * @param relationVo QuestionRelationVo
+     */
+    void doRelation(QuestionRelationVo relationVo);
 }

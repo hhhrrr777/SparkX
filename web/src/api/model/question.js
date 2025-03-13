@@ -19,11 +19,19 @@ export default {
 		}
 	},
 	getRelation: {
-		url: `${config.API_URL}/question/relation`,
+		url: `${config.API_URL}/question/getRelation`,
 		name: "获取问题关联信息",
 		get: async function(data={}){
 
 			return await http.get(this.url, data);
+		}
+	},
+	doRelation: {
+		url: `${config.API_URL}/question/doRelation`,
+		name: "关联问题",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
 		}
 	}
 }

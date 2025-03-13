@@ -1,6 +1,5 @@
 package sparkai.service.vo.question;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serial;
@@ -31,4 +30,9 @@ public class QuestionRelationVo implements Serializable {
      * 关联的问题
      */
     private String questionId;
+
+    /**
+     * 操作类型 1:新增 2:删除
+     */
+    private Integer type;
 }

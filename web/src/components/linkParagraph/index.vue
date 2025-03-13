@@ -19,7 +19,11 @@
 			</div>
 		</div>
 		<div class="paragraph-list">
-			<div class="paragraph-item" v-for="item in paragraphList" :key="item.paragraphId">
+			<div class="paragraph-item"
+				 :class="{active: item.relationed}"
+				 v-for="(item, index) in paragraphList"
+				 :key="item.paragraphId"
+				 @click="linkParagraph(item, index)">
 				<div class="paragraph-title">
 					<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 					<div class="title-left line1" v-else>--</div>
@@ -87,6 +91,39 @@ export default {
 
 			this.getRelationList()
 		},
+		// 关联分段
+		async linkParagraph(row, index) {
+
+			let type = 1
+			if (this.paragraphList[index].relationed) {
+				this.paragraphList[index].relationed = false
+			} else {
+				this.paragraphList[index].relationed = true
+			}
+
+			const loading = this.$loading({
+				customClass: 'loading-class',
+				lock: true,
+				text: '关联中...',
+				spinner: 'el-icon-loading',
+				background: 'rgba(0, 0, 0, 0.8)'
+			});
+
+			let res = await this.$API.question.doRelation.post({
+				datasetId: this.datasetId,
+				questionId: this.questionId,
+				documentId: this.selectedDocumentId,
+				paragraphId: row.paragraphId,
+				type: type, // 1:新增 2:删除
+			})
+
+			loading.close()
+			if (res.code === 0) {
+				this.$message.success(res.msg)
+			} else {
+				this.$message.error(res.msg)
+			}
+		},
 		// 选择文档
 		selectDocument(row) {
 			this.selectedDocumentId = row.documentId
@@ -111,7 +148,11 @@ export default {
 	}
 }
 </script>
-
+<style>
+.loading-class .el-loading-text {
+	color: #fff !important;
+}
+</style>
 <style scoped>
 .link-box {
 	width: 100%;
