@@ -19,12 +19,15 @@ import sparkai.common.utils.TsVectorGenerator;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
+import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
 import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
 import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
+import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmbeddingDocumentTask {
@@ -39,6 +42,9 @@ public class EmbeddingDocumentTask {
     KnowledgeEmbeddingMapper knowledgeEmbeddingMapper;
 
     @Autowired
+    KnowledgeQuestionParagraphMapper knowledgeQuestionParagraphMapper;
+
+    @Autowired
     MarkChunk markChunk;
 
     private EmbeddingModel embeddingModel;
@@ -51,7 +57,8 @@ public class EmbeddingDocumentTask {
     public void executeAsyncTask(String documentId) {
 
         // 查询文档所属的段落
-        List<KnowledgeParagraphEntity> paragraphEntityList = knowledgeParagraphMapper.selectList(new QueryWrapper<KnowledgeParagraphEntity>()
+        List<KnowledgeParagraphEntity> paragraphEntityList = knowledgeParagraphMapper.selectList(
+                new QueryWrapper<KnowledgeParagraphEntity>()
                 .eq("document_id", documentId).eq("active", StatusEnum.YES.getCode()));
 
         if (!CollectionUtils.isEmpty(paragraphEntityList)) {
@@ -123,6 +130,14 @@ public class EmbeddingDocumentTask {
             knowledgeEmbeddingMapper.insert(embeddingEntity);
         }
 
-        // TODO 段落关联的问题，也得重新索引
+        // 段落关联的问题，也得重新索引
+        List<KnowledgeQuestionParagraphEntity> relationList = knowledgeQuestionParagraphMapper.selectList(
+                new QueryWrapper<KnowledgeQuestionParagraphEntity>()
+                        .eq("paragraph_id", paragraph.getParagraphId()));
+        List<String> questionIds = relationList.stream().map(KnowledgeQuestionParagraphEntity::getQuestionId).toList();
+
+        for (String questionId : questionIds) {
+
+        }
     }
 }
