@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ElAlert: typeof import('element-plus/es')['ElAlert']
+    ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
@@ -58,6 +59,7 @@ declare module 'vue' {
     ElPagination: typeof import('element-plus/es')['ElPagination']
     ElPopover: typeof import('element-plus/es')['ElPopover']
     ElRadio: typeof import('element-plus/es')['ElRadio']
+    ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElResult: typeof import('element-plus/es')['ElResult']
     ElRow: typeof import('element-plus/es')['ElRow']
@@ -76,6 +78,7 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    LinkParagraph: typeof import('./src/components/linkParagraph/index.vue')['default']
     Pages: typeof import('./src/components/pages/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

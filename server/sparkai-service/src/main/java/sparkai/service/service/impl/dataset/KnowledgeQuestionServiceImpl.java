@@ -17,6 +17,7 @@ import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeQuestionService;
 import sparkai.service.vo.question.QuestionListVo;
 import sparkai.service.vo.question.QuestionQueryVo;
+import sparkai.service.vo.question.QuestionRelationVo;
 import sparkai.service.vo.question.QuestionSaveVo;
 
 import java.util.LinkedList;
@@ -83,5 +84,29 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
 
             knowledgeQuestionMapper.insert(questionEntity);
         }
+    }
+
+    /**
+     * 获取关联信息
+     * @param questionId String
+     * @return List<QuestionRelationVo>
+     */
+    @Override
+    public List<QuestionRelationVo> getRelationList(String questionId) {
+
+        List<KnowledgeQuestionParagraphEntity> relationList =
+                knowledgeQuestionParagraphMapper.selectList(new QueryWrapper<KnowledgeQuestionParagraphEntity>()
+                        .eq("question_id", questionId));
+
+        List<QuestionRelationVo> returnList = new LinkedList<>();
+        for (KnowledgeQuestionParagraphEntity entity : relationList) {
+
+            QuestionRelationVo vo = new QuestionRelationVo();
+            BeanUtils.copyProperties(entity, vo);
+
+            returnList.add(vo);
+        }
+
+        return returnList;
     }
 }

@@ -16,7 +16,10 @@ import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.dataset.IKnowledgeQuestionService;
 import sparkai.service.vo.question.QuestionListVo;
 import sparkai.service.vo.question.QuestionQueryVo;
+import sparkai.service.vo.question.QuestionRelationVo;
 import sparkai.service.vo.question.QuestionSaveVo;
+
+import java.util.List;
 
 @RequestMapping("/api/question")
 @RestController
@@ -42,5 +45,14 @@ public class QuestionController {
 
         iKnowledgeQuestionService.addQuestion(questionSaveVo);
         return AjaxResult.success();
+    }
+
+    /**
+     * 问题关联的文档、段落
+     */
+    @GetMapping("/relation")
+    public AjaxResult<List<QuestionRelationVo>> getRelation(@RequestParam("questionId") String questionId) {
+
+        return AjaxResult.success(iKnowledgeQuestionService.getRelationList(questionId));
     }
 }

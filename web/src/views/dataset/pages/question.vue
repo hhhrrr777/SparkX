@@ -69,7 +69,7 @@
                     width="120">
                     <template #default="scope">
                         <div style="display: flex;align-items: center;color: #5E17EB;cursor: pointer">
-                            <div style="margin-right: 8px;display: flex;align-items: center">
+                            <div style="margin-right: 8px;display: flex;align-items: center" @click="linkParagraph(scope.row)">
                                 <el-tooltip class="item" content="关联">
                                     <el-icon size="14">
                                         <component :is="linkIcon" />
@@ -114,13 +114,19 @@
             </div>
         </template>
     </el-dialog>
+
+	<!-- 关联问题 -->
+	<el-dialog title="关联分段" v-model="linkVisible" width="1000px" ref="save2Dialog" :close-on-click-modal="false">
+		<link-paragraph :dataset-id="linkForm.datasetId" :question-id="linkForm.questionId" :key="randomKey"></link-paragraph>
+	</el-dialog>
 </template>
 
 <script>
 import Pages from "@/components/pages/index.vue";
+import linkParagraph from "@/components/linkParagraph/index.vue";
 
 export default {
-    components: {Pages},
+    components: {Pages, linkParagraph},
     data() {
         return {
             searchForm: {
@@ -143,6 +149,14 @@ export default {
             editIcon: "el-icon-edit",
             linkIcon: "el-icon-link",
             delIcon: "el-icon-delete",
+			linkVisible: false,
+			linkForm: {
+				questionId: "",
+				datasetId: "",
+				documentId: "",
+				paragraphId: ""
+			},
+			randomKey: 0
         }
     },
     mounted() {
@@ -198,7 +212,14 @@ export default {
         handlePageChange(page) {
             this.searchForm.page = page;
             this.getList();
-        }
+        },
+		// 链接
+		linkParagraph(row) {
+			this.randomKey = Math.random()
+			this.linkForm.datasetId = this.$route.query.datasetId
+			this.linkForm.questionId = row.questionId
+			this.linkVisible = true
+		}
     }
 }
 </script>
