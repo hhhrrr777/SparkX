@@ -5,7 +5,7 @@
 			<div class="paragraph-title">
 				<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 				<div class="title-left line1" v-else>--</div>
-				<el-tooltip class="item" content="取消关联">
+				<el-tooltip class="item" content="取消关联" @click="unLink(item)">
 					<span class="iconfont icon-link-unlink" style="font-size: 20px;margin-right: 5px;color: #5E17EB"></span>
 				</el-tooltip>
 			</div>
