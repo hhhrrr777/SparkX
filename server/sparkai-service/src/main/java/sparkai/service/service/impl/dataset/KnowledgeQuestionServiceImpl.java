@@ -190,7 +190,7 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
                 .collect(Collectors.toList());
 
         List<QuestionParagraphDataVo> returnList = new LinkedList<>();
-        if (questionIdsList. size() > 0) {
+        if (!questionIdsList.isEmpty()) {
             List<KnowledgeParagraphEntity> questionList = knowledgeParagraphMapper.selectByIds(questionIdsList);
             for (KnowledgeParagraphEntity entity : questionList) {
 
