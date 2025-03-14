@@ -16,7 +16,7 @@
 						<div class="add-item-box">
 							<div class="add-icon">
 								<el-icon class="icon-color">
-									<component :is="plusIcon"></component>
+									<Plus />
 								</el-icon>
 							</div>
 							<div class="add-store-name"> 创建知识库</div>
@@ -61,7 +61,7 @@
 							<div class="tool-box-right">
 								<el-dropdown trigger="click">
 									<el-icon>
-										<component :is="menusIcon"></component>
+										<MoreFilled />
 									</el-icon>
 									<template #dropdown>
 										<el-dropdown-menu>
@@ -70,7 +70,7 @@
 											</el-dropdown-item>
 											<el-dropdown-item>
 												<el-icon>
-													<component :is="settingIcon"></component>
+													<Setting />
 												</el-icon> 设置</el-dropdown-item>
 											<el-dropdown-item>
 												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出Excel</el-dropdown-item>
@@ -78,7 +78,7 @@
 												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出ZIP</el-dropdown-item>
 											<el-dropdown-item>
 												<el-icon>
-													<component :is="delIcon"></component>
+													<Delete />
 												</el-icon> 删除</el-dropdown-item>
 										</el-dropdown-menu>
 									</template>
@@ -98,9 +98,14 @@
 <script>
 import saveDialog from '@/views/dataset/save.vue';
 import Pages from "@/components/pages/index.vue";
+import {Delete, MoreFilled, Plus, Setting} from "@element-plus/icons-vue";
 
 export default{
 	components: {
+		Delete,
+		Setting,
+		MoreFilled,
+		Plus,
 		saveDialog,
 		Pages
 	},
@@ -114,11 +119,6 @@ export default{
 			page: {
 				total: 0
 			},
-			plusIcon: 'el-icon-plus',
-			menusIcon: 'el-icon-MoreFilled',
-			settingIcon: 'el-icon-setting',
-			downloadIcon: 'el-icon-Download',
-			delIcon: 'el-icon-Delete',
 			storeList: [],
 			dialogVisible: false,
 		}

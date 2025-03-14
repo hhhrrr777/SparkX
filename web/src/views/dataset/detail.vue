@@ -4,36 +4,36 @@
 			<el-row class="detail-box">
 				<el-col :span="3" class="box-height-left">
 					<div class="menu-bar">
-						<el-icon style="font-size: 18px" @click="goBack">
-							<component :is="backIcon"/>
+						<el-icon size="18" @click="goBack">
+							<Back />
 						</el-icon>
 						<el-popover placement="bottom" :width="250" trigger="click">
 							<template #reference>
 								<div style="display: flex;width: calc(100% - 20px)">
 									<div class="dataset-title line1">
 										<el-icon style="font-size: 18px;margin-right: 5px;margin-top: 5px;top:4px;">
-											<component :is="datasetIcon"/>
+											<Collection />
 										</el-icon>这是一个测文档
 									</div>
 									<el-icon style="font-size: 18px">
-										<component :is="downIcon"/>
+										<CaretBottom />
 									</el-icon>
 								</div>
 							</template>
 							<div class="dataset-list">
 								<div class="dataset-item">
 									<el-icon style="font-size: 18px;margin-right: 5px">
-										<component :is="datasetIcon"/>
+										<Collection />
 									</el-icon>这是一个测文档
 								</div>
 								<div class="dataset-item">
 									<el-icon style="font-size: 18px;margin-right: 5px">
-										<component :is="datasetIcon"/>
+										<Collection />
 									</el-icon>这是一个测文档
 								</div>
 								<div class="dataset-item" style="border-top: 1px solid #e2e2e2;">
 									<el-icon style="font-size: 18px;margin-right: 5px">
-										<component :is="plusIcon"/>
+										<Collection />
 									</el-icon> 创建知识库
 								</div>
 							</div>
@@ -44,13 +44,13 @@
 						default-active="1">
 						<el-menu-item index="1" @click="handleClick(1)">
 							<el-icon>
-								<component :is="documentIcon"/>
+								<Document />
 							</el-icon>
 							<span>文档管理</span>
 						</el-menu-item>
 						<el-menu-item index="2" @click="handleClick(2)">
 							<el-icon>
-								<component :is="questionIcon"/>
+								<QuestionFilled />
 							</el-icon>
 							<span>问题管理</span>
 						</el-menu-item>
@@ -60,7 +60,7 @@
 						</el-menu-item>
 						<el-menu-item index="4" @click="handleClick(4)">
 							<el-icon>
-								<component :is="settingIcon"/>
+								<Setting />
 							</el-icon>
 							<span>编辑知识库</span>
 						</el-menu-item>
@@ -85,17 +85,12 @@
 
 <script>
 import {defineAsyncComponent} from "vue";
+import {Back, CaretBottom, Collection, Document, QuestionFilled, Setting} from "@element-plus/icons-vue";
 
 export default {
+	components: {CaretBottom, Collection, Back, Document, QuestionFilled, Setting},
 	data() {
 		return {
-			documentIcon: 'el-icon-Document',
-			settingIcon: 'el-icon-Setting',
-			questionIcon: 'el-icon-QuestionFilled',
-			backIcon: 'el-icon-Back',
-			downIcon: 'el-icon-CaretBottom',
-			datasetIcon: 'el-icon-Collection',
-			plusIcon: 'el-icon-Plus',
 			components: {
 				document: defineAsyncComponent(() => import('./pages/document.vue')),
 				question: defineAsyncComponent(() => import('./pages/question.vue')),

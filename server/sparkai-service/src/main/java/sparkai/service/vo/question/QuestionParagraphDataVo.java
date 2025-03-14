@@ -25,4 +25,9 @@ public class QuestionParagraphDataVo implements Serializable {
      * 段落id
      */
     private String paragraphId;
+
+    /**
+     * 所属文档id
+     */
+    private String documentId;
 }

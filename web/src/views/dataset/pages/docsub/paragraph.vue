@@ -14,24 +14,24 @@
 				<span>{{ (item.content).length }} 字符</span>
 				<el-dropdown trigger="click" @command="handleCommand($event, item)">
 					<el-icon color="#5E17EB">
-						<component :is="menusIcon"></component>
+						<MoreFilled />
 					</el-icon>
 					<template #dropdown>
 						<el-dropdown-menu>
 							<el-dropdown-item command="question">
 								<el-icon>
-									<component :is="questionIcon"></component>
+									<QuestionFilled />
 								</el-icon>
 								生成问题
 							</el-dropdown-item>
 							<el-dropdown-item command="transfer">
 								<el-icon>
-									<component :is="switchIcon"></component>
+									<Switch />
 								</el-icon> 迁移
 							</el-dropdown-item>
 							<el-dropdown-item command="del">
 								<el-icon>
-									<component :is="delIcon"></component>
+									<Delete />
 								</el-icon> 删除</el-dropdown-item>
 						</el-dropdown-menu>
 					</template>
@@ -71,9 +71,10 @@
 
 <script>
 import Pages from "@/components/pages/index.vue"
+import {Delete, MoreFilled, QuestionFilled, Switch} from "@element-plus/icons-vue";
 
 export default {
-	components: {Pages},
+	components: {Delete, Pages, MoreFilled, QuestionFilled, Switch},
 	props: {
 		documentId: {
 			type: String,
@@ -108,12 +109,7 @@ export default {
 				content: ""
 			},
 			loading: false,
-			modeType: 'add',
-			menusIcon: 'el-icon-MoreFilled',
-			settingIcon: 'el-icon-Setting',
-			questionIcon: 'el-icon-QuestionFilled',
-			delIcon: 'el-icon-Delete',
-			switchIcon: 'el-icon-Switch',
+			modeType: 'add'
 		}
 	},
 	mounted() {

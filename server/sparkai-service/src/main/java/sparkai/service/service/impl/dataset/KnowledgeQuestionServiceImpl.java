@@ -198,6 +198,7 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
                 vo.setTitle(entity.getTitle());
                 vo.setContent(entity.getContent());
                 vo.setParagraphId(entity.getParagraphId());
+                vo.setDocumentId(entity.getDocumentId());
 
                 returnList.add(vo);
             }

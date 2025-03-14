@@ -62,7 +62,7 @@
 						<span v-if="scope.row.status === 1" style="color: #999;cursor: pointer">待生成</span>
 						<span v-if="scope.row.status === 2" style="display: flex;align-items: center;color: #409EFF;cursor: pointer">
 							<el-icon class="custom-loading-icon">
-								<component :is="embeddingIcon" />
+								<Loading />
 							</el-icon>
 							向量化中
 						</span>
@@ -76,7 +76,7 @@
 						<span v-if="scope.row.questionStatus === 1" style="color: #999;cursor: pointer">待生成</span>
 						<span v-if="scope.row.questionStatus === 2" style="display: flex;align-items: center;color: #409EFF;cursor: pointer">
 							<el-icon class="custom-loading-icon">
-								<component :is="embeddingIcon" />
+								<Loading />
 							</el-icon>
 							生成中
 						</span>
@@ -127,26 +127,26 @@
 							<div style="margin-right: 8px;display: flex;align-items: center" @click="settingOne(scope.row)">
 								<el-tooltip class="item" content="设置">
 									<el-icon size="14">
-										<component :is="settingIcon" />
+										<Setting />
 									</el-icon>
 								</el-tooltip>
 							</div>
 							<div style="display: flex;align-items: center;color: #5E17EB">
 								<el-dropdown trigger="click" @command="handleCommand($event, scope.row)">
 									<el-icon color="#5E17EB">
-										<component :is="menusIcon"></component>
+										<MoreFilled />
 									</el-icon>
 									<template #dropdown>
 										<el-dropdown-menu>
 											<el-dropdown-item command="question">
 												<el-icon>
-													<component :is="questionIcon"></component>
+													<QuestionFilled />
 												</el-icon>
 												生成问题
 											</el-dropdown-item>
 											<el-dropdown-item command="transfer">
 												<el-icon>
-													<component :is="switchIcon"></component>
+													<Switch />
 												</el-icon> 迁移</el-dropdown-item>
 											<el-dropdown-item command="exportExcel">
 												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出Excel</el-dropdown-item>
@@ -154,7 +154,7 @@
 												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出ZIP</el-dropdown-item>
 											<el-dropdown-item command="del">
 												<el-icon>
-													<component :is="delIcon"></component>
+													<Delete />
 												</el-icon> 删除</el-dropdown-item>
 										</el-dropdown-menu>
 									</template>
@@ -203,9 +203,10 @@
 <script>
 import Pages from "@/components/pages/index.vue";
 import Paragraph from "@/views/dataset/pages/docsub/paragraph.vue";
+import {Delete, Loading, MoreFilled, QuestionFilled, Setting, Switch} from "@element-plus/icons-vue";
 
 export default {
-	components: {Paragraph, Pages},
+	components: {Delete, Switch, QuestionFilled, MoreFilled, Setting, Loading, Paragraph, Pages},
 	data() {
 		return {
 			tableData: [],
@@ -219,13 +220,6 @@ export default {
 				total: 0
 			},
 			datasetId: '',
-			embeddingIcon: 'el-icon-Loading',
-			menusIcon: 'el-icon-MoreFilled',
-			settingIcon: 'el-icon-Setting',
-			questionIcon: 'el-icon-QuestionFilled',
-			delIcon: 'el-icon-Delete',
-			switchIcon: 'el-icon-Switch',
-			editIcon: 'el-icon-Edit',
 			direction: "rtl",
 			drawer: false,
 			documentTitle: "",

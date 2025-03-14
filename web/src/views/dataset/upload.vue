@@ -2,7 +2,7 @@
 	<el-container style="padding: 20px">
 		<div class="go-back"  @click="goBack" style="cursor: pointer">
 			<el-icon style="font-size: 18px">
-				<component :is="backIcon"/>
+				<Back />
 			</el-icon>
 			<span style="margin-left: 10px;font-size: 16px;">返回</span>
 		</div>
@@ -51,7 +51,7 @@
 					multiple
 				>
 					<el-icon size="48">
-						<component :is="uploadIcon"/>
+						<UploadFilled />
 					</el-icon>
 					<div class="el-upload__text">
 						拖拽文件至此上传或 <em>选择文件</em>
@@ -69,7 +69,7 @@
 							</div>
 						</div>
 						<el-icon size="16" style="cursor: pointer" @click="delFile(index)">
-							<component :is="delIcon"/>
+							<Delete />
 						</el-icon>
 					</div>
 				</div>
@@ -95,7 +95,7 @@
 												<span>自定义分隔符</span>
 												<el-tooltip class="item" effect="dark" content="填写你的文档的特殊的分段标识，来提高分段的精确性。" placement="bottom">
 													<el-icon>
-														<component :is="infoIcon"></component>
+														<InfoFilled />
 													</el-icon>
 												</el-tooltip>
 											</template>
@@ -135,7 +135,7 @@
 							 nowFileIndex = index;
 							 nowSegmentData = segmentData[nowFileIndex]">
 							<el-icon size="16">
-								<component :is="fileIcon"/>
+								<Document />
 							</el-icon>
 							<span style="margin-left: 5px">{{ item }}</span>
 						</div>
@@ -149,10 +149,10 @@
 								<div class="item-no">#{{ index + 1 }}</div>
 								<div class="tool-box">
 									<el-icon size="16">
-										<component :is="editIcon"/>
+										<Edit />
 									</el-icon>
 									<el-icon size="16" style="margin-left: 10px">
-										<component :is="delIcon"/>
+										<Delete />
 									</el-icon>
 								</div>
 							</div>
@@ -184,17 +184,13 @@
 
 <script>
 import config from "@/config"
+import {Back, Delete, InfoFilled, UploadFilled, Document, Edit} from "@element-plus/icons-vue";
 
 export default {
+	components: {InfoFilled, Delete, UploadFilled, Back, Document, Edit},
 	data() {
 		return {
 			active: 0,
-			backIcon: 'el-icon-Back',
-			uploadIcon: 'el-icon-UploadFilled',
-			delIcon: 'el-icon-delete',
-			fileIcon: 'el-icon-Document',
-			editIcon: 'el-icon-Edit',
-			infoIcon: 'el-icon-InfoFilled',
 			fileList: [],
 			uploadUrl: config.API_URL + '/document/preview',
 			isUpload: false,

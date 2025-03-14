@@ -135,30 +135,33 @@ public class EmbeddingDocumentTask {
 
         // 查出段落问题信息
         List<String> questionIds = relationList.stream().map(KnowledgeQuestionParagraphEntity::getQuestionId).toList();
-        List<KnowledgeQuestionEntity> questionList = knowledgeQuestionMapper.selectByIds(questionIds);
+        if (!questionIds.isEmpty()) {
 
-        HashMap<String, KnowledgeQuestionEntity> questionId2Info = new HashMap<>();
-        for (KnowledgeQuestionEntity question : questionList) {
-            questionId2Info.put(question.getQuestionId(), question);
-        }
+            List<KnowledgeQuestionEntity> questionList = knowledgeQuestionMapper.selectByIds(questionIds);
 
-        for (KnowledgeQuestionParagraphEntity relation : relationList) {
+            HashMap<String, KnowledgeQuestionEntity> questionId2Info = new HashMap<>();
+            for (KnowledgeQuestionEntity question : questionList) {
+                questionId2Info.put(question.getQuestionId(), question);
+            }
 
-            // 开始向量化，并入库
-            KnowledgeEmbeddingEntity embeddingEntity = new KnowledgeEmbeddingEntity();
-            embeddingEntity.setEmbeddingId(IdUtil.randomUUID());
-            embeddingEntity.setDatasetId(relation.getDatasetId());
-            embeddingEntity.setDocumentId(relation.getDocumentId());
-            embeddingEntity.setParagraphId(relation.getParagraphId());
-            String content = questionId2Info.get(relation.getQuestionId()).getContent();
-            embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
-            embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
-            embeddingEntity.setActive(StatusEnum.YES.getCode());
-            embeddingEntity.setSourceType(SourceType.QUESTION.getCode()); // 来源问题
-            embeddingEntity.setSourceId(relation.getQuestionId()); // 来源id
-            embeddingEntity.setCreateTime(Tool.nowDateTime());
+            for (KnowledgeQuestionParagraphEntity relation : relationList) {
 
-            knowledgeEmbeddingMapper.insert(embeddingEntity);
+                // 开始向量化，并入库
+                KnowledgeEmbeddingEntity embeddingEntity = new KnowledgeEmbeddingEntity();
+                embeddingEntity.setEmbeddingId(IdUtil.randomUUID());
+                embeddingEntity.setDatasetId(relation.getDatasetId());
+                embeddingEntity.setDocumentId(relation.getDocumentId());
+                embeddingEntity.setParagraphId(relation.getParagraphId());
+                String content = questionId2Info.get(relation.getQuestionId()).getContent();
+                embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
+                embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
+                embeddingEntity.setActive(StatusEnum.YES.getCode());
+                embeddingEntity.setSourceType(SourceType.QUESTION.getCode()); // 来源问题
+                embeddingEntity.setSourceId(relation.getQuestionId()); // 来源id
+                embeddingEntity.setCreateTime(Tool.nowDateTime());
+
+                knowledgeEmbeddingMapper.insert(embeddingEntity);
+            }
         }
     }
 }

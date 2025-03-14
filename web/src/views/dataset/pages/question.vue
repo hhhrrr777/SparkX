@@ -38,10 +38,15 @@
                 <el-table-column
                     label="问题">
                     <template #default="scope">
-                        <span style="cursor: pointer" @click="showQuestion(scope.row)">{{ scope.row.content }}</span>
-                        <el-icon style="margin-left: 5px;cursor: pointer">
-                            <component :is="editIcon" />
-                        </el-icon>
+						<div v-if="scope.$index === nowIndex" style="display:flex;align-items: center;">
+							<el-input v-model="scope.row.content" clearable style="width: 400px;"></el-input>
+							<el-icon size="18" style="margin-left: 10px"><Check /></el-icon>
+							<el-icon size="18" style="margin-left: 10px"><Close /></el-icon>
+						</div>
+						<div v-else>
+							<span style="cursor: pointer" @click="showQuestion(scope.row)">{{ scope.row.content }}</span>
+							<el-icon style="margin-left: 5px;cursor: pointer" @click="editContent(scope.$index, scope.row)"><Edit /></el-icon>
+						</div>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -71,23 +76,12 @@
                         <div style="display: flex;align-items: center;color: #5E17EB;cursor: pointer">
                             <div style="margin-right: 8px;display: flex;align-items: center" @click="linkParagraph(scope.row)">
                                 <el-tooltip class="item" content="关联">
-                                    <el-icon size="16">
-                                        <component :is="linkIcon" />
-                                    </el-icon>
-                                </el-tooltip>
-                            </div>
-                            <div style="margin-right: 8px;display: flex;align-items: center">
-                                <el-tooltip class="item" content="编辑">
-                                    <el-icon size="16">
-                                        <component :is="editIcon" />
-                                    </el-icon>
+									<el-icon size="16"><Link /></el-icon>
                                 </el-tooltip>
                             </div>
                             <div style="margin-right: 8px;display: flex;align-items: center">
                                 <el-tooltip class="item" content="删除">
-                                    <el-icon size="16">
-                                        <component :is="delIcon" />
-                                    </el-icon>
+									<el-icon size="16"><Delete /></el-icon>
                                 </el-tooltip>
                             </div>
                         </div>
@@ -127,7 +121,7 @@
         title="问题关联信息"
         :direction="direction"
     >
-        <question-link :question-id="nowQuestionId" :dataset-id="form.datasetId" :title="title" :key="nowQuestionId"></question-link>
+        <question-link :question-id="nowQuestionId" :dataset-id="form.datasetId" :title="title" :key="randomKey"></question-link>
     </el-drawer>
 </template>
 
@@ -136,9 +130,10 @@ import Pages from "@/components/pages/index.vue";
 import linkParagraph from "@/components/linkParagraph/index.vue";
 import Paragraph from "@/views/dataset/pages/docsub/paragraph.vue";
 import questionLink from "@/views/dataset/pages/docsub/questionLink.vue"
+import {Check, Close, Link, Edit, Delete} from "@element-plus/icons-vue";
 
 export default {
-    components: {Paragraph, Pages, linkParagraph, questionLink},
+    components: {Delete, Close, Check, Paragraph, Pages, Link, Edit, linkParagraph, questionLink},
     data() {
         return {
             searchForm: {
@@ -158,9 +153,6 @@ export default {
                 content: ""
             },
             loading: false,
-            editIcon: "el-icon-edit",
-            linkIcon: "el-icon-link",
-            delIcon: "el-icon-delete",
             linkVisible: false,
             linkForm: {
                 questionIds: "",
@@ -170,7 +162,12 @@ export default {
             drawer: false,
             direction: "rtl",
             nowQuestionId: "",
-            title: ""
+            title: "",
+			nowIndex: -1,
+			editForm: {
+				questionId: "",
+				content: ""
+			}
         }
     },
     mounted() {
@@ -200,8 +197,15 @@ export default {
         del() {
 
         },
+		// 编辑content内容
+		async editContent(index, row) {
+			this.editForm.content = row.content
+			this.editForm.questionId = row.questionId
+			this.nowIndex = index
+		},
         // 显示问题
         showQuestion(row) {
+			this.randomKey = Math.random()
             this.nowQuestionId = row.questionId
             this.title = row.content
             this.drawer = true

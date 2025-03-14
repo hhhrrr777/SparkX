@@ -5,8 +5,8 @@
 			<div class="paragraph-title">
 				<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 				<div class="title-left line1" v-else>--</div>
-				<el-tooltip class="item" content="取消关联" @click="unLink(item)">
-					<span class="iconfont icon-link-unlink" style="font-size: 20px;margin-right: 5px;color: #5E17EB"></span>
+				<el-tooltip class="item" content="取消关联">
+					<span class="iconfont icon-link-unlink" style="font-size: 20px;margin-right: 5px;color: #5E17EB" @click="unLink(item)"></span>
 				</el-tooltip>
 			</div>
 			<div class="paragraph-doc">
@@ -46,6 +46,22 @@ export default {
 		async getRelinkList() {
 			let res = await this.$API.question.getRelationData.get({questionId: this.questionId, datasetId: this.datasetId})
 			this.paragraphList = res.data
+		},
+		// 取消关联
+		async unLink(row) {
+			let res = await this.$API.question.doRelation.post({
+				datasetId: this.datasetId,
+				questionIds: this.questionId,
+				documentId: row.documentId,
+				paragraphId: row.paragraphId,
+				type: 2, // 1:新增 2:删除
+			})
+			if (res.code === 0) {
+				this.$message.success(res.msg)
+				this.getRelinkList()
+			} else {
+				this.$message.error(res.msg)
+			}
 		}
 	}
 }
