@@ -5,6 +5,9 @@
 			<div class="paragraph-title">
 				<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 				<div class="title-left line1" v-else>--</div>
+				<el-tooltip class="item" content="取消关联">
+					<span class="iconfont icon-link-unlink" style="font-size: 20px;margin-right: 5px;color: #5E17EB"></span>
+				</el-tooltip>
 			</div>
 			<div class="paragraph-doc">
 				{{ item.content }}
@@ -84,7 +87,7 @@ export default {
 }
 .paragraph-doc {
 	width: 100%;
-	height: calc(100% - 71px);
+	height: calc(100% - 40px);
 	padding: 5px 0;
 	overflow: hidden;
 	color: #606266;
