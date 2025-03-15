@@ -59,6 +59,7 @@ export default {
 			if (res.code === 0) {
 				this.$message.success(res.msg)
 				this.getRelinkList()
+				this.$emit("unLinkComplete")
 			} else {
 				this.$message.error(res.msg)
 			}

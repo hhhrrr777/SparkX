@@ -15,7 +15,7 @@
 				 v-for="(item, index) in documentList" :key="item.documentId"
 				 :class="{'document-active': item.documentId === this.selectedDocumentId}">
 				<span style="width: 200px;" class="line1">{{ item.name }}</span>
-				<span class="label" v-if="item.linkNum > 0">{{ item.linkNum }}</span>
+				<span class="label" v-if="item.linkNum > 0 && showNum">{{ item.linkNum }}</span>
 			</div>
 		</div>
 		<div class="paragraph-list">
@@ -46,6 +46,10 @@ export default {
 		questionIds: {
 			type: String,
 			default: ''
+		},
+		showNum: {
+			type: Boolean,
+			default: true
 		}
 	},
 	data() {
@@ -150,6 +154,7 @@ export default {
 			loading.close()
 			if (res.code === 0) {
 				this.$message.success(res.msg)
+				this.$emit("linkComplete")
 			} else {
 				this.$message.error(res.msg)
 			}

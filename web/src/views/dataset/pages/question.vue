@@ -116,7 +116,7 @@
 
     <!-- 关联问题 -->
     <el-dialog title="关联分段" v-model="linkVisible" width="1000px" ref="save2Dialog" :close-on-click-modal="false">
-        <link-paragraph :dataset-id="linkForm.datasetId" :question-ids="linkForm.questionIds" :key="randomKey"></link-paragraph>
+        <link-paragraph :dataset-id="linkForm.datasetId" :question-ids="linkForm.questionIds" :key="randomKey" :show-num="showNum" @linkComplete="getList"></link-paragraph>
     </el-dialog>
 
     <!-- 关联的段落 -->
@@ -126,7 +126,7 @@
         title="问题关联信息"
         :direction="direction"
     >
-        <question-link :question-id="nowQuestionId" :dataset-id="form.datasetId" :title="title" :key="randomKey"></question-link>
+        <question-link :question-id="nowQuestionId" :dataset-id="form.datasetId" :title="title" :key="randomKey" @unLinkComplete="$emit('linkComplete')"></question-link>
     </el-drawer>
 </template>
 
@@ -172,7 +172,8 @@ export default {
 			editForm: {
 				questionId: "",
 				content: ""
-			}
+			},
+			showNum: true
         }
     },
     mounted() {
@@ -183,6 +184,7 @@ export default {
     methods: {
         // 获取列表
         async getList() {
+			console.log('xxx', '穿法')
             let res = await this.$API.question.list.get(this.searchForm)
             this.tableData = res.data.data
             this.page.total = res.data.total
@@ -205,6 +207,7 @@ export default {
 			this.linkForm.datasetId = this.$route.query.datasetId
 			this.linkForm.questionIds =this.selectedQuestionId.join(",")
 			this.linkVisible = true
+			this.showNum = false
         },
         // 批量删除
         delAll() {
@@ -265,6 +268,7 @@ export default {
         },
         // 链接
         linkParagraph(row) {
+			this.showNum = true
             this.randomKey = Math.random()
             this.linkForm.datasetId = this.$route.query.datasetId
             this.linkForm.questionIds = row.questionId

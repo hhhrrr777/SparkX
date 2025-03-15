@@ -146,18 +146,26 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
         for (String questionId : questionList) {
             // 新增段落关联
             if (relationVo.getType().equals(1)) {
-                KnowledgeQuestionParagraphEntity questionParagraph = new KnowledgeQuestionParagraphEntity();
-                questionParagraph.setUuid(IdUtil.randomUUID());
-                questionParagraph.setDatasetId(relationVo.getDatasetId());
-                questionParagraph.setDocumentId(relationVo.getDocumentId());
-                questionParagraph.setParagraphId(relationVo.getParagraphId());
-                questionParagraph.setQuestionId(questionId);
-                questionParagraph.setCreateTime(Tool.nowDateTime());
+                // 牵扯到批量操作的情况，此处防止重复添加
+                KnowledgeQuestionParagraphEntity questionParagraphRes = knowledgeQuestionParagraphMapper.selectOne(
+                        new QueryWrapper<KnowledgeQuestionParagraphEntity>().eq("question_id", questionId)
+                                .eq("paragraph_id", relationVo.getParagraphId()));
 
-                knowledgeQuestionParagraphMapper.insert(questionParagraph);
+                if (questionParagraphRes == null) {
 
-                // 向量化问题
-                questionTask.executeAsyncTask(questionId, relationVo.getParagraphId(), relationVo.getDocumentId());
+                    KnowledgeQuestionParagraphEntity questionParagraph = new KnowledgeQuestionParagraphEntity();
+                    questionParagraph.setUuid(IdUtil.randomUUID());
+                    questionParagraph.setDatasetId(relationVo.getDatasetId());
+                    questionParagraph.setDocumentId(relationVo.getDocumentId());
+                    questionParagraph.setParagraphId(relationVo.getParagraphId());
+                    questionParagraph.setQuestionId(questionId);
+                    questionParagraph.setCreateTime(Tool.nowDateTime());
+
+                    knowledgeQuestionParagraphMapper.insert(questionParagraph);
+
+                    // 向量化问题
+                    questionTask.executeAsyncTask(questionId, relationVo.getParagraphId(), relationVo.getDocumentId());
+                }
             } else { // 删除关联
 
                 knowledgeQuestionParagraphMapper.delete(new QueryWrapper<KnowledgeQuestionParagraphEntity>()
