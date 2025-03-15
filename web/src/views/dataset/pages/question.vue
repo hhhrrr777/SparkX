@@ -84,7 +84,7 @@
 									<el-icon size="16"><Link /></el-icon>
                                 </el-tooltip>
                             </div>
-                            <div style="margin-right: 8px;display: flex;align-items: center" @click="del(scope.row)">
+                            <div style="margin-right: 8px;display: flex;align-items: center" @click="del(scope.row.questionId)">
                                 <el-tooltip class="item" content="删除">
 									<el-icon size="16"><Delete /></el-icon>
                                 </el-tooltip>
@@ -184,7 +184,6 @@ export default {
     methods: {
         // 获取列表
         async getList() {
-			console.log('xxx', '穿法')
             let res = await this.$API.question.list.get(this.searchForm)
             this.tableData = res.data.data
             this.page.total = res.data.total
@@ -205,17 +204,35 @@ export default {
 
 			this.randomKey = Math.random()
 			this.linkForm.datasetId = this.$route.query.datasetId
-			this.linkForm.questionIds =this.selectedQuestionId.join(",")
+			this.linkForm.questionIds = this.selectedQuestionId.join(",")
 			this.linkVisible = true
 			this.showNum = false
         },
         // 批量删除
         delAll() {
+			if (this.selectedQuestionId.length === 0) {
+				this.$message.error("请够选问题")
+				return false
+			}
 
+			this.del(this.selectedQuestionId.join(","))
         },
 		// 删除单个
-		del() {
-
+		del(ids) {
+			this.$confirm('此操作将永久删除该问题 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(async () => {
+				let res = await this.$API.question.delQuestion.get({questionIds: ids})
+				if (res.code === 0) {
+					this.$message.success(res.msg)
+					this.getList()
+				} else {
+					this.$message.error(res.msg)
+				}
+			}).catch(() => {
+			});
 		},
 		// 编辑content内容
 		editContent(index, row) {

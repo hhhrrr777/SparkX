@@ -49,5 +49,13 @@ export default {
 
 			return await http.post(this.url, data);
 		}
+	},
+	delQuestion: {
+		url: `${config.API_URL}/question/del`,
+		name: "删除问题",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
 	}
 }

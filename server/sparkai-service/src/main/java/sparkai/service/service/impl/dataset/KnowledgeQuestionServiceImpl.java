@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import sparkai.common.core.PageResult;
 import sparkai.common.enums.SourceType;
@@ -243,5 +244,28 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
                 questionTask.executeAsyncTask(entity.getQuestionId(), entity.getParagraphId(), entity.getDocumentId());
             }
         }
+    }
+
+    /**
+     * 编辑问题内容
+     * @param questionIds String
+     */
+    @Override
+    @Transactional
+    public void deleteQuestions(String questionIds) {
+
+        List<String> questionIdList = Arrays.stream(questionIds.split(",")).toList();
+        if (CollectionUtils.isEmpty(questionIdList)) {
+            throw new BusinessException("问题id不能为空");
+        }
+
+        knowledgeQuestionMapper.deleteByIds(questionIdList);
+
+        knowledgeQuestionParagraphMapper.delete(new QueryWrapper<KnowledgeQuestionParagraphEntity>()
+                        .in("question_id", questionIdList));
+
+        knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>()
+                        .eq("source_type", SourceType.QUESTION.getCode())
+                        .in("source_id", questionIdList));
     }
 }

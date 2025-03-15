@@ -64,4 +64,10 @@ public interface IKnowledgeQuestionService {
      * @param questionContentVo QuestionContentVo
      */
     void updateContent(QuestionContentVo questionContentVo);
+
+    /**
+     * 删除问题
+     * @param questionIds String
+     */
+    void deleteQuestions(String questionIds);
 }

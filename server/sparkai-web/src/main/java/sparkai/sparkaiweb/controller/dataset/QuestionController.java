@@ -83,4 +83,14 @@ public class QuestionController {
         iKnowledgeQuestionService.updateContent(questionContentVo);
         return AjaxResult.success();
     }
+
+    /**
+     * 删除问题
+     */
+    @GetMapping("/del")
+    public AjaxResult<Object> del(@RequestParam("questionIds") String questionIds) {
+
+        iKnowledgeQuestionService.deleteQuestions(questionIds);
+        return AjaxResult.success();
+    }
 }
