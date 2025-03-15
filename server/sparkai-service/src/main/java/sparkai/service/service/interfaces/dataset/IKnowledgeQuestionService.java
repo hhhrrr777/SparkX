@@ -58,4 +58,10 @@ public interface IKnowledgeQuestionService {
      * @return List<QuestionParagraphDataVo>
      */
     List<QuestionParagraphDataVo> getRelationDataList(String questionId, String datasetId);
+
+    /**
+     * 编辑问题内容
+     * @param questionContentVo QuestionContentVo
+     */
+    void updateContent(QuestionContentVo questionContentVo);
 }

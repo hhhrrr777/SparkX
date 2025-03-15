@@ -42,4 +42,12 @@ export default {
 			return await http.get(this.url, data);
 		}
 	},
+	editQuestion: {
+		url: `${config.API_URL}/question/edit`,
+		name: "编辑问题",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
+	}
 }

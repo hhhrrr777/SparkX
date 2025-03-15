@@ -73,4 +73,14 @@ public class QuestionController {
 
         return AjaxResult.success(iKnowledgeQuestionService.getRelationDataList(questionId, datasetId));
     }
+
+    /**
+     * 编辑问题内容
+     */
+    @PostMapping("/edit")
+    public AjaxResult<Object> update(@RequestBody QuestionContentVo questionContentVo) {
+
+        iKnowledgeQuestionService.updateContent(questionContentVo);
+        return AjaxResult.success();
+    }
 }

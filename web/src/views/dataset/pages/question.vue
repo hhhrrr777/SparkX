@@ -4,14 +4,19 @@
             <div>
                 <el-button icon="el-icon-plus" style="margin-top: -10px;" type="primary" @click="add">创建问题
                 </el-button>
-                <el-button :disabled="selectedQuestionIds.length === 0" icon="el-icon-link"
-                           style="margin-top: -10px;"
-                           type="primary"
-                           @click="setting">关联分段
+                <el-button
+					:disabled="selectedQuestionId.length === 0"
+					icon="el-icon-link"
+                    style="margin-top: -10px;"
+                    type="primary"
+                    @click="setting">关联分段
                 </el-button>
-                <el-button :disabled="selectedQuestionIds.length === 0" icon="el-icon-Delete" style="margin-top: -10px;"
-                           type="primary"
-                           @click="del">删除
+                <el-button
+					:disabled="selectedQuestionId.length === 0"
+					icon="el-icon-Delete"
+					style="margin-top: -10px;"
+                    type="primary"
+                    @click="delAll">删除
                 </el-button>
             </div>
 
@@ -40,8 +45,8 @@
                     <template #default="scope">
 						<div v-if="scope.$index === nowIndex" style="display:flex;align-items: center;">
 							<el-input v-model="scope.row.content" clearable style="width: 400px;"></el-input>
-							<el-icon size="18" style="margin-left: 10px"><Check /></el-icon>
-							<el-icon size="18" style="margin-left: 10px"><Close /></el-icon>
+							<el-icon size="16" style="margin-left: 10px;cursor: pointer;color: #67C23A" @click="edit(scope.row)"><Check /></el-icon>
+							<el-icon size="16" style="margin-left: 10px;cursor: pointer;color: #909399" @click="nowIndex = -1"><Close /></el-icon>
 						</div>
 						<div v-else>
 							<span style="cursor: pointer" @click="showQuestion(scope.row)">{{ scope.row.content }}</span>
@@ -79,7 +84,7 @@
 									<el-icon size="16"><Link /></el-icon>
                                 </el-tooltip>
                             </div>
-                            <div style="margin-right: 8px;display: flex;align-items: center">
+                            <div style="margin-right: 8px;display: flex;align-items: center" @click="del(scope.row)">
                                 <el-tooltip class="item" content="删除">
 									<el-icon size="16"><Delete /></el-icon>
                                 </el-tooltip>
@@ -142,7 +147,7 @@ export default {
                 page: 1,
                 limit: 10
             },
-            selectedQuestionIds: [],
+            selectedQuestionId: [],
             tableData: [],
             page: {
                 total: 0
@@ -191,17 +196,42 @@ export default {
         },
         // 关联分段
         setting() {
+			if (this.selectedQuestionId.length === 0) {
+				this.$message.error("请够选问题")
+				return false
+			}
 
+			this.randomKey = Math.random()
+			this.linkForm.datasetId = this.$route.query.datasetId
+			this.linkForm.questionIds =this.selectedQuestionId.join(",")
+			this.linkVisible = true
         },
         // 批量删除
-        del() {
+        delAll() {
 
         },
+		// 删除单个
+		del() {
+
+		},
 		// 编辑content内容
-		async editContent(index, row) {
+		editContent(index, row) {
 			this.editForm.content = row.content
 			this.editForm.questionId = row.questionId
 			this.nowIndex = index
+		},
+		// 保存编辑内容
+		async edit(row) {
+			let res = await this.$API.question.editQuestion.post({
+				questionId: row.questionId,
+				content: row.content
+			})
+			if (res.code === 0) {
+				this.$message.success(res.msg)
+				this.nowIndex = -1
+			} else {
+				this.$message.error(res.msg)
+			}
 		},
         // 显示问题
         showQuestion(row) {
@@ -223,9 +253,9 @@ export default {
         },
         // 勾选
         handleSelectionChange(row) {
-            this.selectedQuestionId = []
+			this.selectedQuestionId = []
             row.forEach(item => {
-                this.selectedQuestionId.push(item.questionId)
+				this.selectedQuestionId.push(item.questionId)
             })
         },
         // 翻页

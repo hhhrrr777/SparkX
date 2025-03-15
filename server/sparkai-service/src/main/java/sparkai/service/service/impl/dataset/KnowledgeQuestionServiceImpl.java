@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import sparkai.common.core.PageResult;
 import sparkai.common.enums.SourceType;
 import sparkai.common.exception.BusinessException;
@@ -205,5 +206,34 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
         }
 
         return returnList;
+    }
+
+    /**
+     * 编辑问题内容
+     * @param questionContentVo QuestionContentVo
+     */
+    @Override
+    public void updateContent(QuestionContentVo questionContentVo) {
+
+        if (questionContentVo.getContent().isBlank()) {
+            throw new BusinessException("问题内容不能为空");
+        }
+
+        KnowledgeQuestionEntity questionEntity = knowledgeQuestionMapper.selectById(questionContentVo.getQuestionId());
+        questionEntity.setContent(questionContentVo.getContent());
+        questionEntity.setUpdateTime(Tool.nowDateTime());
+
+        knowledgeQuestionMapper.updateById(questionEntity);
+
+        // 查询是否关联了段落
+        List<KnowledgeQuestionParagraphEntity> relationList = knowledgeQuestionParagraphMapper.selectList(
+                new QueryWrapper<KnowledgeQuestionParagraphEntity>().eq("question_id", questionContentVo.getQuestionId()));
+
+        if (!CollectionUtils.isEmpty(relationList)) {
+            for (KnowledgeQuestionParagraphEntity entity : relationList) {
+                // 向量化问题
+                questionTask.executeAsyncTask(entity.getQuestionId(), entity.getParagraphId(), entity.getDocumentId());
+            }
+        }
     }
 }
