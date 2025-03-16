@@ -14,10 +14,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
+import sparkai.service.service.interfaces.dataset.IHitTestService;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
 import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
+import sparkai.service.vo.dataset.HitTestVo;
+import sparkai.service.vo.dataset.SearchVo;
+
+import java.util.List;
 
 @RequestMapping("/api/dataset")
 @RestController
@@ -25,6 +30,9 @@ public class DatasetController {
 
     @Autowired
     IKnowledgeDatasetService iKnowledgeDatasetService;
+
+    @Autowired
+    IHitTestService iHitTestService;
 
     /**
      * 知识库列表
@@ -43,5 +51,11 @@ public class DatasetController {
 
         iKnowledgeDatasetService.addDataset(validate);
         return AjaxResult.success();
+    }
+
+    @PostMapping("/hitTest")
+    public AjaxResult<List<SearchVo>> hitTest(@RequestBody HitTestVo hitTestVo) {
+
+        return AjaxResult.success(iHitTestService.search(hitTestVo));
     }
 }

@@ -94,6 +94,7 @@ export default {
 			components: {
 				document: defineAsyncComponent(() => import('./pages/document.vue')),
 				question: defineAsyncComponent(() => import('./pages/question.vue')),
+				hit: defineAsyncComponent(() => import('./pages/hit.vue'))
 			},
 			page: ''
 		}
@@ -111,6 +112,8 @@ export default {
 				this.page = this.components.document
 			} else if (index === 2) {
 				this.page = this.components.question
+			} else if (index === 3) {
+				this.page = this.components.hit
 			}
 		}
 	}

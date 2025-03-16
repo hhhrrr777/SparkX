@@ -12,8 +12,10 @@ package sparkai.service.mapper.dataset;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import sparkai.common.core.IBaseMapper;
 import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
+import sparkai.service.vo.dataset.SearchVo;
 
 import java.util.List;
 
@@ -33,4 +35,19 @@ public interface KnowledgeEmbeddingMapper extends IBaseMapper<KnowledgeEmbedding
             "</script>"
     })
     void deleteByDocumentIds(@Param("list") List<String> documentIds);
+
+    @Select({
+        "<script>",
+            "SELECT paragraph_id,document_id,comprehensive_score,comprehensive_score as similarity FROM (SELECT DISTINCT ON (\"paragraph_id\") ( similarity ),* ,similarity AS comprehensive_score",
+            " FROM ( SELECT *, ( 1 - ( knowledge_embedding.embedding <![CDATA[ <=>  ]]> #{vector} ) ) AS similarity FROM knowledge_embedding WHERE knowledge_embedding.dataset_id IN ",
+            "<foreach item='datasetId' collection='datasetIds' open='(' separator=',' close=')'>",
+            "#{datasetId}",
+            "</foreach>",
+            " AND knowledge_embedding.active = 1) TEMP",
+            " ORDER BY paragraph_id,similarity DESC) DISTINCT_TEMP",
+            " WHERE comprehensive_score > #{score} ORDER BY comprehensive_score DESC LIMIT #{limit}",
+        "</script>"
+    })
+    List<SearchVo> embeddingSearch(@Param("vector") String vector, @Param("datasetIds") List<String> datasetIds,
+                                   @Param("score") double score, @Param("limit") int limit);
 }

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
-import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.document.*;
 
 import java.util.List;

@@ -209,5 +209,57 @@ export default {
 </script>
 
 <style scoped>
-
+.paragraph-list {
+	width: 100%;
+	display: flex;
+	overflow-y: scroll;
+	background: #f4f4f4;
+	padding: 10px;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+.paragraph-list::-webkit-scrollbar { /* WebKit */
+	width: 0 !important;
+}
+.paragraph-item {
+	background: #fff;
+	height: 200px;
+	width: 49%;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+}
+.paragraph-title {
+	width: 100%;
+	height: 20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.title-left {
+	width: 320px;
+}
+.paragraph-doc {
+	width: 100%;
+	height: calc(100% - 71px);
+	padding: 5px 0;
+	overflow: hidden;
+	color: #606266;
+	margin-top: 10px;
+}
+.paragraph-bottom {
+	width: 100%;
+	height: 30px;
+	margin-top: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+#word-count {
+	font-size: 13px;
+	margin-top: 5px;
+}
 </style>

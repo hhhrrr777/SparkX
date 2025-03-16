@@ -54,7 +54,10 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
         long pageSize = queryVo.getLimit();
 
         QueryWrapper<KnowledgeQuestionEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("content", queryVo.getContent());
+        if (!queryVo.getContent().isBlank()) {
+            queryWrapper.like("content", queryVo.getContent());
+        }
+
         queryWrapper.orderByDesc("create_time");
 
         IPage<KnowledgeQuestionEntity> questionListRes =
