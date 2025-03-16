@@ -40,6 +40,20 @@ public class TsVectorGenerator {
 
     // 主转换方法
     public static String toTsVector(String text) {
+
+        List<WordPosition> wordPositions = buildWordPositions(text);
+        // 6. 构建最终结果
+        return buildTsVector(wordPositions);
+    }
+
+    public static String toTsQuery(String text) {
+
+        List<WordPosition> wordPositions = buildWordPositions(text);
+        // 6. 构建最终结果
+        return buildTsQuery(wordPositions);
+    }
+
+    private static List<WordPosition> buildWordPositions(String text) {
         // 1. 提取特殊词汇
         List<String> specialWords = extractSpecialWords(text);
 
@@ -53,10 +67,7 @@ public class TsVectorGenerator {
         List<Term> terms = HanLP.segment(processedText);
 
         // 5. 过滤和处理分词结果
-        List<WordPosition> wordPositions = processTerms(terms, wordMap);
-
-        // 6. 构建最终结果
-        return buildTsVector(wordPositions);
+        return processTerms(terms, wordMap);
     }
 
     private static List<String> extractSpecialWords(String text) {
@@ -137,6 +148,25 @@ public class TsVectorGenerator {
                             .map(Object::toString)
                             .collect(Collectors.joining(","));
                     return entry.getKey() + ":" + positionsStr;
+                })
+                .collect(Collectors.joining(" "));
+    }
+
+    private static String buildTsQuery(List<WordPosition> positions) {
+        Map<String, List<Integer>> positionMap = new HashMap<>();
+
+        for (WordPosition wp : positions) {
+            positionMap.computeIfAbsent(wp.word, k -> new ArrayList<>())
+                    .add(wp.position);
+        }
+
+        return positionMap.entrySet().stream()
+                .map(entry -> {
+                    String positionsStr = entry.getValue().stream()
+                            .limit(20)
+                            .map(Object::toString)
+                            .collect(Collectors.joining(","));
+                    return entry.getKey();
                 })
                 .collect(Collectors.joining(" "));
     }

@@ -14,7 +14,7 @@
 		<div class="hit-list">
 			<div class="content" v-if="hitList.length > 0">
 				<div class="paragraph-item" v-for="(item, index) in hitList" :key="index">
-					<div style="color: #999">段落ID: {{ item.paragraphId }}</div>
+					<div style="color: #999;border-bottom: 1px solid #e2e2e2;font-size: 13px;padding-bottom: 5px;">段落ID: {{ item.paragraphId }}</div>
 					<div class="paragraph-title">
 						<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 						<div class="title-left line1" v-else>--</div>
@@ -28,7 +28,7 @@
 					</div>
 				</div>
 			</div>
-			<el-empty style="margin-top: 10%" description="无命中段落" v-else></el-empty>
+			<el-empty style="margin-top: 10%" description="无命中段落" v-loading="loading" v-else></el-empty>
 		</div>
 	</div>
 </template>
@@ -42,12 +42,13 @@ export default {
 		return {
 			searchForm: {
 				keyword: "",
-				type: "embedding",
-				similarity: 0.6,
+				type: "mix", //"embedding",
+				similarity: 0.0,
 				topRank: 5,
 				datasetIds: ""
 			},
-			hitList: []
+			hitList: [],
+			loading: false
 		}
 	},
 	mounted() {
@@ -56,7 +57,11 @@ export default {
 	methods: {
 		// 查询测试
 		async query() {
+			this.loading = true
 			let res = await this.$API.dataset.hitTest.post(this.searchForm)
+			setTimeout(() => {
+				this.loading = false
+			}, 800)
 			this.hitList = res.data
 		}
 	}
@@ -103,7 +108,7 @@ export default {
 }
 .paragraph-item {
 	background: #fff;
-	height: 240px;
+	height: 250px;
 	border-radius: 5px;
 	cursor: pointer;
 	padding: 15px 12px 15px 12px;
@@ -123,7 +128,7 @@ export default {
 }
 .paragraph-doc {
 	width: 100%;
-	height: calc(100% - 71px);
+	height: calc(100% - 81px);
 	overflow: hidden;
 	color: #606266;
 	margin-top: 10px;
