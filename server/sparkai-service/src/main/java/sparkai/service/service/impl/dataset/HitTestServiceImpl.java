@@ -5,6 +5,7 @@ import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2Embedding
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.TsVectorGenerator;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
@@ -35,6 +36,18 @@ public class HitTestServiceImpl implements IHitTestService {
      */
     @Override
     public List<SearchVo> search(HitTestVo hitTestVo) {
+
+        if (hitTestVo.getKeyword().isBlank()) {
+            throw new BusinessException("输入的问题不能为空");
+        }
+
+        if (hitTestVo.getSimilarity() < 0) {
+            throw new BusinessException("设信度应该大于0");
+        }
+
+        if (hitTestVo.getTopRank() < 1) {
+            throw new BusinessException("召回数应该大于1");
+        }
 
         List<SearchVo> searchRes = new LinkedList<>();
 

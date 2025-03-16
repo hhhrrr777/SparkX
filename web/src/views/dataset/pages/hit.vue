@@ -1,11 +1,13 @@
 <template>
 	<div style="background: #fff;border-radius: 10px;padding: 10px 5px">
 		<div class="tool-bar">
-			<div class="search-type" @click="setSearchMode">
+			<div class="search-type" @click="dialogVisible = true">
 				<el-icon>
 					<Setting />
 				</el-icon>
-				向量检索
+				<span v-if="searchForm.type === 'embedding'">向量检索</span>
+				<span v-if="searchForm.type === 'text'">全文检索</span>
+				<span v-if="searchForm.type === 'mix'">混合检索</span>
 			</div>
 			<div class="search-input" style="width: calc(100% - 200px);">
 				<el-input v-model="searchForm.keyword" suffix-icon="el-icon-search" @keyup.enter.native="query" clearable/>
@@ -55,11 +57,11 @@
 				<div class="score-list">
 					<div class="score-item">
 						<div class="item-title">置信度高于</div>
-						<div class="item-input"></div>
+						<div class="item-input"><el-input-number v-model="searchForm.similarity" :min="0" :precision="3"></el-input-number></div>
 					</div>
 					<div class="score-item">
 						<div class="item-title">召回数量</div>
-						<div class="item-input"></div>
+						<div class="item-input"><el-input-number v-model="searchForm.topRank" :min="1"></el-input-number></div>
 					</div>
 				</div>
 			</el-form-item>
@@ -67,7 +69,7 @@
 		<template #footer>
 			<div class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="optSubmit">确 定</el-button>
+				<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
 			</div>
 		</template>
 	</el-dialog>
@@ -82,14 +84,23 @@ export default {
 		return {
 			searchForm: {
 				keyword: "",
-				type: "mix", //"embedding",
-				similarity: 0.0,
+				type: "embedding",
+				similarity: 0.600,
 				topRank: 5,
 				datasetIds: ""
 			},
 			hitList: [],
 			loading: false,
 			dialogVisible: false
+		}
+	},
+	watch: {
+		"searchForm.type": function(val) {
+			if (val === "embedding" || val === 'mix') {
+				this.searchForm.similarity = 0.600
+			} else if (val === "text") {
+				this.searchForm.similarity = 0
+			}
 		}
 	},
 	mounted() {
@@ -104,15 +115,7 @@ export default {
 				this.loading = false
 			}, 800)
 			this.hitList = res.data
-		},
-		// 设置查询模式
-		setSearchMode() {
-			this.dialogVisible = true
-		},
-		// 设置搜索
-		optSubmit() {
-
-		},
+		}
 	}
 }
 </script>
