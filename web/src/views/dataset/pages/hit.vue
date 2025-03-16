@@ -1,7 +1,7 @@
 <template>
 	<div style="background: #fff;border-radius: 10px;padding: 10px 5px">
 		<div class="tool-bar">
-			<div class="search-type">
+			<div class="search-type" @click="setSearchMode">
 				<el-icon>
 					<Setting />
 				</el-icon>
@@ -14,7 +14,7 @@
 		<div class="hit-list">
 			<div class="content" v-if="hitList.length > 0">
 				<div class="paragraph-item" v-for="(item, index) in hitList" :key="index">
-					<div style="color: #999;border-bottom: 1px solid #e2e2e2;font-size: 13px;padding-bottom: 5px;">段落ID: {{ item.paragraphId }}</div>
+					<div class="paragraph-id">段落ID: {{ item.paragraphId }}</div>
 					<div class="paragraph-title">
 						<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 						<div class="title-left line1" v-else>--</div>
@@ -31,6 +31,46 @@
 			<el-empty style="margin-top: 10%" description="无命中段落" v-loading="loading" v-else></el-empty>
 		</div>
 	</div>
+
+	<!-- 设置检索模式 -->
+	<el-dialog title="设置检索模式" v-model="dialogVisible" width="600px" destroy-on-close :close-on-click-modal="false">
+		<el-form :model="searchForm" label-width="10px">
+			<el-form-item label="">
+				<el-radio-group v-model="searchForm.type" class="too-radio-list">
+					<el-radio border label="embedding" class="radio-item">
+						<div class="radio-title">向量检索</div>
+						<div class="radio-desc">通过向量距离计算与用户问题最相似的文本分段</div>
+					</el-radio>
+					<el-radio border label="text" class="radio-item">
+						<div class="radio-title">全文检索</div>
+						<div class="radio-desc">通过关键词检索，返回包含关键词最多的文本分段</div>
+					</el-radio>
+					<el-radio border label="mix" class="radio-item">
+						<div class="radio-title">混合检索</div>
+						<div class="radio-desc">同时执行全文检索和向量检索，再进行重排序，从两类查询结果中选择匹配用户问题的最佳结果</div>
+					</el-radio>
+				</el-radio-group>
+			</el-form-item>
+			<el-form-item label="">
+				<div class="score-list">
+					<div class="score-item">
+						<div class="item-title">置信度高于</div>
+						<div class="item-input"></div>
+					</div>
+					<div class="score-item">
+						<div class="item-title">召回数量</div>
+						<div class="item-input"></div>
+					</div>
+				</div>
+			</el-form-item>
+		</el-form>
+		<template #footer>
+			<div class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="optSubmit">确 定</el-button>
+			</div>
+		</template>
+	</el-dialog>
 </template>
 
 <script>
@@ -48,7 +88,8 @@ export default {
 				datasetIds: ""
 			},
 			hitList: [],
-			loading: false
+			loading: false,
+			dialogVisible: false
 		}
 	},
 	mounted() {
@@ -63,7 +104,15 @@ export default {
 				this.loading = false
 			}, 800)
 			this.hitList = res.data
-		}
+		},
+		// 设置查询模式
+		setSearchMode() {
+			this.dialogVisible = true
+		},
+		// 设置搜索
+		optSubmit() {
+
+		},
 	}
 }
 </script>
@@ -133,6 +182,12 @@ export default {
 	color: #606266;
 	margin-top: 10px;
 }
+.paragraph-id {
+	color: #5c5f66;
+	border-bottom: 1px solid #e2e2e2;
+	font-size: 13px;
+	padding-bottom: 5px;
+}
 .paragraph-bottom {
 	width: 100%;
 	height: 30px;
@@ -141,5 +196,35 @@ export default {
 	align-items: center;
 	justify-content: space-between;
 	padding-bottom: 10px;
+	color: #5c5f66;
+}
+.too-radio-list {
+	width: 100%;
+	display: flex;
+}
+.radio-item {
+	margin-bottom: 10px;
+	width: calc(100% - 40px);
+	height: 85px;
+	font-size: 13px;
+}
+.radio-desc {
+	margin-top: 3px;
+	margin-left: 10px;
+	color: #8f959e;
+	text-wrap: wrap;
+	line-height: 17px;
+}
+.radio-title {
+	margin-left: 10px;
+}
+.score-list {
+	display: flex;
+	width: 100%;
+}
+.score-item {
+	width: 50%;
+	display: flex;
+	flex-direction: column;
 }
 </style>

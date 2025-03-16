@@ -18,7 +18,7 @@
 				<span class="label" v-if="item.linkNum > 0 && showNum">{{ item.linkNum }}</span>
 			</div>
 		</div>
-		<div class="paragraph-list">
+		<div class="paragraph-list" v-loading="loading">
 			<div class="paragraph-item"
 				 :class="{active: item.relationed}"
 				 v-for="(item, index) in paragraphList"
@@ -58,7 +58,8 @@ export default {
 			paragraphList: [],
 			selectedDocumentId: "",
 			searchTitle: "",
-			nowDocumentIndex: 0
+			nowDocumentIndex: 0,
+			loading: false
 		}
 	},
 	mounted() {
@@ -135,14 +136,7 @@ export default {
 				this.paragraphList[index].relationed = true
 			}
 
-			const loading = this.$loading({
-				customClass: 'loading-class',
-				lock: true,
-				text: '关联中...',
-				spinner: 'el-icon-loading',
-				background: 'rgba(0, 0, 0, 0.8)'
-			});
-
+			this.loading = true
 			let res = await this.$API.question.doRelation.post({
 				datasetId: this.datasetId,
 				questionIds: this.questionIds,
@@ -150,8 +144,10 @@ export default {
 				paragraphId: row.paragraphId,
 				type: type, // 1:新增 2:删除
 			})
+			setTimeout(() => {
+				this.loading = false
+			}, 300)
 
-			loading.close()
 			if (res.code === 0) {
 				this.$message.success(res.msg)
 				this.$emit("linkComplete")
@@ -210,6 +206,11 @@ export default {
 	width: calc(100% - 249px);
 	height: 600px;
 	overflow-y: auto;
+	display: flex;
+	flex-wrap: wrap;
+	background: #f4f4f4;
+	justify-content: space-between;
+	padding: 5px;
 }
 .paragraph-list::-webkit-scrollbar { /* WebKit */
 	width: 0 !important;
