@@ -147,11 +147,8 @@
 											<el-dropdown-item command="transfer">
 												<el-icon>
 													<Switch />
-												</el-icon> 迁移</el-dropdown-item>
-											<el-dropdown-item command="exportExcel">
-												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出Excel</el-dropdown-item>
-											<el-dropdown-item command="exportZip">
-												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出ZIP</el-dropdown-item>
+												</el-icon> 迁移
+											</el-dropdown-item>
 											<el-dropdown-item command="del">
 												<el-icon>
 													<Delete />

@@ -44,13 +44,13 @@
 						<div class="tool-box">
 							<div class="tool-box-left" @click="goDetail(item.datasetId)">
 								<div class="box-item">
-									<span class="num">1</span>
+									<span class="num">{{ item.documentNum }}</span>
 									<span class="num-label">文档数</span>
 								</div>
 								<el-divider direction="vertical"></el-divider>
 								<div class="box-item">
-									<span class="num">5.7k</span>
-									<span class="num-label">字符</span>
+									<span class="num">{{ $TOOL.formatBytes(item.fileSize) }}</span>
+									<span class="num-label"></span>
 								</div>
 								<el-divider direction="vertical"></el-divider>
 								<div class="box-item">
@@ -59,24 +59,21 @@
 								</div>
 							</div>
 							<div class="tool-box-right">
-								<el-dropdown trigger="click">
+								<el-dropdown trigger="click" @command="handleClick($event, item)">
 									<el-icon>
 										<MoreFilled />
 									</el-icon>
 									<template #dropdown>
 										<el-dropdown-menu>
-											<el-dropdown-item>
+											<el-dropdown-item command="embedding">
 												<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量化
 											</el-dropdown-item>
-											<el-dropdown-item>
+											<el-dropdown-item command="setting">
 												<el-icon>
 													<Setting />
-												</el-icon> 设置</el-dropdown-item>
-											<el-dropdown-item>
-												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出Excel</el-dropdown-item>
-											<el-dropdown-item>
-												<span class="iconfont icon-daochu" style="font-size: 14px;margin-right: 5px"></span> 导出ZIP</el-dropdown-item>
-											<el-dropdown-item>
+												</el-icon> 设置
+											</el-dropdown-item>
+											<el-dropdown-item command="delete">
 												<el-icon>
 													<Delete />
 												</el-icon> 删除</el-dropdown-item>
@@ -154,6 +151,44 @@ export default{
 		// 知识库详情
 		goDetail(datasetId) {
 			this.$router.push('/dataset/detail?datasetId=' + datasetId)
+		},
+		// 向量化
+		async embedding(datasetId) {
+			let res = await this.$API.dataset.embedding.get({datasetId: datasetId})
+			if (res.code === 0) {
+				this.$message.success(res.msg)
+			} else {
+				this.$message.error(res.msg)
+			}
+		},
+		// 删除知识库
+		async delete(datasetId) {
+			this.$confirm('此操作将永久删除该知识库 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(async () => {
+				let res = await this.$API.dataset.del.get({datasetId: datasetId})
+				if (res.code === 0) {
+					this.$message.success(res.msg)
+					this.getList()
+				} else {
+					this.$message.error(res.msg)
+				}
+			}).catch(() => {});
+		},
+		// 操作知识库
+		handleClick(event, row) {
+			switch (event) {
+				case 'embedding':
+					this.embedding(row.datasetId)
+					break;
+				case 'setting':
+					break;
+				case 'delete':
+					this.delete(row.datasetId)
+					break;
+			}
 		}
 	}
 }

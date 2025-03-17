@@ -13,7 +13,7 @@
 									<div class="dataset-title line1">
 										<el-icon style="font-size: 18px;margin-right: 5px;margin-top: 5px;top:4px;">
 											<Collection />
-										</el-icon>这是一个测文档
+										</el-icon> {{ nowDocument }}
 									</div>
 									<el-icon style="font-size: 18px">
 										<CaretBottom />
@@ -21,17 +21,12 @@
 								</div>
 							</template>
 							<div class="dataset-list">
-								<div class="dataset-item">
+								<div class="dataset-item" v-for="item in storeList" :key="item.datasetId" @click="selectDataset(item)">
 									<el-icon style="font-size: 18px;margin-right: 5px">
 										<Collection />
-									</el-icon>这是一个测文档
+									</el-icon>{{ item.title }}
 								</div>
-								<div class="dataset-item">
-									<el-icon style="font-size: 18px;margin-right: 5px">
-										<Collection />
-									</el-icon>这是一个测文档
-								</div>
-								<div class="dataset-item" style="border-top: 1px solid #e2e2e2;">
+								<div class="dataset-item" style="border-top: 1px solid #e2e2e2;" @click="addDataset">
 									<el-icon style="font-size: 18px;margin-right: 5px">
 										<Collection />
 									</el-icon> 创建知识库
@@ -81,14 +76,17 @@
 			</el-row>
 		</el-card>
 	</el-container>
+
+	<save-dialog v-if="dialogVisible" ref="saveDialog" @success="handleSuccess" @closed="dialogVisible=false" :close-on-click-modal="false"></save-dialog>
 </template>
 
 <script>
 import {defineAsyncComponent} from "vue";
 import {Back, CaretBottom, Collection, Document, QuestionFilled, Setting} from "@element-plus/icons-vue";
+import saveDialog from "@/views/dataset/save.vue";
 
 export default {
-	components: {CaretBottom, Collection, Back, Document, QuestionFilled, Setting},
+	components: {saveDialog, CaretBottom, Collection, Back, Document, QuestionFilled, Setting},
 	data() {
 		return {
 			components: {
@@ -96,11 +94,22 @@ export default {
 				question: defineAsyncComponent(() => import('./pages/question.vue')),
 				hit: defineAsyncComponent(() => import('./pages/hit.vue'))
 			},
-			page: ''
+			page: '',
+			searchForm: {
+				title: '',
+				page: 1,
+				limit: 15
+			},
+			storeList: [],
+			nowDocument: "",
+			datesetId: "",
+			dialogVisible: false
 		}
 	},
 	mounted() {
 		this.page = this.components.document
+		this.datesetId = this.$route.query.datasetId;
+		this.getList()
 	},
 	methods: {
 		goBack() {
@@ -115,7 +124,33 @@ export default {
 			} else if (index === 3) {
 				this.page = this.components.hit
 			}
-		}
+		},
+		// 获取文档列表
+		async getList() {
+			let res = await this.$API.dataset.list.get(this.searchForm)
+			this.storeList = res.data.data
+
+			this.storeList.forEach(item => {
+				if (item.datasetId === this.datesetId) {
+					this.nowDocument = item.title
+				}
+			})
+		},
+		// 选择知识库
+		selectDataset(item) {
+			this.$router.push('/dataset/detail?datasetId=' + item.datasetId)
+		},
+		addDataset() {
+
+			this.dialogVisible = true
+			this.$nextTick(() => {
+				this.$refs.saveDialog.open('add')
+			})
+		},
+		handleSuccess() {
+			this.dialogVisible = false
+			this.getList()
+		},
 	}
 }
 

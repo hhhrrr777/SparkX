@@ -25,5 +25,21 @@ export default {
 
 			return await http.post(this.url, data);
 		}
+	},
+	embedding: {
+		url: `${config.API_URL}/dataset/embedding`,
+		name: "向量化知识库",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
+	},
+	del: {
+		url: `${config.API_URL}/dataset/del`,
+		name: "删除知识库",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
 	}
 }
