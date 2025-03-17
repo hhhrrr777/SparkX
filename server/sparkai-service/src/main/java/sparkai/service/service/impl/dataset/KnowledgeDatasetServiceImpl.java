@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import sparkai.common.core.PageResult;
 import sparkai.common.enums.DocumentStatusEnum;
+import sparkai.common.enums.SourceType;
+import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.dataset.*;
 import sparkai.service.entity.system.SystemUsersEntity;
@@ -31,7 +33,10 @@ import sparkai.service.task.EmbeddingDocumentTask;
 import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
+import sparkai.service.vo.dataset.OtherDatasetVo;
+import sparkai.service.vo.dataset.TransferDatasetVo;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -185,5 +190,59 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
         knowledgeQuestionMapper.delete(new QueryWrapper<KnowledgeQuestionEntity>().eq("dataset_id", datasetId));
         // 删除文档下问题关联数据
         knowledgeQuestionParagraphMapper.delete(new QueryWrapper<KnowledgeQuestionParagraphEntity>().eq("dataset_id", datasetId));
+    }
+
+    /**
+     * 获取其他知识库
+     * @param datasetId String
+     * @return List<OtherDatasetVo>
+     */
+    @Override
+    public List<OtherDatasetVo> getOtherDatasetList(String datasetId) {
+
+        QueryWrapper<KnowledgeDatasetEntity> queryWrapper = new QueryWrapper<>();
+        // TODO 查询属于自己的知识库
+        queryWrapper.eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        queryWrapper.ne("dataset_id", datasetId);
+        queryWrapper.orderByDesc("create_time");
+
+        List<KnowledgeDatasetEntity> datasetList = datasetMapper.selectList(queryWrapper);
+        List<OtherDatasetVo> otherDatasetList = new LinkedList<>();
+        for (KnowledgeDatasetEntity entity : datasetList) {
+            OtherDatasetVo otherDatasetVo = new OtherDatasetVo();
+            BeanUtils.copyProperties(entity, otherDatasetVo);
+
+            otherDatasetList.add(otherDatasetVo);
+        }
+
+        return otherDatasetList;
+    }
+
+    /**
+     * 迁移文档
+     * @param transferDatasetVo TransferDatasetVo
+     */
+    @Override
+    @Transactional
+    public void transferDocument(TransferDatasetVo transferDatasetVo) {
+
+        if (transferDatasetVo.getDocumentIds().isBlank() || transferDatasetVo.getDatasetId().isBlank()) {
+            throw new BusinessException("参数错误");
+        }
+
+        List<String> documentIds = Arrays.stream(transferDatasetVo.getDocumentIds().split(",")).toList();
+        // 更改文档的知识库id
+        knowledgeDocumentMapper.updateDatasetByIds(documentIds, transferDatasetVo.getDatasetId());
+        // 更改段落的知识库id
+        knowledgeParagraphMapper.updateDatasetByIds(documentIds, transferDatasetVo.getDatasetId());
+        // 删除问题关联的知识库id
+        knowledgeQuestionParagraphMapper.deleteByDocumentIds(documentIds);
+        // 删除embedding的问题
+        knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>()
+                        .eq("source_type", SourceType.QUESTION.getCode())
+                        .eq("dataset_id", transferDatasetVo.getOldDatasetId())
+                        .in("document_id", documentIds));
+        // 修改embedding的文本关联
+        knowledgeEmbeddingMapper.updateDatasetByIds(documentIds, transferDatasetVo.getDatasetId());
     }
 }

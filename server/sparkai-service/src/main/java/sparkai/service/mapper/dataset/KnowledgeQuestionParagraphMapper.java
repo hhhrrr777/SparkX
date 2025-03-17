@@ -12,6 +12,7 @@ package sparkai.service.mapper.dataset;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import sparkai.common.core.IBaseMapper;
 import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
 

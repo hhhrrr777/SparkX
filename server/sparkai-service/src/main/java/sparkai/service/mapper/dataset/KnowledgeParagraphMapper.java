@@ -12,6 +12,7 @@ package sparkai.service.mapper.dataset;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import sparkai.common.core.IBaseMapper;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
 
@@ -33,4 +34,15 @@ public interface KnowledgeParagraphMapper extends IBaseMapper<KnowledgeParagraph
             "</script>"
     })
     void deleteByDocumentIds(@Param("list") List<String> documentIds);
+
+    @Update({
+            "<script>",
+            "UPDATE knowledge_paragraph SET dataset_id = #{datasetId} ",
+            "WHERE document_id IN",
+            "<foreach item='id' collection='list' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void updateDatasetByIds(@Param("list") List<String> documentIds, @Param("datasetId") String datasetId);
 }

@@ -198,7 +198,8 @@
 
 	<!-- 迁移文档 -->
 	<el-dialog title="迁移文档" v-model="datasetVisible" width="800px" destroy-on-close :close-on-click-modal="false">
-		<dataset-dialog @success="getList" ></dataset-dialog>
+		<dataset-dialog @success="handleSuccess" :diff-dataset-id="datasetId" :document-ids="selectedDocumentIds.join(',')"
+						@doClose="datasetVisible=false"></dataset-dialog>
 	</el-dialog>
 </template>
 
@@ -324,13 +325,14 @@ export default {
 					this.delDocument()
 					break;
 				case 'transfer':
+					this.selectedDocumentIds = [row.documentId]
 					this.datasetVisible = true
 					break;
 			}
 		},
 		// 设置单个文档
 		settingOne(row) {
-			console.log(row)
+
 			this.settingForm.documentIds = row.documentId
 			this.settingForm.answerType = row.answerType
 			this.settingForm.redirectSimilar = row.redirectSimilar
@@ -376,6 +378,10 @@ export default {
 					this.$message.error(res.msg)
 				}
 			}).catch(() => {});
+		},
+		handleSuccess() {
+			this.datasetVisible = false
+			this.getList()
 		}
 	}
 }

@@ -17,10 +17,7 @@ import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.dataset.IHitTestService;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
 import sparkai.service.validate.dataset.DatasetValidate;
-import sparkai.service.vo.dataset.DatasetQueryVo;
-import sparkai.service.vo.dataset.DatasetVo;
-import sparkai.service.vo.dataset.HitTestVo;
-import sparkai.service.vo.dataset.SearchVo;
+import sparkai.service.vo.dataset.*;
 
 import java.util.List;
 
@@ -79,6 +76,22 @@ public class DatasetController {
     public AjaxResult<Object> del(@RequestParam("datasetId") String datasetId) {
 
         iKnowledgeDatasetService.deleteDataset(datasetId);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 获取其他知识库
+     */
+    @GetMapping("/otherDataset")
+    public AjaxResult<List<OtherDatasetVo>> otherDataset(@RequestParam("datasetId") String datasetId) {
+
+        return AjaxResult.success(iKnowledgeDatasetService.getOtherDatasetList(datasetId));
+    }
+
+    @PostMapping("/transfer")
+    public AjaxResult<Object> transfer(@RequestBody TransferDatasetVo transferDatasetVo) {
+
+        iKnowledgeDatasetService.transferDocument(transferDatasetVo);
         return AjaxResult.success();
     }
 }

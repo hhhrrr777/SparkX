@@ -41,5 +41,21 @@ export default {
 
 			return await http.get(this.url, data);
 		}
+	},
+	otherDataset: {
+		url: `${config.API_URL}/dataset/otherDataset`,
+		name: "获取其他知识库",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
+	},
+	transfer: {
+		url: `${config.API_URL}/dataset/transfer`,
+		name: "迁移文本",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
 	}
 }

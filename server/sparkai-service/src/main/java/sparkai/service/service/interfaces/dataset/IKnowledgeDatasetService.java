@@ -13,6 +13,10 @@ import sparkai.common.core.PageResult;
 import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
+import sparkai.service.vo.dataset.OtherDatasetVo;
+import sparkai.service.vo.dataset.TransferDatasetVo;
+
+import java.util.List;
 
 public interface IKnowledgeDatasetService {
 
@@ -40,4 +44,17 @@ public interface IKnowledgeDatasetService {
      * @param datasetId String
      */
     void deleteDataset(String datasetId);
+
+    /**
+     * 获取其他知识库
+     * @param datasetId String
+     * @return List<OtherDatasetVo>
+     */
+    List<OtherDatasetVo> getOtherDatasetList(String datasetId);
+
+    /**
+     * 迁移文档
+     * @param transferDatasetVo TransferDatasetVo
+     */
+    void transferDocument(TransferDatasetVo transferDatasetVo);
 }

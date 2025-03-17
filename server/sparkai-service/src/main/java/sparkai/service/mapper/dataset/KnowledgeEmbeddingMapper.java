@@ -9,10 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.mapper.dataset;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import sparkai.common.core.IBaseMapper;
 import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
 import sparkai.service.vo.dataset.SearchVo;
@@ -79,4 +76,15 @@ public interface KnowledgeEmbeddingMapper extends IBaseMapper<KnowledgeEmbedding
     })
     List<SearchVo> mixSearch(@Param("vector") String vector, @Param("tsQuery") String tsQuery, @Param("datasetIds") List<String> datasetIds,
                                    @Param("score") double score, @Param("limit") int limit);
+
+    @Update({
+            "<script>",
+            "UPDATE knowledge_embedding SET dataset_id = #{datasetId} ",
+            "WHERE document_id IN",
+            "<foreach item='id' collection='list' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void updateDatasetByIds(@Param("list") List<String> documentIds, @Param("datasetId") String datasetId);
 }
