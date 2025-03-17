@@ -10,19 +10,24 @@
 package sparkai.service.service.impl.dataset;
 
 import cn.hutool.core.util.IdUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import sparkai.common.core.PageResult;
+import sparkai.common.enums.DocumentStatusEnum;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
+import sparkai.service.entity.dataset.*;
 import sparkai.service.entity.system.SystemUsersEntity;
-import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
+import sparkai.service.mapper.dataset.*;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
+import sparkai.service.task.EmbeddingDocumentTask;
 import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
@@ -38,6 +43,24 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
 
     @Autowired
     SystemUserMapper userMapper;
+
+    @Autowired
+    KnowledgeDocumentMapper knowledgeDocumentMapper;
+
+    @Autowired
+    KnowledgeParagraphMapper knowledgeParagraphMapper;
+
+    @Autowired
+    KnowledgeEmbeddingMapper knowledgeEmbeddingMapper;
+
+    @Autowired
+    KnowledgeQuestionParagraphMapper knowledgeQuestionParagraphMapper;
+
+    @Autowired
+    KnowledgeQuestionMapper knowledgeQuestionMapper;
+
+    @Autowired
+    EmbeddingDocumentTask task;
 
     /**
      * 获取知识库列表
@@ -70,6 +93,21 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
             SystemUsersEntity userInfo = userMapper.selectById(entity.getUserId());
             vo.setAuthor(userInfo.getNickname());
 
+            // 文档数
+            long documentNum = knowledgeDocumentMapper.selectCount(new QueryWrapper<KnowledgeDocumentEntity>()
+                    .eq("dataset_id", entity.getDatasetId()));
+            vo.setDocumentNum(documentNum);
+
+            // 字符数
+            KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectOne(new QueryWrapper<KnowledgeDocumentEntity>()
+                            .select("sum(file_size) as file_size")
+                    .eq("dataset_id", entity.getDatasetId()));
+            if (documentInfo != null) {
+                vo.setFileSize(documentInfo.getFileSize());
+            } else {
+                vo.setFileSize(0);
+            }
+
             datasetVoList.add(vo);
         }
 
@@ -94,5 +132,58 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
         datasetEntity.setCreateTime(Tool.nowDateTime());
 
         datasetMapper.insert(datasetEntity);
+    }
+
+    /**
+     * 向量化整个文档
+     * @param datasetId String
+     */
+    @Override
+    public void embeddingDataset(String datasetId) {
+
+        List<KnowledgeDocumentEntity> documentList = knowledgeDocumentMapper.selectList(
+                new QueryWrapper<KnowledgeDocumentEntity>().eq("dataset_id", datasetId));
+
+        if (!CollectionUtils.isEmpty(documentList)) {
+
+            for (KnowledgeDocumentEntity documentEntity : documentList) {
+                String documentId = documentEntity.getDocumentId();
+                // 检测应答模式
+                KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(documentId);
+                if (documentInfo.getAnswerType().equals("model")) {
+
+                    // 标记开始向量化
+                    KnowledgeDocumentEntity updateEntity = knowledgeDocumentMapper.selectById(documentId);
+                    updateEntity.setStatus(DocumentStatusEnum.RUNNING.getCode());
+                    updateEntity.setUpdateTime(Tool.nowDateTime());
+                    knowledgeDocumentMapper.updateById(updateEntity);
+
+                    // 执行向量化
+                    task.executeAsyncTask(documentId);
+                }
+            }
+        }
+    }
+
+    /**
+     * 删除整个知识库
+     * @param datasetId String
+     */
+    @Override
+    @Transactional
+    public void deleteDataset(String datasetId) {
+
+        // 删除知识库
+        datasetMapper.deleteById(datasetId);
+        // 删除知识库下的文档
+        knowledgeDocumentMapper.delete(new QueryWrapper<KnowledgeDocumentEntity>().eq("dataset_id", datasetId));
+        // 删除知识库下的文档分段
+        knowledgeParagraphMapper.delete(new QueryWrapper<KnowledgeParagraphEntity>().eq("dataset_id", datasetId));
+        // 删除知识库下的文档embedding数据
+        knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>().eq("dataset_id", datasetId));
+        // 删除知识库下文档下问题数据
+        knowledgeQuestionMapper.delete(new QueryWrapper<KnowledgeQuestionEntity>().eq("dataset_id", datasetId));
+        // 删除文档下问题关联数据
+        knowledgeQuestionParagraphMapper.delete(new QueryWrapper<KnowledgeQuestionParagraphEntity>().eq("dataset_id", datasetId));
     }
 }

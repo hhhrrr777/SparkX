@@ -52,4 +52,14 @@ public class DatasetVo implements Serializable {
      * 创建人
      */
     private String author;
+
+    /**
+     * 文档数
+     */
+    private long documentNum;
+
+    /**
+     * 字符数
+     */
+    private long fileSize;
 }

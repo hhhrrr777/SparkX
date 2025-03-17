@@ -53,9 +53,32 @@ public class DatasetController {
         return AjaxResult.success();
     }
 
+    /**
+     * 命中测试
+     */
     @PostMapping("/hitTest")
     public AjaxResult<List<SearchVo>> hitTest(@RequestBody HitTestVo hitTestVo) {
 
         return AjaxResult.success(iHitTestService.search(hitTestVo));
+    }
+
+    /**
+     * 向量化
+     */
+    @GetMapping("/embedding")
+    public AjaxResult<Object> embedding(@RequestParam("datasetId") String datasetId) {
+
+        iKnowledgeDatasetService.embeddingDataset(datasetId);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 删除知识库
+     */
+    @GetMapping("/del")
+    public AjaxResult<Object> del(@RequestParam("datasetId") String datasetId) {
+
+        iKnowledgeDatasetService.deleteDataset(datasetId);
+        return AjaxResult.success();
     }
 }

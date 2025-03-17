@@ -28,4 +28,16 @@ public interface IKnowledgeDatasetService {
      * @param validate DatasetValidate
      */
     void addDataset(DatasetValidate validate);
+
+    /**
+     * 向量化整个知识库
+     * @param datasetId String
+     */
+    void embeddingDataset(String datasetId);
+
+    /**
+     * 删除整个知识库
+     * @param datasetId String
+     */
+    void deleteDataset(String datasetId);
 }
