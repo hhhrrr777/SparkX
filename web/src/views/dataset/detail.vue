@@ -84,9 +84,10 @@
 import {defineAsyncComponent} from "vue";
 import {Back, CaretBottom, Collection, Document, QuestionFilled, Setting} from "@element-plus/icons-vue";
 import saveDialog from "@/views/dataset/save.vue";
+import datasetDialog from "@/components/dataset/index.vue";
 
 export default {
-	components: {saveDialog, CaretBottom, Collection, Back, Document, QuestionFilled, Setting},
+	components: {saveDialog, CaretBottom, Collection, Back, Document, QuestionFilled, Setting, datasetDialog},
 	data() {
 		return {
 			components: {
@@ -103,7 +104,8 @@ export default {
 			storeList: [],
 			nowDocument: "",
 			datesetId: "",
-			dialogVisible: false
+			dialogVisible: false,
+			datasetVisible: false
 		}
 	},
 	mounted() {

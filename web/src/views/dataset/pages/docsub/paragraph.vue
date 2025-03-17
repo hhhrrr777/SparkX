@@ -67,14 +67,19 @@
 			</div>
 		</template>
 	</el-dialog>
+
+	<el-dialog v-if="datasetVisible" ref="datasetDialog" @closed="datasetVisible=false" :close-on-click-modal="false">
+		<dataset-dialog @success="getParagraphList" ></dataset-dialog>
+	</el-dialog>
 </template>
 
 <script>
 import Pages from "@/components/pages/index.vue"
 import {Delete, MoreFilled, QuestionFilled, Switch} from "@element-plus/icons-vue";
+import datasetDialog from "@/components/dataset/index.vue";
 
 export default {
-	components: {Delete, Pages, MoreFilled, QuestionFilled, Switch},
+	components: {datasetDialog, Delete, Pages, MoreFilled, QuestionFilled, Switch},
 	props: {
 		documentId: {
 			type: String,
@@ -109,7 +114,8 @@ export default {
 				content: ""
 			},
 			loading: false,
-			modeType: 'add'
+			modeType: 'add',
+			datasetVisible: false
 		}
 	},
 	mounted() {
@@ -175,6 +181,9 @@ export default {
 			switch (event) {
 				case 'del':
 					this.handleDel(row)
+					break;
+				case 'transfer':
+					this.datasetVisible = true
 					break;
 			}
 		},

@@ -2,7 +2,14 @@
 	<el-container style="padding: 20px" class='store-div-box'>
 		<el-card style="height: 900px" shadow="never">
 			<div class="title">知识库</div>
-			<el-form :inline="true" :model="searchForm" class="demo-form-inline" style="float: right;margin-top: 10px">
+			<el-form :inline="true" :model="searchForm" class="demo-form-inline" style="float: right;margin-top: 10px" label-width="5px">
+				<el-form-item style="margin-right: 10px !important;">
+					<el-select v-model="searchForm.type" placeholder="选择范围" style="width: 110px" clearable>
+						<el-option label="全部" value="0"></el-option>
+						<el-option label="我的团队" value="1"></el-option>
+						<el-option label="我的" value="2"></el-option>
+					</el-select>
+				</el-form-item>
 				<el-form-item>
 					<el-input v-model="searchForm.title" placeholder="知识库标题" clearable></el-input>
 				</el-form-item>

@@ -195,15 +195,21 @@
 			</div>
 		</template>
 	</el-dialog>
+
+	<!-- 迁移文档 -->
+	<el-dialog title="迁移文档" v-model="datasetVisible" width="800px" destroy-on-close :close-on-click-modal="false">
+		<dataset-dialog @success="getList" ></dataset-dialog>
+	</el-dialog>
 </template>
 
 <script>
 import Pages from "@/components/pages/index.vue";
 import Paragraph from "@/views/dataset/pages/docsub/paragraph.vue";
 import {Delete, Loading, MoreFilled, QuestionFilled, Setting, Switch} from "@element-plus/icons-vue";
+import datasetDialog from "@/components/dataset/index.vue";
 
 export default {
-	components: {Delete, Switch, QuestionFilled, MoreFilled, Setting, Loading, Paragraph, Pages},
+	components: {datasetDialog, Delete, Switch, QuestionFilled, MoreFilled, Setting, Loading, Paragraph, Pages},
 	data() {
 		return {
 			tableData: [],
@@ -228,7 +234,8 @@ export default {
 				documentIds: "",
 				answerType: "model",
 				redirectSimilar: 0.900
-			}
+			},
+			datasetVisible: false
 		}
 	},
 	mounted() {
@@ -315,6 +322,9 @@ export default {
 				case 'del':
 					this.selectedDocumentIds = [row.documentId]
 					this.delDocument()
+					break;
+				case 'transfer':
+					this.datasetVisible = true
 					break;
 			}
 		},
