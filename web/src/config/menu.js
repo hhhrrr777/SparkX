@@ -17,10 +17,10 @@ const menu = [{
 		"name": "应用",
 		"auth": "index/home",
 		"path": "/index/home",
-		"icon": "el-icon-Service",
+		"icon": "el-icon-Comment",
 		"component": "index/home",
 		"meta": {
-			"icon": "el-icon-Service",
+			"icon": "el-icon-Comment",
 			"title": "应用",
 			"type": "menu",
 			"hidden": false
