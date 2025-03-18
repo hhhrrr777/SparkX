@@ -239,3 +239,86 @@ COMMENT ON COLUMN "public"."system_users"."status" IS '状态 1:正常 2:禁用'
 COMMENT ON COLUMN "public"."system_users"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."system_users"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."system_users" IS '系统用户表';
+
+
+CREATE TABLE "public"."application" (
+    "app_id" varchar(64) COLLATE "pg_catalog"."default" NOT NULL,
+    "name" varchar(155) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "description" varchar(255) COLLATE "pg_catalog"."default",
+    "icon" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "model_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "prompt" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "relation_dataset" int2 DEFAULT 2,
+    "prologue" varchar(500) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "show_relation" int2 DEFAULT 1,
+    "show_time" int2 DEFAULT 1,
+    "show_tokens" int2 DEFAULT 1,
+    "show_appraise" int2 DEFAULT 1,
+    "user_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "show_think" int2 DEFAULT 2,
+    "voice_input" int2 DEFAULT 2,
+    "voice_out" int2 DEFAULT 2,
+    "empty_reply" int2 DEFAULT 2,
+    "reply_content" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "search_mode" varchar(55) COLLATE "pg_catalog"."default" DEFAULT 'embedding'::character varying,
+    "similarity" numeric(10,3) DEFAULT 0.600,
+    "top_rank" int2 DEFAULT 3,
+    "rerank_model_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "memory_num" int2 DEFAULT 4,
+    "max_reply_token" int8 DEFAULT 1024,
+    "temperature" numeric(10,2) DEFAULT 3,
+    "type" int2 DEFAULT 1,
+    "create_time" timestamp(6),
+    "update_time" timestamp(6),
+    CONSTRAINT "application_pkey" PRIMARY KEY ("app_id")
+);
+
+ALTER TABLE "public"."application"
+    OWNER TO "postgres";
+
+COMMENT ON COLUMN "public"."application"."app_id" IS 'id';
+COMMENT ON COLUMN "public"."application"."name" IS '应用名称';
+COMMENT ON COLUMN "public"."application"."description" IS '应用描述';
+COMMENT ON COLUMN "public"."application"."icon" IS '应用的头像';
+COMMENT ON COLUMN "public"."application"."model_id" IS '使用的模型';
+COMMENT ON COLUMN "public"."application"."prompt" IS '提示词';
+COMMENT ON COLUMN "public"."application"."relation_dataset" IS '是否关联知识库 1:关联 2:不关联';
+COMMENT ON COLUMN "public"."application"."prologue" IS '开场白';
+COMMENT ON COLUMN "public"."application"."show_relation" IS '显示知识库引用 1:显示 2:不显示';
+COMMENT ON COLUMN "public"."application"."show_time" IS '显示耗时 1:显示 2:不显示';
+COMMENT ON COLUMN "public"."application"."show_tokens" IS '显示消耗token 1:显示 2:不显示';
+COMMENT ON COLUMN "public"."application"."show_appraise" IS '显示评价 1:显示 2:不显示';
+COMMENT ON COLUMN "public"."application"."user_id" IS '创建人id';
+COMMENT ON COLUMN "public"."application"."show_think" IS '显示思考过程 1:显示 2:不显示';
+COMMENT ON COLUMN "public"."application"."voice_input" IS '语音输入 1:开启 2:关闭';
+COMMENT ON COLUMN "public"."application"."voice_out" IS '语音播放 1:开启 2:关闭';
+COMMENT ON COLUMN "public"."application"."empty_reply" IS '空搜索回复 1:AI 2:人工';
+COMMENT ON COLUMN "public"."application"."reply_content" IS '空搜索回复内容';
+COMMENT ON COLUMN "public"."application"."search_mode" IS '搜索模式：embedding,text,mix';
+COMMENT ON COLUMN "public"."application"."similarity" IS '相似度';
+COMMENT ON COLUMN "public"."application"."top_rank" IS '召回数量';
+COMMENT ON COLUMN "public"."application"."rerank_model_id" IS '重排索引模型';
+COMMENT ON COLUMN "public"."application"."memory_num" IS '记忆条数';
+COMMENT ON COLUMN "public"."application"."max_reply_token" IS '回复上限';
+COMMENT ON COLUMN "public"."application"."temperature" IS '回复温度';
+COMMENT ON COLUMN "public"."application"."type" IS '类型 1:普通 2:编排';
+COMMENT ON COLUMN "public"."application"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."application"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."application" IS '系统应用表';
+
+
+CREATE TABLE "public"."application_dataset_relation" (
+    "app_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "dataset_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "create_time" timestamp(6),
+    "update_time" timestamp(6)
+);
+
+ALTER TABLE "public"."application_dataset_relation"
+    OWNER TO "postgres";
+
+COMMENT ON COLUMN "public"."application_dataset_relation"."app_id" IS '应用id';
+COMMENT ON COLUMN "public"."application_dataset_relation"."dataset_id" IS '知识库id';
+COMMENT ON COLUMN "public"."application_dataset_relation"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."application_dataset_relation"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."application_dataset_relation" IS '应用知识库关联表';

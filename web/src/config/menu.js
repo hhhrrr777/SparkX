@@ -14,14 +14,14 @@ const menu = [{
 	"children": [{
 		"id": 2,
 		"pid": 1,
-		"name": "智能体",
+		"name": "应用",
 		"auth": "index/home",
 		"path": "/index/home",
 		"icon": "el-icon-Service",
 		"component": "index/home",
 		"meta": {
 			"icon": "el-icon-Service",
-			"title": "智能体",
+			"title": "应用",
 			"type": "menu",
 			"hidden": false
 		}
@@ -42,14 +42,14 @@ const menu = [{
 	}, {
 		"id": 4,
 		"pid": 1,
-		"name": "工具箱",
+		"name": "函数库",
 		"auth": "/tools/index",
 		"path": "/tools/index",
 		"icon": "el-icon-Box",
 		"component": "tools",
 		"meta": {
 			"icon": "el-icon-Box",
-			"title": "工具箱",
+			"title": "函数库",
 			"type": "menu",
 			"hidden": false
 		}
