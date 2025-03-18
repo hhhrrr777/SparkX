@@ -6,8 +6,20 @@ import router from './router'
 import App from './App.vue'
 import 'element-plus/dist/index.css';
 import { config } from 'md-editor-v3'
-import highlight from 'highlight.js'
+
+import highlight from 'highlight.js' // 代码高亮
 import 'highlight.js/styles/atom-one-dark.css'
+
+import screenfull from 'screenfull' // 全屏
+
+import katex from 'katex' // 科学算式
+import 'katex/dist/katex.min.css'
+
+import Cropper from 'cropperjs' // 截图
+import 'cropperjs/dist/cropper.css'
+
+import mermaid from 'mermaid' // 流程图
+
 import {createPinia} from "pinia";
 
 config({

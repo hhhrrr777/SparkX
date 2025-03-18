@@ -98,6 +98,9 @@ public class DatasetController {
         return AjaxResult.success(iKnowledgeDatasetService.getOtherDatasetList(datasetId));
     }
 
+    /**
+     * 迁移文档
+     */
     @PostMapping("/transfer")
     public AjaxResult<Object> transfer(@RequestBody TransferDatasetVo transferDatasetVo) {
 

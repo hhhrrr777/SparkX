@@ -2,25 +2,26 @@
 	<div class="container">
 		<div class="chat-box">
 			<el-row style="width: 100%; height: 100%">
-				<el-col :span="4" class="left-side">
+				<el-col :span="3" class="left-side">
 					<div style="padding: 20px">
 						<div class="logo">
-							<img src="" style="width: 30px; height: 30px" alt="" />
+							<img src="/src/assets/robot.gif" style="width: 30px; height: 30px" alt="" />
 							<span class="font-weight-700">智能助手</span>
 						</div>
 						<div class="chat-tool">
 							<div class="new-chat btn-color">
-								<span>新对话</span>
+								<el-icon><Plus /></el-icon>
+								<span style="margin-left: 5px">新对话</span>
 							</div>
 						</div>
 
-						<div style="margin-top: 20px" :bordered="false" :split="false">
-							<div>你叫什么名字</div>
-							<div>请问php怎么搜索</div>
+						<div style="margin-top: 20px">
+							<div class="log-item item-active">你叫什么名字</div>
+							<div class="log-item">请问php怎么搜索</div>
 						</div>
 					</div>
 				</el-col>
-				<el-col :span="20" class="right-side">
+				<el-col :span="21" class="right-side">
 					<div class="chat-content-box">
 						<div class="chat-msg">
 							<!-- 循环对话开始 -->
@@ -29,7 +30,7 @@
 									<div class="chat-msg-content">
 										<div class="chat-user">
 											<div class="user-icon">
-												<img src="/src/assets/user.png" style="width: 40px;height: 40px;"/>
+												<img src="/src/assets/user.png" style="width: 30px;height: 30px;"/>
 											</div>
 											<div class="chat-user-name">用户333</div>
 										</div>
@@ -49,25 +50,54 @@
 									<div class="chat-msg-content">
 										<div class="chat-user">
 											<div class="user-icon">
-												<img src="/src/assets/robot.gif" style="width: 40px;height: 40px;"/>
+												<img src="/src/assets/robot.gif" style="width: 30px;height: 30px;"/>
 											</div>
 											<div class="chat-user-name">DingDongAI</div>
 										</div>
 										<div class="answer-content">
 											<div class="code-box">
-												<div class="answer-content-wrap markdown-body">
-													<MdEditor
-														v-model="compiledMarkdown"
-														:toolbars="[]"
-														class="magnify-md-editor"
-													>
-													</MdEditor>
+												<div class="answer-content-wrap markdown-body" style="width: 100%">
+													<MdPreview noIconfont noPrettier :codeFoldable="false" v-model="compiledMarkdown"/>
 												</div>
 											</div>
 										</div>
 										<div class="menu-list">
-											<el-tag bordered style="margin-left: 10px;cursor: pointer;">2条上下文</el-tag>
-											<el-tag bordered style="margin-left: 10px">1.6s</el-tag>
+											<div class="menu-left-side">
+												<el-tag bordered style="margin-left: 10px;cursor: pointer;">2条引用</el-tag>
+												<el-tag bordered style="margin-left: 10px">1.6s</el-tag>
+												<el-tag bordered style="margin-left: 10px">150tokens</el-tag>
+											</div>
+											<div class="menu-right-side">
+												<el-tooltip
+													effect="dark"
+													content="复制"
+													placement="bottom"
+												>
+													<el-icon size="22" style="margin-left: 10px;cursor: pointer"><CopyDocument /></el-icon>
+												</el-tooltip>
+												<el-tooltip
+													effect="dark"
+													content="赞"
+													placement="bottom"
+												>
+													<span class="iconfont icon-zan icon-style"></span>
+												</el-tooltip>
+												<el-tooltip
+													effect="dark"
+													content="踩"
+													placement="bottom"
+												>
+													<span class="iconfont icon-cai icon-style"></span>
+												</el-tooltip>
+												<el-tooltip
+													effect="dark"
+													content="播报"
+													placement="bottom"
+												>
+													<span class="iconfont icon-bobao icon-style"></span>
+												</el-tooltip>
+											</div>
+
 										</div>
 									</div>
 								</div>
@@ -77,11 +107,13 @@
 
 						<div class="chat-area">
 							<div class="input-box">
-								<el-input type="textarea" placeholder="输入你的问题或需求" :max-length="500" allow-clear show-word-limit />
+								<el-input type="textarea" placeholder="输入你的问题或需求"
+										  v-model="chatMsg"
+										  max-length="3000" allow-clear show-word-limit :rows="3" class="no-border"/>
 							</div>
 							<div class="send-btn">
 								<div class="send-icon">
-									<el-icon style="font-size: 24px;color: #fff"><Promotion /></el-icon>
+									<el-icon style="color: #5E17EB" size="28"><Promotion /></el-icon>
 								</div>
 							</div>
 						</div>
@@ -93,53 +125,60 @@
 </template>
 
 <script>
-import hljs from "highlight.js";
-import {Promotion} from "@element-plus/icons-vue";
-import { MdPreview } from 'md-editor-v3'
-
+import {CopyDocument, Plus, Promotion} from "@element-plus/icons-vue";
+import { config, MdPreview } from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
 export default {
-	components: {Promotion, MdPreview},
+	components: {CopyDocument, Plus, Promotion, MdPreview},
 	data() {
 		return {
-			compiledMarkdown: ""
+			compiledMarkdown: "",
+			chatMsg: ''
 		}
 	},
 	mounted() {
-
+		config({
+			markdownItConfig(md) {
+				md.renderer.rules.image = (tokens, idx, options, env, self) => {
+					tokens[idx].attrSet('style', 'display:inline-block;min-height:33px;padding:0;margin:0')
+					if (tokens[idx].content) {
+						tokens[idx].attrSet('title', tokens[idx].content)
+					}
+					tokens[idx].attrSet(
+						'onerror',
+						'this.src="/src/assets/load_error.png";this.onerror=null;this.height="33px"'
+					)
+					return md.renderer.renderToken(tokens, idx, options)
+				}
+				md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+					tokens[idx].attrSet('target', '_blank')
+					return md.renderer.renderToken(tokens, idx, options)
+				}
+				document.appendChild
+			}
+		})
 		this.compiledMarkdown = `
-<!DOCTYPE html>
-<html>
-<title>
+	/**
+     * 向量化
+     */
+    @GetMapping("/embedding")
+    public AjaxResult<Object> embedding(@RequestParam("datasetId") String datasetId) {
 
-    <head>地址</head>
-</title>
-
-<body>
-    <span>Hello wolrd</span>
-</body>
-
-</html>
-`;
-		/*this.compiledMarkdown = markdown.render(markdownContent);
-		console.log(this.compiledMarkdown);
-		this.$nextTick(() => {
-			const blocks = document.querySelectorAll("pre code");
-			blocks.forEach((block) => {
-				hljs.highlightBlock(block);
-			});
-		})*/
-
+        iKnowledgeDatasetService.embeddingDataset(datasetId);
+        return AjaxResult.success();
+    }
+		`
 	},
 	methods: {
 
 	}
 }
 </script>
-
 <style>
-@import 'highlight.js/styles/atom-one-dark.css';
+.no-border .el-textarea__inner {
+	box-shadow: none !important; /* 使用 !important 来确保覆盖默认样式 */
+}
 </style>
-
 <style lang="scss" scoped>
 .container {
 	background-color: #f4f4f4;
@@ -153,7 +192,6 @@ export default {
 	border-radius: 10px;
 }
 .left-side {
-	width: 390px;
 	height: 100%;
 	border-right: 1px solid #f4f4f4;
 }
@@ -171,44 +209,20 @@ export default {
 		font-weight: 700;
 	}
 }
+.chat-tool:hover {
+	background: #5E17EB;
+	color: #fff;
+}
 .chat-tool {
 	margin-top: 30px;
 	width: 100%;
 	display: flex;
-	align-content: center;
-
-	.new-chat {
-		width: 80%;
-		height: 30px;
-		border: 1px solid var(--color-border-3);
-		border-radius: 20px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-	}
-	.new-chat:hover {
-		background: rgb(var(--primary-5));
-		color: #fff;
-		border: 1px solid var(--primary-5);
-	}
-
-	.clear {
-		width: 30px;
-		height: 30px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 50%;
-		border: 1px solid var(--color-border-3);
-		margin-left: 20px;
-		cursor: pointer;
-	}
-	.clear:hover {
-		background: rgb(var(--primary-5));
-		color: #fff;
-		border: 1px solid var(--primary-5);
-	}
+	align-items: center;
+	border: 1px solid #5E17EB;
+	border-radius: 5px;
+	justify-content: center;
+	cursor: pointer;
+	padding: 8px 0;
 }
 .btn-color {
 	color: rgb(var(--primary-5));
@@ -226,20 +240,21 @@ export default {
 	border-radius: 20px;
 }
 .chat-content-box {
-	max-width: 950px;
+	width: calc(100% - 400px);
 	height: 100%;
 	margin: 0 auto;
 
 	.chat-msg {
-		height: 85%;
+		height: 90%;
 		width: 100%;
 		overflow-y: scroll;
 		overflow-x: hidden;
 
 		.panel {
 			background: #fff;
-			padding: 20px;
+			padding: 10px;
 			margin-top: 10px;
+			border-radius: 5px;
 
 			.flex-x-between {
 				display: flex;
@@ -251,7 +266,7 @@ export default {
 					align-items: flex-start;
 					justify-content: space-between;
 					flex-direction: column;
-
+					width: 100%;
 					.chat-user {
 						display: flex;
 						align-items: center;
@@ -278,6 +293,7 @@ export default {
 						display: flex;
 						flex-direction: column;
 						flex: 1;
+						width: 100%;
 
 						.code-box {
 							padding-left: 8px;
@@ -301,15 +317,14 @@ export default {
 
 .chat-area {
 	width: 100%;
-	height: 80px;
-	border-radius: 10px;
+	height: 73px;
+	border-radius: 5px;
 	border: 1px solid var(--color-border-3);
 	background: #fff;
 	margin-top: 40px;
 	display: flex;
 	.input-box {
-		margin-top: 14px;
-		width: 90%;
+		width: 95%;
 	}
 }
 .arco-textarea-wrapper {
@@ -319,7 +334,7 @@ export default {
 	border-color: #fff !important;
 }
 .send-btn {
-	width: 10%;
+	width: 5%;
 	height: 100%;
 	display: flex;
 	align-items: center;
@@ -338,12 +353,44 @@ export default {
 }
 .chat-msg::-webkit-scrollbar { width: 0 !important }
 .chat-msg { -ms-overflow-style: none; }
-.chat-msg { overflow: -moz-scrollbars-none; }
 .menu-list {
 	display: flex;
 	align-items: center;
+	width: 100%;
+	justify-content: space-between;
 }
 .menu-item {
 	margin-left: 10px;cursor: pointer;stroke-width: 3;
+}
+.log-item {
+	height: 40px;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	font-weight: 500;
+	color: #1f2329;
+	padding-left: 10px;
+}
+.log-item:hover {
+	color: #5E17EB;
+	background: #eee7fd;
+}
+.item-active {
+	color: #5E17EB;
+	background: #eee7fd;
+}
+.icon-style {
+	font-size: 20px;margin-left: 10px;cursor: pointer;
+	color: #3f4a54;
+}
+.menu-left-side {
+	display: flex;
+	align-items: center;
+}
+.menu-right-side {
+	display: flex;
+	align-items: center;
+	float: right;
 }
 </style>
