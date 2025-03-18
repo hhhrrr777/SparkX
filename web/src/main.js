@@ -6,7 +6,8 @@ import router from './router'
 import App from './App.vue'
 import 'element-plus/dist/index.css';
 import { config } from 'md-editor-v3'
-import 'md-editor-v3/lib/style.css';
+import highlight from 'highlight.js'
+import 'highlight.js/styles/atom-one-dark.css'
 import {createPinia} from "pinia";
 
 config({
