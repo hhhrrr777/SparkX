@@ -140,6 +140,21 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
     }
 
     /**
+     * 编辑知识库
+     * @param validate DatasetValidate
+     */
+    @Override
+    public void editDataset(DatasetValidate validate) {
+
+        KnowledgeDatasetEntity datasetEntity = datasetMapper.selectById(validate.getDatasetId());
+        datasetEntity.setTitle(validate.getTitle());
+        datasetEntity.setDescription(validate.getDescription());
+        datasetEntity.setUpdateTime(Tool.nowDateTime());
+
+        datasetMapper.updateById(datasetEntity);
+    }
+
+    /**
      * 向量化整个文档
      * @param datasetId String
      */

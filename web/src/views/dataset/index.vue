@@ -191,6 +191,11 @@ export default{
 					this.embedding(row.datasetId)
 					break;
 				case 'setting':
+					this.dialogVisible = true
+
+					this.$nextTick(() => {
+						this.$refs.saveDialog.open('edit').setData(row)
+					})
 					break;
 				case 'delete':
 					this.delete(row.datasetId)

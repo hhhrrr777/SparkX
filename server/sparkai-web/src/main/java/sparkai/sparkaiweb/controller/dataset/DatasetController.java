@@ -51,6 +51,16 @@ public class DatasetController {
     }
 
     /**
+     * 编辑知识库
+     */
+    @PostMapping("/edit")
+    public AjaxResult<Object> edit(@RequestBody @Validated DatasetValidate validate) {
+
+        iKnowledgeDatasetService.editDataset(validate);
+        return AjaxResult.success();
+    }
+
+    /**
      * 命中测试
      */
     @PostMapping("/hitTest")

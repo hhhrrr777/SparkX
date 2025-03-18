@@ -18,6 +18,14 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
+	edit: {
+		url: `${config.API_URL}/dataset/edit`,
+		name: "修改知识库",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
+	},
 	hitTest: {
 		url: `${config.API_URL}/dataset/hitTest`,
 		name: "命中测试",

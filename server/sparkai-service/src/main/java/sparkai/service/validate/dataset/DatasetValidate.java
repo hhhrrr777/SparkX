@@ -22,7 +22,10 @@ public class DatasetValidate implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private long id;
+    /**
+     * 知识库id
+     */
+    private String datasetId;
 
     /**
      * 知识库标题

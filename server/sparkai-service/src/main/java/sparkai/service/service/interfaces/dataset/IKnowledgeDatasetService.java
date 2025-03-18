@@ -34,6 +34,12 @@ public interface IKnowledgeDatasetService {
     void addDataset(DatasetValidate validate);
 
     /**
+     * 编辑知识库模型
+     * @param validate DatasetValidate
+     */
+    void editDataset(DatasetValidate validate);
+
+    /**
      * 向量化整个知识库
      * @param datasetId String
      */

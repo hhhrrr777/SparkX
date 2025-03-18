@@ -105,7 +105,8 @@ export default {
 			nowDocument: "",
 			datesetId: "",
 			dialogVisible: false,
-			datasetVisible: false
+			datasetVisible: false,
+			nowDataset: {}
 		}
 	},
 	mounted() {
@@ -125,6 +126,12 @@ export default {
 				this.page = this.components.question
 			} else if (index === 3) {
 				this.page = this.components.hit
+			} else if (index === 4) {
+				this.dialogVisible = true
+
+				this.$nextTick(() => {
+					this.$refs.saveDialog.open('edit').setData(this.nowDataset)
+				})
 			}
 		},
 		// 获取文档列表
@@ -135,6 +142,7 @@ export default {
 			this.storeList.forEach(item => {
 				if (item.datasetId === this.datesetId) {
 					this.nowDocument = item.title
+					this.nowDataset = item
 				}
 			})
 		},

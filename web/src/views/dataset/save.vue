@@ -7,7 +7,7 @@
 			<el-form-item label="知识库描述" prop="description">
 				<el-input v-model="form.description" type="textarea" maxlength="255" show-word-limit :rows="5"></el-input>
 			</el-form-item>
-			<el-form-item label="向量模型">
+			<el-form-item label="向量模型" v-if="mode === 'add'">
 
 			</el-form-item>
 		</el-form>
@@ -32,7 +32,7 @@ export default {
 				show: '查看'
 			},
 			form: {
-				id: 0,
+				datasetId: "",
 				title: '',
 				description: '',
 				type: 1,
@@ -62,10 +62,15 @@ export default {
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
 					this.loading = true
-					let res = await this.$API.dataset.add.post(this.form);
-					this.loading = false
+					let res;
+					if (this.mode === "add") {
+						res = await this.$API.dataset.add.post(this.form);
+					} else {
+						res = await this.$API.dataset.edit.post(this.form);
+					}
 
-					if (res.code == 0) {
+					this.loading = false
+					if (res.code === 0) {
 						this.$message.success(res.msg)
 						this.$emit('success')
 					} else {
@@ -75,6 +80,11 @@ export default {
 					return false;
 				}
 			})
+		},
+		setData(row) {
+			this.form.datasetId = row.datasetId
+			this.form.title = row.title
+			this.form.description = row.description
 		}
 	}
 }
