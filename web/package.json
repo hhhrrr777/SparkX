@@ -19,7 +19,7 @@
 		"echarts": "^5.5.0",
 		"element-plus": "^2.2.32",
 		"highlight.js": "^11.11.1",
-		"markdown-it": "^14.1.0",
+		"md-editor-v3": "^5.4.2",
 		"nprogress": "^0.2.0",
 		"pinia": "^2.1.7",
 		"pinyin": "^4.0.0-alpha.0",

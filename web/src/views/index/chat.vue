@@ -56,7 +56,12 @@
 										<div class="answer-content">
 											<div class="code-box">
 												<div class="answer-content-wrap markdown-body">
-													<div v-html="compiledMarkdown"></div>
+													<MdEditor
+														v-model="compiledMarkdown"
+														:toolbars="[]"
+														class="magnify-md-editor"
+													>
+													</MdEditor>
 												</div>
 											</div>
 										</div>
@@ -88,12 +93,12 @@
 </template>
 
 <script>
-import MarkdownIt from 'markdown-it';
 import hljs from "highlight.js";
 import {Promotion} from "@element-plus/icons-vue";
+import { MdPreview } from 'md-editor-v3'
 
 export default {
-	components: {Promotion},
+	components: {Promotion, MdPreview},
 	data() {
 		return {
 			compiledMarkdown: ""
@@ -101,8 +106,7 @@ export default {
 	},
 	mounted() {
 
-		const markdown = new MarkdownIt();
-		const markdownContent = `
+		this.compiledMarkdown = `
 <!DOCTYPE html>
 <html>
 <title>
@@ -116,14 +120,14 @@ export default {
 
 </html>
 `;
-		this.compiledMarkdown = markdown.render(markdownContent);
+		/*this.compiledMarkdown = markdown.render(markdownContent);
 		console.log(this.compiledMarkdown);
 		this.$nextTick(() => {
 			const blocks = document.querySelectorAll("pre code");
 			blocks.forEach((block) => {
 				hljs.highlightBlock(block);
 			});
-		})
+		})*/
 
 	},
 	methods: {
