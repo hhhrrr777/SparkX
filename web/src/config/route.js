@@ -50,6 +50,18 @@ menu[0].children.push({
 		"active": "/dataset/index",
 	}
 })
+menu[0].children.push({
+	"id": 102,
+	"pid": 1,
+	"name": '应用测试',
+	"path": "/index/chat",
+	"component": "index/chat",
+	"meta": {
+		"title": "应用测试",
+		"hidden": true,
+		"active": "/index/home",
+	}
+})
 
 const routes = menu
 
