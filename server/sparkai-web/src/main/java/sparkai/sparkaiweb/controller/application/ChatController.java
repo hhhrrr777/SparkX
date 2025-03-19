@@ -59,48 +59,5 @@ public class ChatController {
         }).start();
 
         return emitter;
-
-        /*SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-
-        new Thread(() -> {
-            try {
-
-                QianfanStreamingChatModel model = QianfanStreamingChatModel.builder()
-                        .apiKey("DYATIgV0vT2W118kz2spXAj3")
-                        .secretKey("NEVr9XhWa0T8WB3e9INUwYgjPUEXiFas")
-                        .modelName("ERNIE-Speed-128K") // 一个免费的模型名称
-                        .build();
-
-                model.chat("雷军介绍", new StreamingChatResponseHandler() {
-
-                    @Override
-                    public void onPartialResponse(String partialResponse) {
-
-                        try {
-                            emitter.send(SseEmitter.event().name("message").data(partialResponse)); // 发送事件和数据
-                        } catch (IOException e) {
-                            // 处理异常，例如移除失效的emitter等
-                            emitter.completeWithError(e); // 标记emitter为错误状态并关闭连接
-                        }
-                        emitter.complete();
-                    }
-
-                    @Override
-                    public void onCompleteResponse(ChatResponse completeResponse) {
-                        System.out.println("onCompleteResponse: 结束了");
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
-
-            } catch (Exception e) {
-                emitter.completeWithError(e);
-            }
-        }).start();
-
-        return emitter;*/
     }
 }
