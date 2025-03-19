@@ -160,7 +160,7 @@ export default {
 				document.appendChild
 			}
 		})
-		this.compiledMarkdown = "";
+		this.compiledMarkdown = ``;
 	},
 	methods: {
 		// 发送消息
@@ -176,6 +176,8 @@ export default {
 					console.log('Received message:', ev.data);
 					// 这里可以根据接收到的流式数据更新前端界面
 					that.compiledMarkdown += ev.data
+					const split = that.compiledMarkdown.match(/data:.*}\n\n/g)
+					console.log('xxx', split)
 				},
 				onclose() {
 					console.log('Connection closed by server');
