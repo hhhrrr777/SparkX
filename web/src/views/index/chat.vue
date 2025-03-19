@@ -111,7 +111,7 @@
 										  v-model="chatMsg"
 										  max-length="3000" allow-clear show-word-limit :rows="3" class="no-border"/>
 							</div>
-							<div class="send-btn">
+							<div class="send-btn" @click="send">
 								<div class="send-icon">
 									<el-icon style="color: #5E17EB" size="28"><Promotion /></el-icon>
 								</div>
@@ -157,20 +157,14 @@ export default {
 				document.appendChild
 			}
 		})
-		this.compiledMarkdown = `
-	/**
-     * 向量化
-     */
-    @GetMapping("/embedding")
-    public AjaxResult<Object> embedding(@RequestParam("datasetId") String datasetId) {
-
-        iKnowledgeDatasetService.embeddingDataset(datasetId);
-        return AjaxResult.success();
-    }
-		`
+		this.compiledMarkdown = "";
 	},
 	methods: {
-
+		// 发送消息
+		async send() {
+			let res = await this.$API.chat.sendMessage.post()
+			console.log('xx', res)
+		}
 	}
 }
 </script>
@@ -245,7 +239,7 @@ export default {
 	margin: 0 auto;
 
 	.chat-msg {
-		height: 90%;
+		height: 88%;
 		width: 100%;
 		overflow-y: scroll;
 		overflow-x: hidden;
