@@ -372,6 +372,8 @@ export default {
 	align-items: center;
 	width: 100%;
 	justify-content: space-between;
+	border-top: 1px solid #dee0e3;
+	padding-top: 10px;
 }
 .menu-item {
 	margin-left: 10px;cursor: pointer;stroke-width: 3;
