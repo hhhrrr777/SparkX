@@ -128,6 +128,9 @@
 import {CopyDocument, Plus, Promotion} from "@element-plus/icons-vue";
 import { config, MdPreview } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
+import { fetchEventSource } from '@microsoft/fetch-event-source';
+import configInfo from "@/config"
+
 export default {
 	components: {CopyDocument, Plus, Promotion, MdPreview},
 	data() {
@@ -162,8 +165,25 @@ export default {
 	methods: {
 		// 发送消息
 		async send() {
-			let res = await this.$API.chat.sendMessage.post()
-			console.log('xx', res)
+			let that = this
+			fetchEventSource(`${configInfo.API_URL}/chat/chat`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ query: that.chatMsg }),
+				onmessage(ev) {
+					console.log('Received message:', ev.data);
+					// 这里可以根据接收到的流式数据更新前端界面
+					that.compiledMarkdown += ev.data
+				},
+				onclose() {
+					console.log('Connection closed by server');
+				},
+				onerror(err) {
+					console.error('Error received:', err);
+				},
+			});
 		}
 	}
 }

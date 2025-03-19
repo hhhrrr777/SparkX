@@ -33,11 +33,9 @@ let MessageBox_401_show = false
 // HTTP response 拦截器
 axios.interceptors.response.use(
 	(response) => {
-		console.log('正确的响应', response);
 		return response;
 	},
 	(error) => {
-		console.log('错误相应', error.response);
 		if (error.response) {
 			if (error.response.status == 404) {
 				ElNotification.error({
