@@ -25,4 +25,9 @@ public class SseChatVo implements Serializable {
      * 应用ID
      */
     private String appId;
+
+    /**
+     * 是否重新回答
+     */
+    private boolean reTry;
 }
