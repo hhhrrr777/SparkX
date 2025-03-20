@@ -80,7 +80,7 @@
 					<div class="title">分段设置</div>
 
 					<div class="tool-list">
-						<el-radio-group v-model="diyForm.splitType" class="too-radio-list">
+						<el-radio-group v-model="diyForm.splitType" class="tool-radio-list">
 							<el-radio :label="1" border class="radio-item">
 								<div class="radio-title">默认分段</div>
 								<div class="radio-desc">系统会根据换行符以512个字符为一块，自动拆分文本</div>
@@ -424,7 +424,7 @@ export default {
 .tool-list {
 	width: 100%;
 }
-.too-radio-list {
+.tool-radio-list {
 	width: 100%;
 	display: flex;
 	padding-left: 10px;

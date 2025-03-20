@@ -9,6 +9,11 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.application;
 
+import sparkai.common.core.PageResult;
+import sparkai.service.validate.application.ApplicationAddValidate;
+import sparkai.service.vo.application.ApplicationListVo;
+import sparkai.service.vo.application.ApplicationQueryVo;
+
 /**
  * <p>
  * 系统应用表 服务类
@@ -19,4 +24,16 @@ package sparkai.service.service.interfaces.application;
  */
 public interface IApplicationService {
 
+    /**
+     * 获取应用列表
+     * @param queryVo ApplicationQueryVo
+     * @return PageResult<ApplicationListVo>
+     */
+    PageResult<ApplicationListVo> getApplicationList(ApplicationQueryVo queryVo);
+
+    /**
+     * 添加应用
+     * @param validate ApplicationAddValidate
+     */
+    void addApplication(ApplicationAddValidate validate);
 }

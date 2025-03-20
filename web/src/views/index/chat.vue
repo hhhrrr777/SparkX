@@ -133,17 +133,4 @@ export default {
 	color: #5E17EB;
 	background: #eee7fd;
 }
-.icon-style {
-	font-size: 20px;margin-left: 10px;cursor: pointer;
-	color: #3f4a54;
-}
-.menu-left-side {
-	display: flex;
-	align-items: center;
-}
-.menu-right-side {
-	display: flex;
-	align-items: center;
-	float: right;
-}
 </style>

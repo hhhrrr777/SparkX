@@ -15,28 +15,33 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
-public class SseChatVo implements Serializable {
+public class ApplicationListVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 聊天内容
-     */
-    private String content;
-
-    /**
-     * 会话ID
-     */
-    private String sessionId;
-
-    /**
-     * 应用ID
+     * 应用id
      */
     private String appId;
 
     /**
-     * 是否重新回答
+     * 应用名称
      */
-    private boolean reTry;
+    private String name;
+
+    /**
+     * 应用描述
+     */
+    private String description;
+
+    /**
+     * 应用类型 1:普通  2:编排
+     */
+    private Integer type;
+
+    /**
+     * 创建人
+     */
+    private String author;
 }

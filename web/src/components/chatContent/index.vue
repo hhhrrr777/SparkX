@@ -31,7 +31,7 @@
 									content="复制"
 									placement="bottom"
 								>
-									<el-icon size="22" style="margin-left: 10px;cursor: pointer"><CopyDocument /></el-icon>
+									<el-icon size="16" style="margin-left: 10px;cursor: pointer"><CopyDocument /></el-icon>
 								</el-tooltip>
 								<el-tooltip
 									v-if="setting.showAppraise === 1"
@@ -267,4 +267,17 @@ export default {
 }
 .chat-msg::-webkit-scrollbar { width: 0 !important }
 .chat-msg { -ms-overflow-style: none; }
+.icon-style {
+	font-size: 16px;margin-left: 10px;cursor: pointer;
+	color: #3f4a54;
+}
+.menu-left-side {
+	display: flex;
+	align-items: center;
+}
+.menu-right-side {
+	display: flex;
+	align-items: center;
+	float: right;
+}
 </style>

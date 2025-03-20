@@ -7,36 +7,16 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.vo.application;
+package sparkai.service.mapper.application;
 
-import lombok.Data;
+import org.apache.ibatis.annotations.Mapper;
+import sparkai.common.core.IBaseMapper;
+import sparkai.service.entity.application.ApplicationEntity;
 
-import java.io.Serial;
-import java.io.Serializable;
+/**
+ * 应用表 Mapper
+ */
+@Mapper
+public interface ApplicationMapper extends IBaseMapper<ApplicationEntity> {
 
-@Data
-public class SseChatVo implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * 聊天内容
-     */
-    private String content;
-
-    /**
-     * 会话ID
-     */
-    private String sessionId;
-
-    /**
-     * 应用ID
-     */
-    private String appId;
-
-    /**
-     * 是否重新回答
-     */
-    private boolean reTry;
 }

@@ -11,7 +11,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<el-input v-model="searchForm.title" placeholder="应用名称" clearable></el-input>
+					<el-input v-model="searchForm.name" placeholder="应用名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="onSubmit" icon="el-icon-search">查询</el-button>
@@ -31,18 +31,19 @@
 					</el-card>
 				</el-col>
 
-				<el-col :span="6" class="store-item" v-for="item in storeList" :key="item.code">
+				<el-col :span="6" class="store-item" v-for="item in applicationList" :key="item.code">
 					<el-card style="height: 170px;padding: 10px" shadow="never">
 						<div class="title-box" @click="goDetail(item.datasetId)">
 							<div class="title-left">
-								<div class="title-label">{{ item.title.substring(0, 1) }}</div>
+								<div class="title-label">{{ item.name.substring(0, 1) }}</div>
 								<div class="title-info">
-									<div class="line1 knowledge-title">{{ item.title }}</div>
+									<div class="line1 knowledge-title">{{ item.name }}</div>
 									<div class="author">创建者: {{ item.author }}</div>
 								</div>
 							</div>
 							<div class="title-right">
-								<el-tag type="primary">通用</el-tag>
+								<el-tag type="primary" v-if="item.type === 1">简单配置</el-tag>
+								<el-tag v-else>高级编排</el-tag>
 							</div>
 						</div>
 						<div class="desc-box" @click="goDetail(item.datasetId)">
@@ -51,12 +52,12 @@
 						<div class="tool-box">
 							<div class="tool-box-left" @click="goDetail(item.datasetId)">
 								<div class="box-item">
-									<span class="num">{{ item.documentNum }}</span>
+									<span class="num">1</span>
 									<span class="num-label">文档数</span>
 								</div>
 								<el-divider direction="vertical"></el-divider>
 								<div class="box-item">
-									<span class="num">{{ $TOOL.formatBytes(item.fileSize) }}</span>
+									<span class="num">2</span>
 									<span class="num-label"></span>
 								</div>
 								<el-divider direction="vertical"></el-divider>
@@ -64,29 +65,6 @@
 									<span class="num">1</span>
 									<span class="num-label">关联应用</span>
 								</div>
-							</div>
-							<div class="tool-box-right">
-								<el-dropdown trigger="click" @command="handleClick($event, item)">
-									<el-icon>
-										<MoreFilled />
-									</el-icon>
-									<template #dropdown>
-										<el-dropdown-menu>
-											<el-dropdown-item command="embedding">
-												<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量化
-											</el-dropdown-item>
-											<el-dropdown-item command="setting">
-												<el-icon>
-													<Setting />
-												</el-icon> 设置
-											</el-dropdown-item>
-											<el-dropdown-item command="delete">
-												<el-icon>
-													<Delete />
-												</el-icon> 删除</el-dropdown-item>
-										</el-dropdown-menu>
-									</template>
-								</el-dropdown>
 							</div>
 						</div>
 					</el-card>
@@ -100,7 +78,7 @@
 </template>
 
 <script>
-import saveDialog from '@/views/dataset/save.vue';
+import saveDialog from './save.vue';
 import Pages from "@/components/pages/index.vue";
 import {Delete, MoreFilled, Plus, Setting} from "@element-plus/icons-vue";
 
@@ -116,14 +94,14 @@ export default{
 	data() {
 		return {
 			searchForm: {
-				title: '',
+				name: '',
 				page: 1,
 				limit: 15
 			},
 			page: {
 				total: 0
 			},
-			storeList: [],
+			applicationList: [],
 			dialogVisible: false,
 		}
 	},
@@ -132,8 +110,8 @@ export default{
 	},
 	methods: {
 		async getList() {
-			let res = await this.$API.dataset.list.get(this.searchForm)
-			this.storeList = res.data.data
+			let res = await this.$API.application.list.get(this.searchForm)
+			this.applicationList = res.data.data
 			this.page.total = res.data.total
 		},
 		addDataset() {
@@ -159,15 +137,6 @@ export default{
 		goDetail(datasetId) {
 			this.$router.push('/dataset/detail?datasetId=' + datasetId)
 		},
-		// 向量化
-		async embedding(datasetId) {
-			let res = await this.$API.dataset.embedding.get({datasetId: datasetId})
-			if (res.code === 0) {
-				this.$message.success(res.msg)
-			} else {
-				this.$message.error(res.msg)
-			}
-		},
 		// 删除知识库
 		async delete(datasetId) {
 			this.$confirm('此操作将永久删除该知识库 是否继续?', '提示', {
@@ -183,24 +152,6 @@ export default{
 					this.$message.error(res.msg)
 				}
 			}).catch(() => {});
-		},
-		// 操作知识库
-		handleClick(event, row) {
-			switch (event) {
-				case 'embedding':
-					this.embedding(row.datasetId)
-					break;
-				case 'setting':
-					this.dialogVisible = true
-
-					this.$nextTick(() => {
-						this.$refs.saveDialog.open('edit').setData(row)
-					})
-					break;
-				case 'delete':
-					this.delete(row.datasetId)
-					break;
-			}
 		}
 	}
 }
@@ -293,24 +244,6 @@ export default{
 	overflow: hidden;
 	padding-top: 20px;
 	height: 60px;
-}
-.tool-box {
-	width: 100%;
-	height: 40px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-.tool-box-left {
-	display: flex;
-	align-items: center;
-}
-.box-item .num {
-	font-weight: bold;
-}
-.box-item .num-label {
-	color: #646a73;
-	margin-left: 5px;
 }
 .add-item-box {
 	display: flex;
