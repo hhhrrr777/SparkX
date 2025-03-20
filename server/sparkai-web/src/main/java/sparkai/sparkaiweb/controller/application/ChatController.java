@@ -8,7 +8,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.service.service.interfaces.application.ISseChatService;
 import sparkai.service.vo.application.SseChatVo;
 
-
 @RequestMapping("/api/chat")
 @RestController
 public class ChatController {

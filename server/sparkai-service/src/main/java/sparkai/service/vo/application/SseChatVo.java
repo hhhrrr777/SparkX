@@ -15,4 +15,14 @@ public class SseChatVo implements Serializable {
      * 聊天内容
      */
     private String content;
+
+    /**
+     * 会话ID
+     */
+    private String sessionId;
+
+    /**
+     * 应用ID
+     */
+    private String appId;
 }
