@@ -32,7 +32,7 @@
 											<div class="user-icon">
 												<img src="/src/assets/user.png" style="width: 30px;height: 30px;"/>
 											</div>
-											<div class="chat-user-name">用户333</div>
+											<div class="chat-user-name"></div>
 										</div>
 										<div class="answer-content">
 											<div class="code-box">
@@ -52,7 +52,7 @@
 											<div class="user-icon">
 												<img src="/src/assets/robot.gif" style="width: 30px;height: 30px;"/>
 											</div>
-											<div class="chat-user-name">DingDongAI</div>
+											<div class="chat-user-name"></div>
 										</div>
 										<div class="answer-content">
 											<div class="code-box">
@@ -166,18 +166,16 @@ export default {
 		// 发送消息
 		async send() {
 			let that = this
-			fetchEventSource(`${configInfo.API_URL}/chat/chat`, {
+			fetchEventSource(`${configInfo.API_URL}/chat/sseChat`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ query: that.chatMsg }),
+				body: JSON.stringify({ content: that.chatMsg }),
 				onmessage(ev) {
-					console.log('Received message:', ev.data);
+					console.log('Received message:', ev);
 					// 这里可以根据接收到的流式数据更新前端界面
-					that.compiledMarkdown += ev.data
-					const split = that.compiledMarkdown.match(/data:.*}\n\n/g)
-					console.log('xxx', split)
+					that.compiledMarkdown += ev.data.replace("-_-_wrap_-_-", "\r\n")
 				},
 				onclose() {
 					console.log('Connection closed by server');
