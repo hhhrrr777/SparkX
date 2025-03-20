@@ -15,6 +15,9 @@ public class ChatController {
     @Autowired
     ISseChatService iSseChatService;
 
+    /**
+     * 流式聊天
+     */
     @PostMapping(value = "/sseChat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter sseChat(@RequestBody @Validated SseChatVo chatVo) {
 
