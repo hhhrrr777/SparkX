@@ -1,8 +1,29 @@
 <template>
 	<div class="chat-content-box">
 		<div class="chat-msg">
+			<div class="panel" style="background: #f4f4f4">
+				<div class="flex-x-between">
+					<div class="chat-msg-content" style="width: 50px">
+						<div class="chat-user">
+							<div class="user-icon">
+								<img src="/src/assets/robot.gif" style="width: 30px;height: 30px;"/>
+							</div>
+							<div class="chat-user-name"></div>
+						</div>
+					</div>
+					<div class="answer-content">
+						<div class="hello-word">
+							<p style="font-size: 14px;font-weight: 500">您好，我是 XXX 小助手，您可以向我提出 XXX 使用问题。</p>
+							<div class="hello-word-list">
+								<div class="hello-word-item" v-for="i in 10" :key="i">你想了解什么</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- 循环对话开始 -->
-			<div class="panel" :style="{background: (item.source === 'user') ? '#f4f4f4' : '#fff' }" v-for="(item, index) in chatMsg" :key="index">
+			<div class="panel" :style="{background: (item.source === 'user') ? '#f4f4f4' : '#fff' }" v-for="(item, index) in chatLogMsg" :key="index">
 				<div class="flex-x-between">
 					<div class="chat-msg-content">
 						<div class="chat-user">
@@ -73,7 +94,7 @@
 			</div>
 			<div class="send-btn" @click="send">
 				<div class="send-icon">
-					<el-icon style="color: #5E17EB" size="28"><Promotion /></el-icon>
+					<el-icon size="28" :style="{color: chatMsg.length > 0 ? '#5E17EB' : '#909399'}" ><Promotion /></el-icon>
 				</div>
 			</div>
 		</div>
@@ -165,7 +186,7 @@ export default {
 	margin: 0 auto;
 
 	.chat-msg {
-		height: 88%;
+		height: calc(100% - 83px);
 		width: 100%;
 		overflow-y: scroll;
 		overflow-x: hidden;
@@ -279,5 +300,32 @@ export default {
 	display: flex;
 	align-items: center;
 	float: right;
+}
+.hello-word {
+	width: 100%;
+	background-image: linear-gradient(137deg, rgb(229, 244, 255) 0%, rgb(239, 231, 255) 100%);
+	border: 0;
+	display: flex;
+	flex-direction: column;
+	padding: 20px 30px;
+	border-radius: 5px;
+}
+.hello-word-list {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-top: 10px;
+}
+.hello-word-item {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	font-size: 13px;
+	background: rgba(255, 255, 255, 0.45);
+	border: 1px solid rgb(255, 255, 255);
+	margin-right: 10px;
+	margin-bottom: 10px;
+	cursor: pointer;
 }
 </style>

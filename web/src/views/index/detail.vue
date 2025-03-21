@@ -149,7 +149,7 @@ export default {
 <style scoped>
 .detail-box {
 	width: 100%;
-	height: calc(100vh - 100px);
+	height: calc(100vh - 70px);
 }
 .box-height-left {
 	height: 100%;
