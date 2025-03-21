@@ -67,7 +67,7 @@
 									</el-icon>
 									<div class="line1">关联知识库关联知识库关联</div>
 								</div>
-								<el-icon>
+								<el-icon style="margin-left: 5px">
 									<Delete />
 								</el-icon>
 							</div>
@@ -77,43 +77,7 @@
 						<el-input type="textarea" v-model="form.prologue" rows="5" maxlength="500" show-word-limit></el-input>
 					</el-form-item>
 				</el-form>
-				<div class="setting-box">
-					<div class="setting-title">知识库引用</div>
-					<el-switch
-						v-model="form.show_relation">
-					</el-switch>
-				</div>
-				<div class="setting-box">
-					<div class="setting-title">显示耗时</div>
-					<el-switch
-						v-model="form.show_time">
-					</el-switch>
-				</div>
-				<div class="setting-box">
-					<div class="setting-title">显示消耗token</div>
-					<el-switch
-						v-model="form.show_tokens">
-					</el-switch>
-				</div>
-				<div class="setting-box">
-					<div class="setting-title">显示评价</div>
-					<el-switch
-						v-model="form.show_appraise">
-					</el-switch>
-				</div>
-				<div class="setting-box">
-					<div class="setting-title">语音输入</div>
-					<el-switch
-						v-model="form.voice_input">
-					</el-switch>
-				</div>
-				<div class="setting-box">
-					<div class="setting-title">语音输出</div>
-					<el-switch
-						v-model="form.voice_out">
-					</el-switch>
-				</div>
-				<div class="setting-box">
+				<div class="setting-box" style="width: calc(100% - 40px);">
 					<div class="setting-title">空搜索回复</div>
 					<el-switch
 						active-text="AI"
@@ -126,6 +90,44 @@
 						<el-input type="textarea" v-model="form.reply_content" rows="3" maxlength="255" show-word-limit></el-input>
 					</el-form-item>
 				</el-form>
+				<div class="setting-box-list">
+					<div class="setting-box">
+						<div class="setting-title">知识库引用</div>
+						<el-switch
+							v-model="form.show_relation">
+						</el-switch>
+					</div>
+					<div class="setting-box">
+						<div class="setting-title">显示耗时</div>
+						<el-switch
+							v-model="form.show_time">
+						</el-switch>
+					</div>
+					<div class="setting-box">
+						<div class="setting-title">显示消耗token</div>
+						<el-switch
+							v-model="form.show_tokens">
+						</el-switch>
+					</div>
+					<div class="setting-box">
+						<div class="setting-title">显示评价</div>
+						<el-switch
+							v-model="form.show_appraise">
+						</el-switch>
+					</div>
+					<div class="setting-box">
+						<div class="setting-title">语音输入</div>
+						<el-switch
+							v-model="form.voice_input">
+						</el-switch>
+					</div>
+					<div class="setting-box">
+						<div class="setting-title">语音输出</div>
+						<el-switch
+							v-model="form.voice_out">
+						</el-switch>
+					</div>
+				</div>
 			</el-col>
 			<el-col :span="14" style="background: #f4f4f4;padding: 10px;">
 				<chat-box></chat-box>
@@ -221,13 +223,19 @@ export default {
 .dataset-item-div {
 	width: calc(100% - 20px);display: flex;align-items: center;
 }
+.setting-box-list {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
 .setting-box {
-	width: calc(100% - 60px);
+	width: 40%;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	margin: 0 auto;
 	margin-bottom: 10px;
+
 }
 .setting-div {
 	height: calc(100vh - 160px);
