@@ -62,6 +62,18 @@ menu[0].children.push({
 		"active": "/index/home",
 	}
 })
+menu[0].children.push({
+	"id": 103,
+	"pid": 1,
+	"name": '应用详情',
+	"path": "/index/detail",
+	"component": "index/detail",
+	"meta": {
+		"title": "应用详情",
+		"hidden": true,
+		"active": "/index/home",
+	}
+})
 
 const routes = menu
 

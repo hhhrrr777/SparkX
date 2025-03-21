@@ -19,7 +19,7 @@
 			</el-form>
 			<el-row class="store-list">
 				<el-col :span="6" class="store-item">
-					<el-card class="add-box" shadow="never" @click="addDataset">
+					<el-card class="add-box" shadow="never" @click="addApplication">
 						<div class="add-item-box">
 							<div class="add-icon">
 								<el-icon class="icon-color">
@@ -33,7 +33,7 @@
 
 				<el-col :span="6" class="store-item" v-for="item in applicationList" :key="item.code">
 					<el-card style="height: 170px;padding: 10px" shadow="never">
-						<div class="title-box" @click="goDetail(item.datasetId)">
+						<div class="title-box" @click="goDetail(item.appId)">
 							<div class="title-left">
 								<div class="title-label">{{ item.name.substring(0, 1) }}</div>
 								<div class="title-info">
@@ -42,28 +42,40 @@
 								</div>
 							</div>
 							<div class="title-right">
-								<el-tag type="primary" v-if="item.type === 1">简单配置</el-tag>
+								<el-tag type="success" v-if="item.type === 1">简单配置</el-tag>
 								<el-tag v-else>高级编排</el-tag>
 							</div>
 						</div>
-						<div class="desc-box" @click="goDetail(item.datasetId)">
+						<div class="desc-box" @click="goDetail(item.appId)">
 							{{ item.description }}
 						</div>
 						<div class="tool-box">
-							<div class="tool-box-left" @click="goDetail(item.datasetId)">
+							<div class="tool-box-left">
 								<div class="box-item">
-									<span class="num">1</span>
-									<span class="num-label">文档数</span>
+									<el-tooltip
+										effect="dark"
+										content="演示"
+									>
+										<el-icon size="16"><VideoPlay /></el-icon>
+									</el-tooltip>
 								</div>
 								<el-divider direction="vertical"></el-divider>
 								<div class="box-item">
-									<span class="num">2</span>
-									<span class="num-label"></span>
+									<el-tooltip
+										effect="dark"
+										content="设置"
+									>
+										<el-icon size="16"><Setting /></el-icon>
+									</el-tooltip>
 								</div>
 								<el-divider direction="vertical"></el-divider>
 								<div class="box-item">
-									<span class="num">1</span>
-									<span class="num-label">关联应用</span>
+									<el-tooltip
+										effect="dark"
+										content="删除"
+									>
+										<el-icon size="16"><Delete /></el-icon>
+									</el-tooltip>
 								</div>
 							</div>
 						</div>
@@ -80,13 +92,13 @@
 <script>
 import saveDialog from './save.vue';
 import Pages from "@/components/pages/index.vue";
-import {Delete, MoreFilled, Plus, Setting} from "@element-plus/icons-vue";
+import {Delete, Plus, Setting, VideoPlay} from "@element-plus/icons-vue";
 
 export default{
 	components: {
+		VideoPlay,
 		Delete,
 		Setting,
-		MoreFilled,
 		Plus,
 		saveDialog,
 		Pages
@@ -103,6 +115,7 @@ export default{
 			},
 			applicationList: [],
 			dialogVisible: false,
+			mode: 'add'
 		}
 	},
 	mounted() {
@@ -114,16 +127,19 @@ export default{
 			this.applicationList = res.data.data
 			this.page.total = res.data.total
 		},
-		addDataset() {
+		addApplication() {
 
 			this.dialogVisible = true
-
+			this.mode = 'add'
 			this.$nextTick(() => {
 				this.$refs.saveDialog.open('add')
 			})
 		},
-		handleSuccess() {
+		handleSuccess(row) {
 			this.dialogVisible = false
+			if (this.mode === 'add') {
+				this.goDetail(row)
+			}
 			this.getList()
 		},
 		handlePageChange(page) {
@@ -133,18 +149,18 @@ export default{
 		onSubmit() {
 			this.getList()
 		},
-		// 知识库详情
-		goDetail(datasetId) {
-			this.$router.push('/dataset/detail?datasetId=' + datasetId)
+		// 应用详情
+		goDetail(appId) {
+			this.$router.push('/index/detail?appId=' + appId)
 		},
-		// 删除知识库
-		async delete(datasetId) {
-			this.$confirm('此操作将永久删除该知识库 是否继续?', '提示', {
+		// 删除应用
+		async delete(appId) {
+			this.$confirm('此操作将永久删除该应用 是否继续?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(async () => {
-				let res = await this.$API.dataset.del.get({datasetId: datasetId})
+				let res = await this.$API.dataset.del.get({appId: appId})
 				if (res.code === 0) {
 					this.$message.success(res.msg)
 					this.getList()
@@ -250,5 +266,16 @@ export default{
 	align-items: center;
 	justify-content: center;
 	height: 170px;
+}
+.tool-box {
+	width: 100%;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.tool-box-left {
+	display: flex;
+	align-items: center;
 }
 </style>

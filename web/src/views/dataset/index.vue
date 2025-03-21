@@ -42,7 +42,7 @@
 								</div>
 							</div>
 							<div class="title-right">
-								<el-tag type="primary">通用</el-tag>
+								<el-tag>通用</el-tag>
 							</div>
 						</div>
 						<div class="desc-box" @click="goDetail(item.datasetId)">

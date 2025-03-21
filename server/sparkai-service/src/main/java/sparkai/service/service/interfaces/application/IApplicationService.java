@@ -13,6 +13,7 @@ import sparkai.common.core.PageResult;
 import sparkai.service.validate.application.ApplicationAddValidate;
 import sparkai.service.vo.application.ApplicationListVo;
 import sparkai.service.vo.application.ApplicationQueryVo;
+import sparkai.service.vo.application.ApplicationVo;
 
 /**
  * <p>
@@ -34,6 +35,14 @@ public interface IApplicationService {
     /**
      * 添加应用
      * @param validate ApplicationAddValidate
+     * @return String
      */
-    void addApplication(ApplicationAddValidate validate);
+    String addApplication(ApplicationAddValidate validate);
+
+    /**
+     * 获取应用信息
+     * @param appId String
+     * @return ApplicationVo
+     */
+    ApplicationVo getApplicationInfo(String appId);
 }

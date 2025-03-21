@@ -16,22 +16,27 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import sparkai.common.core.PageResult;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
-import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
+import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
 import sparkai.service.vo.application.ApplicationListVo;
 import sparkai.service.vo.application.ApplicationQueryVo;
-import sparkai.service.vo.dataset.DatasetVo;
+import sparkai.service.vo.application.ApplicationVo;
+import sparkai.service.vo.dataset.DatasetSimpleVo;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -49,6 +54,12 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     SystemUserMapper systemUserMapper;
+
+    @Autowired
+    ApplicationDatasetRelationMapper applicationDatasetRelationMapper;
+
+    @Autowired
+    KnowledgeDatasetMapper knowledgeDatasetMapper;
 
     /**
      * 应用列表
@@ -92,15 +103,55 @@ public class ApplicationServiceImpl implements IApplicationService {
      * @param validate ApplicationAddValidate
      */
     @Override
-    public void addApplication(ApplicationAddValidate validate) {
+    public String addApplication(ApplicationAddValidate validate) {
 
         ApplicationEntity entity = new ApplicationEntity();
         entity.setAppId(IdUtil.randomUUID());
         entity.setName(validate.getName());
+        entity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
         entity.setDescription(validate.getDescription());
         entity.setType(validate.getType());
         entity.setCreateTime(Tool.nowDateTime());
 
         applicationMapper.insert(entity);
+
+        return entity.getAppId();
+    }
+
+    /**
+     * 获取应用信息
+     * @param appId String
+     * @return ApplicationVo
+     */
+    @Override
+    public ApplicationVo getApplicationInfo(String appId) {
+
+        ApplicationVo applicationVo = new ApplicationVo();
+        ApplicationEntity info = applicationMapper.selectOne(
+                new QueryWrapper<ApplicationEntity>()
+                        .eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616")
+                        .eq("app_id", appId));
+        BeanUtils.copyProperties(info, applicationVo);
+
+        // 查询关联的知识库信息
+        List<ApplicationDatasetRelationEntity> relationEntityList =
+                applicationDatasetRelationMapper.selectList(new QueryWrapper<ApplicationDatasetRelationEntity>()
+                        .eq("app_id", appId));
+        if (!CollectionUtils.isEmpty(relationEntityList)) {
+
+            List<String> datasetIds = relationEntityList.stream().map(ApplicationDatasetRelationEntity::getDatasetId).toList();
+            List<KnowledgeDatasetEntity> datasetList = knowledgeDatasetMapper.selectByIds(datasetIds);
+            List<DatasetSimpleVo> datasetSimpleVoList = new LinkedList<>();
+            for (KnowledgeDatasetEntity entity : datasetList) {
+
+                DatasetSimpleVo vo = new DatasetSimpleVo();
+                BeanUtils.copyProperties(entity, vo);
+
+                datasetSimpleVoList.add(vo);
+            }
+            applicationVo.setDatasetList(datasetSimpleVoList);
+        }
+
+        return applicationVo;
     }
 }

@@ -75,15 +75,15 @@ export default {
 					this.loading = true
 					let res;
 					if (this.mode === "add") {
-						res = await this.$API.dataset.add.post(this.form);
+						res = await this.$API.application.add.post(this.form);
 					} else {
-						res = await this.$API.dataset.edit.post(this.form);
+						res = await this.$API.application.edit.post(this.form);
 					}
 
 					this.loading = false
 					if (res.code === 0) {
-						this.$message.success(res.msg)
-						this.$emit('success')
+						this.$message.success('操作成功')
+						this.$emit('success', res.msg)
 					} else {
 						this.$message.error(res.msg)
 					}

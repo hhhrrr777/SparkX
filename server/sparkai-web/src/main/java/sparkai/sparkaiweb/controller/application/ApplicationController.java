@@ -9,6 +9,7 @@ import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
 import sparkai.service.vo.application.ApplicationListVo;
 import sparkai.service.vo.application.ApplicationQueryVo;
+import sparkai.service.vo.application.ApplicationVo;
 
 @RequestMapping("/api/application")
 @RestController
@@ -32,7 +33,15 @@ public class ApplicationController {
     @PostMapping("/add")
     public AjaxResult<Object> add(@RequestBody @Validated ApplicationAddValidate validate) {
 
-        iApplicationService.addApplication(validate);
-        return AjaxResult.success();
+        return AjaxResult.success(iApplicationService.addApplication(validate));
+    }
+
+    /**
+     * 获取知识库详情
+     */
+    @GetMapping("/detail")
+    public AjaxResult<ApplicationVo> applicationInfo(@RequestParam("appId") String appId) {
+
+        return AjaxResult.success(iApplicationService.getApplicationInfo(appId));
     }
 }

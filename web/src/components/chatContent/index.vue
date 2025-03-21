@@ -160,7 +160,7 @@ export default {
 
 <style lang="scss" scoped>
 .chat-content-box {
-	width: calc(100% - 400px);
+	width: 100%;
 	height: 100%;
 	margin: 0 auto;
 
@@ -241,14 +241,14 @@ export default {
 	border-radius: 5px;
 	border: 1px solid var(--color-border-3);
 	background: #fff;
-	margin-top: 40px;
+	margin-top: 10px;
 	display: flex;
 	.input-box {
 		width: 95%;
 	}
 }
 .send-btn {
-	width: 5%;
+	width: 10%;
 	height: 100%;
 	display: flex;
 	align-items: center;
