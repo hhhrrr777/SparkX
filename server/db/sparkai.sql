@@ -264,7 +264,7 @@ CREATE TABLE "public"."application" (
     "similarity" numeric(10,3) DEFAULT 0.600,
     "top_rank" int2 DEFAULT 3,
     "rerank_model_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "memory_num" int2 DEFAULT 4,
+    "memory_num" int2 DEFAULT 2,
     "max_reply_token" int8 DEFAULT 1024,
     "temperature" numeric(10,2) DEFAULT 3,
     "type" int2 DEFAULT 1,

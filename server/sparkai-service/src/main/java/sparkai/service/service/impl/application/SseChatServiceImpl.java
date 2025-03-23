@@ -1,7 +1,12 @@
 package sparkai.service.service.impl.application;
 
 import cn.hutool.core.date.TimeInterval;
+import dev.langchain4j.community.model.qianfan.QianfanChatModel;
 import dev.langchain4j.community.model.qianfan.QianfanStreamingChatModel;
+import dev.langchain4j.community.model.zhipu.ZhipuAiChatModel;
+import dev.langchain4j.community.model.zhipu.ZhipuAiStreamingChatModel;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.TokenStream;
 import lombok.extern.slf4j.Slf4j;
