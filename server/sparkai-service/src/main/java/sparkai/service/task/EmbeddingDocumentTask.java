@@ -1,8 +1,6 @@
 package sparkai.service.task;
 
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
@@ -22,7 +20,6 @@ import sparkai.service.mapper.dataset.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EmbeddingDocumentTask {

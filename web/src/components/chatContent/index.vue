@@ -1,7 +1,7 @@
 <template>
 	<div class="chat-content-box">
 		<div class="chat-msg">
-			<div class="panel" style="background: #f4f4f4">
+			<div class="panel" style="background: #f4f4f4" v-if="welcomeWord.title.length > 0">
 				<div class="flex-x-between">
 					<div class="chat-msg-content" style="width: 50px">
 						<div class="chat-user">
@@ -13,9 +13,9 @@
 					</div>
 					<div class="answer-content">
 						<div class="hello-word">
-							<p style="font-size: 14px;font-weight: 500">您好，我是 XXX 小助手，您可以向我提出 XXX 使用问题。</p>
+							<p style="font-size: 14px;font-weight: 500">{{ welcomeWord.title }}</p>
 							<div class="hello-word-list">
-								<div class="hello-word-item" v-for="i in 10" :key="i">你想了解什么</div>
+								<div class="hello-word-item" v-for="(item, index) in welcomeWord.question" :key="index">{{ item.content }}</div>
 							</div>
 						</div>
 					</div>
@@ -116,6 +116,10 @@ export default {
 			default: []
 		},
 		setting: {
+			type: Object,
+			default: () => {}
+		},
+		welcomeWord: {
 			type: Object,
 			default: () => {}
 		}
@@ -226,30 +230,30 @@ export default {
 						justify-content: center;
 						align-items: center;
 					}
+				}
+			}
 
-					.answer-content {
-						gap: 0;
-						margin-top: 3px;
-						overflow: hidden;
-						display: flex;
-						flex-direction: column;
-						flex: 1;
-						width: 100%;
+			.answer-content {
+				gap: 0;
+				margin-top: 3px;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+				flex: 1;
+				width: 100%;
 
-						.code-box {
-							padding-left: 8px;
-							margin-top: 3px;
-							overflow: hidden;
-							flex: 1;
-						}
+				.code-box {
+					padding-left: 8px;
+					margin-top: 3px;
+					overflow: hidden;
+					flex: 1;
+				}
 
-						.answer-content-wrap {
-							font-style: normal;
-							font-size: 16px;
-							line-height: 1.5;
-							word-wrap: break-word;
-						}
-					}
+				.answer-content-wrap {
+					font-style: normal;
+					font-size: 16px;
+					line-height: 1.5;
+					word-wrap: break-word;
 				}
 			}
 		}

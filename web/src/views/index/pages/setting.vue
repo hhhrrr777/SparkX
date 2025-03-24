@@ -14,20 +14,20 @@
 						<template #label>
 							<div class="flex-center">
 								<div><span style="color: var(--el-color-danger);">*</span> AI模型</div>
-								<div class="flex-center setting-btn" @click="setAI">
+								<div class="flex-center setting-btn">
 									<el-button
 										icon="el-icon-Setting"
 										type="primary"
 										link
-										@click="setAI"
-										:disabled="!form.model_id"
+										@click="dialogVisible = true"
+										:disabled="!form.modelId"
 									>
 										参数
 									</el-button>
 								</div>
 							</div>
 						</template>
-						<el-select v-model="form.model_id" placeholder="请选择" style="width: 100%" clearable>
+						<el-select v-model="form.modelId" placeholder="请选择" style="width: 100%" clearable>
 							<el-option-group
 								v-for="group in options"
 								:key="group.label"
@@ -41,8 +41,14 @@
 							</el-option-group>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="提示词" prop="prompt">
-						<el-input type="textarea" v-model="form.prompt" rows="4" maxlength="1000" show-word-limit></el-input>
+					<el-form-item>
+						<template #label>
+							设定角色
+							<el-tooltip effect="dark" content="例如: 你是一位资深的数据分析专员，请根据用户提出的数据,给出最专业的解答,要求回答言简意赅" placement="top-start">
+								<el-icon size="16"><InfoFilled /></el-icon>
+							</el-tooltip>
+						</template>
+						<el-input type="textarea" v-model="form.prompt" rows="8" maxlength="1000" show-word-limit></el-input>
 					</el-form-item>
 					<el-form-item>
 						<template #label>
@@ -72,88 +78,144 @@
 							</div>
 						</template>
 						<div class="dataset-list">
-							<div class="dataset-item">
+							<div class="dataset-item" v-for="(item, index) in relationDataList" :key="index">
 								<div class="dataset-item-div">
 									<el-icon size="20" color="#5E17EB" style="margin-right: 5px">
 										<Document />
 									</el-icon>
-									<div class="line1">关联知识库关联知识库关联</div>
+									<div class="line1">{{ item.title }}</div>
 								</div>
-								<el-icon style="margin-left: 5px">
+								<el-icon style="margin-left: 5px" @click="delDataset(index)">
 									<Delete />
 								</el-icon>
 							</div>
 						</div>
 					</el-form-item>
-					<el-form-item label="开场白" prop="prologue">
-						<el-input type="textarea" v-model="form.prologue" rows="5" maxlength="500" show-word-limit></el-input>
+					<el-form-item label="开场白标题">
+						<el-input v-model="welcomeList.title" maxlength="155" show-word-limit></el-input>
+					</el-form-item>
+					<el-form-item label="开场白问题">
+						<div class="question-list">
+							<div class="question-item" v-for="(item, index) in welcomeList.question" :key="index">
+								<el-input v-model="item.content" maxlength="155" show-word-limit style="width: calc(100% - 40px)"></el-input>
+								<el-icon class="delete-icon" @click="delQuestion(index)">
+									<Delete />
+								</el-icon>
+							</div>
+						</div>
+						<el-button
+							@click="addQuestion"
+							icon="el-icon-Plus"
+							type="primary"
+							link
+						>
+							添加问题
+						</el-button>
 					</el-form-item>
 				</el-form>
 				<div class="setting-box" style="width: calc(100% - 40px);">
 					<div class="setting-title">空搜索回复</div>
 					<el-switch
+						active-value="1"
+						inactive-value="2"
 						active-text="AI"
 						inactive-text="人工"
-						v-model="form.empty_reply">
+						v-model="form.emptyReply">
 					</el-switch>
 				</div>
-				<el-form ref="form" :model="form" :rules="rules" label-position="top" label-width="80px" style="padding: 10px 20px">
-					<el-form-item label="回复内容" prop="reply_content">
-						<el-input type="textarea" v-model="form.reply_content" rows="3" maxlength="255" show-word-limit></el-input>
+				<el-form :model="form" label-position="top" label-width="80px"
+						 style="padding: 10px 20px">
+					<el-form-item label="回复内容" v-if="form.emptyReply == 2">
+						<el-input type="textarea" v-model="form.replyContent" rows="3" maxlength="255" show-word-limit></el-input>
 					</el-form-item>
 				</el-form>
 				<div class="setting-box-list">
 					<div class="setting-box">
 						<div class="setting-title">显示引用片段</div>
 						<el-switch
-							v-model="form.show_relation">
+							v-model="form.showRelation">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">显示耗时</div>
 						<el-switch
-							v-model="form.show_time">
+							v-model="form.showTime">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">显示消耗token</div>
 						<el-switch
-							v-model="form.show_tokens">
+							v-model="form.showTokens">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">显示评价</div>
 						<el-switch
-							v-model="form.show_appraise">
+							v-model="form.showAppraise">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">语音输入</div>
 						<el-switch
-							v-model="form.voice_input">
+							v-model="form.voiceInput">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">语音输出</div>
 						<el-switch
-							v-model="form.voice_out">
+							v-model="form.voiceOut">
 						</el-switch>
 					</div>
 				</div>
 			</el-col>
 			<el-col :span="14" style="background: #f4f4f4;padding: 10px;">
-				<chat-box></chat-box>
+				<chat-box :welcome-word="welcomeList" :key="chatBoxKey"></chat-box>
 			</el-col>
 		</el-row>
 	</div>
+
+	<!-- 模型设置 -->
+	<el-dialog title="AI设置" v-model="dialogVisible" width="500px" destroy-on-close :close-on-click-modal="false">
+		<el-form :model="form" ref="ruleForm" label-width="80px">
+			<el-form-item label="回复上限">
+				<el-slider
+					v-model="form.maxReplyToken"
+					:min="0"
+					:max="4096"
+					show-input>
+				</el-slider>
+			</el-form-item>
+			<el-form-item>
+				<template #label>
+					温度
+					<el-tooltip effect="dark" content="较高的数值会使输出更加随机，而较低的数值会使其更加集中和确定" placement="top-start">
+						<el-icon size="16"><InfoFilled /></el-icon>
+					</el-tooltip>
+				</template>
+				<el-slider
+					v-model="form.temperature"
+					:min="0"
+					:step="0.01"
+					:max="1"
+					show-input>
+				</el-slider>
+			</el-form-item>
+		</el-form>
+		<template #footer>
+			<div class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+			</div>
+		</template>
+	</el-dialog>
 </template>
 
 <script>
 import chatBox from '@/components/chatContent/index.vue'
-import {Plus, Setting, Document, Delete} from "@element-plus/icons-vue";
+import {Plus, Setting, Document, Delete, InfoFilled} from "@element-plus/icons-vue";
 
 export default {
-	components: {Document, Plus, chatBox, Setting, Delete},
+	components: {InfoFilled, Document, Plus, chatBox, Setting, Delete},
 	data() {
 		return {
 			form: {},
@@ -166,35 +228,29 @@ export default {
 				]
 			},
 			options: [{
-				label: '热门城市',
+				label: '百度千帆',
 				options: [{
-					value: 'Shanghai',
-					label: '上海'
-				}, {
-					value: 'Beijing',
-					label: '北京'
-				}]
-			}, {
-				label: '城市名',
-				options: [{
-					value: 'Chengdu',
-					label: '成都'
-				}, {
-					value: 'Shenzhen',
-					label: '深圳'
-				}, {
-					value: 'Guangzhou',
-					label: '广州'
-				}, {
-					value: 'Dalian',
-					label: '大连'
+					value: 'ERNIE-Speed-128K',
+					label: 'ERNIE-Speed-128K'
 				}]
 			}],
+			dialogVisible: false,
+			datasetList: [], // 所有的知识库
+			relationDataList: [], // 关联的知识库
+			welcomeList: {
+				title: "您好，我是xxx小助手。",
+				question: [
+					{"content": "请问xxx怎么购买"},
+					{"content": "请问xxx怎么使用"},
+				]
+			},
+			chatBoxKey: ""
 		}
 	},
 	mounted() {
 		this.appId = this.$route.query.appId;
 		this.getInfo()
+		this.chatBoxKey = Math.random()
 	},
 	methods: {
 		// 获取应用详情
@@ -202,10 +258,17 @@ export default {
 			let res = await this.$API.application.info.get({appId: this.appId})
 			this.form = res.data
 		},
-		// 设置ai信息
-		setAI(e) {
-			console.log(23)
-			e.stopPropagation()
+		// 删除关联的知识库
+		delDataset(index) {
+			this.relationDataList.slice(index, 1)
+		},
+		// 删除问题
+		delQuestion(index) {
+			this.welcomeList.question.splice(index, 1)
+		},
+		// 添加问题
+		addQuestion() {
+			this.welcomeList.question.push({content: ""})
 		}
 	}
 }
@@ -260,5 +323,20 @@ export default {
 .setting-div-setting {
 	height: calc(100vh - 160px);
 	overflow-y: scroll;
+}
+.question-list {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+.question-item {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+.delete-icon {
+	margin-left: 20px;
+	cursor: pointer;
 }
 </style>
