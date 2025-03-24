@@ -176,6 +176,12 @@ public class ApplicationEntity implements Serializable {
     private Integer type;
 
     /**
+     * 问题优化
+     */
+    @TableField(value = "compressing_query")
+    private Integer compressingQuery;
+
+    /**
     * 创建时间
     */
     @TableField(value = "create_time")

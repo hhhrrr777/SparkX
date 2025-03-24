@@ -264,10 +264,11 @@ CREATE TABLE "public"."application" (
     "similarity" numeric(10,3) DEFAULT 0.600,
     "top_rank" int2 DEFAULT 3,
     "rerank_model_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "memory_num" int2 DEFAULT 2,
+    "memory_num" int2 DEFAULT 4,
     "max_reply_token" int8 DEFAULT 1024,
     "temperature" numeric(10,2) DEFAULT 3,
     "type" int2 DEFAULT 1,
+    "compressing_query" int2 DEFAULT 2,
     "create_time" timestamp(6),
     "update_time" timestamp(6),
     CONSTRAINT "application_pkey" PRIMARY KEY ("app_id")
@@ -302,6 +303,7 @@ COMMENT ON COLUMN "public"."application"."memory_num" IS '记忆条数';
 COMMENT ON COLUMN "public"."application"."max_reply_token" IS '回复上限';
 COMMENT ON COLUMN "public"."application"."temperature" IS '回复温度';
 COMMENT ON COLUMN "public"."application"."type" IS '类型 1:普通 2:编排';
+COMMENT ON COLUMN "public"."application"."compressing_query" IS '问题优化 1:开启 2:关闭';
 COMMENT ON COLUMN "public"."application"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."application"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."application" IS '系统应用表';

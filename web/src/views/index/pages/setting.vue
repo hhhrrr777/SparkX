@@ -10,15 +10,20 @@
 					<el-form-item label="应用描述" prop="description">
 						<el-input type="textarea" v-model="form.description" rows="3" maxlength="255" show-word-limit></el-input>
 					</el-form-item>
-					<el-form-item>
+					<el-form-item :for="'test'">
 						<template #label>
 							<div class="flex-center">
 								<div><span style="color: var(--el-color-danger);">*</span> AI模型</div>
-								<div class="flex-center setting-btn">
-									<el-icon style="margin-right: 5px">
-										<Setting />
-									</el-icon>
-									参数
+								<div class="flex-center setting-btn" @click="setAI">
+									<el-button
+										icon="el-icon-Setting"
+										type="primary"
+										link
+										@click="setAI"
+										:disabled="!form.model_id"
+									>
+										参数
+									</el-button>
 								</div>
 							</div>
 						</template>
@@ -45,16 +50,23 @@
 								<div>关联知识库</div>
 								<div class="flex-center setting-btn">
 									<div class="flex-center setting-btn">
-										<el-icon style="margin-right: 5px">
-											<Setting />
-										</el-icon>
-										参数
+										<el-button
+											icon="el-icon-Setting"
+											type="primary"
+											link
+										>
+											参数
+										</el-button>
 									</div>
+
 									<div class="flex-center setting-btn" style="margin-left: 10px">
-										<el-icon style="margin-right: 5px">
-											<Plus />
-										</el-icon>
-										添加
+										<el-button
+											icon="el-icon-Plus"
+											type="primary"
+											link
+										>
+											添加
+										</el-button>
 									</div>
 								</div>
 							</div>
@@ -92,7 +104,7 @@
 				</el-form>
 				<div class="setting-box-list">
 					<div class="setting-box">
-						<div class="setting-title">知识库引用</div>
+						<div class="setting-title">显示引用片段</div>
 						<el-switch
 							v-model="form.show_relation">
 						</el-switch>
@@ -190,6 +202,11 @@ export default {
 			let res = await this.$API.application.info.get({appId: this.appId})
 			this.form = res.data
 		},
+		// 设置ai信息
+		setAI(e) {
+			console.log(23)
+			e.stopPropagation()
+		}
 	}
 }
 </script>
