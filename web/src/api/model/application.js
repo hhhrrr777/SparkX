@@ -25,5 +25,13 @@ export default {
 
 			return await http.get(this.url, data);
 		}
+	},
+	save: {
+		url: `${config.API_URL}/application/save`,
+		name: "设置应用",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
 	}
 }

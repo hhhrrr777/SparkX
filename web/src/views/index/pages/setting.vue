@@ -1,8 +1,8 @@
 <template>
 	<div style="background: #fff;border-radius: 10px;padding: 10px 5px">
 		<div style="width: 100%;height: 40px;">
-			<el-button type="primary" style="float: right">保存并发布</el-button>
-			<el-button style="float: right;margin-right: 20px">仅保存</el-button>
+			<el-button type="primary" style="float: right" @click="saveApp(1)">保存并发布</el-button>
+			<el-button style="float: right;margin-right: 20px" @click="saveApp(2)">仅保存</el-button>
 		</div>
 		<el-row class="setting-div">
 			<el-col :span="10" class="setting-div-setting">
@@ -165,8 +165,8 @@
 	</div>
 
 	<!-- 模型设置 -->
-	<el-dialog title="AI设置" v-model="dialogVisible" width="500px" destroy-on-close :close-on-click-modal="false">
-		<el-form :model="form" ref="ruleForm" label-width="80px">
+	<el-dialog title="AI参数设置" v-model="dialogVisible" width="500px" destroy-on-close :close-on-click-modal="false">
+		<el-form :model="form" ref="ruleForm" label-width="120px">
 			<el-form-item label="回复上限">
 				<el-slider
 					v-model="form.maxReplyToken"
@@ -187,6 +187,14 @@
 					:min="0"
 					:step="0.01"
 					:max="1"
+					show-input>
+				</el-slider>
+			</el-form-item>
+			<el-form-item label="历史聊天记录数">
+				<el-slider
+					v-model="form.memoryNum"
+					:min="0"
+					:max="10"
 					show-input>
 				</el-slider>
 			</el-form-item>
@@ -285,6 +293,7 @@ export default {
 		// 设置知识库参数
 		setParams() {
 			this.paramsVisible = true
+
 			this.$nextTick(() => {
 				this.$refs.paramsDialog.open().setData(this.form)
 			})
@@ -292,6 +301,16 @@ export default {
 		// 完成参数设定
 		handleDatasetSuccess(row) {
 			console.log(row)
+		},
+		// 保存应用
+		async saveApp(type) {
+			this.form.type = type
+			let res = await this.$API.application.save.post(this.form)
+			if (res.code === 0) {
+				this.$message.success(res.msg)
+			} else {
+				this.$message.error(res.msg)
+			}
 		}
 	}
 }

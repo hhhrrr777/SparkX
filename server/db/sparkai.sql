@@ -258,7 +258,7 @@ CREATE TABLE "public"."application" (
     "show_think" int2 DEFAULT 2,
     "voice_input" int2 DEFAULT 2,
     "voice_out" int2 DEFAULT 2,
-    "empty_reply" int2 DEFAULT 2,
+    "empty_reply" int2 DEFAULT 1,
     "reply_content" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "search_mode" varchar(55) COLLATE "pg_catalog"."default" DEFAULT 'embedding'::character varying,
     "similarity" numeric(10,3) DEFAULT 0.600,
