@@ -1,6 +1,9 @@
-package sparkai.service.vo.application;
+package sparkai.service.validate.application;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 
 import java.io.Serial;
@@ -9,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class ApplicationVo implements Serializable {
+public class ApplicationSaveValidate implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -17,16 +20,21 @@ public class ApplicationVo implements Serializable {
     /**
     * id
     */
+    @NotEmpty(message = "应用id不能为空")
     private String appId;
 
     /**
     * 应用名称
     */
+    @Length(min = 2, max = 25, message = "应用标题必须在2到25个字")
+    @NotEmpty(message = "应用标题不能为空")
     private String name;
 
     /**
     * 应用描述
     */
+    @Length(min = 2, max = 255, message = "应用标题必须在2到255个字")
+    @NotEmpty(message = "应用描述不能为空")
     private String description;
 
     /**
@@ -37,6 +45,7 @@ public class ApplicationVo implements Serializable {
     /**
     * 使用的模型
     */
+    @NotEmpty(message = "使用的模型不能为空")
     private String modelId;
 
     /**
@@ -112,6 +121,7 @@ public class ApplicationVo implements Serializable {
     /**
     * 相似度
     */
+    @Min(value = 0)
     private BigDecimal similarity;
 
     /**
@@ -132,6 +142,7 @@ public class ApplicationVo implements Serializable {
     /**
     * 回复上限
     */
+    @Min(value = 20)
     private Long maxReplyToken;
 
     /**
@@ -145,7 +156,17 @@ public class ApplicationVo implements Serializable {
     private Integer type;
 
     /**
+     * 问题优化 1:开启 2:关闭
+     */
+    private Integer compressingQuery;
+
+    /**
      * 知识库列表
      */
     private List<DatasetSimpleVo> datasetList;
+
+    /**
+     * 保存类型 1:仅保存 2:保存并发布
+     */
+    private Integer saveType;
 }

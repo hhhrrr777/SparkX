@@ -1,6 +1,9 @@
 <template>
 	<div style="background: #fff;border-radius: 10px;padding: 10px 5px">
-		<div style="width: 100%;height: 40px;"><el-button type="primary" style="float: right">保存并发布</el-button></div>
+		<div style="width: 100%;height: 40px;">
+			<el-button type="primary" style="float: right">保存并发布</el-button>
+			<el-button style="float: right;margin-right: 20px">仅保存</el-button>
+		</div>
 		<el-row class="setting-div">
 			<el-col :span="10" class="setting-div-setting">
 				<el-form ref="form" :model="form" :rules="rules" label-position="top" label-width="80px" style="padding: 10px 20px">
@@ -48,7 +51,7 @@
 								<el-icon size="16"><InfoFilled /></el-icon>
 							</el-tooltip>
 						</template>
-						<el-input type="textarea" v-model="form.prompt" rows="8" maxlength="1000" show-word-limit></el-input>
+						<el-input type="textarea" v-model="form.prompt" rows="4" maxlength="1000" show-word-limit></el-input>
 					</el-form-item>
 					<el-form-item>
 						<template #label>
@@ -60,6 +63,7 @@
 											icon="el-icon-Setting"
 											type="primary"
 											link
+											@click="setParams"
 										>
 											参数
 										</el-button>
@@ -70,6 +74,7 @@
 											icon="el-icon-Plus"
 											type="primary"
 											link
+											@click="datasetVisible = true"
 										>
 											添加
 										</el-button>
@@ -77,7 +82,7 @@
 								</div>
 							</div>
 						</template>
-						<div class="dataset-list">
+						<div class="dataset-list" v-if="relationDataList.length > 0">
 							<div class="dataset-item" v-for="(item, index) in relationDataList" :key="index">
 								<div class="dataset-item-div">
 									<el-icon size="20" color="#5E17EB" style="margin-right: 5px">
@@ -90,6 +95,7 @@
 								</el-icon>
 							</div>
 						</div>
+						<div class="notice-dataset" v-else>请选择关联的知识库</div>
 					</el-form-item>
 					<el-form-item label="开场白标题">
 						<el-input v-model="welcomeList.title" maxlength="155" show-word-limit></el-input>
@@ -111,22 +117,6 @@
 						>
 							添加问题
 						</el-button>
-					</el-form-item>
-				</el-form>
-				<div class="setting-box" style="width: calc(100% - 40px);">
-					<div class="setting-title">空搜索回复</div>
-					<el-switch
-						active-value="1"
-						inactive-value="2"
-						active-text="AI"
-						inactive-text="人工"
-						v-model="form.emptyReply">
-					</el-switch>
-				</div>
-				<el-form :model="form" label-position="top" label-width="80px"
-						 style="padding: 10px 20px">
-					<el-form-item label="回复内容" v-if="form.emptyReply == 2">
-						<el-input type="textarea" v-model="form.replyContent" rows="3" maxlength="255" show-word-limit></el-input>
 					</el-form-item>
 				</el-form>
 				<div class="setting-box-list">
@@ -180,7 +170,7 @@
 			<el-form-item label="回复上限">
 				<el-slider
 					v-model="form.maxReplyToken"
-					:min="0"
+					:min="20"
 					:max="4096"
 					show-input>
 				</el-slider>
@@ -208,14 +198,22 @@
 			</div>
 		</template>
 	</el-dialog>
+
+	<el-dialog title="选择知识库" v-model="datasetVisible" width="800px" destroy-on-close :close-on-click-modal="false" class="select-dataset">
+		<dataset-dialog @success="handleSuccess" @doClose="datasetVisible=false" :dataset-ids="relationDataIds"></dataset-dialog>
+	</el-dialog>
+	<!-- 参数设置 -->
+	<save-dialog v-if="paramsVisible" ref="paramsDialog" @success="handleDatasetSuccess" @closed="paramsVisible=false" :close-on-click-modal="false"></save-dialog>
 </template>
 
 <script>
 import chatBox from '@/components/chatContent/index.vue'
 import {Plus, Setting, Document, Delete, InfoFilled} from "@element-plus/icons-vue";
+import datasetDialog from "@/components/dataset/multiple.vue";
+import saveDialog from "@/views/index/dialog/params.vue";
 
 export default {
-	components: {InfoFilled, Document, Plus, chatBox, Setting, Delete},
+	components: {saveDialog, datasetDialog, InfoFilled, Document, Plus, chatBox, Setting, Delete},
 	data() {
 		return {
 			form: {},
@@ -235,8 +233,8 @@ export default {
 				}]
 			}],
 			dialogVisible: false,
-			datasetList: [], // 所有的知识库
 			relationDataList: [], // 关联的知识库
+			relationDataIds: [],
 			welcomeList: {
 				title: "您好，我是xxx小助手。",
 				question: [
@@ -244,13 +242,14 @@ export default {
 					{"content": "请问xxx怎么使用"},
 				]
 			},
-			chatBoxKey: ""
+			chatBoxKey: Math.random(),
+			datasetVisible: false,
+			paramsVisible: false
 		}
 	},
 	mounted() {
 		this.appId = this.$route.query.appId;
 		this.getInfo()
-		this.chatBoxKey = Math.random()
 	},
 	methods: {
 		// 获取应用详情
@@ -260,7 +259,11 @@ export default {
 		},
 		// 删除关联的知识库
 		delDataset(index) {
-			this.relationDataList.slice(index, 1)
+			this.relationDataList.splice(index, 1)
+			this.relationDataIds = []
+			this.relationDataList.forEach(item => {
+				this.relationDataIds.push(item.datasetId)
+			})
 		},
 		// 删除问题
 		delQuestion(index) {
@@ -269,11 +272,30 @@ export default {
 		// 添加问题
 		addQuestion() {
 			this.welcomeList.question.push({content: ""})
+		},
+		// 选择了知识库
+		handleSuccess(row) {
+			this.relationDataList = row
+			this.relationDataIds = []
+			row.forEach(item => {
+				this.relationDataIds.push(item.datasetId)
+			})
+			this.datasetVisible = false
+		},
+		// 设置知识库参数
+		setParams() {
+			this.paramsVisible = true
+			this.$nextTick(() => {
+				this.$refs.paramsDialog.open().setData(this.form)
+			})
+		},
+		// 完成参数设定
+		handleDatasetSuccess(row) {
+			console.log(row)
 		}
 	}
 }
 </script>
-
 <style scoped>
 .flex-center {
 	display: flex;align-items: center;justify-content: space-between
@@ -286,7 +308,6 @@ export default {
 	width: 100%;
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: space-between;
 }
 .dataset-item {
 	width: 30%;
@@ -299,9 +320,12 @@ export default {
 	font-size: 13px;
 	cursor: pointer;
 	margin-bottom: 10px;
+	margin-right: 10px;
 }
 .dataset-item-div {
-	width: calc(100% - 20px);display: flex;align-items: center;
+	width: calc(100% - 20px);
+	display: flex;
+	align-items: center;
 }
 .setting-box-list {
 	display: flex;
@@ -338,5 +362,14 @@ export default {
 .delete-icon {
 	margin-left: 20px;
 	cursor: pointer;
+}
+.notice-dataset {
+	background: #f4f4f4;
+	width: 100%;
+	height: 40px;
+	text-align: center;
+	line-height: 40px;
+	color: #646a73;
+	font-size: 13px;
 }
 </style>

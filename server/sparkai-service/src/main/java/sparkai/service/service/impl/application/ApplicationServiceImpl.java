@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import sparkai.common.core.PageResult;
+import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
@@ -29,6 +30,7 @@ import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
+import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.ApplicationListVo;
 import sparkai.service.vo.application.ApplicationQueryVo;
 import sparkai.service.vo.application.ApplicationVo;
@@ -153,5 +155,26 @@ public class ApplicationServiceImpl implements IApplicationService {
         }
 
         return applicationVo;
+    }
+
+    /**
+     * 编辑应用
+     * @param validate ApplicationSaveValidate
+     */
+    @Override
+    public void saveApplication(ApplicationSaveValidate validate) {
+
+        if (validate.getTemperature() <= 0) {
+            throw new BusinessException("温度数值应该大于0");
+        }
+
+        if (validate.getEmptyReply().equals(2) && validate.getReplyContent().isBlank()) {
+            throw new BusinessException("回复内容不能为空");
+        }
+
+        ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
+        if (applicationInfo == null) {
+            throw new BusinessException("应用信息错误");
+        }
     }
 }

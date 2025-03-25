@@ -7,6 +7,7 @@ import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
+import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.ApplicationListVo;
 import sparkai.service.vo.application.ApplicationQueryVo;
 import sparkai.service.vo.application.ApplicationVo;
@@ -37,11 +38,21 @@ public class ApplicationController {
     }
 
     /**
-     * 获取知识库详情
+     * 获取应用详情
      */
     @GetMapping("/detail")
     public AjaxResult<ApplicationVo> applicationInfo(@RequestParam("appId") String appId) {
 
         return AjaxResult.success(iApplicationService.getApplicationInfo(appId));
+    }
+
+    /**
+     * 保存应用设置
+     */
+    @PostMapping("/save")
+    public AjaxResult<Object> save(@RequestBody @Validated ApplicationSaveValidate validate) {
+
+        iApplicationService.saveApplication(validate);
+        return AjaxResult.success();
     }
 }

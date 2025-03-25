@@ -11,6 +11,7 @@ package sparkai.service.service.interfaces.application;
 
 import sparkai.common.core.PageResult;
 import sparkai.service.validate.application.ApplicationAddValidate;
+import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.ApplicationListVo;
 import sparkai.service.vo.application.ApplicationQueryVo;
 import sparkai.service.vo.application.ApplicationVo;
@@ -45,4 +46,10 @@ public interface IApplicationService {
      * @return ApplicationVo
      */
     ApplicationVo getApplicationInfo(String appId);
+
+    /**
+     * 编辑应用
+     * @param validate ApplicationSaveValidate
+     */
+    void saveApplication(ApplicationSaveValidate validate);
 }
