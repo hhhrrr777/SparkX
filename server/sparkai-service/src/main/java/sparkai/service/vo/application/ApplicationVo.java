@@ -45,9 +45,9 @@ public class ApplicationVo implements Serializable {
     private String prompt;
 
     /**
-    * 是否关联知识库 1:关联 2:不关联
-    */
-    private Short relationDataset;
+     * 是否关联的知识库 1:关联 2:不关联
+     */
+    private Integer relationDataset;
 
     /**
     * 开场白

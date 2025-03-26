@@ -248,7 +248,7 @@ CREATE TABLE "public"."application" (
     "icon" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "model_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "prompt" varchar(1000) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "relation_dataset" text COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "relation_dataset" int2 DEFAULT 2,
     "prologue" text COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "show_relation" int2 DEFAULT 1,
     "show_time" int2 DEFAULT 1,

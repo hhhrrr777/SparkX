@@ -276,6 +276,17 @@ export default {
 		async getInfo() {
 			let res = await this.$API.application.info.get({appId: this.appId})
 			this.form = res.data
+			if (res.data.prologue !== '') {
+				this.welcomeList = JSON.parse(res.data.prologue)
+			}
+
+			if (res.data.datasetList.length > 0) {
+				this.relationDataList = res.data.datasetList
+				this.relationDataIds = []
+				this.relationDataList.forEach(item => {
+					this.relationDataIds.push(item.datasetId)
+				})
+			}
 		},
 		// 删除关联的知识库
 		delDataset(index) {

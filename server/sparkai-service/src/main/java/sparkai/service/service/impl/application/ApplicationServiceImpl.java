@@ -13,12 +13,11 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.gson.JsonObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import sparkai.common.core.PageResult;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
@@ -40,7 +39,6 @@ import sparkai.service.vo.dataset.DatasetSimpleVo;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -57,10 +55,10 @@ public class ApplicationServiceImpl implements IApplicationService {
     ApplicationMapper applicationMapper;
 
     @Autowired
-    SystemUserMapper systemUserMapper;
+    ApplicationDatasetRelationMapper applicationDatasetRelationMapper;
 
     @Autowired
-    ApplicationDatasetRelationMapper applicationDatasetRelationMapper;
+    SystemUserMapper systemUserMapper;
 
     @Autowired
     KnowledgeDatasetMapper knowledgeDatasetMapper;
@@ -197,10 +195,23 @@ public class ApplicationServiceImpl implements IApplicationService {
         // 开始入库
         BeanUtils.copyProperties(validate, applicationInfo);
 
-        applicationInfo.setRelationDataset(JSONUtil.toJsonStr(validate.getDatasetList()));
+        applicationInfo.setRelationDataset(validate.getDatasetList().size() > 0 ? 1 : 2);
         applicationInfo.setPrologue(JSONUtil.toJsonStr(validate.getPrologue()));
         applicationInfo.setUpdateTime(Tool.nowDateTime());
 
         applicationMapper.updateById(applicationInfo);
+
+        // 记录知识库关联表
+        applicationDatasetRelationMapper.delete(new QueryWrapper<ApplicationDatasetRelationEntity>()
+                .eq("app_id", applicationInfo.getAppId()));
+
+        validate.getDatasetList().forEach(item -> {
+            ApplicationDatasetRelationEntity entity = new ApplicationDatasetRelationEntity();
+            entity.setAppId(applicationInfo.getAppId());
+            entity.setDatasetId(item.getDatasetId());
+            entity.setCreateTime(Tool.nowDateTime());
+
+            applicationDatasetRelationMapper.insert(entity);
+        });
     }
 }
