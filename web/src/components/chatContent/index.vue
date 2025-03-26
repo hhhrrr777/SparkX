@@ -88,9 +88,16 @@
 
 		<div class="chat-area">
 			<div class="input-box">
-				<el-input type="textarea" placeholder="输入你的问题或需求"
-						  v-model="chatMsg"
-						  max-length="3000" allow-clear show-word-limit :rows="3" class="no-border"/>
+				<el-input
+					@keyup.enter.native="send"
+					type="textarea"
+					placeholder="输入你的问题或需求"
+					v-model="chatMsg"
+					max-length="3000"
+					allow-clear
+					show-word-limit
+					:rows="3"
+					class="no-border"/>
 			</div>
 			<div class="send-btn" @click="send">
 				<div class="send-icon">
@@ -120,6 +127,14 @@ export default {
 			default: () => {}
 		},
 		welcomeWord: {
+			type: Object,
+			default: () => {}
+		},
+		apiUrl: {
+			type: String,
+			default: ""
+		},
+		apiData: {
 			type: Object,
 			default: () => {}
 		}
@@ -156,12 +171,14 @@ export default {
 		// 发送消息
 		async send() {
 			let that = this
-			fetchEventSource(`${configInfo.API_URL}/chat/sseChat`, {
+			this.apiData.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
+			let res = await this.$API.application.testChat.post(this.apiData)
+			/*fetchEventSource(`${configInfo.API_URL}` + this.apiUrl, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ content: that.chatMsg }),
+				body: JSON.stringify(this.apiData),
 				onmessage(ev) {
 					that.compiledMarkdown += ev.data.replace("-_-_wrap_-_-", "\r\n")
 				},
@@ -171,7 +188,7 @@ export default {
 				onerror(err) {
 					console.error('Error received:', err);
 				},
-			});
+			});*/
 		}
 	}
 }

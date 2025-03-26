@@ -33,5 +33,13 @@ export default {
 
 			return await http.post(this.url, data);
 		}
+	},
+	testChat: {
+		url: `${config.API_URL}/application/testChat`,
+		name: "聊天测试",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
 	}
 }

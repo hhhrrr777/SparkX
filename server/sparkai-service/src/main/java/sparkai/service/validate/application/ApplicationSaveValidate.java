@@ -174,4 +174,9 @@ public class ApplicationSaveValidate implements Serializable {
      * 保存类型 1:仅保存 2:保存并发布
      */
     private Integer saveType;
+
+    /**
+     * 用户输入内容
+     */
+    private String content;
 }

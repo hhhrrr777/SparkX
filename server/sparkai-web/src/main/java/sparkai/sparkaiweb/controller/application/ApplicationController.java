@@ -1,8 +1,10 @@
 package sparkai.sparkaiweb.controller.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.application.IApplicationService;
@@ -54,5 +56,14 @@ public class ApplicationController {
 
         iApplicationService.saveApplication(validate);
         return AjaxResult.success();
+    }
+
+    /**
+     * 应用内聊天测试
+     */
+    @PostMapping(value = "/testChat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter testChat(@RequestBody ApplicationSaveValidate validate) {
+
+        return iApplicationService.testChat(validate);
     }
 }

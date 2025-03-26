@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.core.PageResult;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
@@ -213,5 +214,14 @@ public class ApplicationServiceImpl implements IApplicationService {
 
             applicationDatasetRelationMapper.insert(entity);
         });
+    }
+
+    /**
+     * 应用内聊天测试
+     * @param validate ApplicationSaveValidate
+     */
+    @Override
+    public SseEmitter testChat(ApplicationSaveValidate validate) {
+        return null;
     }
 }
