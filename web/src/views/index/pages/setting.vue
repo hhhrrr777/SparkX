@@ -123,36 +123,48 @@
 					<div class="setting-box">
 						<div class="setting-title">显示引用片段</div>
 						<el-switch
+							:active-value="1"
+							:inactive-value="2"
 							v-model="form.showRelation">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">显示耗时</div>
 						<el-switch
+							:active-value="1"
+							:inactive-value="2"
 							v-model="form.showTime">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">显示消耗token</div>
 						<el-switch
+							:active-value="1"
+							:inactive-value="2"
 							v-model="form.showTokens">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">显示评价</div>
 						<el-switch
+							:active-value="1"
+							:inactive-value="2"
 							v-model="form.showAppraise">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">语音输入</div>
 						<el-switch
+							:active-value="1"
+							:inactive-value="2"
 							v-model="form.voiceInput">
 						</el-switch>
 					</div>
 					<div class="setting-box">
 						<div class="setting-title">语音输出</div>
 						<el-switch
+							:active-value="1"
+							:inactive-value="2"
 							v-model="form.voiceOut">
 						</el-switch>
 					</div>
@@ -300,11 +312,27 @@ export default {
 		},
 		// 完成参数设定
 		handleDatasetSuccess(row) {
-			console.log(row)
+			this.form = row
+			this.paramsVisible = false
 		},
 		// 保存应用
 		async saveApp(type) {
-			this.form.type = type
+			// 保存类型
+			this.form.saveType = type
+
+			// 组装关联的知识库
+			let relationData = []
+			this.relationDataList.forEach(item => {
+				relationData.push({
+					datasetId: item.datasetId,
+					title: item.title
+				})
+			})
+			this.form.datasetList = relationData
+
+			// 组装开场白
+			this.form.prologue = this.welcomeList
+
 			let res = await this.$API.application.save.post(this.form)
 			if (res.code === 0) {
 				this.$message.success(res.msg)

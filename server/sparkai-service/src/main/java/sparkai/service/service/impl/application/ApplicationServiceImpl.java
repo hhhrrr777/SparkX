@@ -10,9 +10,11 @@
 package sparkai.service.service.impl.application;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.JsonObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -172,9 +174,33 @@ public class ApplicationServiceImpl implements IApplicationService {
             throw new BusinessException("回复内容不能为空");
         }
 
+        if (validate.getPrologue().getQuestion().size() > 0
+                && validate.getPrologue().getTitle().isBlank()) {
+            throw new BusinessException("开场白不能为空");
+        }
+
+        if (validate.getPrologue().getQuestion().size() > 0) {
+            validate.getPrologue().getQuestion().forEach(item -> {
+                if (item.getContent().isBlank()) {
+                    throw new BusinessException("开场问题不能为空");
+                }
+            });
+        }
+
         ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
         if (applicationInfo == null) {
             throw new BusinessException("应用信息错误");
         }
+
+        // TODO 保存模式 -- 仅保存 ，保存发布
+
+        // 开始入库
+        BeanUtils.copyProperties(validate, applicationInfo);
+
+        applicationInfo.setRelationDataset(JSONUtil.toJsonStr(validate.getDatasetList()));
+        applicationInfo.setPrologue(JSONUtil.toJsonStr(validate.getPrologue()));
+        applicationInfo.setUpdateTime(Tool.nowDateTime());
+
+        applicationMapper.updateById(applicationInfo);
     }
 }

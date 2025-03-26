@@ -248,8 +248,8 @@ CREATE TABLE "public"."application" (
     "icon" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "model_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "prompt" varchar(1000) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "relation_dataset" int2 DEFAULT 2,
-    "prologue" varchar(1000) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "relation_dataset" text COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "prologue" text COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "show_relation" int2 DEFAULT 1,
     "show_time" int2 DEFAULT 1,
     "show_tokens" int2 DEFAULT 1,
@@ -283,7 +283,7 @@ COMMENT ON COLUMN "public"."application"."description" IS '应用描述';
 COMMENT ON COLUMN "public"."application"."icon" IS '应用的头像';
 COMMENT ON COLUMN "public"."application"."model_id" IS '使用的模型';
 COMMENT ON COLUMN "public"."application"."prompt" IS '提示词';
-COMMENT ON COLUMN "public"."application"."relation_dataset" IS '是否关联知识库 1:关联 2:不关联';
+COMMENT ON COLUMN "public"."application"."relation_dataset" IS '关联的知识库';
 COMMENT ON COLUMN "public"."application"."prologue" IS '开场白';
 COMMENT ON COLUMN "public"."application"."show_relation" IS '显示知识库引用 1:显示 2:不显示';
 COMMENT ON COLUMN "public"."application"."show_time" IS '显示耗时 1:显示 2:不显示';

@@ -56,10 +56,10 @@ public class ApplicationEntity implements Serializable {
     private String prompt;
 
     /**
-    * 是否关联知识库 1:关联 2:不关联
+    * 关联的知识库
     */
     @TableField(value = "relation_dataset")
-    private Short relationDataset;
+    private String relationDataset;
 
     /**
     * 开场白

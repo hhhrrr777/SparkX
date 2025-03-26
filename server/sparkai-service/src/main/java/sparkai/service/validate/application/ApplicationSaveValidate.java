@@ -1,9 +1,19 @@
+// +----------------------------------------------------------------------
+// | SparkAI 基于大语言模型和 RAG 的知识库问答系统
+// +----------------------------------------------------------------------
+// | Copyright (c) 2022~2099 http://sparkai.sparkshop.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed SparkAI 并不是自由软件，未经许可不能去掉 SparkAI 相关版权
+// +----------------------------------------------------------------------
+// | Author: NickBai  <1902822973@qq.com>
+// +----------------------------------------------------------------------
 package sparkai.service.validate.application;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import sparkai.service.vo.application.PrologueVo;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 
 import java.io.Serial;
@@ -54,14 +64,9 @@ public class ApplicationSaveValidate implements Serializable {
     private String prompt;
 
     /**
-    * 是否关联知识库 1:关联 2:不关联
-    */
-    private Short relationDataset;
-
-    /**
     * 开场白
     */
-    private String prologue;
+    private PrologueVo prologue;
 
     /**
     * 显示知识库引用 1:显示 2:不显示

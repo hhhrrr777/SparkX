@@ -7,42 +7,27 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.validate.application;
+package sparkai.service.vo.application;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
-public class ApplicationAddValidate implements Serializable {
+public class PrologueVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 应用id
+     * 开场白标题
      */
-    private String appId;
+    private String title;
 
     /**
-     * 应用名称
+     * 开场白问题
      */
-    @Length(min = 2, max = 25, message = "应用标题必须在2到25个字")
-    @NotEmpty(message = "应用标题不能为空")
-    private String name;
-
-    /**
-     * 应用描述
-     */
-    @Length(min = 2, max = 25, message = "应用描述必须在2到255个字")
-    @NotEmpty(message = "应用描述不能为空")
-    private String description;
-
-    /**
-     * 应用类型
-     */
-    private Integer type;
+    private List<PrologueContentVo> question;
 }
