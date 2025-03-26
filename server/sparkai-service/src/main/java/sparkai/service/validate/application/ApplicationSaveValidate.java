@@ -127,7 +127,7 @@ public class ApplicationSaveValidate implements Serializable {
     * 相似度
     */
     @Min(value = 0)
-    private BigDecimal similarity;
+    private double similarity;
 
     /**
     * 召回数量

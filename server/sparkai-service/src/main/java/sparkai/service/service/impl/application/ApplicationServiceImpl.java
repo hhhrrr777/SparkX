@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,13 @@ import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.helper.AssistantBuildHelper;
+import sparkai.service.helper.StreamChatModelBuildHelper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
+import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
 import sparkai.service.validate.application.ApplicationSaveValidate;
@@ -63,6 +67,12 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     KnowledgeDatasetMapper knowledgeDatasetMapper;
+
+    @Autowired
+    AssistantBuildHelper assistantBuildHelper;
+
+    @Autowired
+    StreamChatModelBuildHelper streamChatModelBuildHelper;
 
     /**
      * 应用列表
@@ -173,12 +183,12 @@ public class ApplicationServiceImpl implements IApplicationService {
             throw new BusinessException("回复内容不能为空");
         }
 
-        if (validate.getPrologue().getQuestion().size() > 0
+        if (!validate.getPrologue().getQuestion().isEmpty()
                 && validate.getPrologue().getTitle().isBlank()) {
             throw new BusinessException("开场白不能为空");
         }
 
-        if (validate.getPrologue().getQuestion().size() > 0) {
+        if (!validate.getPrologue().getQuestion().isEmpty()) {
             validate.getPrologue().getQuestion().forEach(item -> {
                 if (item.getContent().isBlank()) {
                     throw new BusinessException("开场问题不能为空");
@@ -196,7 +206,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         // 开始入库
         BeanUtils.copyProperties(validate, applicationInfo);
 
-        applicationInfo.setRelationDataset(validate.getDatasetList().size() > 0 ? 1 : 2);
+        applicationInfo.setRelationDataset(!validate.getDatasetList().isEmpty() ? 1 : 2);
         applicationInfo.setPrologue(JSONUtil.toJsonStr(validate.getPrologue()));
         applicationInfo.setUpdateTime(Tool.nowDateTime());
 
@@ -222,6 +232,13 @@ public class ApplicationServiceImpl implements IApplicationService {
      */
     @Override
     public SseEmitter testChat(ApplicationSaveValidate validate) {
+
+        // step 1 构建流式模型
+        StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(validate);
+        // step 2 构建 IAiService
+        IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel);
+
+
         return null;
     }
 }

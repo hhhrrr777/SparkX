@@ -170,11 +170,11 @@
 					</div>
 				</div>
 			</el-col>
-			<el-col :span="14" style="background: #f4f4f4;padding: 10px;">
+			<el-col :span="14" style="background: #f4f4f4;padding: 20px;">
 				<chat-box
 					:welcome-word="welcomeList"
 					:key="chatBoxKey"
-					:api-data="form"
+					:setting="form"
 					api-url="/api/application/testChat">
 				</chat-box>
 			</el-col>

@@ -1,7 +1,7 @@
 <template>
 	<div class="chat-content-box">
 		<div class="chat-msg">
-			<div class="panel" style="background: #f4f4f4" v-if="welcomeWord.title.length > 0">
+			<div class="panel" style="background: #f4f4f4" v-if="welcomeWord.title.length > 0 && chatLogList.length === 0">
 				<div class="flex-x-between">
 					<div class="chat-msg-content" style="width: 50px">
 						<div class="chat-user">
@@ -23,12 +23,13 @@
 			</div>
 
 			<!-- 循环对话开始 -->
-			<div class="panel" :style="{background: (item.source === 'user') ? '#f4f4f4' : '#fff' }" v-for="(item, index) in chatLogMsg" :key="index">
+			<div class="panel" :style="{background: (item.source === 'user') ? '#f4f4f4' : '#fff' }" v-for="(item, index) in chatLogList" :key="index">
 				<div class="flex-x-between">
 					<div class="chat-msg-content">
 						<div class="chat-user">
 							<div class="user-icon">
-								<img src="/src/assets/user.png" style="width: 30px;height: 30px;"/>
+								<img src="/src/assets/user.png" style="width: 30px;height: 30px;" v-if="item.source === 'user'"/>
+								<img src="/src/assets/robot.gif" style="width: 30px;height: 30px;" v-if="item.source === 'ai' || item.source === 'system'"/>
 							</div>
 							<div class="chat-user-name"></div>
 						</div>
@@ -36,54 +37,65 @@
 							<div class="code-box">
 								<div class="answer-content-wrap" style="width: 100%">
 									<p v-if="item.source === 'user'">{{ item.content }}</p>
+									<p v-else-if="item.source === 'system'" style="display: flex;align-items: center">{{ item.content }}
+										<el-icon style="margin-left: 5px"><Loading class="rotate-loading"/></el-icon></p>
 									<MdPreview v-else noIconfont noPrettier :codeFoldable="false" v-model="item.content"/>
 								</div>
 							</div>
-						</div>
-						<div class="menu-list" v-if="item.source === 'ai'">
-							<div class="menu-left-side">
-								<el-tag bordered style="margin-left: 10px;cursor: pointer;" v-if="setting.showRelation === 1">2条引用</el-tag>
-								<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">1.6s</el-tag>
-								<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">150tokens</el-tag>
-							</div>
-							<div class="menu-right-side">
-								<el-tooltip
-									effect="dark"
-									content="复制"
-									placement="bottom"
-								>
-									<el-icon size="16" style="margin-left: 10px;cursor: pointer"><CopyDocument /></el-icon>
-								</el-tooltip>
-								<el-tooltip
-									v-if="setting.showAppraise === 1"
-									effect="dark"
-									content="赞"
-									placement="bottom"
-								>
-									<span class="iconfont icon-zan icon-style"></span>
-								</el-tooltip>
-								<el-tooltip
-									v-if="setting.showAppraise === 1"
-									effect="dark"
-									content="踩"
-									placement="bottom"
-								>
-									<span class="iconfont icon-cai icon-style"></span>
-								</el-tooltip>
-								<el-tooltip
-									v-if="setting.voiceOut === 1"
-									effect="dark"
-									content="播报"
-									placement="bottom"
-								>
-									<span class="iconfont icon-bobao icon-style"></span>
-								</el-tooltip>
-							</div>
 
+							<div class="menu-list" v-if="item.source === 'ai'">
+								<div class="menu-left-side">
+									<el-tag bordered style="margin-left: 10px;cursor: pointer;" v-if="setting.showRelation === 1">2条引用</el-tag>
+									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">1.6s</el-tag>
+									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">150tokens</el-tag>
+								</div>
+								<div class="menu-right-side">
+									<el-tooltip
+										effect="dark"
+										content="复制"
+										placement="bottom"
+									>
+										<el-icon size="16" style="margin-left: 10px;cursor: pointer"><CopyDocument /></el-icon>
+									</el-tooltip>
+									<el-tooltip
+										v-if="setting.showAppraise === 1"
+										effect="dark"
+										content="赞"
+										placement="bottom"
+									>
+										<span class="iconfont icon-zan icon-style"></span>
+									</el-tooltip>
+									<el-tooltip
+										v-if="setting.showAppraise === 1"
+										effect="dark"
+										content="踩"
+										placement="bottom"
+									>
+										<span class="iconfont icon-cai icon-style"></span>
+									</el-tooltip>
+									<el-tooltip
+										v-if="setting.voiceOut === 1"
+										effect="dark"
+										content="播报"
+										placement="bottom"
+									>
+										<span class="iconfont icon-bobao icon-style"></span>
+									</el-tooltip>
+								</div>
+
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+			<el-button
+				v-if="answerIng"
+				style="margin-top: 10px"
+				@click="stopAnswer"
+				link
+			>
+				停止生成
+			</el-button>
 		</div>
 
 		<div class="chat-area">
@@ -110,14 +122,14 @@
 </template>
 
 <script>
-import {CopyDocument, Promotion} from "@element-plus/icons-vue";
+import {CopyDocument, Loading, Promotion} from "@element-plus/icons-vue";
 import { config, MdPreview } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import configInfo from "@/config"
 
 export default {
-	components: {CopyDocument, Promotion, MdPreview},
+	components: {Loading, CopyDocument, Promotion, MdPreview},
 	props: {
 		chatLogMsg: {
 			type: Array,
@@ -134,16 +146,14 @@ export default {
 		apiUrl: {
 			type: String,
 			default: ""
-		},
-		apiData: {
-			type: Object,
-			default: () => {}
 		}
 	},
 	data() {
 		return {
 			chatMsg: "",
-			compiledMarkdown: ""
+			compiledMarkdown: "",
+			chatLogList: [],
+			answerIng: false
 		}
 	},
 	mounted() {
@@ -167,13 +177,21 @@ export default {
 				document.appendChild
 			}
 		})
+
+		this.chatLogList = this.chatLogMsg
 	},
 	methods: {
 		// 发送消息
 		async send() {
+
 			let that = this
-			this.apiData.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
-			let res = await this.$API.application.testChat.post(this.apiData)
+			let data = this.setting
+			data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
+			//let res = await this.$API.application.testChat.post(this.apiData)
+			this.chatLogList.push({source: 'user', content: this.chatMsg.slice(0, -1)});
+			this.chatLogList.push({source: 'system', content: '思考中 '});
+			this.chatMsg = ''
+			this.answerIng = true
 			/*fetchEventSource(`${configInfo.API_URL}` + this.apiUrl, {
 				method: 'POST',
 				headers: {
@@ -190,6 +208,9 @@ export default {
 					console.error('Error received:', err);
 				},
 			});*/
+		},
+		stopAnswer() {
+
 		}
 	}
 }
@@ -216,7 +237,6 @@ export default {
 		.panel {
 			background: #fff;
 			padding: 10px;
-			margin-top: 10px;
 			border-radius: 5px;
 
 			.flex-x-between {
@@ -226,9 +246,8 @@ export default {
 
 				.chat-msg-content {
 					display: flex;
-					align-items: flex-start;
+					align-items: center;
 					justify-content: space-between;
-					flex-direction: column;
 					width: 100%;
 					.chat-user {
 						display: flex;
@@ -253,7 +272,6 @@ export default {
 
 			.answer-content {
 				gap: 0;
-				margin-top: 3px;
 				overflow: hidden;
 				display: flex;
 				flex-direction: column;
@@ -349,5 +367,24 @@ export default {
 	margin-right: 10px;
 	margin-bottom: 10px;
 	cursor: pointer;
+}
+.menu-list {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 10px;
+}
+
+@keyframes rotate {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.rotate-loading {
+	animation: rotate 2s linear infinite;
 }
 </style>
