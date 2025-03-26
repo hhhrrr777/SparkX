@@ -89,6 +89,7 @@
 		<div class="chat-area">
 			<div class="input-box">
 				<el-input
+					resize="none"
 					@keyup.enter.native="send"
 					type="textarea"
 					placeholder="输入你的问题或需求"
