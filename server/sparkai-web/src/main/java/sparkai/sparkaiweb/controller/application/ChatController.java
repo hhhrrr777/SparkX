@@ -25,9 +25,6 @@ public class ChatController {
     @Autowired
     ISseChatService iSseChatService;
 
-    @Autowired
-    IHitTestService iHitTestService;
-
     /**
      * 流式聊天
      */

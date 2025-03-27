@@ -206,13 +206,12 @@ public class ApplicationServiceImpl implements IApplicationService {
             throw new BusinessException("应用信息错误");
         }
 
-        // TODO 保存模式 -- 仅保存 ，保存发布
-
         // 开始入库
         BeanUtils.copyProperties(validate, applicationInfo);
 
         applicationInfo.setRelationDataset(!validate.getDatasetList().isEmpty() ? 1 : 2);
         applicationInfo.setPrologue(JSONUtil.toJsonStr(validate.getPrologue()));
+        applicationInfo.setStatus(validate.getSaveType());
         applicationInfo.setUpdateTime(Tool.nowDateTime());
 
         applicationMapper.updateById(applicationInfo);

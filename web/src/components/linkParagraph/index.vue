@@ -250,7 +250,7 @@ export default {
 	width: 0 !important;
 }
 .active {
-	border: 1px solid #5E17EB;
+	border: 1px solid var(--el-color-theme);
 }
 .document-item {
 	width: 100%;
@@ -265,11 +265,11 @@ export default {
 .document-item:hover {
 	background: #eee7fd;
 	border-radius: 5px;
-	color: #5E17EB;
+	color: var(--el-color-theme);
 }
 .document-active {
 	background: #eee7fd;
-	color: #5E17EB;
+	color: var(--el-color-theme);
 	border-radius: 5px;
 }
 .label {
@@ -279,7 +279,7 @@ export default {
 	line-height: 20px;
 	text-align: center;
 	color: #fff;
-	background: #5E17EB;
+	background: var(--el-color-theme);
 	font-size: 11px;
 	margin-left: 5px;
 }

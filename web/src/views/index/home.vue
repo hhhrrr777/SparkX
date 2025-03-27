@@ -228,7 +228,7 @@ export default{
 	font-size: 12px;
 }
 .title-label {
-	background: #5E17EB;
+	background: var(--el-color-theme);
 	color: #fff;
 	border-radius: 10px;
 	height: 40px;
@@ -241,17 +241,17 @@ export default{
 	font-size: 16px;margin-left: 10px
 }
 .add-box:hover {
-	border: 1px dashed #5E17EB;
+	border: 1px dashed var(--el-color-theme);
 	background: #fff;
 }
 .add-box:hover .add-store-name {
-	color: #5E17EB;
+	color: var(--el-color-theme);
 }
 .add-box:hover .add-icon {
-	border: 1px solid #5E17EB;
+	border: 1px solid var(--el-color-theme);
 }
 .add-box:hover .icon-color {
-	color: #5E17EB;
+	color: var(--el-color-theme);
 }
 .desc-box {
 	color: #646a73;

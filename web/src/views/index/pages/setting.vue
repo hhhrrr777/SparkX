@@ -1,8 +1,8 @@
 <template>
 	<div style="background: #fff;border-radius: 10px;padding: 10px 5px">
 		<div style="width: 100%;height: 40px;">
-			<el-button type="primary" style="float: right" @click="saveApp(1)">保存并发布</el-button>
-			<el-button style="float: right;margin-right: 20px" @click="saveApp(2)">仅保存</el-button>
+			<el-button type="primary" style="float: right" @click="saveApp(2)">保存并发布</el-button>
+			<el-button style="float: right;margin-right: 20px" @click="saveApp(1)">仅保存</el-button>
 		</div>
 		<el-row class="setting-div">
 			<el-col :span="10" class="setting-div-setting">
@@ -85,7 +85,7 @@
 						<div class="dataset-list" v-if="relationDataList.length > 0">
 							<div class="dataset-item" v-for="(item, index) in relationDataList" :key="index">
 								<div class="dataset-item-div">
-									<el-icon size="20" color="#5E17EB" style="margin-right: 5px">
+									<el-icon size="20" color="var(--el-color-theme)" style="margin-right: 5px">
 										<Document />
 									</el-icon>
 									<div class="line1">{{ item.title }}</div>
@@ -365,7 +365,7 @@ export default {
 }
 .setting-btn {
 	cursor: pointer;
-	color: #5E17EB;
+	color: var(--el-color-theme);
 }
 .dataset-list {
 	width: 100%;

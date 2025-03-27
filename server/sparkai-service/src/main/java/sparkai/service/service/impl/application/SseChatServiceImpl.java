@@ -27,8 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SseChatServiceImpl implements ISseChatService {
 
-    private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
-
     @Autowired
     StreamChatModelBuildHelper streamChatModelBuildHelper;
 

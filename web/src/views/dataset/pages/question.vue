@@ -78,7 +78,7 @@
                     prop="operation"
                     width="120">
                     <template #default="scope">
-                        <div style="display: flex;align-items: center;color: #5E17EB;cursor: pointer">
+                        <div style="display: flex;align-items: center;color: var(--el-color-theme);cursor: pointer">
                             <div style="margin-right: 8px;display: flex;align-items: center" @click="linkParagraph(scope.row)">
                                 <el-tooltip class="item" content="关联">
 									<el-icon size="16"><Link /></el-icon>

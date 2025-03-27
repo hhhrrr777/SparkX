@@ -118,7 +118,7 @@
 					width="120"
 					label="操作">
 					<template #default="scope">
-						<div style="display: flex;align-items: center;color: #5E17EB;cursor: pointer">
+						<div style="display: flex;align-items: center;color: var(--el-color-theme);cursor: pointer">
 							<div style="margin-right: 8px;display: flex;align-items: center" @click="embedding(scope.row)">
 								<el-tooltip class="item" content="向量化文档">
 									<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>
@@ -131,9 +131,9 @@
 									</el-icon>
 								</el-tooltip>
 							</div>
-							<div style="display: flex;align-items: center;color: #5E17EB">
+							<div style="display: flex;align-items: center;color: var(--el-color-theme)">
 								<el-dropdown trigger="click" @command="handleCommand($event, scope.row)">
-									<el-icon color="#5E17EB">
+									<el-icon color="var(--el-color-theme)">
 										<MoreFilled />
 									</el-icon>
 									<template #dropdown>

@@ -87,7 +87,7 @@ export default {
 	}
 }
 .chat-tool:hover {
-	background: #5E17EB;
+	background: var(--el-color-theme);
 	color: #fff;
 }
 .chat-tool {
@@ -95,7 +95,7 @@ export default {
 	width: 100%;
 	display: flex;
 	align-items: center;
-	border: 1px solid #5E17EB;
+	border: 1px solid var(--el-color-theme);
 	border-radius: 5px;
 	justify-content: center;
 	cursor: pointer;
@@ -126,11 +126,11 @@ export default {
 	padding-left: 10px;
 }
 .log-item:hover {
-	color: #5E17EB;
+	color: var(--el-color-theme);
 	background: #eee7fd;
 }
 .item-active {
-	color: #5E17EB;
+	color: var(--el-color-theme);
 	background: #eee7fd;
 }
 </style>

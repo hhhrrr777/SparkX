@@ -4,7 +4,7 @@
 		<el-checkbox-group v-model="selectedDatasetIds" class="too-radio-list">
 			<el-checkbox :label="item.datasetId" border class="radio-item" v-for="item in datasetList" :key="item.datasetId">
 				<div style="display: flex;align-items: center;">
-					<el-icon size="26" color="#5E17EB"><Management /></el-icon>
+					<el-icon size="26" color="var(--el-color-theme)"><Management /></el-icon>
 					<div class="line1 name">{{ item.title }}</div>
 				</div>
 			</el-checkbox>

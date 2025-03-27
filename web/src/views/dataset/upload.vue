@@ -307,7 +307,7 @@ export default {
 	font-size: 13px !important;
 }
 .btn-group .el-radio-button__original-radio:checked + .el-radio-button__inner {
-	color: #5E17EB !important;
+	color: var(--el-color-theme) !important;
 	background: #EEE7FD !important;
 	border: none !important;
 	box-shadow: none !important;
@@ -328,7 +328,7 @@ export default {
 	margin-top: 20px;
 }
 .upload-title {
-	border-left: 5px solid #5E17EB;
+	border-left: 5px solid var(--el-color-theme);
 	padding-left: 10px;
 	font-size: 16px;
 }
@@ -478,12 +478,12 @@ export default {
 	cursor: pointer;
 }
 .file-title-item:hover {
-	border: 1px solid #5E17EB;
-	color: #5E17EB;
+	border: 1px solid var(--el-color-theme);
+	color: var(--el-color-theme);
 }
 .file-title-list .active {
-	border: 1px solid #5E17EB;
-	background: #5E17EB;
+	border: 1px solid var(--el-color-theme);
+	background: var(--el-color-theme);
 	color: #fff;
 }
 .preview-list {
@@ -508,7 +508,7 @@ export default {
 .preview-item .label {
 	font-size: 13px;
 	font-weight: bold;
-	color: #5E17EB;
+	color: var(--el-color-theme);
 	margin-bottom: 5px;
 }
 .label-num {

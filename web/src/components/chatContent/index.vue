@@ -116,7 +116,7 @@
 			</div>
 			<div class="send-btn" @click="send">
 				<div class="send-icon">
-					<el-icon size="28" :style="{color: chatMsg.length > 0 ? '#5E17EB' : '#909399'}" ><Promotion /></el-icon>
+					<el-icon size="28" :style="{color: chatMsg.length > 0 ? 'var(--el-color-theme)' : '#909399'}" ><Promotion /></el-icon>
 				</div>
 			</div>
 		</div>

@@ -127,9 +127,9 @@ export default {
 	padding: 10px;
 }
 .search-type {
-	border: 1px solid #5E17EB;
+	border: 1px solid var(--el-color-theme);
 	border-radius: 5px;
-	color: #5E17EB;
+	color: var(--el-color-theme);
 	padding: 5px 10px;
 	cursor: pointer;
 	display: flex;

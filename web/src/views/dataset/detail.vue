@@ -202,6 +202,6 @@ export default {
 }
 .dataset-item:hover {
 	background: #eee7fd;
-	color: #5E17EB;
+	color: var(--el-color-theme);
 }
 </style>

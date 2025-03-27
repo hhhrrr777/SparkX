@@ -190,6 +190,12 @@ public class ApplicationEntity implements Serializable {
     private Integer compressingQuery;
 
     /**
+     * 状态 1:待发布 2:已发布
+     */
+    @TableField(value = "status")
+    private Integer status;
+
+    /**
     * 创建时间
     */
     @TableField(value = "create_time")

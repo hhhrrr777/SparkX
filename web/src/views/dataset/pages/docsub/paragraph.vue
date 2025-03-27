@@ -13,7 +13,7 @@
 			<div class="paragraph-bottom">
 				<span>{{ (item.content).length }} 字符</span>
 				<el-dropdown trigger="click" @command="handleCommand($event, item)">
-					<el-icon color="#5E17EB">
+					<el-icon color="var(--el-color-theme)">
 						<MoreFilled />
 					</el-icon>
 					<template #dropdown>
