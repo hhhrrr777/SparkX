@@ -49,8 +49,8 @@
 					</el-tooltip>
 				</template>
 				<el-switch
-					active-value="1"
-					inactive-value="2"
+					:active-value="1"
+					:inactive-value="2"
 					v-model="form.compressingQuery">
 				</el-switch>
 			</el-form-item>

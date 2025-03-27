@@ -55,6 +55,8 @@ public class AssistantBuildHelper {
                     .build();
         }
 
+        // TODO 空召回策略
+
         // 关联了知识库
         QueryTransformer queryTransformer = null;
 
@@ -71,7 +73,15 @@ public class AssistantBuildHelper {
 
         // embedding模型
         EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
-        EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder().build();
+        EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder()
+                .host("127.0.0.1")
+                .port(6432)
+                .database("sparkai")
+                .user("sparkai")
+                .password("123123")
+                .table("knowledge_embedding")
+                .dimension(384)
+                .build();;
 
         // 构建交互数据
         HitTestVo searchDataVo = new HitTestVo();

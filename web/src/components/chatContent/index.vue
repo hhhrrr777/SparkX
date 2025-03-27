@@ -1,6 +1,6 @@
 <template>
 	<div class="chat-content-box">
-		<div class="chat-msg">
+		<div class="chat-msg" ref="chatContainer">
 			<div class="panel" style="background: #f4f4f4" v-if="welcomeWord.title.length > 0 && chatLogList.length === 0">
 				<div class="flex-x-between">
 					<div class="chat-msg-content" style="width: 50px">
@@ -43,11 +43,13 @@
 								</div>
 							</div>
 
-							<div class="menu-list" v-if="item.source === 'ai'">
+							<div class="menu-list" v-if="item.source === 'ai' && item.answerIng === 3">
 								<div class="menu-left-side">
-									<el-tag bordered style="margin-left: 10px;cursor: pointer;" v-if="setting.showRelation === 1">2条引用</el-tag>
-									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">1.6s</el-tag>
-									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">150tokens</el-tag>
+									<el-tag bordered style="margin-left: 10px;cursor: pointer;" v-if="setting.showRelation === 1">
+										{{ item.retrievedList.length }} 条引用
+									</el-tag>
+									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">{{ item.meta.time }} s</el-tag>
+									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">{{ item.meta.tokens }} tokens</el-tag>
 								</div>
 								<div class="menu-right-side">
 									<el-tooltip
@@ -89,8 +91,8 @@
 				</div>
 			</div>
 			<el-button
-				v-if="answerIng"
-				style="margin-top: 10px"
+				v-if="answerIng === 2"
+				style="margin-top: 10px;font-size: 14px;"
 				@click="stopAnswer"
 				link
 			>
@@ -153,7 +155,10 @@ export default {
 			chatMsg: "",
 			compiledMarkdown: "",
 			chatLogList: [],
-			answerIng: false
+			answerIng: 0,
+			ctrl: null,
+			nowIndex: -1, // 当前交流的下表
+			sessionId: ""
 		}
 	},
 	mounted() {
@@ -179,6 +184,8 @@ export default {
 		})
 
 		this.chatLogList = this.chatLogMsg
+		this.sessionId = Math.random().toString(32)
+		this.ctrl = new AbortController();
 	},
 	methods: {
 		// 发送消息
@@ -186,31 +193,59 @@ export default {
 
 			let that = this
 			let data = this.setting
+			data.sessionId = this.sessionId
 			data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
-			//let res = await this.$API.application.testChat.post(this.apiData)
+
 			this.chatLogList.push({source: 'user', content: this.chatMsg.slice(0, -1)});
-			this.chatLogList.push({source: 'system', content: '思考中 '});
+			this.chatLogList.push({source: 'system', content: '思考中'});
 			this.chatMsg = ''
-			this.answerIng = true
-			/*fetchEventSource(`${configInfo.API_URL}` + this.apiUrl, {
+			this.answerIng = 1
+
+			fetchEventSource(`${configInfo.API_URL}` + this.apiUrl, {
 				method: 'POST',
+				signal: that.ctrl.signal,
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(this.apiData),
+				body: JSON.stringify(data),
 				onmessage(ev) {
-					that.compiledMarkdown += ev.data.replace("-_-_wrap_-_-", "\r\n")
+
+					let event = ev.event
+					if (event === '[START]') { // 回答开始
+						that.nowIndex = that.chatLogList.length - 1
+						that.chatLogList[that.nowIndex].source = 'ai'
+						that.answerIng = that.chatLogList[that.nowIndex].answerIng = 2
+						that.chatLogList[that.nowIndex].content = '' // 清理默认思考中... 提示
+					} else if (event === '[DONE]') { // 回答结束
+						that.answerIng = that.chatLogList[that.nowIndex].answerIng = 3
+						that.chatLogList[that.nowIndex].meta = JSON.parse(ev.data)
+						that.sliderBottom()
+					} else if (event === '[ERROR]') {
+						that.stopAnswer()
+					} else if (event === '[META]') { // 通知召回数据
+						that.chatLogList[that.nowIndex].retrievedList = JSON.parse(ev.data)
+					} else {
+						that.chatLogList[that.nowIndex].content += ev.data.replace("-_-_wrap_-_-", "\r\n")
+						that.sliderBottom()
+					}
 				},
 				onclose() {
-					console.log('Connection closed by server');
+					console.log('Connection closed by server')
 				},
 				onerror(err) {
-					console.error('Error received:', err);
+					console.error('Error received:', err)
+					that.stopAnswer()
 				},
-			});*/
+			});
 		},
 		stopAnswer() {
-
+			this.ctrl.abort()
+			this.answerIng = 0
+		},
+		sliderBottom() {
+			this.$nextTick(() => {
+				this.$refs.chatContainer.scrollTop = this.$refs.chatContainer.scrollHeight;
+			});
 		}
 	}
 }
@@ -219,6 +254,9 @@ export default {
 <style>
 .no-border .el-textarea__inner {
 	box-shadow: none !important; /* 使用 !important 来确保覆盖默认样式 */
+}
+.md-editor-preview {
+	font-size: 14px !important;
 }
 </style>
 
@@ -246,12 +284,10 @@ export default {
 
 				.chat-msg-content {
 					display: flex;
-					align-items: center;
 					justify-content: space-between;
 					width: 100%;
 					.chat-user {
 						display: flex;
-						align-items: center;
 					}
 
 					.chat-user-name {

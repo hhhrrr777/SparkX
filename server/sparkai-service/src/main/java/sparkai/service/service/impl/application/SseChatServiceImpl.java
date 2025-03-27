@@ -21,9 +21,13 @@ import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.application.ISseChatService;
 import sparkai.service.vo.application.SseChatVo;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class SseChatServiceImpl implements ISseChatService {
+
+    private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     @Autowired
     StreamChatModelBuildHelper streamChatModelBuildHelper;
@@ -40,6 +44,7 @@ public class SseChatServiceImpl implements ISseChatService {
     public SseEmitter sseChat(SseChatVo chatVo) {
 
         SseEmitter emitter = new SseEmitter();
+        emitters.put(chatVo.getSessionId(), emitter);
 
         String word = chatVo.getContent();
         // todo modelId
@@ -48,7 +53,7 @@ public class SseChatServiceImpl implements ISseChatService {
         TokenStream tokenStream = assistant.chatInTokenStream(word);
 
         // 执行异步发送
-        sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
+        sseEmitterHelper.asyncSend2Client(tokenStream, emitters, chatVo.getSessionId());
 
         return emitter;
     }

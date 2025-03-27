@@ -14,5 +14,10 @@ import sparkai.service.vo.application.SseChatVo;
 
 public interface ISseChatService {
 
+    /**
+     * 应用内聊天测试
+     * @param chatVo SseChatVo
+     * @return SseEmitter
+     */
     SseEmitter sseChat(SseChatVo chatVo);
 }

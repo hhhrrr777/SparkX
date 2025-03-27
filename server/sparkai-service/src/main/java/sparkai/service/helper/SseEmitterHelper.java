@@ -1,15 +1,27 @@
+// +----------------------------------------------------------------------
+// | SparkAI 基于大语言模型和 RAG 的知识库问答系统
+// +----------------------------------------------------------------------
+// | Copyright (c) 2022~2099 http://sparkai.sparkshop.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed SparkAI 并不是自由软件，未经许可不能去掉 SparkAI 相关版权
+// +----------------------------------------------------------------------
+// | Author: NickBai  <1902822973@qq.com>
+// +----------------------------------------------------------------------
 package sparkai.service.helper;
 
 import cn.hutool.core.date.TimeInterval;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import dev.langchain4j.service.TokenStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.constant.SparkAIConstant;
-import sparkai.service.vo.application.SseChatResVo;
+import sparkai.common.exception.BusinessException;
 
 import java.io.IOException;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -18,42 +30,75 @@ public class SseEmitterHelper {
     /**
      * 异步发送给客户端
      * @param tokenStream TokenStream
-     * @param emitter SseEmitter
+     * @param emitters Map<String, SseEmitter>
+     * @param sessionId String
      */
     @Async
-    public void asyncSend2Client(TokenStream tokenStream, SseEmitter emitter) {
+    public void asyncSend2Client(TokenStream tokenStream, Map<String, SseEmitter> emitters, String sessionId) {
+
+        SseEmitter emitter = emitters.get(sessionId);
+        if (emitter == null) {
+            throw new BusinessException("系统错误");
+        }
+
+        // 连接已关闭，清理资源
+        emitter.onCompletion(() -> {
+            emitters.remove(sessionId);
+        });
 
         // 消息开始
         sendStartSse(emitter);
 
         final TimeInterval timer = new TimeInterval();
-        tokenStream.onPartialResponse((content) -> {
-                    // 加空格配合前端的fetchEventSource进行解析，
-                    // 见https://github.com/Azure/fetch-event-source/blob/45ac3cfffd30b05b79fbf95c21e67d4ef59aa56a/src/parse.ts#L129-L133
-                    try {
+        tokenStream
+                .onRetrieved((retrievedList) -> {
+                    // 整理并转换召回的片段数据，返回前端
+                    List<Map<String, Object>> retiredMapList = new ArrayList<>();
+                    retrievedList.forEach(item -> {
+                        Map<String, Object> map = new HashMap<>();
+                        JSONObject jsonObject = JSONUtil.parseObj(item.metadata());
+                        map.put("text", item.textSegment().text());
+                        map.put("embeddingId", jsonObject.get("EMBEDDING_ID"));
+                        map.put("score", jsonObject.get("SCORE"));
 
-                        String[] lines = content.split("[\\r\\n]", -1);
-                        if (lines.length > 1) {
-                            emitter.send(" " + lines[0]);
-                            for (int i = 1; i < lines.length; i++) {
-                                /**
-                                 * 当响应结果的content中包含有多行文本时，
-                                 * 前端的fetch-event-source框架的BUG会将包含有换行符的那一行内容替换为空字符串，
-                                 * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
-                                 */
-                                emitter.send("-_-_wrap_-_-");
-                                emitter.send(" " + lines[i]);
+                        retiredMapList.add(map);
+                    });
+
+                    // 召回知识库片段
+                    if (emitters.get(sessionId) != null) {
+                        sendMetaSse(emitter, retiredMapList);
+                    }
+                })
+                .onPartialResponse((content) -> {
+                    if (emitters.get(sessionId) != null) {
+                        // 加空格配合前端的fetchEventSource进行解析，
+                        // 见https://github.com/Azure/fetch-event-source/blob/45ac3cfffd30b05b79fbf95c21e67d4ef59aa56a/src/parse.ts#L129-L133
+                        try {
+
+                            String[] lines = content.split("[\\r\\n]", -1);
+                            if (lines.length > 1) {
+                                emitter.send(" " + lines[0]);
+                                for (int i = 1; i < lines.length; i++) {
+                                    /**
+                                     * 当响应结果的content中包含有多行文本时，
+                                     * 前端的fetch-event-source框架的BUG会将包含有换行符的那一行内容替换为空字符串，
+                                     * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
+                                     */
+                                    emitter.send("-_-_wrap_-_-");
+                                    emitter.send(" " + lines[i]);
+                                }
+                            } else {
+                                emitter.send(" " + content);
                             }
-                        } else {
-                            emitter.send(" " + content);
+
+                        } catch (IOException e) {
+                            //log.error("拆解AI返回信息失败：", e);
+                            sendErrorSse(emitter);
+                            emitter.complete();
                         }
-                    } catch (IOException e) {
-                        log.error("拆解AI返回信息失败：", e);
-                        sendErrorSse(emitter);
                     }
                 })
                 .onCompleteResponse((response) -> {
-                    System.out.println(response);
                     // 输入的token
                     int inputTokenCount = response.tokenUsage().totalTokenCount();
                     // 输出的token
@@ -65,14 +110,15 @@ public class SseEmitterHelper {
                     long second = timer.intervalSecond();
 
                     // 发送结束信号
-                    SseChatResVo resVo = new SseChatResVo();
-                    resVo.setTokens(inputTokenCount + outputTokenCount);
-                    resVo.setContent(content);
-                    resVo.setUseTime(second);
-                    sendEndSse(emitter, resVo);
+                    if (emitters.get(sessionId) != null) {
+                        Map<String, Object> resMap = new HashMap<>();
+                        resMap.put("tokens", inputTokenCount + outputTokenCount);
+                        resMap.put("time", second);
+                        sendEndSse(emitter, JSONUtil.toJsonStr(resMap));
 
-                    // 关闭sse
-                    emitter.complete();
+                        // 关闭sse
+                        emitter.complete();
+                    }
                 })
                 .onError(Throwable::printStackTrace)
                 .start();
@@ -96,13 +142,31 @@ public class SseEmitterHelper {
     /**
      * 发送sse结束信号
      * @param sseEmitter SseEmitter
+     * @param resVo String
      */
-    private void sendEndSse(SseEmitter sseEmitter, SseChatResVo resVo) {
+    private void sendEndSse(SseEmitter sseEmitter, String resVo) {
 
         try {
 
             sseEmitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.DONE)
-                    .data(" " + SparkAIConstant.SSEEventName.META + resVo.toString()));
+                    .data(resVo));
+        } catch (IOException e) {
+            log.error("startSse error", e);
+            sseEmitter.completeWithError(e);
+        }
+    }
+
+    /**
+     * 发送召回数据
+     * @param sseEmitter SseEmitter
+     * @param metaData List<Map<String, Object>>
+     */
+    private void sendMetaSse(SseEmitter sseEmitter, List<Map<String, Object>> metaData) {
+
+        try {
+
+            sseEmitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.META)
+                    .data(metaData));
         } catch (IOException e) {
             log.error("startSse error", e);
             sseEmitter.completeWithError(e);

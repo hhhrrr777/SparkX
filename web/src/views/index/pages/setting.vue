@@ -170,12 +170,12 @@
 					</div>
 				</div>
 			</el-col>
-			<el-col :span="14" style="background: #f4f4f4;padding: 20px;">
+			<el-col :span="14" style="background: #f4f4f4;padding: 20px;height: 100%">
 				<chat-box
 					:welcome-word="welcomeList"
 					:key="chatBoxKey"
 					:setting="form"
-					api-url="/api/application/testChat">
+					api-url="/application/testChat">
 				</chat-box>
 			</el-col>
 		</el-row>
@@ -282,7 +282,7 @@ export default {
 			let res = await this.$API.application.info.get({appId: this.appId})
 			this.form = res.data
 			if (res.data.prologue !== '') {
-				this.welcomeList = JSON.parse(res.data.prologue)
+				this.welcomeList = this.form.prologue = JSON.parse(res.data.prologue)
 			}
 
 			if (res.data.datasetList.length > 0) {

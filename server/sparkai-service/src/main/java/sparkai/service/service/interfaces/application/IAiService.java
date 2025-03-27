@@ -2,6 +2,7 @@ package sparkai.service.service.interfaces.application;
 
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.TokenStream;
+import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
 public interface IAiService {
@@ -19,6 +20,6 @@ public interface IAiService {
      * @param userMessage String
      * @return TokenStream
      */
-    @SystemMessage("{{ message }}")
-    TokenStream chatWithSystem(@V("message") String systemMessage, String userMessage);
+    @SystemMessage("{{message}}")
+    TokenStream chatWithSystem(@V("message") String systemMessage, @UserMessage String userMessage);
 }

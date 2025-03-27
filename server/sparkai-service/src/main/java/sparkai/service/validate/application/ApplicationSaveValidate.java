@@ -28,6 +28,11 @@ public class ApplicationSaveValidate implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 会听id
+     */
+    private String sessionId;
+
+    /**
     * id
     */
     @NotEmpty(message = "应用id不能为空")

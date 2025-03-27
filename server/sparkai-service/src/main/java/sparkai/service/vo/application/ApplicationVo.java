@@ -148,4 +148,9 @@ public class ApplicationVo implements Serializable {
      * 知识库列表
      */
     private List<DatasetSimpleVo> datasetList;
+
+    /**
+     * 问题优化 1:开启 2:关闭
+     */
+    private Integer compressingQuery;
 }
