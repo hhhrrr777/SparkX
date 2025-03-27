@@ -44,7 +44,6 @@ public class SseChatServiceImpl implements ISseChatService {
     public SseEmitter sseChat(SseChatVo chatVo) {
 
         SseEmitter emitter = new SseEmitter();
-        emitters.put(chatVo.getSessionId(), emitter);
 
         String word = chatVo.getContent();
         // todo modelId
@@ -53,7 +52,7 @@ public class SseChatServiceImpl implements ISseChatService {
         TokenStream tokenStream = assistant.chatInTokenStream(word);
 
         // 执行异步发送
-        sseEmitterHelper.asyncSend2Client(tokenStream, emitters, chatVo.getSessionId());
+        sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
 
         return emitter;
     }

@@ -30,21 +30,10 @@ public class SseEmitterHelper {
     /**
      * 异步发送给客户端
      * @param tokenStream TokenStream
-     * @param emitters Map<String, SseEmitter>
-     * @param sessionId String
+     * @param emitter SseEmitter
      */
     @Async
-    public void asyncSend2Client(TokenStream tokenStream, Map<String, SseEmitter> emitters, String sessionId) {
-
-        SseEmitter emitter = emitters.get(sessionId);
-        if (emitter == null) {
-            throw new BusinessException("系统错误");
-        }
-
-        // 连接已关闭，清理资源
-        emitter.onCompletion(() -> {
-            emitters.remove(sessionId);
-        });
+    public void asyncSend2Client(TokenStream tokenStream, SseEmitter emitter) {
 
         // 消息开始
         sendStartSse(emitter);
@@ -65,37 +54,33 @@ public class SseEmitterHelper {
                     });
 
                     // 召回知识库片段
-                    if (emitters.get(sessionId) != null) {
-                        sendMetaSse(emitter, retiredMapList);
-                    }
+                    sendMetaSse(emitter, retiredMapList);
                 })
                 .onPartialResponse((content) -> {
-                    if (emitters.get(sessionId) != null) {
-                        // 加空格配合前端的fetchEventSource进行解析，
-                        // 见https://github.com/Azure/fetch-event-source/blob/45ac3cfffd30b05b79fbf95c21e67d4ef59aa56a/src/parse.ts#L129-L133
-                        try {
+                    // 加空格配合前端的fetchEventSource进行解析，
+                    // 见https://github.com/Azure/fetch-event-source/blob/45ac3cfffd30b05b79fbf95c21e67d4ef59aa56a/src/parse.ts#L129-L133
+                    try {
 
-                            String[] lines = content.split("[\\r\\n]", -1);
-                            if (lines.length > 1) {
-                                emitter.send(" " + lines[0]);
-                                for (int i = 1; i < lines.length; i++) {
-                                    /**
-                                     * 当响应结果的content中包含有多行文本时，
-                                     * 前端的fetch-event-source框架的BUG会将包含有换行符的那一行内容替换为空字符串，
-                                     * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
-                                     */
-                                    emitter.send("-_-_wrap_-_-");
-                                    emitter.send(" " + lines[i]);
-                                }
-                            } else {
-                                emitter.send(" " + content);
+                        String[] lines = content.split("[\\r\\n]", -1);
+                        if (lines.length > 1) {
+                            emitter.send(" " + lines[0]);
+                            for (int i = 1; i < lines.length; i++) {
+                                /**
+                                 * 当响应结果的content中包含有多行文本时，
+                                 * 前端的fetch-event-source框架的BUG会将包含有换行符的那一行内容替换为空字符串，
+                                 * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
+                                 */
+                                emitter.send("-_-_wrap_-_-");
+                                emitter.send(" " + lines[i]);
                             }
-
-                        } catch (IOException e) {
-                            //log.error("拆解AI返回信息失败：", e);
-                            sendErrorSse(emitter);
-                            emitter.complete();
+                        } else {
+                            emitter.send(" " + content);
                         }
+
+                    } catch (IOException e) {
+                        //log.error("拆解AI返回信息失败：", e);
+                        sendErrorSse(emitter);
+                        //emitter.complete();
                     }
                 })
                 .onCompleteResponse((response) -> {
@@ -107,15 +92,13 @@ public class SseEmitterHelper {
                     long second = timer.intervalSecond();
 
                     // 发送结束信号
-                    if (emitters.get(sessionId) != null) {
-                        Map<String, Object> resMap = new HashMap<>();
-                        resMap.put("tokens", inputTokenCount + outputTokenCount);
-                        resMap.put("time", second);
-                        sendEndSse(emitter, JSONUtil.toJsonStr(resMap));
+                    Map<String, Object> resMap = new HashMap<>();
+                    resMap.put("tokens", inputTokenCount + outputTokenCount);
+                    resMap.put("time", second);
+                    sendEndSse(emitter, JSONUtil.toJsonStr(resMap));
 
-                        // 关闭sse
-                        emitter.complete();
-                    }
+                    // 关闭sse
+                    emitter.complete();
                 })
                 .onError(Throwable::printStackTrace)
                 .start();

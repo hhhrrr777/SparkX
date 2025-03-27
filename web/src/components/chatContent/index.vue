@@ -45,7 +45,7 @@
 
 							<div class="menu-list" v-if="item.source === 'ai' && item.answerIng === 3">
 								<div class="menu-left-side">
-									<el-tag bordered style="margin-left: 10px;cursor: pointer;" v-if="setting.showRelation === 1">
+									<el-tag bordered style="margin-left: 10px;cursor: pointer;" v-if="setting.showRelation === 1" @click="showResource(item)">
 										{{ item.retrievedList.length }} 条引用
 									</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">{{ item.meta.time }} s</el-tag>
@@ -57,7 +57,7 @@
 										content="复制"
 										placement="bottom"
 									>
-										<el-icon size="16" style="margin-left: 10px;cursor: pointer"><CopyDocument /></el-icon>
+										<el-icon size="16" style="margin-left: 10px;cursor: pointer" @click="copyText(item.content)"><CopyDocument /></el-icon>
 									</el-tooltip>
 									<el-tooltip
 										v-if="setting.showAppraise === 1"
@@ -120,6 +120,17 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- 知识库引用 -->
+		<el-dialog title="关联的片段" v-model="dialogVisible" width="1000px" destroy-on-close :close-on-click-modal="false">
+			<el-row style="background: #f4f4f4;display: flex;padding: 10px">
+				<el-col :span="11" v-for="(item, index) in retrievedList" :key="index" class="relation-item">
+					<div class="item-box">
+						{{ item.text }}
+					</div>
+				</el-col>
+			</el-row>
+		</el-dialog>
 	</div>
 </template>
 
@@ -158,7 +169,9 @@ export default {
 			answerIng: 0,
 			ctrl: null,
 			nowIndex: -1, // 当前交流的下表
-			sessionId: ""
+			sessionId: "",
+			dialogVisible: false,
+			retrievedList: [], // 召回文档列表
 		}
 	},
 	mounted() {
@@ -246,6 +259,20 @@ export default {
 			this.$nextTick(() => {
 				this.$refs.chatContainer.scrollTop = this.$refs.chatContainer.scrollHeight;
 			});
+		},
+		// 显示知识引用
+		showResource(row) {
+			this.retrievedList = row.retrievedList
+			this.dialogVisible = true
+		},
+		// 复制内容
+		copyText(text) {
+			navigator.clipboard.writeText(text).then(() => {
+				this.$message.success('复制成功')
+			}).catch(error => {
+				console.log('错误', error)
+				this.$message.error('复制错误')
+			});
 		}
 	}
 }
@@ -271,6 +298,7 @@ export default {
 		width: 100%;
 		overflow-y: scroll;
 		overflow-x: hidden;
+		padding-bottom: 50px;
 
 		.panel {
 			background: #fff;
@@ -323,7 +351,7 @@ export default {
 
 				.answer-content-wrap {
 					font-style: normal;
-					font-size: 16px;
+					font-size: 14px;
 					line-height: 1.5;
 					word-wrap: break-word;
 				}
@@ -422,5 +450,20 @@ export default {
 
 .rotate-loading {
 	animation: rotate 2s linear infinite;
+}
+.relation-item {
+	background: #fff;
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+	margin-left: 20px;
+}
+.relation-item .item-box {
+	width: 100%;
+	height: 200px;
+	overflow-y: scroll;
+}
+.item-box::-webkit-scrollbar  {
+	width: 0 !important;
 }
 </style>

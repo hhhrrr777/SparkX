@@ -46,8 +46,6 @@ import sparkai.service.vo.dataset.DatasetSimpleVo;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -59,8 +57,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class ApplicationServiceImpl implements IApplicationService {
-
-    private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     @Autowired
     ApplicationMapper applicationMapper;
@@ -243,7 +239,6 @@ public class ApplicationServiceImpl implements IApplicationService {
     public SseEmitter testChat(ApplicationSaveValidate validate) {
 
         SseEmitter emitter = new SseEmitter();
-        emitters.put(validate.getSessionId(), emitter);
 
         // step 1 构建流式模型
         StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(validate.getModelId());
@@ -258,7 +253,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         }
 
         // 异步发送消息
-        sseEmitterHelper.asyncSend2Client(tokenStream, emitters, validate.getSessionId());
+        sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
 
         return emitter;
     }

@@ -34,8 +34,8 @@ public class SparkEmbeddingStoreContentRetriever implements ContentRetriever {
 
     public static final String DEFAULT_DISPLAY_NAME = "Default";
 
-    private final EmbeddingStore<TextSegment> embeddingStore;
-    private final EmbeddingModel embeddingModel;
+    //private final EmbeddingStore<TextSegment> embeddingStore;
+    //private final EmbeddingModel embeddingModel;
 
     private final Function<Query, Integer> maxResultsProvider;
     private final Function<Query, Double> minScoreProvider;
@@ -108,11 +108,11 @@ public class SparkEmbeddingStoreContentRetriever implements ContentRetriever {
                                                 IHitTestService searchService,
                                                 HitTestVo searchDataVo) {
         this.displayName = getOrDefault(displayName, DEFAULT_DISPLAY_NAME);
-        this.embeddingStore = ensureNotNull(embeddingStore, "embeddingStore");
+        /*this.embeddingStore = ensureNotNull(embeddingStore, "embeddingStore");
         this.embeddingModel = ensureNotNull(
                 getOrDefault(embeddingModel, SparkEmbeddingStoreContentRetriever::loadEmbeddingModel),
                 "embeddingModel"
-        );
+        );*/
         this.maxResultsProvider = getOrDefault(dynamicMaxResults, DEFAULT_MAX_RESULTS);
         this.minScoreProvider = getOrDefault(dynamicMinScore, DEFAULT_MIN_SCORE);
         this.filterProvider = getOrDefault(dynamicFilter, DEFAULT_FILTER);
