@@ -20,6 +20,9 @@ spring:
       file-size-threshold: 0 # 支持文件写入磁盘
       max-file-size: 50MB # 最大文件上传大小
       max-request-size: 100MB  # 最大支持请求大小
+  mvc:
+    async:
+      request-timeout: 10000 # sse超时关闭报错问题
 
 mybatis-plus:
   configuration:

@@ -103,9 +103,6 @@ public class SseEmitterHelper {
                     int inputTokenCount = response.tokenUsage().totalTokenCount();
                     // 输出的token
                     int outputTokenCount = response.tokenUsage().outputTokenCount();
-                    // 输出的报文
-                    String content = response.aiMessage().text();
-
                     // 计算耗时
                     long second = timer.intervalSecond();
 
