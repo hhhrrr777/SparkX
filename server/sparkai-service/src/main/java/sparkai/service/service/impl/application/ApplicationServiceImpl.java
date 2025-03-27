@@ -16,6 +16,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.service.TokenStream;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.helper.AssistantBuildHelper;
+import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.helper.StreamChatModelBuildHelper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
@@ -73,6 +75,9 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     StreamChatModelBuildHelper streamChatModelBuildHelper;
+
+    @Autowired
+    SseEmitterHelper sseEmitterHelper;
 
     /**
      * 应用列表
@@ -233,12 +238,23 @@ public class ApplicationServiceImpl implements IApplicationService {
     @Override
     public SseEmitter testChat(ApplicationSaveValidate validate) {
 
+        SseEmitter emitter = new SseEmitter();
+
         // step 1 构建流式模型
-        StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(validate);
+        StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(validate.getModelId());
         // step 2 构建 IAiService
         IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel);
 
+        TokenStream tokenStream;
+        if (validate.getPrompt().isBlank()) {
+            tokenStream = assistant.chatInTokenStream(validate.getContent());
+        } else {
+            tokenStream = assistant.chatWithSystem(validate.getPrompt(), validate.getContent());
+        }
 
-        return null;
+        // 异步发送消息
+        sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
+
+        return emitter;
     }
 }

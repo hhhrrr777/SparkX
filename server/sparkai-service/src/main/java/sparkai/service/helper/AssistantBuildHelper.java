@@ -90,7 +90,7 @@ public class AssistantBuildHelper {
                 .build();
 
         // 检索增强
-        RetrievalAugmentor retrievalAugmentor = null;
+        RetrievalAugmentor retrievalAugmentor;
         if (queryTransformer != null) {
             retrievalAugmentor = DefaultRetrievalAugmentor.builder()
                     .queryTransformer(queryTransformer) // 问题压缩

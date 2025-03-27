@@ -10,10 +10,10 @@ public class StreamChatModelBuildHelper {
 
     /**
      * 构建流输出model
-     * @param validate ApplicationSaveValidate
+     * @param modelId String
      * @return StreamingChatLanguageModel
      */
-    public StreamingChatLanguageModel build(ApplicationSaveValidate validate) {
+    public StreamingChatLanguageModel build(String modelId) {
 
         return QianfanStreamingChatModel.builder()
                 .apiKey("DYATIgV0vT2W118kz2spXAj3")
