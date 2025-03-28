@@ -51,8 +51,28 @@ body {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
+.base-style {
+	display: flex;
+	align-items: center;
+	margin-top: 10px;
+}
+.flex-center {
+	display: flex;
+	align-items: center;
+}
+.flex-center-all {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 .el-card {
 	border-radius: 10px !important;
+}
+.code-bg {
+	background: #e2e2e2;
+	padding: 10px;
+	color: #303133;
+	border-radius: 5px;
 }
 @import '@/style/style.scss';
 </style>
