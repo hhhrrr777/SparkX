@@ -7,27 +7,25 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.sparkaiweb.controller.application;
+package sparkai.service.service.interfaces.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import sparkai.common.core.AjaxResult;
-import sparkai.service.service.interfaces.application.IApplicationChatService;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.service.vo.application.ApplicationChatVo;
+import sparkai.service.vo.application.SseChatVo;
 
-@RequestMapping("/api/chat")
-@RestController
-public class ChatController {
-
-    @Autowired
-    IApplicationChatService iApplicationChatService;
+public interface IApplicationChatService {
 
     /**
-     * 应用聊天详情
+     * 获取应用信息
+     * @param appId String
+     * @return ApplicationChatVo
      */
-    @GetMapping("/info")
-    public AjaxResult<ApplicationChatVo> info(@RequestParam("appId") String appId) {
+    ApplicationChatVo getChatInfo(String appId);
 
-        return AjaxResult.success(iApplicationChatService.getChatInfo(appId));
-    }
+    /**
+     * 应用内聊天测试
+     * @param chatVo SseChatVo
+     * @return SseEmitter
+     */
+    SseEmitter sseChat(SseChatVo chatVo);
 }

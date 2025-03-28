@@ -17,6 +17,13 @@ const routes = [
 		meta: {
 			title: "登录"
 		}
+	},
+	{
+		path: "/chat/:appId",
+		component: () => import(/* webpackChunkName: "login" */ '@/views/chat/index.vue'),
+		meta: {
+			title: "应用"
+		}
 	}
 ]
 

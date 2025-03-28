@@ -159,6 +159,10 @@ export default {
 		apiUrl: {
 			type: String,
 			default: ""
+		},
+		sessionId: {
+			type: String,
+			default: ""
 		}
 	},
 	data() {
@@ -169,7 +173,6 @@ export default {
 			answerIng: 0,
 			ctrl: null,
 			nowIndex: -1, // 当前交流的下表
-			sessionId: "",
 			dialogVisible: false,
 			retrievedList: [], // 召回文档列表
 		}
@@ -197,7 +200,6 @@ export default {
 		})
 
 		this.chatLogList = this.chatLogMsg
-		this.sessionId = Math.random().toString(32)
 		this.ctrl = new AbortController();
 	},
 	methods: {
@@ -206,7 +208,17 @@ export default {
 
 			let that = this
 			let data = this.setting
-			data.sessionId = this.sessionId
+			// 检测会话
+			if (this.sessionId === "") {
+				let res2 = await this.$API.chat.createSession.post({appId: data.appId})
+				if (res2.code !== 0) {
+					return false
+				} else {
+					this.sessionId = data.sessionId = res2.data
+				}
+			} else {
+				data.sessionId = this.sessionId
+			}
 			data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
 
 			this.chatLogList.push({source: 'user', content: this.chatMsg.slice(0, -1)});

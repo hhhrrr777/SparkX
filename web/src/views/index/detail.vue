@@ -45,9 +45,9 @@
 						</el-menu-item>
 						<el-menu-item index="2" @click="handleClick(2)">
 							<el-icon>
-								<Platform />
+								<Odometer />
 							</el-icon>
-							<span>部署</span>
+							<span>检测</span>
 						</el-menu-item>
 						<el-menu-item index="4" @click="handleClick(4)">
 							<el-icon>
@@ -78,12 +78,12 @@
 
 <script>
 import {defineAsyncComponent} from "vue";
-import {Back, CaretBottom, Collection, Document, Platform, Setting} from "@element-plus/icons-vue";
+import {Back, CaretBottom, Collection, Document, Odometer, Platform, Setting} from "@element-plus/icons-vue";
 import saveDialog from "@/views/index/save.vue";
 import datasetDialog from "@/components/chatContent/index.vue";
 
 export default {
-	components: {Platform, saveDialog, CaretBottom, Collection, Back, Document, Setting, datasetDialog},
+	components: {Odometer, Platform, saveDialog, CaretBottom, Collection, Back, Document, Setting, datasetDialog},
 	data() {
 		return {
 			components: {

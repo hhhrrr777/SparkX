@@ -327,3 +327,67 @@ COMMENT ON COLUMN "public"."application_dataset_relation"."dataset_id" IS '知�
 COMMENT ON COLUMN "public"."application_dataset_relation"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."application_dataset_relation"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."application_dataset_relation" IS '应用知识库关联表';
+
+
+CREATE TABLE "public"."application_chat_log" (
+    "log_id" int4 NOT NULL GENERATED ALWAYS AS IDENTITY (
+    INCREMENT 1
+    MINVALUE  1
+    MAXVALUE 2147483647
+    START 1
+    CACHE 1
+    ),
+    "app_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "session_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "source" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "content" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
+    "time" int4 DEFAULT 0,
+    "tokens" int4 DEFAULT 0,
+    "retrieved_list" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
+    "appraise" int4 DEFAULT 0,
+    "create_time" timestamp(6),
+    "update_time" timestamp(6),
+    CONSTRAINT "application_chat_log_pkey" PRIMARY KEY ("log_id")
+);
+
+ALTER TABLE "public"."application_chat_log"
+    OWNER TO "postgres";
+
+COMMENT ON COLUMN "public"."application_chat_log"."log_id" IS 'id';
+COMMENT ON COLUMN "public"."application_chat_log"."app_id" IS '所属应用id';
+COMMENT ON COLUMN "public"."application_chat_log"."session_id" IS '所属对话id';
+COMMENT ON COLUMN "public"."application_chat_log"."source" IS '聊天来源 user ai';
+COMMENT ON COLUMN "public"."application_chat_log"."content" IS '内容';
+COMMENT ON COLUMN "public"."application_chat_log"."time" IS '消耗时间';
+COMMENT ON COLUMN "public"."application_chat_log"."tokens" IS '消耗的token';
+COMMENT ON COLUMN "public"."application_chat_log"."retrieved_list" IS '引用的知识库';
+COMMENT ON COLUMN "public"."application_chat_log"."appraise" IS '评价 1:好评 2:差评';
+COMMENT ON COLUMN "public"."application_chat_log"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."application_chat_log"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."application_chat_log" IS '聊天日志表';
+
+
+CREATE TABLE "public"."application_chat_session" (
+    "session_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "app_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "title" varchar(25) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "user_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "create_time" timestamp(6),
+    "update_time" timestamp(6)
+);
+
+ALTER TABLE "public"."application_chat_session"
+    OWNER TO "postgres";
+
+CREATE INDEX "idx_user_log" ON "public"."application_chat_session" USING btree (
+    "app_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST,
+    "user_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+    );
+
+COMMENT ON COLUMN "public"."application_chat_session"."session_id" IS '会话id';
+COMMENT ON COLUMN "public"."application_chat_session"."app_id" IS '所属应用';
+COMMENT ON COLUMN "public"."application_chat_session"."title" IS '会话标题';
+COMMENT ON COLUMN "public"."application_chat_session"."user_id" IS '用户id';
+COMMENT ON COLUMN "public"."application_chat_session"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."application_chat_session"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."application_chat_session" IS '应用会话表';

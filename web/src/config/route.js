@@ -53,18 +53,6 @@ menu[0].children.push({
 menu[0].children.push({
 	"id": 102,
 	"pid": 1,
-	"name": '应用测试',
-	"path": "/index/chat",
-	"component": "index/chat",
-	"meta": {
-		"title": "应用测试",
-		"hidden": true,
-		"active": "/index/home",
-	}
-})
-menu[0].children.push({
-	"id": 103,
-	"pid": 1,
 	"name": '应用详情',
 	"path": "/index/detail",
 	"component": "index/detail",

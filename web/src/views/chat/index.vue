@@ -6,10 +6,10 @@
 					<div style="padding: 20px">
 						<div class="logo">
 							<img src="/src/assets/robot.gif" style="width: 30px; height: 30px" alt="" />
-							<span class="font-weight-700">智能助手</span>
+							<span class="font-weight-700">{{ title }}</span>
 						</div>
 						<div class="chat-tool">
-							<div class="new-chat btn-color">
+							<div class="flex-center new-chat btn-color">
 								<el-icon><Plus /></el-icon>
 								<span style="margin-left: 5px">新对话</span>
 							</div>
@@ -20,8 +20,8 @@
 						</div>
 					</div>
 				</el-col>
-				<el-col :span="21" class="right-side">
-					<chat-box :setting="setting" :chat-log-msg="chatLogMsg"></chat-box>
+				<el-col :span="21" class="right-side" style="padding: 20px">
+					<chat-box :setting="setting" :chat-log-msg="chatLogMsg" :welcome-word="welcomeWord" :key="randomKey"></chat-box>
 				</el-col>
 			</el-row>
 		</div>
@@ -36,22 +36,38 @@ export default {
 	components: {Plus, chatBox},
 	data() {
 		return {
-			setting: {
-				showRelation: 1,
-				showTime: 1,
-				showTokens: 1,
-				showAppraise: 1,
-				voiceOut: 1
+			setting: {},
+			welcomeWord: {
+				title: '',
+				question: []
 			},
 			chatLogMsg: [],
-			sessionLog: []
+			sessionLog: [],
+			appId: "",
+			title: '', // 应用标题
+			randomKey: Math.random()
 		}
 	},
 	mounted() {
-
+		this.appId = this.$route.params.appId
+		this.getChatInfo()
 	},
 	methods: {
-
+		// 获取应用聊天详情
+		async getChatInfo() {
+			let res = await this.$API.chat.getInfo.get({appId: this.appId})
+			if (res.code === 0) {
+				let appInfo = res.data.applicationInfo
+				if (appInfo.prologue != '') {
+					this.welcomeWord = JSON.parse(appInfo.prologue)
+					appInfo.prologue = JSON.parse(appInfo.prologue)
+				}
+				this.setting = appInfo
+				this.randomKey = Math.random()
+				this.title = appInfo.name
+				this.sessionLog = res.data.sessionList
+			}
+		}
 	}
 }
 </script>
@@ -134,3 +150,4 @@ export default {
 	background: #eee7fd;
 }
 </style>
+
