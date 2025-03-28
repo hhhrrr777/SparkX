@@ -12,7 +12,6 @@ package sparkai.service.helper;
 import dev.langchain4j.community.model.qianfan.QianfanStreamingChatModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import org.springframework.stereotype.Component;
-import sparkai.service.validate.application.ApplicationSaveValidate;
 
 @Component
 public class StreamChatModelBuildHelper {

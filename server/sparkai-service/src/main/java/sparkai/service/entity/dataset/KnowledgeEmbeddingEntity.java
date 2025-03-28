@@ -12,7 +12,6 @@ package sparkai.service.entity.dataset;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.pgvector.PGvector;
 import lombok.Data;
 import sparkai.service.task.TsVectorTypeHandler;
 import sparkai.service.task.VectorTypeHandler;
