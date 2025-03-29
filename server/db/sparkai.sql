@@ -339,7 +339,7 @@ CREATE TABLE "public"."application_chat_log" (
     ),
     "app_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "session_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "source" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "question" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "content" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
     "time" int4 DEFAULT 0,
     "tokens" int4 DEFAULT 0,
@@ -356,7 +356,7 @@ ALTER TABLE "public"."application_chat_log"
 COMMENT ON COLUMN "public"."application_chat_log"."log_id" IS 'id';
 COMMENT ON COLUMN "public"."application_chat_log"."app_id" IS '所属应用id';
 COMMENT ON COLUMN "public"."application_chat_log"."session_id" IS '所属对话id';
-COMMENT ON COLUMN "public"."application_chat_log"."source" IS '聊天来源 user ai';
+COMMENT ON COLUMN "public"."application_chat_log"."question" IS '问题';
 COMMENT ON COLUMN "public"."application_chat_log"."content" IS '内容';
 COMMENT ON COLUMN "public"."application_chat_log"."time" IS '消耗时间';
 COMMENT ON COLUMN "public"."application_chat_log"."tokens" IS '消耗的token';

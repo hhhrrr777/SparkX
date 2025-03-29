@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.entity.application;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -28,7 +29,7 @@ public class ApplicationChatLogEntity implements Serializable {
     /**
     * id
     */
-    @TableId(value="log_id")
+    @TableId(type = IdType.AUTO)
     @TableField(value = "log_id")
     private Integer logId;
 
@@ -45,10 +46,10 @@ public class ApplicationChatLogEntity implements Serializable {
     private String sessionId;
 
     /**
-    * 聊天来源 user ai
+    * 问题
     */
-    @TableField(value = "source")
-    private String source;
+    @TableField(value = "question")
+    private String question;
 
     /**
     * 内容

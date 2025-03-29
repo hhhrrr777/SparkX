@@ -9,9 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.application;
 
-import sparkai.service.vo.application.ApplicationSimpleSessionVo;
-import sparkai.service.vo.application.ApplicationVo;
-import sparkai.service.vo.application.SessionVo;
+import sparkai.service.vo.application.*;
 
 import java.util.List;
 
@@ -43,4 +41,17 @@ public interface IApplicationChatService {
      * @param sessionVo SessionVo
      */
     void updateSession(SessionVo sessionVo);
+
+    /**
+     * 记录对话日志
+     * @param logVo ApplicationLogVo
+     * @return Integer
+     */
+    Integer writeLog(ApplicationLogVo logVo);
+
+    /**
+     * 评价回答
+     * @param appraiseVo AppraiseVo
+     */
+    void appraise(AppraiseVo appraiseVo);
 }

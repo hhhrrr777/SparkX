@@ -26,9 +26,9 @@
 						:chat-log-msg="chatLogMsg"
 						:welcome-word="welcomeWord"
 						:key="randomKey"
+						:write-log="true"
 						api-url="/application/sseChat"
-						@sessionCreate="sessionCreate"
-						@writeLog="writeLog">
+						@sessionCreate="sessionCreate">
 					</chat-box>
 				</el-col>
 			</el-row>
@@ -91,10 +91,6 @@ export default {
 			if (res.code === 0) {
 				this.getSessionList()
 			}
-		},
-		// 写入日志
-		writeLog(row) {
-			console.log('xx', row)
 		}
 	}
 }

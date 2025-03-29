@@ -14,19 +14,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
+import sparkai.service.mapper.application.ApplicationChatLogMapper;
 import sparkai.service.mapper.application.ApplicationChatSessionMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.service.interfaces.application.IApplicationChatService;
-import sparkai.service.vo.application.ApplicationSimpleSessionVo;
-import sparkai.service.vo.application.ApplicationVo;
-import sparkai.service.vo.application.SessionVo;
-import sparkai.service.vo.application.SseChatVo;
+import sparkai.service.vo.application.*;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 
 import java.util.ArrayList;
@@ -44,6 +42,9 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
 
     @Autowired
     ApplicationDatasetRelationMapper applicationDatasetRelationMapper;
+
+    @Autowired
+    ApplicationChatLogMapper applicationChatLogMapper;
 
     /**
      * 获取应用信息
@@ -135,5 +136,43 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         entity.setUpdateTime(Tool.nowDateTime());
 
         applicationChatSessionMapper.updateById(entity);
+    }
+
+    /**
+     * 记录对话日志
+     * @param logVo ApplicationLogVo
+     */
+    @Override
+    public Integer writeLog(ApplicationLogVo logVo) {
+
+        ApplicationChatLogEntity entity = new ApplicationChatLogEntity();
+        entity.setAppId(logVo.getAppId());
+        entity.setSessionId(logVo.getSessionId());
+        entity.setQuestion(logVo.getQuestion());
+        entity.setContent(logVo.getAnswer());
+        entity.setTime(logVo.getTime());
+        entity.setTokens(logVo.getTokens());
+        entity.setRetrievedList(logVo.getRetrievedList());
+        entity.setCreateTime(Tool.nowDateTime());
+
+        applicationChatLogMapper.insert(entity);
+
+        return entity.getLogId();
+    }
+
+    /**
+     * 评价回答
+     * @param appraiseVo AppraiseVo
+     */
+    @Override
+    public void appraise(AppraiseVo appraiseVo) {
+
+        ApplicationChatLogEntity entity = applicationChatLogMapper.selectOne(
+                new QueryWrapper<ApplicationChatLogEntity>()
+                        .eq("log_id", appraiseVo.getLogId()).eq("session_id", appraiseVo.getSessionId()));
+        entity.setAppraise(appraiseVo.getAppraise());
+        entity.setUpdateTime(Tool.nowDateTime());
+
+        applicationChatLogMapper.updateById(entity);
     }
 }

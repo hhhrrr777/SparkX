@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.service.service.interfaces.application.IApplicationChatService;
-import sparkai.service.vo.application.ApplicationSimpleSessionVo;
-import sparkai.service.vo.application.ApplicationVo;
-import sparkai.service.vo.application.SessionVo;
+import sparkai.service.vo.application.*;
 
 import java.util.List;
 
@@ -60,6 +58,34 @@ public class ChatController {
     public AjaxResult<Object> updateSession(@RequestBody SessionVo sessionVo) {
 
         iApplicationChatService.updateSession(sessionVo);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 记录对话日志
+     */
+    @PostMapping("/writeLog")
+    public AjaxResult<Object> writeLog(@RequestBody ApplicationLogVo logVo) {
+
+        return AjaxResult.success(iApplicationChatService.writeLog(logVo));
+    }
+
+    /**
+     * 评价回答
+     */
+    @PostMapping("/appraise")
+    public AjaxResult<Object> appraise(@RequestBody AppraiseVo appraiseVo) {
+
+        iApplicationChatService.appraise(appraiseVo);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 删除会话
+     */
+    @GetMapping("/delSession")
+    public AjaxResult<Object> delSession(@RequestParam("sessionId") String sessionId) {
+
         return AjaxResult.success();
     }
 }

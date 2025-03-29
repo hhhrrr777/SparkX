@@ -34,4 +34,20 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
+	writeLog: {
+		url: `${config.API_URL}/chat/writeLog`,
+		name: "记录会话日志",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
+	},
+	appraise: {
+		url: `${config.API_URL}/chat/appraise`,
+		name: "评价",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
+	}
 }

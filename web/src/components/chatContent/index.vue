@@ -54,6 +54,13 @@
 								<div class="menu-right-side">
 									<el-tooltip
 										effect="dark"
+										content="换一个答案"
+										placement="bottom"
+									>
+										<el-icon size="16" style="margin-left: 10px;cursor: pointer" @click="rechat"><Refresh /></el-icon>
+									</el-tooltip>
+									<el-tooltip
+										effect="dark"
 										content="复制"
 										placement="bottom"
 									>
@@ -65,7 +72,7 @@
 										content="赞"
 										placement="bottom"
 									>
-										<span class="iconfont icon-zan icon-style"></span>
+										<span class="iconfont icon-zan icon-style" @click="appraise(item, 1)"></span>
 									</el-tooltip>
 									<el-tooltip
 										v-if="setting.showAppraise === 1"
@@ -73,7 +80,7 @@
 										content="踩"
 										placement="bottom"
 									>
-										<span class="iconfont icon-cai icon-style"></span>
+										<span class="iconfont icon-cai icon-style" @click="appraise(item, 2)"></span>
 									</el-tooltip>
 									<el-tooltip
 										v-if="setting.voiceOut === 1"
@@ -135,14 +142,14 @@
 </template>
 
 <script>
-import {CopyDocument, Loading, Promotion} from "@element-plus/icons-vue";
+import {CopyDocument, Loading, Promotion, Refresh} from "@element-plus/icons-vue";
 import { config, MdPreview } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import configInfo from "@/config"
 
 export default {
-	components: {Loading, CopyDocument, Promotion, MdPreview},
+	components: {Refresh, Loading, CopyDocument, Promotion, MdPreview},
 	props: {
 		chatLogMsg: {
 			type: Array,
@@ -163,6 +170,10 @@ export default {
 		chatSessionId: {
 			type: String,
 			default: ""
+		},
+		writeLog: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {
@@ -260,15 +271,26 @@ export default {
 
 						let nowLog = that.chatLogList[that.nowIndex]
 						// 插件外决定是否保存
-						let meta = JSON.parse(ev.data)
-						that.$emit("writeLog", {
-							sessionId: data.sessionId,
-							question: data.content,
-							answer: nowLog.content,
-							time: meta.time,
-							tokens: meta.tokens,
-							retrieved_list: nowLog.retrievedList
-						})
+						if (that.writeLog) {
+							let meta = JSON.parse(ev.data)
+							let row = {
+								sessionId: data.sessionId,
+								question: data.content,
+								answer: nowLog.content,
+								time: meta.time,
+								tokens: meta.tokens,
+								retrieved_list: nowLog.retrievedList
+							}
+
+							row.retrievedList = JSON.stringify(row.retrieved_list)
+							delete row.retrieved_list
+							row.appId = data.appId
+
+							let logRes = that.$API.chat.writeLog.post(row)
+							logRes.then(result => {
+								that.chatLogList[that.nowIndex].logId = result.code
+							})
+						}
 
 						that.sliderBottom()
 					} else if (event === '[ERROR]') {
@@ -311,6 +333,14 @@ export default {
 				console.log('错误', error)
 				this.$message.error('复制错误')
 			});
+		},
+		// 评价
+		appraise(row, type) {
+			console.log('xx', row, type)
+		},
+		// 换一个答案
+		rechat() {
+
 		}
 	}
 }
