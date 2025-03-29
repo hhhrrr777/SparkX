@@ -34,7 +34,7 @@
 							<div class="chat-user-name"></div>
 						</div>
 						<div class="answer-content">
-							<div class="code-box">
+							<div class="code-box flex-center">
 								<div class="answer-content-wrap" style="width: 100%">
 									<p v-if="item.source === 'user'">{{ item.content }}</p>
 									<p v-else-if="item.source === 'system'" style="display: flex;align-items: center">{{ item.content }}
@@ -213,7 +213,10 @@ export default {
 		})
 
 		this.chatLogList = this.chatLogMsg
-		this.ctrl = new AbortController();
+		this.$nextTick(() => {
+			this.sliderBottom()
+		})
+		this.ctrl = new AbortController()
 	},
 	methods: {
 		// 发送消息

@@ -54,4 +54,9 @@ public class ApplicationLogVo implements Serializable {
      * 召回的
      */
     private String retrievedList;
+
+    /**
+     * 评价信息
+     */
+    private Integer appraise;
 }

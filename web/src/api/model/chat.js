@@ -57,5 +57,13 @@ export default {
 
 			return await http.get(this.url, data);
 		}
+	},
+	getChatLog: {
+		url: `${config.API_URL}/chat/chatLog`,
+		name: "获取聊天记录",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
 	}
 }

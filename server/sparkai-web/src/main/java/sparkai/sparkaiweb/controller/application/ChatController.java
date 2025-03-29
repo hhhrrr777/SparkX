@@ -89,4 +89,13 @@ public class ChatController {
         iApplicationChatService.delSession(sessionId);
         return AjaxResult.success();
     }
+
+    /**
+     * 获取聊天记录
+     */
+    @GetMapping("/chatLog")
+    public AjaxResult<List<ApplicationLogVo>> chatLog(@RequestParam("sessionId") String sessionId) {
+
+        return AjaxResult.success(iApplicationChatService.getChatLog(sessionId));
+    }
 }

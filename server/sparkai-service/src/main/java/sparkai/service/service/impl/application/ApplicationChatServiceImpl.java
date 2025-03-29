@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
@@ -191,5 +192,34 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         if (num > 0) {
             applicationChatLogMapper.delete(new QueryWrapper<ApplicationChatLogEntity>().eq("session_id", sessionId));
         }
+    }
+
+    /**
+     * 获取聊天记录
+     * @param sessionId String
+     * @return List<ApplicationLogVo>
+     */
+    @Override
+    public List<ApplicationLogVo> getChatLog(String sessionId) {
+
+        ApplicationChatSessionEntity sessionInfo = applicationChatSessionMapper.selectOne(new QueryWrapper<ApplicationChatSessionEntity>()
+                .eq("session_id", sessionId).eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616"));
+        if (sessionInfo == null) {
+            throw new BusinessException("暂无记录");
+        }
+
+        List<ApplicationChatLogEntity> resultList = applicationChatLogMapper.selectList(new QueryWrapper<ApplicationChatLogEntity>()
+                .eq("session_id", sessionId).orderByAsc("log_id"));
+        List<ApplicationLogVo> voList = new LinkedList<>();
+        for (ApplicationChatLogEntity entity : resultList) {
+
+            ApplicationLogVo vo = new ApplicationLogVo();
+            BeanUtils.copyProperties(entity, vo);
+            vo.setAnswer(entity.getContent());
+
+            voList.add(vo);
+        }
+
+        return voList;
     }
 }

@@ -60,4 +60,11 @@ public interface IApplicationChatService {
      * @param sessionId String
      */
     void delSession(String sessionId);
+
+    /**
+     * 获取聊天记录
+     * @param sessionId String
+     * @return List<ApplicationLogVo>
+     */
+    List<ApplicationLogVo> getChatLog(String sessionId);
 }

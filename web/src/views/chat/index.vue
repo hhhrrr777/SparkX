@@ -9,14 +9,16 @@
 							<span class="font-weight-700">{{ title }}</span>
 						</div>
 						<div class="chat-tool" style="margin-bottom: 10px">
-							<div class="flex-center new-chat btn-color">
+							<div class="flex-center new-chat btn-color" @click="createNewSession">
 								<el-icon><Plus /></el-icon>
 								<span style="margin-left: 5px">新对话</span>
 							</div>
 						</div>
 
 						<div class="flex-center log-item-box" v-for="(item, index) in sessionLog" :key="item.sessionId"
-							 :class="{'item-active': nowSessionId === item.sessionId}" @mouseover="hoverIndex = index" @mouseleave="hoverIndex = -1">
+							 :class="{'item-active': nowSessionId === item.sessionId}" @mouseover="hoverIndex = index"
+							 @mouseleave="hoverIndex = -1"
+							 @click="checkSession(item.sessionId)">
 							<div class="log-item">{{ item.title }}</div>
 							<el-icon style="cursor: pointer" @click="delSession(item.sessionId)" v-if="hoverIndex === index">
 								<Delete />
@@ -104,11 +106,51 @@ export default {
 				this.getSessionList()
 				// 删除当前的会话session
 				if (sessionId === this.nowSessionId) {
-
+					this.createNewSession()
 				}
-
 			} else {
 				this.$message.error(res.msg)
+			}
+		},
+		// 创建新的会话
+		createNewSession() {
+			this.nowSessionId = ''
+			this.chatLogMsg = []
+			this.randomKey = Math.random()
+		},
+		// 选择会话
+		async checkSession(sessionId) {
+			this.nowSessionId = sessionId
+			let res = await this.$API.chat.getChatLog.get({sessionId: sessionId})
+			if (res.code === 0) {
+
+				let chatLogList = []
+				res.data.forEach((item) => {
+
+					chatLogList.push({
+						appId: item.appId,
+						sessionId: item.sessionId,
+						source: 'user',
+						content: item.question
+					})
+
+					chatLogList.push({
+						appId: item.appId,
+						sessionId: item.sessionId,
+						source: 'ai',
+						content: item.answer,
+						appraise: item.appraise,
+						meta: {
+							time: item.time,
+							tokens: item.tokens,
+						},
+						retrievedList: JSON.parse(item.retrievedList),
+						answerIng: 3
+					})
+				})
+
+				this.chatLogMsg = chatLogList
+				this.randomKey = Math.random()
 			}
 		}
 	}
