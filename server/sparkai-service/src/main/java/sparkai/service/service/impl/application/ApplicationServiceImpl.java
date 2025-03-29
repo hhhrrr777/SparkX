@@ -235,7 +235,7 @@ public class ApplicationServiceImpl implements IApplicationService {
      * @param validate ApplicationSaveValidate
      */
     @Override
-    public SseEmitter testChat(ApplicationSaveValidate validate) {
+    public SseEmitter sseChat(ApplicationSaveValidate validate) {
 
         SseEmitter emitter = new SseEmitter();
 

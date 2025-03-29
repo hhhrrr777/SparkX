@@ -9,11 +9,13 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.impl.application;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
@@ -21,9 +23,9 @@ import sparkai.service.mapper.application.ApplicationChatSessionMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.service.interfaces.application.IApplicationChatService;
-import sparkai.service.vo.application.ApplicationChatVo;
 import sparkai.service.vo.application.ApplicationSimpleSessionVo;
 import sparkai.service.vo.application.ApplicationVo;
+import sparkai.service.vo.application.SessionVo;
 import sparkai.service.vo.application.SseChatVo;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 
@@ -49,9 +51,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
      * @return ApplicationChatVo
      */
     @Override
-    public ApplicationChatVo getChatInfo(String appId) {
-
-        ApplicationChatVo returnVo = new ApplicationChatVo();
+    public ApplicationVo getChatInfo(String appId) {
 
         // 设置应用信息
         ApplicationEntity application = applicationMapper.selectById(appId);
@@ -70,9 +70,18 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         }
         applicationVo.setDatasetList(datasetVoList);
 
-        returnVo.setApplicationInfo(applicationVo);
-
         // TODO 未发布的话，则判断是否应有权限
+
+        return applicationVo;
+    }
+
+    /**
+     * 获取会话记录
+     * @param appId String
+     * @return List<ApplicationSimpleSessionVo>
+     */
+    @Override
+    public List<ApplicationSimpleSessionVo> getChatSesstionList(String appId) {
 
         // 设置会话信息
         List<ApplicationChatSessionEntity> sessionList = applicationChatSessionMapper
@@ -86,13 +95,45 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
 
             sessionVoList.add(vo);
         }
-        returnVo.setSessionList(sessionVoList);
 
-        return returnVo;
+        return sessionVoList;
     }
 
+    /**
+     * 创建会话
+     * @param sessionVo SessionVo
+     * @return String
+     */
     @Override
-    public SseEmitter sseChat(SseChatVo chatVo) {
-        return null;
+    public String createSession(SessionVo sessionVo) {
+
+        ApplicationChatSessionEntity entity = new ApplicationChatSessionEntity();
+        entity.setAppId(sessionVo.getAppId());
+        entity.setSessionId(IdUtil.randomUUID());
+        entity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        entity.setCreateTime(Tool.nowDateTime());
+
+        applicationChatSessionMapper.insert(entity);
+
+        return entity.getSessionId();
+    }
+
+    /**
+     * 更新会话
+     * @param sessionVo SessionVo
+     */
+    @Override
+    public void updateSession(SessionVo sessionVo) {
+
+        ApplicationChatSessionEntity entity = applicationChatSessionMapper.selectById(sessionVo.getSessionId());
+
+        String title = sessionVo.getTitle();
+        if (title.length() > 25) {
+            title = title.substring(0, 25);
+        }
+        entity.setTitle(title);
+        entity.setUpdateTime(Tool.nowDateTime());
+
+        applicationChatSessionMapper.updateById(entity);
     }
 }

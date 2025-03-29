@@ -337,8 +337,8 @@ CREATE TABLE "public"."application_chat_log" (
     START 1
     CACHE 1
     ),
-    "app_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "session_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "app_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "session_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "source" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "content" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
     "time" int4 DEFAULT 0,
@@ -368,10 +368,10 @@ COMMENT ON TABLE "public"."application_chat_log" IS '聊天日志表';
 
 
 CREATE TABLE "public"."application_chat_session" (
-    "session_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "app_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "session_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "app_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "title" varchar(25) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "user_id" varchar(32) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "user_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "create_time" timestamp(6),
     "update_time" timestamp(6)
 );

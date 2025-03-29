@@ -160,7 +160,7 @@ export default {
 			type: String,
 			default: ""
 		},
-		sessionId: {
+		chatSessionId: {
 			type: String,
 			default: ""
 		}
@@ -175,9 +175,11 @@ export default {
 			nowIndex: -1, // 当前交流的下表
 			dialogVisible: false,
 			retrievedList: [], // 召回文档列表
+			sessionId: ""
 		}
 	},
 	mounted() {
+		this.sessionId = this.chatSessionId
 		config({
 			markdownItConfig(md) {
 				md.renderer.rules.image = (tokens, idx, options, env, self) => {
@@ -208,18 +210,24 @@ export default {
 
 			let that = this
 			let data = this.setting
+			data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
+
+			if (data.content.length === 0) {
+				this.$message.error('请输入问题')
+				return false
+			}
+
 			// 检测会话
 			if (this.sessionId === "") {
 				let res2 = await this.$API.chat.createSession.post({appId: data.appId})
 				if (res2.code !== 0) {
 					return false
 				} else {
-					this.sessionId = data.sessionId = res2.data
+					data.sessionId = res2.msg
 				}
 			} else {
 				data.sessionId = this.sessionId
 			}
-			data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
 
 			this.chatLogList.push({source: 'user', content: this.chatMsg.slice(0, -1)});
 			this.chatLogList.push({source: 'system', content: '思考中'});
@@ -244,6 +252,24 @@ export default {
 					} else if (event === '[DONE]') { // 回答结束
 						that.answerIng = that.chatLogList[that.nowIndex].answerIng = 3
 						that.chatLogList[that.nowIndex].meta = JSON.parse(ev.data)
+
+						if (that.sessionId === '') {
+							that.$emit("sessionCreate", {sessionId: data.sessionId, title: data.content})
+							that.sessionId = data.sessionId
+						}
+
+						let nowLog = that.chatLogList[that.nowIndex]
+						// 插件外决定是否保存
+						let meta = JSON.parse(ev.data)
+						that.$emit("writeLog", {
+							sessionId: data.sessionId,
+							question: data.content,
+							answer: nowLog.content,
+							time: meta.time,
+							tokens: meta.tokens,
+							retrieved_list: nowLog.retrievedList
+						})
+
 						that.sliderBottom()
 					} else if (event === '[ERROR]') {
 						that.stopAnswer()
@@ -385,7 +411,7 @@ export default {
 	}
 }
 .send-btn {
-	width: 10%;
+	width: 100px;
 	height: 100%;
 	display: flex;
 	align-items: center;

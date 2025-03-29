@@ -9,9 +9,11 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.application;
 
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import sparkai.service.vo.application.ApplicationChatVo;
-import sparkai.service.vo.application.SseChatVo;
+import sparkai.service.vo.application.ApplicationSimpleSessionVo;
+import sparkai.service.vo.application.ApplicationVo;
+import sparkai.service.vo.application.SessionVo;
+
+import java.util.List;
 
 public interface IApplicationChatService {
 
@@ -20,12 +22,25 @@ public interface IApplicationChatService {
      * @param appId String
      * @return ApplicationChatVo
      */
-    ApplicationChatVo getChatInfo(String appId);
+    ApplicationVo getChatInfo(String appId);
 
     /**
-     * 应用内聊天测试
-     * @param chatVo SseChatVo
-     * @return SseEmitter
+     * 获取会话记录
+     * @param appId String
+     * @return List<ApplicationSimpleSessionVo>
      */
-    SseEmitter sseChat(SseChatVo chatVo);
+    List<ApplicationSimpleSessionVo> getChatSesstionList(String appId);
+
+    /**
+     * 创建会话
+     * @param sessionVo SessionVo
+     * @return String
+     */
+    String createSession(SessionVo sessionVo);
+
+    /**
+     * 更新会话
+     * @param sessionVo SessionVo
+     */
+    void updateSession(SessionVo sessionVo);
 }

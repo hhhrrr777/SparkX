@@ -175,7 +175,8 @@
 					:welcome-word="welcomeList"
 					:key="chatBoxKey"
 					:setting="form"
-					api-url="/application/testChat">
+					:chat-session-id="Math.random().toString(64)"
+					api-url="/application/sseChat">
 				</chat-box>
 			</el-col>
 		</el-row>

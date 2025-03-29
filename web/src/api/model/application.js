@@ -34,8 +34,8 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
-	testChat: {
-		url: `${config.API_URL}/application/testChat`,
+	sseChat: {
+		url: `${config.API_URL}/application/sseChat`,
 		name: "聊天测试",
 		post: async function(data={}){
 

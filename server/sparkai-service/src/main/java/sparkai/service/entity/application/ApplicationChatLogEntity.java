@@ -10,6 +10,7 @@
 package sparkai.service.entity.application;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -27,6 +28,7 @@ public class ApplicationChatLogEntity implements Serializable {
     /**
     * id
     */
+    @TableId(value="log_id")
     @TableField(value = "log_id")
     private Integer logId;
 

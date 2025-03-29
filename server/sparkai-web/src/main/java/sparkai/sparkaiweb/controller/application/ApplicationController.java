@@ -68,11 +68,11 @@ public class ApplicationController {
     }
 
     /**
-     * 应用内聊天测试
+     * 应用聊天
      */
-    @PostMapping(value = "/testChat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter testChat(@RequestBody ApplicationSaveValidate validate) {
+    @PostMapping(value = "/sseChat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter sseChat(@RequestBody ApplicationSaveValidate validate) {
 
-        return iApplicationService.testChat(validate);
+        return iApplicationService.sseChat(validate);
     }
 }

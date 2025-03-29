@@ -8,20 +8,28 @@
 							<img src="/src/assets/robot.gif" style="width: 30px; height: 30px" alt="" />
 							<span class="font-weight-700">{{ title }}</span>
 						</div>
-						<div class="chat-tool">
+						<div class="chat-tool" style="margin-bottom: 10px">
 							<div class="flex-center new-chat btn-color">
 								<el-icon><Plus /></el-icon>
 								<span style="margin-left: 5px">新对话</span>
 							</div>
 						</div>
 
-						<div style="margin-top: 20px" v-for="item in sessionLog" :key="item.sessionId">
-							<div class="log-item item-active">{{ item.title }}</div>
+						<div v-for="item in sessionLog" :key="item.sessionId">
+							<div class="log-item" :class="{'item-active': nowSessionId === item.sessionId}">{{ item.title }}</div>
 						</div>
 					</div>
 				</el-col>
-				<el-col :span="21" class="right-side" style="padding: 20px">
-					<chat-box :setting="setting" :chat-log-msg="chatLogMsg" :welcome-word="welcomeWord" :key="randomKey"></chat-box>
+				<el-col :span="21" class="right-side" style="padding: 50px 10%">
+					<chat-box
+						:setting="setting"
+						:chat-log-msg="chatLogMsg"
+						:welcome-word="welcomeWord"
+						:key="randomKey"
+						api-url="/application/sseChat"
+						@sessionCreate="sessionCreate"
+						@writeLog="writeLog">
+					</chat-box>
 				</el-col>
 			</el-row>
 		</div>
@@ -45,19 +53,21 @@ export default {
 			sessionLog: [],
 			appId: "",
 			title: '', // 应用标题
-			randomKey: Math.random()
+			randomKey: Math.random(),
+			nowSessionId: ""
 		}
 	},
 	mounted() {
 		this.appId = this.$route.params.appId
 		this.getChatInfo()
+		this.getSessionList()
 	},
 	methods: {
 		// 获取应用聊天详情
 		async getChatInfo() {
 			let res = await this.$API.chat.getInfo.get({appId: this.appId})
 			if (res.code === 0) {
-				let appInfo = res.data.applicationInfo
+				let appInfo = res.data
 				if (appInfo.prologue != '') {
 					this.welcomeWord = JSON.parse(appInfo.prologue)
 					appInfo.prologue = JSON.parse(appInfo.prologue)
@@ -65,8 +75,26 @@ export default {
 				this.setting = appInfo
 				this.randomKey = Math.random()
 				this.title = appInfo.name
-				this.sessionLog = res.data.sessionList
 			}
+		},
+		// 获取会话列表
+		async getSessionList() {
+			let res = await this.$API.chat.getSessionList.get({appId: this.appId})
+			if (res.code === 0) {
+				this.sessionLog = res.data
+			}
+		},
+		// 新建会话
+		async sessionCreate(row) {
+			this.nowSessionId = row.sessionId
+			let res = await this.$API.chat.updateSession.post(row)
+			if (res.code === 0) {
+				this.getSessionList()
+			}
+		},
+		// 写入日志
+		writeLog(row) {
+			console.log('xx', row)
 		}
 	}
 }

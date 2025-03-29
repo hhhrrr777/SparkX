@@ -47,7 +47,7 @@
 							<el-icon>
 								<Odometer />
 							</el-icon>
-							<span>检测</span>
+							<span>监控</span>
 						</el-menu-item>
 						<el-menu-item index="4" @click="handleClick(4)">
 							<el-icon>

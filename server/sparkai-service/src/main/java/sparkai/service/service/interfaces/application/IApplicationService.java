@@ -58,5 +58,5 @@ public interface IApplicationService {
      * 应用内聊天测试
      * @param validate ApplicationSaveValidate
      */
-    SseEmitter testChat(ApplicationSaveValidate validate);
+    SseEmitter sseChat(ApplicationSaveValidate validate);
 }
