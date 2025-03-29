@@ -49,5 +49,13 @@ export default {
 
 			return await http.post(this.url, data);
 		}
+	},
+	delSession: {
+		url: `${config.API_URL}/chat/delSession`,
+		name: "删除会话",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
 	}
 }

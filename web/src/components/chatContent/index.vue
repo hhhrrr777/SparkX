@@ -57,7 +57,7 @@
 										content="换一个答案"
 										placement="bottom"
 									>
-										<el-icon size="16" style="margin-left: 10px;cursor: pointer" @click="rechat"><Refresh /></el-icon>
+										<el-icon size="16" style="margin-left: 10px;cursor: pointer" @click="reChat(item)"><Refresh /></el-icon>
 									</el-tooltip>
 									<el-tooltip
 										effect="dark"
@@ -69,18 +69,18 @@
 									<el-tooltip
 										v-if="setting.showAppraise === 1"
 										effect="dark"
-										content="赞"
+										content="答的不错"
 										placement="bottom"
 									>
-										<span class="iconfont icon-zan icon-style" @click="appraise(item, 1)"></span>
+										<span class="iconfont icon-zan icon-style" @click="appraise(item, 1)" :style="{'color': item.appraise === 1 ? 'var(--el-color-theme)' : ''}"></span>
 									</el-tooltip>
 									<el-tooltip
 										v-if="setting.showAppraise === 1"
 										effect="dark"
-										content="踩"
+										content="还不够好"
 										placement="bottom"
 									>
-										<span class="iconfont icon-cai icon-style" @click="appraise(item, 2)"></span>
+										<span class="iconfont icon-cai icon-style" @click="appraise(item, 2)" :style="{'color': item.appraise === 2 ? 'var(--el-color-theme)' : ''}"></span>
 									</el-tooltip>
 									<el-tooltip
 										v-if="setting.voiceOut === 1"
@@ -240,8 +240,8 @@ export default {
 				data.sessionId = this.sessionId
 			}
 
-			this.chatLogList.push({source: 'user', content: this.chatMsg.slice(0, -1)});
-			this.chatLogList.push({source: 'system', content: '思考中'});
+			this.chatLogList.push({source: 'user', content: data.content });
+			this.chatLogList.push({source: 'system', question: data.content, appraise: 0, content: '思考中'});
 			this.chatMsg = ''
 			this.answerIng = 1
 
@@ -335,12 +335,26 @@ export default {
 			});
 		},
 		// 评价
-		appraise(row, type) {
-			console.log('xx', row, type)
+		async appraise(row, type) {
+			if (row.appraise !== 0) {
+				type = 0
+			}
+
+			let res = await this.$API.chat.appraise.post({
+				sessionId: this.sessionId,
+				logId: row.logId,
+				appraise: type
+			})
+			if (res.code !== 0) {
+				this.$message.error(res.msg)
+			} else {
+				this.chatLogList[this.nowIndex].appraise = type
+			}
 		},
 		// 换一个答案
-		rechat() {
-
+		reChat(row) {
+			this.chatMsg = row.question + '\n'
+			this.send()
 		}
 	}
 }

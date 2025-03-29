@@ -86,6 +86,7 @@ public class ChatController {
     @GetMapping("/delSession")
     public AjaxResult<Object> delSession(@RequestParam("sessionId") String sessionId) {
 
+        iApplicationChatService.delSession(sessionId);
         return AjaxResult.success();
     }
 }

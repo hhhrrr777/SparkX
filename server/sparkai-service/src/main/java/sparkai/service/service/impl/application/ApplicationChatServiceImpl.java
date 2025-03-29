@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
@@ -174,5 +175,21 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         entity.setUpdateTime(Tool.nowDateTime());
 
         applicationChatLogMapper.updateById(entity);
+    }
+
+    /**
+     * 删除会话
+     * @param sessionId String
+     */
+    @Override
+    @Transactional
+    public void delSession(String sessionId) {
+
+        int num = applicationChatSessionMapper.delete(new QueryWrapper<ApplicationChatSessionEntity>()
+                .eq("session_id", sessionId).eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616"));
+
+        if (num > 0) {
+            applicationChatLogMapper.delete(new QueryWrapper<ApplicationChatLogEntity>().eq("session_id", sessionId));
+        }
     }
 }

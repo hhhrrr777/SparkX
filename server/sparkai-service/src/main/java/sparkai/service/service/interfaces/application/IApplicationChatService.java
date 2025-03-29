@@ -54,4 +54,10 @@ public interface IApplicationChatService {
      * @param appraiseVo AppraiseVo
      */
     void appraise(AppraiseVo appraiseVo);
+
+    /**
+     * 删除会话
+     * @param sessionId String
+     */
+    void delSession(String sessionId);
 }

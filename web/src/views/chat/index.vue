@@ -15,12 +15,16 @@
 							</div>
 						</div>
 
-						<div v-for="item in sessionLog" :key="item.sessionId">
-							<div class="log-item" :class="{'item-active': nowSessionId === item.sessionId}">{{ item.title }}</div>
+						<div class="flex-center log-item-box" v-for="(item, index) in sessionLog" :key="item.sessionId"
+							 :class="{'item-active': nowSessionId === item.sessionId}" @mouseover="hoverIndex = index" @mouseleave="hoverIndex = -1">
+							<div class="log-item">{{ item.title }}</div>
+							<el-icon style="cursor: pointer" @click="delSession(item.sessionId)" v-if="hoverIndex === index">
+								<Delete />
+							</el-icon>
 						</div>
 					</div>
 				</el-col>
-				<el-col :span="21" class="right-side" style="padding: 50px 10%">
+				<el-col :span="21" class="right-side" style="padding: 50px 20%">
 					<chat-box
 						:setting="setting"
 						:chat-log-msg="chatLogMsg"
@@ -38,10 +42,10 @@
 
 <script>
 import chatBox from '@/components/chatContent/index.vue'
-import {Plus} from "@element-plus/icons-vue";
+import {Delete, Plus} from "@element-plus/icons-vue";
 
 export default {
-	components: {Plus, chatBox},
+	components: {Delete, Plus, chatBox},
 	data() {
 		return {
 			setting: {},
@@ -54,7 +58,8 @@ export default {
 			appId: "",
 			title: '', // 应用标题
 			randomKey: Math.random(),
-			nowSessionId: ""
+			nowSessionId: "",
+			hoverIndex: -1
 		}
 	},
 	mounted() {
@@ -90,6 +95,20 @@ export default {
 			let res = await this.$API.chat.updateSession.post(row)
 			if (res.code === 0) {
 				this.getSessionList()
+			}
+		},
+		// 删除会话
+		async delSession(sessionId) {
+			let res = await this.$API.chat.delSession.get({sessionId: sessionId})
+			if (res.code === 0) {
+				this.getSessionList()
+				// 删除当前的会话session
+				if (sessionId === this.nowSessionId) {
+
+				}
+
+			} else {
+				this.$message.error(res.msg)
 			}
 		}
 	}
@@ -165,7 +184,10 @@ export default {
 	color: #1f2329;
 	padding-left: 10px;
 }
-.log-item:hover {
+.log-item-box {
+	padding-right: 10px;
+}
+.log-item-box:hover {
 	color: var(--el-color-theme);
 	background: #eee7fd;
 }
