@@ -62,4 +62,9 @@ public class DatasetVo implements Serializable {
      * 字符数
      */
     private long fileSize;
+
+    /**
+     * 关联的应用数
+     */
+    private long appNum;
 }

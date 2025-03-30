@@ -42,14 +42,14 @@ const menu = [{
 	}, {
 		"id": 4,
 		"pid": 1,
-		"name": "函数库",
+		"name": "工具箱",
 		"auth": "/tools/index",
 		"path": "/tools/index",
 		"icon": "el-icon-Box",
 		"component": "tools",
 		"meta": {
 			"icon": "el-icon-Box",
-			"title": "函数库",
+			"title": "工具箱",
 			"type": "menu",
 			"hidden": false
 		}

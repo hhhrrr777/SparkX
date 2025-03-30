@@ -8,19 +8,19 @@
 						<el-menu
 							style="background: #f5f5f5"
 							default-active="1">
-							<el-menu-item index="1">
+							<el-menu-item index="1" @click="handleClick(1)">
 								<el-icon>
 									<component :is="userIcon"/>
 								</el-icon>
 								<span>用户设置</span>
 							</el-menu-item>
-							<el-menu-item index="2">
+							<el-menu-item index="2" @click="handleClick(2)">
 								<el-icon>
 									<component :is="userIcon"/>
 								</el-icon>
 								<span>团队管理</span>
 							</el-menu-item>
-							<el-menu-item index="3">
+							<el-menu-item index="3" @click="handleClick(3)">
 								<el-icon>
 									<component :is="filesIcon"/>
 								</el-icon>
@@ -57,12 +57,29 @@ export default {
 			filesIcon: 'el-icon-files',
 			components: {
 				users: defineAsyncComponent(() => import('./pages/users.vue')),
+				teams: defineAsyncComponent(() => import('./pages/teams.vue')),
+				models: defineAsyncComponent(() => import('./pages/models.vue')),
 			},
 			page: ''
 		}
 	},
 	mounted() {
 		this.page = this.components.users
+	},
+	methods: {
+		handleClick(type) {
+			switch (type) {
+				case 1:
+					this.page = this.components.users
+					break;
+				case 2:
+					this.page = this.components.teams
+					break;
+				case 3:
+					this.page = this.components.models
+					break;
+			}
+		}
 	}
 }
 </script>
@@ -83,14 +100,14 @@ export default {
 		height: calc(100vh - 300px);
 		padding: 20px;
 		background: #f5f5f5;
-		border-radius: 10px;
+		border-radius: 6px;
 		margin-top: 20px;
 		padding-top: 40px;
 	}
 	.pages {
 		width: 100%;
 		height: calc(100vh - 300px);
-		padding: 40px;
+		padding: 20px;
 		background: #f5f5f5;
 		border-radius: 10px;
 		margin-top: 20px;

@@ -16,6 +16,9 @@
 						</el-menu>
 					</el-scrollbar>
 				</div>
+				<div class="adminui-side-bottom">
+					<span>社区版</span>
+				</div>
 				<!--<div class="adminui-side-bottom" @click="globalStore.TOGGLE_menuIsCollapse()">
 					<el-icon>
 						<el-icon-expand v-if="globalStore?.menuIsCollapse"/>

@@ -23,8 +23,10 @@ import sparkai.common.enums.DocumentStatusEnum;
 import sparkai.common.enums.SourceType;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.dataset.*;
 import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.dataset.*;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
@@ -62,6 +64,9 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
 
     @Autowired
     KnowledgeQuestionMapper knowledgeQuestionMapper;
+
+    @Autowired
+    ApplicationDatasetRelationMapper applicationDatasetRelationMapper;
 
     @Autowired
     EmbeddingDocumentTask task;
@@ -111,6 +116,11 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
             } else {
                 vo.setFileSize(0);
             }
+
+            // 应用数
+            long appNum = applicationDatasetRelationMapper.selectCount(new QueryWrapper<ApplicationDatasetRelationEntity>()
+                    .eq("dataset_id", entity.getDatasetId()));
+            vo.setAppNum(appNum);
 
             datasetVoList.add(vo);
         }

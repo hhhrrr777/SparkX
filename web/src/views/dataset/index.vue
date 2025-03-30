@@ -61,7 +61,7 @@
 								</div>
 								<el-divider direction="vertical"></el-divider>
 								<div class="box-item">
-									<span class="num">1</span>
+									<span class="num">{{ item.appNum }}</span>
 									<span class="num-label">关联应用</span>
 								</div>
 							</div>
