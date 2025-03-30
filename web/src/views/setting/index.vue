@@ -97,7 +97,7 @@ export default {
 	}
 	.menu {
 		width: 100%;
-		height: calc(100vh - 300px);
+		height: calc(100vh - 200px);
 		padding: 20px;
 		background: #f5f5f5;
 		border-radius: 6px;
@@ -106,7 +106,7 @@ export default {
 	}
 	.pages {
 		width: 100%;
-		height: calc(100vh - 300px);
+		height: calc(100vh - 200px);
 		padding: 20px;
 		background: #f5f5f5;
 		border-radius: 10px;

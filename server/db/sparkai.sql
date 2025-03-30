@@ -391,3 +391,33 @@ COMMENT ON COLUMN "public"."application_chat_session"."user_id" IS '用户id';
 COMMENT ON COLUMN "public"."application_chat_session"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."application_chat_session"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."application_chat_session" IS '应用会话表';
+
+
+CREATE TABLE "public"."models" (
+    "model_id" varchar(64) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
+    "name" varchar(255) COLLATE "pg_catalog"."default",
+    "type" int2 DEFAULT 0,
+    "credential" varchar(500) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "options" varchar(500) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "status" int2 DEFAULT 1,
+    "models" varchar(1000) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "icon" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "create_time" timestamp(6),
+    "update_time" timestamp(6),
+    CONSTRAINT "models_pkey" PRIMARY KEY ("model_id")
+);
+
+ALTER TABLE "public"."models"
+    OWNER TO "postgres";
+
+COMMENT ON COLUMN "public"."models"."model_id" IS '模型id';
+COMMENT ON COLUMN "public"."models"."name" IS '模型名称';
+COMMENT ON COLUMN "public"."models"."type" IS '类型 1:语言模型 2:向量模型 3:重排模型';
+COMMENT ON COLUMN "public"."models"."credential" IS '鉴权配置';
+COMMENT ON COLUMN "public"."models"."options" IS '配置项';
+COMMENT ON COLUMN "public"."models"."status" IS '状态1:正常 2:禁用';
+COMMENT ON COLUMN "public"."models"."models" IS '可使用的模型';
+COMMENT ON COLUMN "public"."models"."icon" IS '图标';
+COMMENT ON COLUMN "public"."models"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."models"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."models" IS '模型表';

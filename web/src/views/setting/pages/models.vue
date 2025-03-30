@@ -2,9 +2,8 @@
 	<div style="background: #fff;border-radius: 10px;padding: 10px">
 		<el-tabs v-model="activeName" @tab-click="handleClick">
 			<el-tab-pane label="语言模型" name="first">
-				<el-button type="primary" icon="el-icon-plus" style="margin-left: 10px">添加模型</el-button>
 				<div class="flex-center model-list">
-					<div class="flex-center model-item" v-for="i in 20" :key="i">
+					<div class="flex-center model-item" v-for="i in 4" :key="i">
 						<img src="https://ai-demo.chatmoney.cn/uploads/images/20250217/20250217164409883653511.jpeg" style="width:44px;height:44px"/>
 						<div class="info">
 							<span class="line1 model-name">ChatGLM2-6B</span>
@@ -17,10 +16,32 @@
 				</div>
 			</el-tab-pane>
 			<el-tab-pane label="向量模型" name="second">
-				<el-button type="primary" icon="el-icon-plus" style="margin-left: 10px">添加模型</el-button>
+				<div class="flex-center model-list">
+					<div class="flex-center model-item" v-for="i in 4" :key="i">
+						<img src="https://ai-demo.chatmoney.cn/uploads/images/20250217/20250217164409883653511.jpeg" style="width:44px;height:44px"/>
+						<div class="info">
+							<span class="line1 model-name">ChatGLM2-6B</span>
+							<div class="status flex-center">
+								<span class="success"></span> <span class="text">已启用</span>
+							</div>
+						</div>
+						<el-button type="primary" plain>编辑</el-button>
+					</div>
+				</div>
 			</el-tab-pane>
 			<el-tab-pane label="重排模型" name="third">
-				<el-button type="primary" icon="el-icon-plus" style="margin-left: 10px">添加模型</el-button>
+				<div class="flex-center model-list">
+					<div class="flex-center model-item" v-for="i in 4" :key="i">
+						<img src="https://ai-demo.chatmoney.cn/uploads/images/20250217/20250217164409883653511.jpeg" style="width:44px;height:44px"/>
+						<div class="info">
+							<span class="line1 model-name">ChatGLM2-6B</span>
+							<div class="status flex-center">
+								<span class="success"></span> <span class="text">已启用</span>
+							</div>
+						</div>
+						<el-button type="primary" plain>编辑</el-button>
+					</div>
+				</div>
 			</el-tab-pane>
 		</el-tabs>
 	</div>
@@ -37,7 +58,10 @@ export default {
 
 	},
 	methods: {
-
+		// tab切换
+		handleClick(row) {
+			console.log('xx', row)
+		}
 	}
 }
 </script>
