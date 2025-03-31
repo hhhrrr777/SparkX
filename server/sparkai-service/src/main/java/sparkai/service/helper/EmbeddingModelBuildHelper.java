@@ -15,7 +15,7 @@ public class EmbeddingModelBuildHelper {
      * @return EmbeddingModel
      */
     public EmbeddingModel build(String modelId) {
-
+        // 默认内存型的模型
         if (Objects.equals(modelId, "AllMiniLmL6V2Embedding")) {
 
             return new AllMiniLmL6V2EmbeddingModel();
