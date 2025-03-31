@@ -423,3 +423,4 @@ COMMENT ON COLUMN "public"."models"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."models" IS '模型表';
 
 INSERT INTO "public"."models" VALUES ('5f4f2e11-df8b-408d-a54b-ed271b6cf5c4', '百度千帆', 1, '[{"field": "apiKey", "value": ""}, {"field": "secretKey", "value": ""}]', '[{"field": "temperature", "name": "温度" , "range": [0.01, 1.0], "value": 0.95}]', 1, 'ERNIE-Bot,ERNIE-Bot 4.0,ERNIE-Bot-8K,ERNIE-Bot-turbo,ERNIE-Speed-128K,EB-turbo-AppBuilder,Yi-34B-Chat,BLOOMZ-7B,Qianfan-BLOOMZ-7B-compressed,Mixtral-8x7B-Instruct,Llama-2-7b-chat,Llama-2-13b-chat,Llama-2-70b-chat,Qianfan-Chinese-Llama-2-7B,ChatGLM2-6B-32K,AquilaChat-7B', '/icons/baidu.png', '2025-03-30 21:22:35', NULL);
+INSERT INTO "public"."models" VALUES ('a4bc4132-d274-411d-89e2-ba7d98778754', 'SparkAI', 2, '[]', '[]', 1, 'AllMiniLmL6V2Embedding', '/icons/sparkai.png', '2025-03-31 14:58:46', NULL);
