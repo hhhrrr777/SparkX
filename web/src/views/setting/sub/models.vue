@@ -85,14 +85,14 @@ export default {
 	border-radius: 50%;
 	background: #67C23A;
 }
-.error {
+.danger {
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
 	background: #F56C6C;
 }
 .status .text {
-	margin-left: 10px;
+	margin-left: 6px;
 	color: #999;
 }
 </style>

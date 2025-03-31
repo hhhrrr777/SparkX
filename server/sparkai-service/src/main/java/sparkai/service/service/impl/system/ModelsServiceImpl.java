@@ -9,10 +9,16 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.impl.system;
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sparkai.common.exception.BusinessException;
+import sparkai.common.utils.Tool;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.system.IModelsService;
@@ -71,5 +77,21 @@ public class ModelsServiceImpl implements IModelsService {
     @Override
     public void editModel(ModelsInfoVo modelsInfoVo) {
 
+        if (modelsInfoVo.getStatus().equals(1)) {
+            JSONArray credential = JSONUtil.parseArray(modelsInfoVo.getCredential());
+
+            for (int i = 0; i < credential.size(); i ++) {
+                String value = credential.getJSONObject(i).getStr("value");
+                if (value.isBlank()) {
+                    throw new BusinessException(credential.getJSONObject(i).getStr("field") + "不能为空");
+                }
+            }
+        }
+
+        ModelsEntity info = modelsMapper.selectById(modelsInfoVo.getModelId());
+        BeanUtils.copyProperties(modelsInfoVo, info);
+        info.setUpdateTime(Tool.nowDateTime());
+
+        modelsMapper.updateById(info);
     }
 }

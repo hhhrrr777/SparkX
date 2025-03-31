@@ -12,7 +12,7 @@
 				</el-select>
 			</el-form-item>
 			<el-form-item
-				v-for="(item, index) in form.credential"
+				v-for="(item, index) in credential"
 				:key="index">
 				<template #label>
 					<span style="margin-right: 3px;color: var(--el-color-danger)"
@@ -86,6 +86,7 @@ export default {
 			visible: false,
 			modelsArr: [],
 			modelsOptions: [],
+			credential: [],
 			temperature: null, // 温度
 			maxOutputTokens: null // 最大输出
 		}
@@ -103,7 +104,7 @@ export default {
 			this.form = res.data
 
 			// 认证信息
-			this.form.credential = JSON.parse(res.data.credential)
+			this.credential = JSON.parse(res.data.credential)
 
 			// 基础配置项
 			let options = JSON.parse(res.data.options)
@@ -133,7 +134,7 @@ export default {
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
 					this.loading = true
-					this.form.credential = JSON.stringify(this.form.credential)
+					this.form.credential = JSON.stringify(this.credential)
 					this.form.models = this.modelsArr.join(",")
 
 					let options = []
