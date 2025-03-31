@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.system;
 
+import sparkai.service.vo.system.ModelsInfoVo;
 import sparkai.service.vo.system.ModelsVo;
 
 import java.util.List;
@@ -20,4 +21,17 @@ public interface IModelsService {
      * @return List<ModelsVo>
      */
     List<ModelsVo> getModelList(Integer type);
+
+    /**
+     * 获取模型信息
+     * @param modelId String
+     * @return ModelsInfoVo
+     */
+    ModelsInfoVo getModelInfo(String modelId);
+
+    /**
+     * 编辑模型
+     * @param modelsInfoVo ModelsInfoVo
+     */
+    void editModel(ModelsInfoVo modelsInfoVo);
 }

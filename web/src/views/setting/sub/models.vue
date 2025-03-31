@@ -14,12 +14,17 @@
 			<el-button type="primary" plain @click="edit(item)">编辑</el-button>
 		</div>
 	</div>
+
+	<save-dialog v-if="dialogVisible" ref="saveDialog" @success="$emit('success')" @closed="dialogVisible=false"
+				 :close-on-click-modal="false"></save-dialog>
 </template>
 
 <script>
 import config from "@/config"
+import saveDialog from "@/views/setting/sub/edit.vue";
 
 export default {
+	components: {saveDialog},
 	props: {
 		modelsList: {
 			type: Array,
@@ -29,6 +34,7 @@ export default {
 	data() {
 		return {
 			domain: config.API_URL.replace("/api", ""),
+			dialogVisible: false
 		}
 	},
 	mounted() {
@@ -36,7 +42,11 @@ export default {
 	methods: {
 		// 编辑模型
 		edit(row) {
-			console.log('xx', row)
+			this.dialogVisible = true
+
+			this.$nextTick(() => {
+				this.$refs.saveDialog.open().setData(row)
+			})
 		}
 	}
 }

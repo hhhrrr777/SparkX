@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.system.IModelsService;
+import sparkai.service.vo.system.ModelsInfoVo;
 import sparkai.service.vo.system.ModelsVo;
 
 import java.util.LinkedList;
@@ -46,5 +47,29 @@ public class ModelsServiceImpl implements IModelsService {
         }
 
         return modelsVoList;
+    }
+
+    /**
+     * 获取模型信息
+     * @param modelId String
+     * @return ModelsInfoVo
+     */
+    @Override
+    public ModelsInfoVo getModelInfo(String modelId) {
+
+        ModelsEntity info = modelsMapper.selectById(modelId);
+        ModelsInfoVo infoVo = new ModelsInfoVo();
+        BeanUtils.copyProperties(info, infoVo);
+
+        return infoVo;
+    }
+
+    /**
+     * 编辑模型
+     * @param modelsInfoVo ModelsInfoVo
+     */
+    @Override
+    public void editModel(ModelsInfoVo modelsInfoVo) {
+
     }
 }
