@@ -10,14 +10,18 @@
 package sparkai.service.service.impl.dataset;
 
 import cn.hutool.json.JSONUtil;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.TsVectorGenerator;
+import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
+import sparkai.service.helper.EmbeddingModelBuildHelper;
+import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
 import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
@@ -38,6 +42,12 @@ public class HitTestServiceImpl implements IHitTestService {
 
     @Autowired
     KnowledgeParagraphMapper knowledgeParagraphMapper;
+
+    @Autowired
+    KnowledgeDatasetMapper knowledgeDatasetMapper;
+
+    @Autowired
+    EmbeddingModelBuildHelper embeddingModelBuildHelper;
 
     /**
      * 命中测试
@@ -60,8 +70,10 @@ public class HitTestServiceImpl implements IHitTestService {
 
         List<SearchVo> searchRes = new LinkedList<>();
 
-        // 默认的内存型的embedding模型
-        AllMiniLmL6V2EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+        // 取对应的embedding模型
+        String datasetId = hitTestVo.getDatasetIds().split(",")[0];
+        KnowledgeDatasetEntity datasetInfo = knowledgeDatasetMapper.selectById(datasetId);
+        EmbeddingModel embeddingModel = embeddingModelBuildHelper.build(datasetInfo.getEmbeddingModeId());
         if (hitTestVo.getType().equals("embedding")) {
 
             List<Float> vector = embeddingModel.embed(hitTestVo.getKeyword()).content().vectorAsList();

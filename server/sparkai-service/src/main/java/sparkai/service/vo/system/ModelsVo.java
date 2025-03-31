@@ -39,6 +39,10 @@ public class ModelsVo implements Serializable {
     /**
      * 图标
      */
-    @TableField(value = "icon")
     private String icon;
+
+    /**
+     * 模型
+     */
+    private String models;
 }

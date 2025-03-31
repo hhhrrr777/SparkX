@@ -8,7 +8,19 @@
 				<el-input v-model="form.description" type="textarea" maxlength="255" show-word-limit :rows="5"></el-input>
 			</el-form-item>
 			<el-form-item label="向量模型" v-if="mode === 'add'">
-
+				<el-select v-model="form.embedding_mode_id" placeholder="请选择" style="width:100%" clearable>
+					<el-option-group
+						v-for="group in modelOptions"
+						:key="group.label"
+						:label="group.label">
+						<el-option
+							v-for="item in group.options"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value">
+						</el-option>
+					</el-option-group>
+				</el-select>
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -36,7 +48,7 @@ export default {
 				title: '',
 				description: '',
 				type: 1,
-				embedding_mode_id: 'test'
+				embedding_mode_id: ''
 			},
 			rules: {
 				title: [
@@ -47,15 +59,40 @@ export default {
 				]
 			},
 			loading: false,
-			visible: false
+			visible: false,
+			modelOptions: [], // 模型列表
 		}
 	},
 	methods: {
 		//显示
 		open(mode = 'add') {
-			this.mode = mode;
-			this.visible = true;
+			this.mode = mode
+			this.visible = true
+			this.getEmbeddingModel()
+
 			return this
+		},
+		// 获取embedding模型
+		async getEmbeddingModel() {
+			let res = await this.$API.models.list.get({type: 2})
+			res.data.forEach(item => {
+
+				let info = {
+					label: item.name,
+					value: item.modelId,
+					options: []
+				}
+				let option = []
+				item.models.split(",").forEach(item => {
+					option.push({
+						label: item,
+						value: item
+					})
+				})
+				info.options = option
+
+				this.modelOptions.push(info)
+			})
 		},
 		// 表单提交方法
 		optSubmit(formName) {

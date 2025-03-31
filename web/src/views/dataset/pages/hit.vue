@@ -180,7 +180,7 @@ export default {
 }
 .paragraph-doc {
 	width: 100%;
-	height: calc(100% - 81px);
+	height: calc(100% - 83px);
 	overflow: hidden;
 	color: #606266;
 	margin-top: 10px;
