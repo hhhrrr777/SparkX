@@ -27,6 +27,7 @@ import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
+import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.helper.AssistantBuildHelper;
 import sparkai.service.helper.SseEmitterHelper;
@@ -34,6 +35,7 @@ import sparkai.service.helper.StreamChatModelBuildHelper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
+import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.application.IApplicationService;
@@ -78,6 +80,9 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     SseEmitterHelper sseEmitterHelper;
+
+    @Autowired
+    ModelsMapper modelsMapper;
 
     /**
      * 应用列表
@@ -239,8 +244,13 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         SseEmitter emitter = new SseEmitter();
 
+        // 获取应用信息
+        ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
+        // 获取模型信息
+        ModelsEntity modelInfo = modelsMapper.selectById(validate.getModelId());
+
         // step 1 构建流式模型
-        StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(validate.getModelId());
+        StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);
         // step 2 构建 IAiService
         IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel);
 

@@ -39,6 +39,12 @@ public class ModelsEntity implements Serializable {
     private String name;
 
     /**
+     * 模型标识
+     */
+    @TableField(value = "model_flag")
+    private String modelFlag;
+
+    /**
      * 类型 1:语言模型 2:向量模型 3:重排模型
      */
     @TableField(value = "type")

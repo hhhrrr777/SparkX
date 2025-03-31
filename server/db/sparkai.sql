@@ -247,6 +247,7 @@ CREATE TABLE "public"."application" (
     "description" varchar(255) COLLATE "pg_catalog"."default",
     "icon" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "model_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "model_name" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "prompt" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "relation_dataset" int2 DEFAULT 2,
     "prologue" varchar(500) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
@@ -284,6 +285,7 @@ COMMENT ON COLUMN "public"."application"."name" IS '应用名称';
 COMMENT ON COLUMN "public"."application"."description" IS '应用描述';
 COMMENT ON COLUMN "public"."application"."icon" IS '应用的头像';
 COMMENT ON COLUMN "public"."application"."model_id" IS '使用的模型';
+COMMENT ON COLUMN "public"."application"."model_name" IS '使用的模型名称';
 COMMENT ON COLUMN "public"."application"."prompt" IS '提示词';
 COMMENT ON COLUMN "public"."application"."relation_dataset" IS '是否关联知识库 1:关联 2:不关联';
 COMMENT ON COLUMN "public"."application"."prologue" IS '开场白';
@@ -396,6 +398,7 @@ COMMENT ON TABLE "public"."application_chat_session" IS '应用会话表';
 CREATE TABLE "public"."models" (
     "model_id" varchar(64) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
     "name" varchar(255) COLLATE "pg_catalog"."default",
+    "model_flag" varchar(255) COLLATE "pg_catalog"."default",
     "type" int2 DEFAULT 0,
     "credential" varchar(500) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "options" varchar(500) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
@@ -412,6 +415,7 @@ ALTER TABLE "public"."models"
 
 COMMENT ON COLUMN "public"."models"."model_id" IS '模型id';
 COMMENT ON COLUMN "public"."models"."name" IS '模型名称';
+COMMENT ON COLUMN "public"."models"."model_flag" IS '模型标识';
 COMMENT ON COLUMN "public"."models"."type" IS '类型 1:语言模型 2:向量模型 3:重排模型';
 COMMENT ON COLUMN "public"."models"."credential" IS '鉴权配置';
 COMMENT ON COLUMN "public"."models"."options" IS '配置项';
@@ -422,5 +426,5 @@ COMMENT ON COLUMN "public"."models"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."models"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."models" IS '模型表';
 
-INSERT INTO "public"."models" VALUES ('5f4f2e11-df8b-408d-a54b-ed271b6cf5c4', '百度千帆', 1, '[{"field": "apiKey", "value": ""}, {"field": "secretKey", "value": ""}]', '[{"field": "temperature", "name": "温度" , "range": [0.01, 1.0], "value": 0.95}]', 1, 'ERNIE-Bot,ERNIE-Bot 4.0,ERNIE-Bot-8K,ERNIE-Bot-turbo,ERNIE-Speed-128K,EB-turbo-AppBuilder,Yi-34B-Chat,BLOOMZ-7B,Qianfan-BLOOMZ-7B-compressed,Mixtral-8x7B-Instruct,Llama-2-7b-chat,Llama-2-13b-chat,Llama-2-70b-chat,Qianfan-Chinese-Llama-2-7B,ChatGLM2-6B-32K,AquilaChat-7B', '/icons/baidu.png', '2025-03-30 21:22:35', NULL);
-INSERT INTO "public"."models" VALUES ('a4bc4132-d274-411d-89e2-ba7d98778754', 'SparkAI', 2, '[]', '[]', 1, 'AllMiniLmL6V2Embedding', '/icons/sparkai.png', '2025-03-31 14:58:46', NULL);
+INSERT INTO "public"."models" VALUES ('5f4f2e11-df8b-408d-a54b-ed271b6cf5c4', '百度千帆', 'qianfan',1, '[{"field": "apiKey", "value": ""}, {"field": "secretKey", "value": ""}]', '[{"field": "temperature", "name": "温度" , "range": [0.01, 1.0], "value": 0.95}]', 1, 'ERNIE-Bot,ERNIE-Bot 4.0,ERNIE-Bot-8K,ERNIE-Bot-turbo,ERNIE-Speed-128K,EB-turbo-AppBuilder,Yi-34B-Chat,BLOOMZ-7B,Qianfan-BLOOMZ-7B-compressed,Mixtral-8x7B-Instruct,Llama-2-7b-chat,Llama-2-13b-chat,Llama-2-70b-chat,Qianfan-Chinese-Llama-2-7B,ChatGLM2-6B-32K,AquilaChat-7B', '/icons/baidu.png', '2025-03-30 21:22:35', NULL);
+INSERT INTO "public"."models" VALUES ('a4bc4132-d274-411d-89e2-ba7d98778754', 'SparkAI', 'sparkai',2, '[]', '[]', 1, 'AllMiniLmL6V2Embedding', '/icons/sparkai.png', '2025-03-31 14:58:46', NULL);

@@ -9,9 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.impl.system;
 
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
@@ -37,12 +35,20 @@ public class ModelsServiceImpl implements IModelsService {
     /**
      * 获取模型列表
      * @param type Integer
+     * @param status Integer
      * @return List<ModelsVo>
      */
     @Override
-    public List<ModelsVo> getModelList(Integer type) {
+    public List<ModelsVo> getModelList(Integer type, Integer status) {
 
-        List<ModelsEntity> modelsList = modelsMapper.selectList(new QueryWrapper<ModelsEntity>().eq("type", type));
+        QueryWrapper<ModelsEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", type);
+
+        if (status != null) {
+            queryWrapper.eq("status", status);
+        }
+
+        List<ModelsEntity> modelsList = modelsMapper.selectList(queryWrapper);
 
         List<ModelsVo> modelsVoList = new LinkedList<>();
         for (ModelsEntity modelsEntity : modelsList) {

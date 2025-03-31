@@ -23,26 +23,21 @@
 										type="primary"
 										link
 										@click="dialogVisible = true"
-										:disabled="!form.modelId"
+										:disabled="!modelId"
 									>
 										参数
 									</el-button>
 								</div>
 							</div>
 						</template>
-						<el-select v-model="form.modelId" placeholder="请选择" style="width: 100%" clearable>
-							<el-option-group
-								v-for="group in options"
-								:key="group.label"
-								:label="group.label">
-								<el-option
-									v-for="item in group.options"
-									:key="item.value"
-									:label="item.label"
-									:value="item.value">
-								</el-option>
-							</el-option-group>
-						</el-select>
+						<el-cascader
+							v-model="modelId"
+							:options="options"
+							:show-all-levels="false"
+							style="width: 100%"
+							@change="handleChange"
+							clearable>
+						</el-cascader>
 					</el-form-item>
 					<el-form-item>
 						<template #label>
@@ -251,13 +246,7 @@ export default {
 					{required: true, message: '应用不能为空', trigger: 'blur'}
 				]
 			},
-			options: [{
-				label: '百度千帆',
-				options: [{
-					value: 'ERNIE-Speed-128K',
-					label: 'ERNIE-Speed-128K'
-				}]
-			}],
+			options: [],
 			dialogVisible: false,
 			relationDataList: [], // 关联的知识库
 			relationDataIds: [],
@@ -270,12 +259,14 @@ export default {
 			},
 			chatBoxKey: Math.random(),
 			datasetVisible: false,
-			paramsVisible: false
+			paramsVisible: false,
+			modelId: []
 		}
 	},
 	mounted() {
 		this.appId = this.$route.query.appId;
 		this.getInfo()
+		this.getModelsList()
 	},
 	methods: {
 		// 获取应用详情
@@ -286,7 +277,7 @@ export default {
 				this.welcomeList = this.form.prologue = JSON.parse(res.data.prologue)
 			}
 
-			if (res.data.datasetList.length > 0) {
+			if (res.data.datasetList && res.data.datasetList.length > 0) {
 				this.relationDataList = res.data.datasetList
 				this.relationDataIds = []
 				this.relationDataList.forEach(item => {
@@ -332,6 +323,29 @@ export default {
 			this.form = row
 			this.paramsVisible = false
 		},
+		// 获取模型列表
+		async getModelsList() {
+			let res = await this.$API.models.list.get({type: 1, status: 1})
+			this.options = []
+			res.data.forEach(item => {
+
+				let info = {
+					label: item.name,
+					value: item.modelId,
+					children: []
+				}
+				let option = []
+				item.models.split(",").forEach(item => {
+					option.push({
+						label: item,
+						value: item
+					})
+				})
+				info.children = option
+
+				this.options.push(info)
+			})
+		},
 		// 保存应用
 		async saveApp(type) {
 			// 保存类型
@@ -350,12 +364,30 @@ export default {
 			// 组装开场白
 			this.form.prologue = this.welcomeList
 
+			this.form.modelId = this.modelId[0]
+			this.form.modelName = this.modelId[1]
+
 			let res = await this.$API.application.save.post(this.form)
 			if (res.code === 0) {
 				this.$message.success(res.msg)
 			} else {
 				this.$message.error(res.msg)
 			}
+		},
+		// 选择了模型
+		async handleChange(row) {
+			let res = await this.$API.models.info.get({modelId: row[0]})
+			let options = JSON.parse(res.data.options)
+
+			options.forEach(item => {
+				if (item.field === 'temperature') {
+					this.form.temperature = item.value
+				}
+
+				if (item.field === 'maxOutputInput') {
+					this.form.maxReplyToken = item.value
+				}
+			})
 		}
 	}
 }

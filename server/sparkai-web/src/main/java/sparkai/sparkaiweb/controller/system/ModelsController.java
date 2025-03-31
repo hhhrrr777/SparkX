@@ -20,9 +20,9 @@ public class ModelsController {
      * 模型列表
      */
     @GetMapping("/list")
-    public AjaxResult<List<ModelsVo>> modelList(@RequestParam("type") Integer type) {
+    public AjaxResult<List<ModelsVo>> modelList(@RequestParam("type") Integer type, @RequestParam("status") Integer status) {
 
-        return AjaxResult.success(iModelsService.getModelList(type));
+        return AjaxResult.success(iModelsService.getModelList(type, status));
     }
 
     /**

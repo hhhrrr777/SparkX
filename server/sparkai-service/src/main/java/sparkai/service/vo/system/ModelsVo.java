@@ -9,7 +9,6 @@
 // +----------------------------------------------------------------------
 package sparkai.service.vo.system;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serial;

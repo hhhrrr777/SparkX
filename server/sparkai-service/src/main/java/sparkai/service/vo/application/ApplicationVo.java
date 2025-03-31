@@ -49,6 +49,11 @@ public class ApplicationVo implements Serializable {
     private String modelId;
 
     /**
+     * 使用的模型名
+     */
+    private String modelName;
+
+    /**
     * 提示词
     */
     private String prompt;

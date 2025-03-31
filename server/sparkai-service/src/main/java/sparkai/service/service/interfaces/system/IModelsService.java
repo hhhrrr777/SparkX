@@ -18,9 +18,11 @@ public interface IModelsService {
 
     /**
      * 获取模型列表
+     * @param type Integer
+     * @param status Integer
      * @return List<ModelsVo>
      */
-    List<ModelsVo> getModelList(Integer type);
+    List<ModelsVo> getModelList(Integer type, Integer status);
 
     /**
      * 获取模型信息

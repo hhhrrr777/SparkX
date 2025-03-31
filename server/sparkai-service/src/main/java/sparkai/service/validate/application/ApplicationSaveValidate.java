@@ -64,6 +64,12 @@ public class ApplicationSaveValidate implements Serializable {
     private String modelId;
 
     /**
+     * 使用的模型名
+     */
+    @NotEmpty(message = "使用的模型不能为空")
+    private String modelName;
+
+    /**
     * 提示词
     */
     private String prompt;

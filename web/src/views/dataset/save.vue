@@ -74,7 +74,7 @@ export default {
 		},
 		// 获取embedding模型
 		async getEmbeddingModel() {
-			let res = await this.$API.models.list.get({type: 2})
+			let res = await this.$API.models.list.get({type: 2, status: 1})
 			res.data.forEach(item => {
 
 				let info = {

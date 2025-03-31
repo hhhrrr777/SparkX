@@ -58,6 +58,12 @@ public class ApplicationEntity implements Serializable {
     private String modelId;
 
     /**
+     * 使用的模型名
+     */
+    @TableField(value = "model_name")
+    private String modelName;
+
+    /**
     * 提示词
     */
     @TableField(value = "prompt")
