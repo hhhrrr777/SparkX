@@ -78,7 +78,7 @@ public class SseEmitterHelper {
 
                     } catch (IOException e) {
                         //log.error("拆解AI返回信息失败：", e);
-                        sendErrorSse(emitter);
+                        sendErrorSse(emitter, e.getMessage());
                         //emitter.complete();
                     }
                 })
@@ -99,7 +99,9 @@ public class SseEmitterHelper {
                     // 关闭sse
                     emitter.complete();
                 })
-                .onError(Throwable::printStackTrace)
+                .onError(e -> {
+                    sendErrorSse(emitter, e.getMessage());
+                })
                 .start();
     }
 
@@ -155,12 +157,13 @@ public class SseEmitterHelper {
     /**
      * 发送sse错误信号
      * @param sseEmitter SseEmitter
+     * @param msg String
      */
-    private void sendErrorSse(SseEmitter sseEmitter) {
+    private void sendErrorSse(SseEmitter sseEmitter, String msg) {
 
         try {
 
-            sseEmitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.ERROR));
+            sseEmitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.ERROR).data(msg));
         } catch (IOException e) {
             log.error("startSse error", e);
             sseEmitter.completeWithError(e);
