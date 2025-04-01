@@ -22,6 +22,7 @@ import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.ApplicationListVo;
 import sparkai.service.vo.application.ApplicationQueryVo;
 import sparkai.service.vo.application.ApplicationVo;
+import sparkai.service.vo.application.CensusVo;
 
 @RequestMapping("/api/application")
 @RestController

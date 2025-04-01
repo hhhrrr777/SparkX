@@ -149,6 +149,11 @@ export default {
 						data: [820, 932, 901, 934, 1290, 1330, 1320],
 						type: 'line',
 						smooth: true
+					},
+					{
+						data: [920, 132, 701, 634, 290, 1030, 1220],
+						type: 'line',
+						smooth: true
 					}
 				]
 			},
