@@ -6,10 +6,10 @@ const DEFAULT_CONFIG = {
 	DASHBOARD_URL: "/index/home",
 
 	//版本号
-	APP_VER: "1.6.9",
+	APP_VER: "1.0.1",
 
 	//内核版本号
-	CORE_VER: "1.6.9",
+	CORE_VER: "1.0.1",
 
 	//接口地址
 	API_URL: import.meta.env.NODE_ENV === 'development' ? import.meta.env.VITE_VUE_APP_API_BASEURL : "http://localhost:8989/api",

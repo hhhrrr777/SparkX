@@ -5,29 +5,32 @@
 			<div class="app-desc">
 				<div class="base-info-item">
 					<div class="app-title-box">
-						<div class="title-label">测</div>
-						<div class="app-title">测试的知识库</div>
+						<div class="title-label">{{ appInfo.name?.substring(0, 1)  }}</div>
+						<div class="app-title">{{ appInfo.name }}</div>
 					</div>
 					<div class="base-style">
 						是否对外发布
 						<el-switch
 							style="margin-left: 10px"
-							v-model="open"
-							:active-value="1"
-							:inactive-value="2"
+							v-model="appInfo.status"
+							:active-value="2"
+							:inactive-value="1"
 						>
 						</el-switch>
 					</div>
-					<div class="base-style code-bg" style="width: 400px">http://localhost:8090/ui/chat/71c8380fe2196c3a <el-icon size="16px" style="margin-left: 5px"><CopyDocument /></el-icon></div>
+					<div class="base-style code-bg" style="width: 600px">
+						{{ domain }}/chat/{{ appId }}
+						<el-icon size="16px" style="margin-left: 5px"><CopyDocument @click="copy"/></el-icon>
+					</div>
 					<div class="base-style">
-						<el-button type="danger">本地演示</el-button>
+						<el-button type="danger" @click="goChat">本地演示</el-button>
 						<el-button>三方嵌入</el-button>
 					</div>
 				</div>
 				<div class="base-info-item">
 					<h3 style="margin-bottom: 10px">后端服务API</h3>
 					API访问凭据
-					<div class="base-style code-bg" style="width: 400px">http://localhost:8090/ui/chat/71c8380fe2196c3a <el-icon size="16px" style="margin-left: 5px"><CopyDocument /></el-icon></div>
+					<div class="base-style code-bg" style="width: 600px">http://localhost:8090/ui/chat/71c8380fe2196c3a <el-icon size="16px" style="margin-left: 5px"><CopyDocument /></el-icon></div>
 					<div class="base-style">
 						<el-button>API秘钥</el-button>
 					</div>
@@ -148,13 +151,37 @@ export default {
 						smooth: true
 					}
 				]
-			}
+			},
+			appId: "",
+			appInfo: {},
+			domain: window.location.origin
 		}
 	},
 	mounted() {
-
+		this.appId = this.$route.query.appId;
+		this.getAppInfo()
 	},
-	methods: {}
+	methods: {
+		// 获取应用信息
+		async getAppInfo() {
+			let res = await this.$API.application.info.get({appId: this.appId})
+			this.appInfo = res.data
+		},
+		// 前往聊天
+		goChat() {
+			this.$router.push('/chat/' + this.appId)
+		},
+		// 复制
+		copy() {
+			let text = this.domain + '/chat/' + this.appId
+			navigator.clipboard.writeText(text).then(() => {
+				this.$message.success('复制成功')
+			}).catch(error => {
+				console.log('错误', error)
+				this.$message.error('复制错误')
+			});
+		}
+	}
 }
 </script>
 

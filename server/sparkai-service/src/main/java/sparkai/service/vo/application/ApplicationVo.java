@@ -167,4 +167,9 @@ public class ApplicationVo implements Serializable {
      * 问题优化 1:开启 2:关闭
      */
     private Integer compressingQuery;
+
+    /**
+     * 状态
+     */
+    private Integer status;
 }
