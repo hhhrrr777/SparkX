@@ -44,7 +44,7 @@ public class ModelsServiceImpl implements IModelsService {
         QueryWrapper<ModelsEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("type", type);
 
-        if (status != null) {
+        if (status > 0) {
             queryWrapper.eq("status", status);
         }
 

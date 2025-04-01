@@ -56,7 +56,7 @@
 										effect="dark"
 										content="演示"
 									>
-										<el-icon size="16"><VideoPlay /></el-icon>
+										<el-icon size="16" @click="goChat(item.appId)"><VideoPlay /></el-icon>
 									</el-tooltip>
 								</div>
 								<el-divider direction="vertical"></el-divider>
@@ -65,7 +65,7 @@
 										effect="dark"
 										content="设置"
 									>
-										<el-icon size="16"><Setting /></el-icon>
+										<el-icon size="16" @click="goDetail(item.appId)"><Setting /></el-icon>
 									</el-tooltip>
 								</div>
 								<el-divider direction="vertical"></el-divider>
@@ -152,6 +152,10 @@ export default{
 		// 应用详情
 		goDetail(appId) {
 			this.$router.push('/index/detail?appId=' + appId)
+		},
+		// 前往聊天
+		goChat(appId) {
+			this.$router.push('/chat/' + appId)
 		},
 		// 删除应用
 		async delete(appId) {

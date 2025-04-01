@@ -99,9 +99,7 @@ public class SseEmitterHelper {
                     // 关闭sse
                     emitter.complete();
                 })
-                .onError(e -> {
-                    sendErrorSse(emitter, e.getMessage());
-                })
+                .onError(Throwable::printStackTrace)
                 .start();
     }
 

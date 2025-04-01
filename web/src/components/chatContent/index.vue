@@ -310,11 +310,9 @@ export default {
 				},
 				onclose() {
 					console.log('Connection closed by server')
-					that.stopAnswer()
 				},
 				onerror(err) {
 					console.error('Error received:', err)
-					that.stopAnswer()
 				},
 			});
 		},

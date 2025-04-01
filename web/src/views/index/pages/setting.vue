@@ -284,6 +284,8 @@ export default {
 					this.relationDataIds.push(item.datasetId)
 				})
 			}
+
+			this.modelId = [res.data.modelId, res.data.modelName]
 		},
 		// 删除关联的知识库
 		delDataset(index) {

@@ -37,7 +37,7 @@ export default {
 		},
 		// 获取模型列表
 		async getModelList() {
-			let res = await this.$API.models.list.get({type: this.activeName})
+			let res = await this.$API.models.list.get({type: this.activeName, status: 0})
 			this.modelsList = res.data
 			this.randomKey = Math.random()
 		},
