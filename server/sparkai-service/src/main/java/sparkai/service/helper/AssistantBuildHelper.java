@@ -11,6 +11,7 @@ package sparkai.service.helper;
 
 import dev.langchain4j.community.model.qianfan.QianfanChatModel;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
@@ -22,7 +23,9 @@ import dev.langchain4j.rag.query.transformer.QueryTransformer;
 import dev.langchain4j.service.AiServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.extend.SparkEmbeddingStoreContentRetriever;
+import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.dataset.IHitTestService;
 import sparkai.service.validate.application.ApplicationSaveValidate;
@@ -35,13 +38,21 @@ public class AssistantBuildHelper {
     @Autowired
     IHitTestService iHitTestService;
 
+    @Autowired
+    EmbeddingModelBuildHelper embeddingModelBuildHelper;
+
+    @Autowired
+    KnowledgeDatasetMapper knowledgeDatasetMapper;
+
     /**
      * 构建 assistant
      * @param validate ApplicationSaveValidate
      * @param streamingChatLanguageModel StreamingChatLanguageModel
+     * @param chatLanguageModel ChatLanguageModel
      * @return IAiService
      */
-    public IAiService build(ApplicationSaveValidate validate, StreamingChatLanguageModel streamingChatLanguageModel) {
+    public IAiService build(ApplicationSaveValidate validate,
+                            StreamingChatLanguageModel streamingChatLanguageModel, ChatLanguageModel chatLanguageModel) {
 
         // 未关联知识库
         if (validate.getDatasetList().isEmpty()) {
@@ -56,26 +67,21 @@ public class AssistantBuildHelper {
 
         // 关联了知识库
         QueryTransformer queryTransformer = null;
-
-        QianfanChatModel chatModel = QianfanChatModel.builder()
-                .apiKey("DYATIgV0vT2W118kz2spXAj3")
-                .secretKey("NEVr9XhWa0T8WB3e9INUwYgjPUEXiFas")
-                .modelName("ERNIE-Speed-128K")
-                .build();
-
         // 开启问题优化
         if (validate.getCompressingQuery().equals(1)) {
-            queryTransformer = new CompressingQueryTransformer(chatModel);
+            queryTransformer = new CompressingQueryTransformer(chatLanguageModel);
         }
-
-        // embedding模型
-        EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
 
         // 构建交互数据
         HitTestVo searchDataVo = new HitTestVo();
         searchDataVo.setType(validate.getSearchMode());
         String[] datasetIds = validate.getDatasetList().stream().map(DatasetSimpleVo::getDatasetId).toArray(String[]::new);
         searchDataVo.setDatasetIds(String.join(",", datasetIds));
+
+        // 取第一条知识库的embedding模型当做全应用的embedding模型
+        KnowledgeDatasetEntity datasetInfo = knowledgeDatasetMapper.selectById(datasetIds[0]);
+        // embedding模型
+        EmbeddingModel embeddingModel = embeddingModelBuildHelper.build(datasetInfo.getEmbeddingModeId());
 
         // 内容检索
         ContentRetriever contentRetriever = SparkEmbeddingStoreContentRetriever.builder()

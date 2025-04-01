@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.service.TokenStream;
 import org.springframework.beans.BeanUtils;
@@ -30,6 +31,7 @@ import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.helper.AssistantBuildHelper;
+import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.helper.StreamChatModelBuildHelper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
@@ -77,6 +79,9 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     StreamChatModelBuildHelper streamChatModelBuildHelper;
+
+    @Autowired
+    ChatModelBuildHelper chatModelBuildHelper;
 
     @Autowired
     SseEmitterHelper sseEmitterHelper;
@@ -251,8 +256,10 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         // step 1 构建流式模型
         StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);
-        // step 2 构建 IAiService
-        IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel);
+        // step 2 构建普通模型，用于问题优化下使用
+        ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
+        // step 3 构建 IAiService
+        IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel, chatLanguageModel);
 
         TokenStream tokenStream;
         if (validate.getPrompt().isBlank()) {

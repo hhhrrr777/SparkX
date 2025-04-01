@@ -175,7 +175,7 @@ public class ApplicationEntity implements Serializable {
     * 回复上限
     */
     @TableField(value = "max_reply_token")
-    private Long maxReplyToken;
+    private Integer maxReplyToken;
 
     /**
     * 回复温度
