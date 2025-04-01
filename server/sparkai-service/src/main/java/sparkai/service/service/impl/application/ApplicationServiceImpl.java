@@ -18,10 +18,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.service.TokenStream;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.core.PageResult;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
@@ -48,6 +50,7 @@ import sparkai.service.vo.application.ApplicationQueryVo;
 import sparkai.service.vo.application.ApplicationVo;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,6 +62,7 @@ import java.util.List;
  * @author NickBai
  * @since 2025-03-18
  */
+@Slf4j
 @Service
 public class ApplicationServiceImpl implements IApplicationService {
 
@@ -249,27 +253,40 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         SseEmitter emitter = new SseEmitter();
 
-        // 获取应用信息
-        ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
-        // 获取模型信息
-        ModelsEntity modelInfo = modelsMapper.selectById(validate.getModelId());
+        try {
 
-        // step 1 构建流式模型
-        StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);
-        // step 2 构建普通模型，用于问题优化下使用
-        ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
-        // step 3 构建 IAiService
-        IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel, chatLanguageModel);
+            // 获取应用信息
+            ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
+            // 获取模型信息
+            ModelsEntity modelInfo = modelsMapper.selectById(validate.getModelId());
 
-        TokenStream tokenStream;
-        if (validate.getPrompt().isBlank()) {
-            tokenStream = assistant.chatInTokenStream(validate.getContent());
-        } else {
-            tokenStream = assistant.chatWithSystem(validate.getPrompt(), validate.getContent());
+            // step 1 构建流式模型
+            StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);
+            // step 2 构建普通模型，用于问题优化下使用
+            ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
+            // step 3 构建 IAiService
+            IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel, chatLanguageModel);
+
+            TokenStream tokenStream;
+            if (validate.getPrompt().isBlank()) {
+                tokenStream = assistant.chatInTokenStream(validate.getContent());
+            } else {
+                tokenStream = assistant.chatWithSystem(validate.getPrompt(), validate.getContent());
+            }
+
+            // 异步发送消息
+            sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
+        } catch (Exception e) {
+            log.error("构建ai服务出现了问题：", e);
+            try {
+
+                emitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.ERROR)
+                        .data(e.getMessage()));
+            } catch (IOException e2) {
+                log.error("startSse error", e2);
+                emitter.completeWithError(e);
+            }
         }
-
-        // 异步发送消息
-        sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
 
         return emitter;
     }

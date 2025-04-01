@@ -297,6 +297,9 @@ export default {
 
 						that.sliderBottom()
 					} else if (event === '[ERROR]') {
+						that.nowIndex = that.chatLogList.length - 1
+						that.chatLogList[that.nowIndex].source = 'ai'
+						that.chatLogList[that.nowIndex].content = '系统配置出现了错误，请仔细检查模型配置，重点是账号、密钥是否正确。' + ev.data
 						that.stopAnswer()
 					} else if (event === '[META]') { // 通知召回数据
 						that.chatLogList[that.nowIndex].retrievedList = JSON.parse(ev.data)
@@ -307,6 +310,7 @@ export default {
 				},
 				onclose() {
 					console.log('Connection closed by server')
+					that.stopAnswer()
 				},
 				onerror(err) {
 					console.error('Error received:', err)
