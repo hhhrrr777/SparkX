@@ -340,6 +340,7 @@ CREATE TABLE "public"."application_chat_log" (
     CACHE 1
     ),
     "app_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
+    "user_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "session_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "question" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
     "content" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
@@ -357,6 +358,7 @@ ALTER TABLE "public"."application_chat_log"
 
 COMMENT ON COLUMN "public"."application_chat_log"."log_id" IS 'id';
 COMMENT ON COLUMN "public"."application_chat_log"."app_id" IS '所属应用id';
+COMMENT ON COLUMN "public"."application_chat_log"."user_id" IS '聊天的用户id';
 COMMENT ON COLUMN "public"."application_chat_log"."session_id" IS '所属对话id';
 COMMENT ON COLUMN "public"."application_chat_log"."question" IS '问题';
 COMMENT ON COLUMN "public"."application_chat_log"."content" IS '内容';

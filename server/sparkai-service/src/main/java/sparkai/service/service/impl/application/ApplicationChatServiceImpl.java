@@ -149,6 +149,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
 
         ApplicationChatLogEntity entity = new ApplicationChatLogEntity();
         entity.setAppId(logVo.getAppId());
+        entity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
         entity.setSessionId(logVo.getSessionId());
         entity.setQuestion(logVo.getQuestion());
         entity.setContent(logVo.getAnswer());

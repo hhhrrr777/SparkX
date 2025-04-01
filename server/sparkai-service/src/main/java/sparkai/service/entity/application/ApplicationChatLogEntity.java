@@ -40,6 +40,12 @@ public class ApplicationChatLogEntity implements Serializable {
     private String appId;
 
     /**
+     * 用户id
+     */
+    @TableField(value = "user_id")
+    private String userId;
+
+    /**
     * 所属对话id
     */
     @TableField(value = "session_id")
@@ -92,4 +98,16 @@ public class ApplicationChatLogEntity implements Serializable {
     */
     @TableField(value = "update_time")
     private LocalDateTime updateTime;
+
+    /**
+     * 日期
+     */
+    @TableField(exist = false)
+    private String date;
+
+    /**
+     * 聚合数据
+     */
+    @TableField(exist = false)
+    private long totalData;
 }

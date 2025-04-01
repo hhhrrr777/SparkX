@@ -165,6 +165,7 @@ export default {
 	mounted() {
 		this.appId = this.$route.query.appId;
 		this.getAppInfo()
+		this.census()
 	},
 	methods: {
 		// 获取应用信息
@@ -185,6 +186,10 @@ export default {
 				console.log('错误', error)
 				this.$message.error('复制错误')
 			});
+		},
+		// 统计数据
+		async census() {
+			let res = await this.$API.application.census.get({startTime: '2024-03-24', endTime: '2024-04-01'})
 		}
 	}
 }

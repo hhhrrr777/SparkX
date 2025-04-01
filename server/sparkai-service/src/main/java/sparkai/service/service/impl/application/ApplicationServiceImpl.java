@@ -9,6 +9,10 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.impl.application;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateRange;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -27,6 +31,7 @@ import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.core.PageResult;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
@@ -36,6 +41,7 @@ import sparkai.service.helper.AssistantBuildHelper;
 import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.helper.StreamChatModelBuildHelper;
+import sparkai.service.mapper.application.ApplicationChatLogMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
@@ -48,11 +54,11 @@ import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.ApplicationListVo;
 import sparkai.service.vo.application.ApplicationQueryVo;
 import sparkai.service.vo.application.ApplicationVo;
+import sparkai.service.vo.application.CensusVo;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -92,6 +98,9 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     ModelsMapper modelsMapper;
+
+    @Autowired
+    ApplicationChatLogMapper applicationChatLogMapper;
 
     /**
      * 应用列表
@@ -260,9 +269,9 @@ public class ApplicationServiceImpl implements IApplicationService {
             // 获取模型信息
             ModelsEntity modelInfo = modelsMapper.selectById(validate.getModelId());
 
-            // step 1 构建流式模型
+            // step 1 构建模型流式应答对象
             StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);
-            // step 2 构建普通模型，用于问题优化下使用
+            // step 2 构建模型普通对象，用于问题优化下使用
             ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
             // step 3 构建 IAiService
             IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel, chatLanguageModel);
@@ -289,5 +298,122 @@ public class ApplicationServiceImpl implements IApplicationService {
         }
 
         return emitter;
+    }
+
+    /**
+     * 获取统计数据
+     * @param startTime String
+     * @param endTime String
+     * @return CensusVo
+     */
+    @Override
+    public CensusVo getCensusData(String startTime, String endTime) {
+
+        CensusVo censusVo = new CensusVo();
+        // 时间线
+        List<String> timeLine = Tool.getDateRange(startTime, endTime);
+        censusVo.setTimeLine(timeLine);
+
+        // 初始化日期数据
+        Map<String, Long> originalData = new HashMap<>();
+        timeLine.forEach(time -> {
+            originalData.put(time, 0L);
+        });
+
+        // 用户总数
+        ApplicationChatLogEntity totalUserData = applicationChatLogMapper.selectOne(new QueryWrapper<ApplicationChatLogEntity>()
+                        .select("COUNT(DISTINCT user_id) AS totalData")
+                .ge("create_time", startTime + " 00:00:00")
+                .le("create_time", endTime + " 23:59:59").groupBy("user_id"));
+        censusVo.setUserNum(totalUserData == null ? 0 : totalUserData.getTotalData());
+
+        // 问题总数
+        ApplicationChatLogEntity totalQuestionData = applicationChatLogMapper.selectOne(new QueryWrapper<ApplicationChatLogEntity>()
+                .select("COUNT(*) AS totalData")
+                .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59"));
+        censusVo.setQuestionNum(totalQuestionData == null ? 0 : totalQuestionData.getTotalData());
+
+        // tokens总数
+        ApplicationChatLogEntity totalTokensData = applicationChatLogMapper.selectOne(new QueryWrapper<ApplicationChatLogEntity>()
+                .select("sum(tokens) AS totalData")
+                .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59"));
+        censusVo.setTokensNum(totalTokensData == null ? 0 : totalTokensData.getTotalData());
+
+        // 赞总数
+        ApplicationChatLogEntity totalLikesData = applicationChatLogMapper.selectOne(new QueryWrapper<ApplicationChatLogEntity>()
+                .select("count(*) AS totalData")
+                .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59").eq("appraise", 1));
+        censusVo.setLikeNum(totalLikesData == null ? 0 : totalLikesData.getTotalData());
+
+        // 踩总数
+        ApplicationChatLogEntity totalDislikesData = applicationChatLogMapper.selectOne(new QueryWrapper<ApplicationChatLogEntity>()
+                .select("count(*) AS totalData")
+                .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59").eq("appraise", 2));
+        censusVo.setDislikeNum(totalDislikesData == null ? 0 : totalDislikesData.getTotalData());
+
+        // 用户数基础数据
+        List<ApplicationChatLogEntity> userSeriesListData = applicationChatLogMapper.selectList(new QueryWrapper<ApplicationChatLogEntity>()
+                .select("DATE(create_time) AS date,COUNT(DISTINCT user_id) AS totalData")
+                .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59").groupBy("DATE(create_time)")
+                .orderByAsc("DATE(create_time)"));
+        Map<String, Long> users2data = new HashMap<>();
+        userSeriesListData.forEach(item -> {
+            users2data.put(item.getDate(), item.getTotalData());
+        });
+
+        CensusVo.CensusSeriesVo userSeriesVo = new CensusVo.CensusSeriesVo();
+        List<Long> userSeriesVoData = new LinkedList<>();
+        for (String key : originalData.keySet()) {
+            userSeriesVoData.add(users2data.get(key) != null ? users2data.get(key) : 0L);
+        }
+        userSeriesVo.setData(userSeriesVoData);
+        userSeriesVo.setSmooth(true);
+        userSeriesVo.setType("line");
+        censusVo.setUserSeries(userSeriesVo);
+
+        // 问题数基础数据
+        List<ApplicationChatLogEntity> questionListData = applicationChatLogMapper.selectList(new QueryWrapper<ApplicationChatLogEntity>()
+                .select("DATE(create_time) AS date,COUNT(*) AS totalData")
+                .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59").groupBy("DATE(create_time)")
+                .orderByAsc("DATE(create_time)"));
+        Map<String, Long> question2data = new HashMap<>();
+        questionListData.forEach(item -> {
+            question2data.put(item.getDate(), item.getTotalData());
+        });
+
+        CensusVo.CensusSeriesVo questionVo = new CensusVo.CensusSeriesVo();
+        List<Long> questionVoData = new LinkedList<>();
+        for (String key : originalData.keySet()) {
+            questionVoData.add(question2data.get(key) != null ? question2data.get(key) : 0L);
+        }
+        questionVo.setData(questionVoData);
+        questionVo.setSmooth(true);
+        questionVo.setType("line");
+        censusVo.setQuestionSeries(questionVo);
+
+        // tokens数基础数据
+        List<ApplicationChatLogEntity> tokensListData = applicationChatLogMapper.selectList(new QueryWrapper<ApplicationChatLogEntity>()
+                .select("DATE(create_time) AS date,SUM(tokens) AS totalData")
+                .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59").groupBy("DATE(create_time)")
+                .orderByAsc("DATE(create_time)"));
+        Map<String, Long> tokens2data = new HashMap<>();
+        tokensListData.forEach(item -> {
+            tokens2data.put(item.getDate(), item.getTotalData());
+        });
+
+        CensusVo.CensusSeriesVo tokensVo = new CensusVo.CensusSeriesVo();
+        List<Long> tokensVoData = new LinkedList<>();
+        for (String key : originalData.keySet()) {
+            tokensVoData.add(tokens2data.get(key) != null ? tokens2data.get(key) : 0L);
+        }
+        tokensVo.setData(tokensVoData);
+        tokensVo.setSmooth(true);
+        tokensVo.setType("line");
+        censusVo.setTokensSeries(tokensVo);
+
+        // 评价数数基础数据
+        Map<String, Long> appraiseSeriesData = originalData;
+
+        return censusVo;
     }
 }

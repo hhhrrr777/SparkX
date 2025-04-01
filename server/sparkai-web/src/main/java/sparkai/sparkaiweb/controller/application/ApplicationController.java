@@ -76,4 +76,13 @@ public class ApplicationController {
 
         return iApplicationService.sseChat(validate);
     }
+
+    /**
+     * 统计数据
+     */
+    @GetMapping("/census")
+    public AjaxResult<CensusVo> census(@RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime) {
+
+        return AjaxResult.success(iApplicationService.getCensusData(startTime, endTime));
+    }
 }

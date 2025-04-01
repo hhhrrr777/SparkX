@@ -16,6 +16,7 @@ import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.ApplicationListVo;
 import sparkai.service.vo.application.ApplicationQueryVo;
 import sparkai.service.vo.application.ApplicationVo;
+import sparkai.service.vo.application.CensusVo;
 
 /**
  * <p>
@@ -59,4 +60,12 @@ public interface IApplicationService {
      * @param validate ApplicationSaveValidate
      */
     SseEmitter sseChat(ApplicationSaveValidate validate);
+
+    /**
+     * 获取统计数据
+     * @param startTime String
+     * @param endTime String
+     * @return CensusVo
+     */
+    CensusVo getCensusData(String startTime, String endTime);
 }

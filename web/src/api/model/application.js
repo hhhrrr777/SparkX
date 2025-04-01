@@ -41,5 +41,13 @@ export default {
 
 			return await http.post(this.url, data);
 		}
+	},
+	census: {
+		url: `${config.API_URL}/application/census`,
+		name: "统计数据",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
 	}
 }

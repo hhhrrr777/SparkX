@@ -9,11 +9,16 @@
 // +----------------------------------------------------------------------
 package sparkai.common.utils;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateRange;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.SecureUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -82,4 +87,24 @@ public class Tool {
     private static final String[] REPLACEMENTS = {
             "\n", " ", "", ""
     };
+
+    /**
+     * 获取时间范围
+     * @param startDate String
+     * @param endDate String
+     * @return List<String>
+     */
+    public static List<String> getDateRange(String startDate, String endDate) {
+
+        DateTime start = DateUtil.parse(startDate);
+        DateTime end = DateUtil.parse(endDate);
+
+        DateRange range = DateUtil.range(start, end, DateField.DAY_OF_MONTH);
+        List<String> dayRange = new LinkedList<>();
+        range.forEach(item -> {
+            dayRange.add(DateUtil.format(item, "yyyy-MM-dd"));
+        });
+
+        return dayRange;
+    }
 }

@@ -1,3 +1,12 @@
+// +----------------------------------------------------------------------
+// | SparkAI 基于大语言模型和 RAG 的知识库问答系统
+// +----------------------------------------------------------------------
+// | Copyright (c) 2022~2099 http://sparkai.sparkshop.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed SparkAI 并不是自由软件，未经许可不能去掉 SparkAI 相关版权
+// +----------------------------------------------------------------------
+// | Author: NickBai  <1902822973@qq.com>
+// +----------------------------------------------------------------------
 package sparkai.service.vo.application;
 
 import lombok.Data;
@@ -45,22 +54,27 @@ public class CensusVo implements Serializable {
     /**
      * 用户统计数据折线
      */
-    private List<CensusSeriesVo> userSeries;
+    private CensusSeriesVo userSeries;
 
     /**
      * 问题统计数据折线
      */
-    private List<CensusSeriesVo> questionSeries;
+    private CensusSeriesVo questionSeries;
 
     /**
      * 用户tokens数据折线
      */
-    private List<CensusSeriesVo> tokensSeries;
+    private CensusSeriesVo tokensSeries;
 
     /**
      * 评价数据折线
      */
-    private List<CensusSeriesVo> appraiseSeries;
+    private CensusSeriesVo likeSeries;
+
+    /**
+     * 评价数据折线
+     */
+    private CensusSeriesVo dislikeSeries;
 
     @Data
     public static class CensusSeriesVo {
