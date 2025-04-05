@@ -302,27 +302,52 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     /**
      * 获取统计数据
+     * @param days Integer
      * @param startTime String
      * @param endTime String
      * @return CensusVo
      */
     @Override
-    public CensusVo getCensusData(String startTime, String endTime) {
+    public CensusVo getCensusData(Integer days, String startTime, String endTime) {
 
         CensusVo censusVo = new CensusVo();
+
         // 时间线
-        List<String> timeLine = Tool.getDateRange(startTime, endTime);
+        List<String> timeLine;
+        if (days.equals(1)) { // 最近7天
+
+            List<String> offsetDays = getOffsetDay(7);
+            startTime = offsetDays.get(0);
+            endTime = offsetDays.get(1);
+        } else if (days.equals(2)) { // 最近30天
+
+            List<String> offsetDays = getOffsetDay(30);
+            startTime = offsetDays.get(0);
+            endTime = offsetDays.get(1);
+        } else if (days.equals(3)) { // 最近90天
+
+            List<String> offsetDays = getOffsetDay(90);
+            startTime = offsetDays.get(0);
+            endTime = offsetDays.get(1);
+        } else if (days.equals(4)) { // 最近半年
+
+            List<String> offsetDays = getOffsetDay(183);
+            startTime = offsetDays.get(0);
+            endTime = offsetDays.get(1);
+        }
+
+        timeLine = Tool.getDateRange(startTime, endTime);
         censusVo.setTimeLine(timeLine);
 
         // 初始化日期数据
-        Map<String, Long> originalData = new HashMap<>();
+        Map<String, Long> originalData = new LinkedHashMap<>();
         timeLine.forEach(time -> {
             originalData.put(time, 0L);
         });
 
         // 用户总数
         ApplicationChatLogEntity totalUserData = applicationChatLogMapper.selectOne(new QueryWrapper<ApplicationChatLogEntity>()
-                        .select("COUNT(DISTINCT user_id) AS totalData")
+                .select("COUNT(DISTINCT user_id) AS totalData")
                 .ge("create_time", startTime + " 00:00:00")
                 .le("create_time", endTime + " 23:59:59").groupBy("user_id"));
         censusVo.setUserNum(totalUserData == null ? 0 : totalUserData.getTotalData());
@@ -411,9 +436,62 @@ public class ApplicationServiceImpl implements IApplicationService {
         tokensVo.setType("line");
         censusVo.setTokensSeries(tokensVo);
 
-        // 评价数数基础数据
-        Map<String, Long> appraiseSeriesData = originalData;
+        // 评价点赞的
+        List<ApplicationChatLogEntity> appraiseLikeData = applicationChatLogMapper.selectList(new QueryWrapper<ApplicationChatLogEntity>()
+                .select("count(*) AS totalData")
+                .eq("appraise", 1)
+                .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59").groupBy("DATE(create_time)")
+                .orderByAsc("DATE(create_time)"));
+        Map<String, Long> like2data = new HashMap<>();
+        appraiseLikeData.forEach(item -> {
+            like2data.put(item.getDate(), item.getTotalData());
+        });
+
+        CensusVo.CensusSeriesVo likeVo = new CensusVo.CensusSeriesVo();
+        List<Long> likeVoData = new LinkedList<>();
+        for (String key : originalData.keySet()) {
+            likeVoData.add(like2data.get(key) != null ? like2data.get(key) : 0L);
+        }
+        likeVo.setData(likeVoData);
+        likeVo.setSmooth(true);
+        likeVo.setType("line");
+        censusVo.setLikeSeries(likeVo);
+
+        // 评价踩的
+        List<ApplicationChatLogEntity> appraiseDislikeData = applicationChatLogMapper.selectList(new QueryWrapper<ApplicationChatLogEntity>()
+                .select("count(*) AS totalData")
+                .eq("appraise", 2)
+                .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59").groupBy("DATE(create_time)")
+                .orderByAsc("DATE(create_time)"));
+        Map<String, Long> dislike2data = new HashMap<>();
+        appraiseDislikeData.forEach(item -> {
+            dislike2data.put(item.getDate(), item.getTotalData());
+        });
+
+        CensusVo.CensusSeriesVo dislikeVo = new CensusVo.CensusSeriesVo();
+        List<Long> dislikeVoData = new LinkedList<>();
+        for (String key : originalData.keySet()) {
+            dislikeVoData.add(dislike2data.get(key) != null ? dislike2data.get(key) : 0L);
+        }
+        dislikeVo.setData(dislikeVoData);
+        dislikeVo.setSmooth(true);
+        dislikeVo.setType("line");
+        censusVo.setDislikeSeries(dislikeVo);
 
         return censusVo;
+    }
+
+    private List<String> getOffsetDay(Integer offsetDays) {
+
+        Date date = DateUtil.date();
+        Date newDate = DateUtil.offset(date, DateField.DAY_OF_MONTH, -offsetDays);
+        String startDate = DateUtil.format(newDate, "yyyy-MM-dd");
+        String endDate = DateUtil.format(date, "yyyy-MM-dd");
+
+        List<String> days = new LinkedList<>();
+        days.add(startDate);
+        days.add(endDate);
+
+        return days;
     }
 }

@@ -40,14 +40,14 @@
 		<div class="census-list">
 			<div class="application-title">数据统计</div>
 			<div class="flex-center time-select">
-				<el-select v-model="days" style="width: 150px">
+				<el-select v-model="searchForm.days" style="width: 150px" @change="dayChange">
 					<el-option label="过去7天" :value="1" />
 					<el-option label="过去30天" :value="2" />
 					<el-option label="过去90天" :value="3" />
 					<el-option label="过去半年" :value="4" />
 					<el-option label="自定义" :value="5" />
 				</el-select>
-				<div style="width: 200px;margin-left: 20px" v-if="days === 5">
+				<div style="width: 200px;margin-left: 20px" v-if="searchForm.days === 5">
 					<el-date-picker
 						v-model="dayRange"
 						type="daterange"
@@ -65,7 +65,7 @@
 					</el-avatar>
 					<div class="info-item">
 						<div class="info-title">用户总数</div>
-						<span>2</span>
+						<span>{{ censusData.userNum }}</span>
 					</div>
 				</div>
 				<div class="flex-center census-card">
@@ -74,7 +74,7 @@
 					</el-avatar>
 					<div class="info-item">
 						<div class="info-title">提问次数</div>
-						<span>2</span>
+						<span>{{ censusData.questionNum }}</span>
 					</div>
 				</div>
 				<div class="flex-center census-card">
@@ -83,7 +83,7 @@
 					</el-avatar>
 					<div class="info-item">
 						<div class="info-title">Tokens 总数</div>
-						<span>2</span>
+						<span>{{ censusData.tokensNum }}</span>
 					</div>
 				</div>
 				<div class="flex-center census-card">
@@ -96,11 +96,11 @@
 						<div class="flex-center">
 							<div class="flex-center">
 								<span class="iconfont icon-zan icon-style" style="font-size: 14px"></span>
-								<span style="margin-left: 5px">2</span>
+								<span style="margin-left: 5px">{{ censusData.likeNum }}</span>
 							</div>
 							<div class="flex-center" style="margin-left: 10px">
 								<span class="iconfont icon-cai icon-style" style="font-size: 14px"></span>
-								<span style="margin-left: 5px">2</span>
+								<span style="margin-left: 5px">{{ censusData.dislikeNum }}</span>
 							</div>
 						</div>
 					</div>
@@ -109,16 +109,16 @@
 
 			<div class="flex-center" style="justify-content: space-between;flex-wrap: wrap;">
 				<div class="census-data-card">
-					<scEcharts height="320px" :option="orderOption"></scEcharts>
+					<scEcharts height="320px" :option="userOption"></scEcharts>
 				</div>
 				<div class="census-data-card">
-					<scEcharts height="320px" :option="orderOption"></scEcharts>
+					<scEcharts height="320px" :option="questionOption"></scEcharts>
 				</div>
 				<div class="census-data-card">
-					<scEcharts height="320px" :option="orderOption"></scEcharts>
+					<scEcharts height="320px" :option="tokenOption"></scEcharts>
 				</div>
 				<div class="census-data-card">
-					<scEcharts height="320px" :option="orderOption"></scEcharts>
+					<scEcharts height="320px" :option="appraiseOption"></scEcharts>
 				</div>
 			</div>
 		</div>
@@ -134,32 +134,51 @@ export default {
 	data() {
 		return {
 			open: 1,
-			days: 1,
 			dayRange: [],
-			orderOption: {
+			baseOption: {
+				title: {
+					text: ''
+				},
+				legend: {
+					data: []
+				},
 				xAxis: {
 					type: 'category',
-					data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+					data: []
 				},
 				yAxis: {
 					type: 'value'
 				},
-				series: [
-					{
-						data: [820, 932, 901, 934, 1290, 1330, 1320],
-						type: 'line',
-						smooth: true
-					},
-					{
-						data: [920, 132, 701, 634, 290, 1030, 1220],
-						type: 'line',
-						smooth: true
+				series: [],
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'cross',
+						label: {
+							backgroundColor: '#6a7985'
+						}
 					}
-				]
+				}
 			},
+			userOption: {},
+			questionOption: {},
+			tokenOption: {},
+			appraiseOption: {},
 			appId: "",
 			appInfo: {},
-			domain: window.location.origin
+			domain: window.location.origin,
+			censusData: {
+				userNum: 0,
+				questionNum: 0,
+				tokensNum: 0,
+				likeNum: 0,
+				dislikeNum: 0
+			},
+			searchForm: {
+				days: 1,
+				startTime: "",
+				endTime: "",
+			}
 		}
 	},
 	mounted() {
@@ -187,9 +206,49 @@ export default {
 				this.$message.error('复制错误')
 			});
 		},
+		// 选择了日期
+		dayChange() {
+			if (this.searchForm.days !== 5) {
+				this.census()
+			} else {
+				
+			}
+		},
 		// 统计数据
 		async census() {
-			let res = await this.$API.application.census.get({startTime: '2024-03-24', endTime: '2024-04-01'})
+			if (this.dayRange.length > 0) {
+				this.searchForm.startTime = this.dayRange[0]
+				this.searchForm.startTime = this.dayRange[1]
+			}
+
+			let res = await this.$API.application.census.get(this.searchForm)
+			this.censusData.userNum = res.data.userNum
+			this.censusData.questionNum = res.data.questionNum
+			this.censusData.tokensNum = res.data.tokensNum
+			this.censusData.likeNum = res.data.likeNum
+			this.censusData.dislikeNum = res.data.dislikeNum
+
+			this.baseOption.xAxis.data = res.data.timeLine
+			let baseData = this.baseOption
+			this.userOption = JSON.parse(JSON.stringify(baseData))
+			this.questionOption = JSON.parse(JSON.stringify(baseData))
+			this.tokenOption = JSON.parse(JSON.stringify(baseData))
+			this.appraiseOption = JSON.parse(JSON.stringify(baseData))
+
+			this.userOption.title.text = "用户总数"
+			this.userOption.series = res.data.userSeries
+
+			this.questionOption.title.text = "提问次数"
+			this.questionOption.series = res.data.questionSeries
+
+			this.tokenOption.title.text = "tokens总数"
+			this.tokenOption.series = res.data.tokensSeries
+
+			this.appraiseOption.title.text = "用户满意度"
+			this.appraiseOption.legend.data = ['答的不错', '还不够好']
+			res.data.likeSeries.name = '答的不错'
+			res.data.dislikeSeries.name = '还不够好'
+			this.appraiseOption.series = [res.data.likeSeries, res.data.dislikeSeries]
 		}
 	}
 }
@@ -281,5 +340,6 @@ export default {
 	border: 1px solid #e4e7ed;
 	height: 365px;
 	margin-top: 20px;
+	padding: 10px;
 }
 </style>

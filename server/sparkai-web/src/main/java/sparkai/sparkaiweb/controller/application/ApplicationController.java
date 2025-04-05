@@ -81,8 +81,9 @@ public class ApplicationController {
      * 统计数据
      */
     @GetMapping("/census")
-    public AjaxResult<CensusVo> census(@RequestParam("startTime") String startTime, @RequestParam("endTime") String endTime) {
+    public AjaxResult<CensusVo> census(@RequestParam("days") Integer days, @RequestParam("startTime") String startTime,
+                                       @RequestParam("endTime") String endTime) {
 
-        return AjaxResult.success(iApplicationService.getCensusData(startTime, endTime));
+        return AjaxResult.success(iApplicationService.getCensusData(days, startTime, endTime));
     }
 }

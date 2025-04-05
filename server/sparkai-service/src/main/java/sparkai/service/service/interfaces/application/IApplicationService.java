@@ -63,9 +63,10 @@ public interface IApplicationService {
 
     /**
      * 获取统计数据
+     * @param days Integer
      * @param startTime String
      * @param endTime String
      * @return CensusVo
      */
-    CensusVo getCensusData(String startTime, String endTime);
+    CensusVo getCensusData(Integer days, String startTime, String endTime);
 }
