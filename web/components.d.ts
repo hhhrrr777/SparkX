@@ -83,6 +83,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     LinkParagraph: typeof import('./src/components/linkParagraph/index.vue')['default']
+    Log: typeof import('./src/components/chatContent/log.vue')['default']
     Multiple: typeof import('./src/components/dataset/multiple.vue')['default']
     Pages: typeof import('./src/components/pages/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

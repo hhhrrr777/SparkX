@@ -6,6 +6,7 @@
 					<el-date-picker
 						v-model="dayRange"
 						type="daterange"
+						value-format="YYYY-MM-DD"
 						unlink-panels
 						range-separator="至"
 						start-placeholder="开始日期"
@@ -46,13 +47,22 @@
 		</el-table>
 		<Pages :form="searchForm" :page-obj="page" @pageChange="handlePageChange" @pageJump="getList"></Pages>
 	</div>
+
+	<el-drawer
+		title="记录详情"
+		v-model="drawer"
+		size="800"
+		:with-header="false">
+		<chat-log :session-id="sessionId" :key="randomKey"></chat-log>
+	</el-drawer>
 </template>
 
 <script>
-import Pages from "@/components/pages/index.vue";
+import Pages from "@/components/pages/index.vue"
+import chatLog from "@/components/chatContent/log.vue"
 
 export default {
-	components: {Pages},
+	components: {Pages, chatLog},
 	data() {
 		return {
 			searchForm: {
@@ -66,7 +76,10 @@ export default {
 			tableData: [],
 			page: {
 				total: 0
-			}
+			},
+			drawer: false,
+			randomKey: Math.random(),
+			sessionId: ""
 		}
 	},
 	mounted() {
@@ -88,8 +101,11 @@ export default {
 			this.getList()
 		},
 		async getList() {
-			this.searchForm.startTime = this.dayRange[0]
-			this.searchForm.endTime = this.dayRange[1]
+			if (this.dayRange.length > 0) {
+				this.searchForm.startTime = this.dayRange[0]
+				this.searchForm.endTime = this.dayRange[1]
+			}
+
 			let res = await this.$API.application.log.get(this.searchForm)
 			this.tableData = res.data.data
 			this.page.total = res.data.total
@@ -99,7 +115,9 @@ export default {
 			this.getList()
 		},
 		handlePreview(row) {
-
+			this.drawer = true
+			this.sessionId = row.sessionId
+			this.randomKey = Math.random()
 		}
 	}
 }

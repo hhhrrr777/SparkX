@@ -494,6 +494,12 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         QueryWrapper<ApplicationChatSessionEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("app_id", queryVo.getAppId());
+
+        if (!queryVo.getStartTime().isBlank()) {
+            queryWrapper.ge("create_time", queryVo.getStartTime() + " 00:00:00");
+            queryWrapper.le("create_time", queryVo.getEndTime() + " 23:59:59");
+        }
+
         // TODO 查询属于自己的应用
         queryWrapper.eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616");
 

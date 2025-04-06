@@ -22,9 +22,9 @@ public class SessionListVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 应用id
+     * 会话id
      */
-    private String appId;
+    private String sessionId;
 
     /**
      * 聊天摘要
