@@ -24,7 +24,7 @@
 								<div class="dataset-item" v-for="item in appList" :key="item.appId" @click="selectApp(item)">
 									<el-icon style="font-size: 18px;margin-right: 5px">
 										<Collection />
-									</el-icon>{{ item.title }}
+									</el-icon>{{ item.name }}
 								</div>
 								<div class="dataset-item" style="border-top: 1px solid #e2e2e2;" @click="addApplication">
 									<el-icon style="font-size: 18px;margin-right: 5px">
@@ -91,6 +91,11 @@ export default {
 				log: defineAsyncComponent(() => import('./pages/log.vue')),
 				setting: defineAsyncComponent(() => import('./pages/setting.vue'))
 			},
+			searchForm: {
+				name: '',
+				page: 1,
+				limit: 15
+			},
 			page: '',
 			appId: "",
 			dialogVisible: false,
@@ -102,6 +107,7 @@ export default {
 		this.page = this.components.setting
 		this.appId = this.$route.query.appId;
 		this.getInfo()
+		this.getApplicationList()
 	},
 	methods: {
 		goBack() {
@@ -137,6 +143,11 @@ export default {
 			this.dialogVisible = false
 			this.getList()
 		},
+		// 获取应用列表
+		async getApplicationList() {
+			let res = await this.$API.application.list.get(this.searchForm)
+			this.appList = res.data.data
+		}
 	}
 }
 
