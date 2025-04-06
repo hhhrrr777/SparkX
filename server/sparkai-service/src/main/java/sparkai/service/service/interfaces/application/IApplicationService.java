@@ -13,10 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.core.PageResult;
 import sparkai.service.validate.application.ApplicationAddValidate;
 import sparkai.service.validate.application.ApplicationSaveValidate;
-import sparkai.service.vo.application.ApplicationListVo;
-import sparkai.service.vo.application.ApplicationQueryVo;
-import sparkai.service.vo.application.ApplicationVo;
-import sparkai.service.vo.application.CensusVo;
+import sparkai.service.vo.application.*;
 
 /**
  * <p>
@@ -69,4 +66,11 @@ public interface IApplicationService {
      * @return CensusVo
      */
     CensusVo getCensusData(Integer days, String startTime, String endTime);
+
+    /**
+     * 获取对话记录
+     * @param queryVo SessionQueryVo
+     * @return PageResult<SessionListVo>
+     */
+    PageResult<SessionListVo> getSessionLog(SessionQueryVo queryVo);
 }

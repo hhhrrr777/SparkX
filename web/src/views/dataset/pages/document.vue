@@ -39,7 +39,7 @@
 					<template #default="scope">
 						<span style="cursor: pointer" @click="showParagraph(scope.row)">{{ scope.row.name }}</span>
 						<el-icon style="margin-left: 5px;">
-							<component :is="editIcon" />
+							<Edit />
 						</el-icon>
 					</template>
 				</el-table-column>

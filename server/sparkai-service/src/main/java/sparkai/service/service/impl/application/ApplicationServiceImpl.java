@@ -10,8 +10,6 @@
 package sparkai.service.service.impl.application;
 
 import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateRange;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
@@ -32,6 +30,7 @@ import sparkai.common.core.PageResult;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationChatLogEntity;
+import sparkai.service.entity.application.ApplicationChatSessionEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
@@ -42,6 +41,7 @@ import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.helper.StreamChatModelBuildHelper;
 import sparkai.service.mapper.application.ApplicationChatLogMapper;
+import sparkai.service.mapper.application.ApplicationChatSessionMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
@@ -51,10 +51,7 @@ import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
 import sparkai.service.validate.application.ApplicationSaveValidate;
-import sparkai.service.vo.application.ApplicationListVo;
-import sparkai.service.vo.application.ApplicationQueryVo;
-import sparkai.service.vo.application.ApplicationVo;
-import sparkai.service.vo.application.CensusVo;
+import sparkai.service.vo.application.*;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 
 import java.io.IOException;
@@ -101,6 +98,9 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     ApplicationChatLogMapper applicationChatLogMapper;
+
+    @Autowired
+    ApplicationChatSessionMapper applicationChatSessionMapper;
 
     /**
      * 应用列表
@@ -479,6 +479,41 @@ public class ApplicationServiceImpl implements IApplicationService {
         censusVo.setDislikeSeries(dislikeVo);
 
         return censusVo;
+    }
+
+    /**
+     * 获取对话记录
+     * @param queryVo SessionQueryVo
+     * @return PageResult<SessionListVo>
+     */
+    @Override
+    public PageResult<SessionListVo> getSessionLog(SessionQueryVo queryVo) {
+
+        long pageNo   = queryVo.getPage();
+        long pageSize = queryVo.getLimit();
+
+        QueryWrapper<ApplicationChatSessionEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("app_id", queryVo.getAppId());
+        // TODO 查询属于自己的应用
+        queryWrapper.eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616");
+
+        queryWrapper.orderByDesc("create_time");
+        IPage<ApplicationChatSessionEntity> sessionListRes = applicationChatSessionMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
+        List<SessionListVo> sessionList = new LinkedList<>();
+
+        for (ApplicationChatSessionEntity entity : sessionListRes.getRecords()) {
+            SessionListVo vo = new SessionListVo();
+            BeanUtils.copyProperties(entity, vo);
+
+            // 查询对话次数
+            long num = applicationChatLogMapper.selectCount(new QueryWrapper<ApplicationChatLogEntity>()
+                    .eq("app_id", entity.getAppId()).eq("session_id", entity.getSessionId()));
+            vo.setNum(num);
+
+            sessionList.add(vo);
+        }
+
+        return PageResult.iPageHandle(sessionListRes.getTotal(), pageNo, pageSize, sessionList);
     }
 
     private List<String> getOffsetDay(Integer offsetDays) {

@@ -51,6 +51,7 @@
 					<el-date-picker
 						v-model="dayRange"
 						type="daterange"
+						value-format="YYYY-MM-DD"
 						unlink-panels
 						range-separator="至"
 						start-placeholder="开始日期"
@@ -181,6 +182,11 @@ export default {
 			}
 		}
 	},
+	watch: {
+		dayRange(newVal, oldVal) {
+			this.census()
+		}
+	},
 	mounted() {
 		this.appId = this.$route.query.appId;
 		this.getAppInfo()
@@ -210,15 +216,13 @@ export default {
 		dayChange() {
 			if (this.searchForm.days !== 5) {
 				this.census()
-			} else {
-				
 			}
 		},
 		// 统计数据
 		async census() {
 			if (this.dayRange.length > 0) {
 				this.searchForm.startTime = this.dayRange[0]
-				this.searchForm.startTime = this.dayRange[1]
+				this.searchForm.endTime = this.dayRange[1]
 			}
 
 			let res = await this.$API.application.census.get(this.searchForm)

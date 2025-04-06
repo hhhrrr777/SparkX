@@ -19,10 +19,7 @@ import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
 import sparkai.service.validate.application.ApplicationSaveValidate;
-import sparkai.service.vo.application.ApplicationListVo;
-import sparkai.service.vo.application.ApplicationQueryVo;
-import sparkai.service.vo.application.ApplicationVo;
-import sparkai.service.vo.application.CensusVo;
+import sparkai.service.vo.application.*;
 
 @RequestMapping("/api/application")
 @RestController
@@ -85,5 +82,14 @@ public class ApplicationController {
                                        @RequestParam("endTime") String endTime) {
 
         return AjaxResult.success(iApplicationService.getCensusData(days, startTime, endTime));
+    }
+
+    /**
+     * 对话记录
+     */
+    @GetMapping("/log")
+    public AjaxResult<PageResult<SessionListVo>> log(SessionQueryVo queryVo) {
+
+        return AjaxResult.success(iApplicationService.getSessionLog(queryVo));
     }
 }

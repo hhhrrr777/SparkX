@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:6432/sparkai
+    url: jdbc:postgresql://127.0.0.1:5432/sparkai
     username: sparkai
     password: 123123
   jpa:
@@ -22,8 +22,7 @@ spring:
       max-request-size: 100MB  # 最大支持请求大小
   mvc:
     async:
-      request-timeout: 10000 # sse超时关闭报错问题
-
+      request-timeout: 80000 # sse超时关闭报错问题
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

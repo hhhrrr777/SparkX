@@ -49,7 +49,7 @@
 							</el-icon>
 							<span>监控</span>
 						</el-menu-item>
-						<el-menu-item index="4" @click="handleClick(4)">
+						<el-menu-item index="4" @click="handleClick(3)">
 							<el-icon>
 								<Document />
 							</el-icon>
@@ -114,11 +114,7 @@ export default {
 			} else if (index === 2) {
 				this.page = this.components.deploy
 			} else if (index === 3) {
-				this.dialogVisible = true
-
-				this.$nextTick(() => {
-					this.$refs.saveDialog.open('edit').setData(this.nowDataset)
-				})
+				this.page = this.components.log
 			}
 		},
 		// 获取应用详情
