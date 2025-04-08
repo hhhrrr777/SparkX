@@ -74,7 +74,7 @@
 										effect="dark"
 										content="删除"
 									>
-										<el-icon size="16"><Delete /></el-icon>
+										<el-icon size="16" @click="deleteApp(item.appId)"><Delete /></el-icon>
 									</el-tooltip>
 								</div>
 							</div>
@@ -158,13 +158,14 @@ export default{
 			this.$router.push('/chat/' + appId)
 		},
 		// 删除应用
-		async delete(appId) {
+		async deleteApp(appId) {
 			this.$confirm('此操作将永久删除该应用 是否继续?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(async () => {
-				let res = await this.$API.dataset.del.get({appId: appId})
+				console.log('xxx')
+				let res = await this.$API.application.del.get({appId: appId})
 				if (res.code === 0) {
 					this.$message.success(res.msg)
 					this.getList()

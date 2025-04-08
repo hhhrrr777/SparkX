@@ -49,5 +49,13 @@ export default {
 
 			return await http.get(this.url, data);
 		}
+	},
+	del: {
+		url: `${config.API_URL}/application/del`,
+		name: "删除应用",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
 	}
 }

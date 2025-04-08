@@ -92,4 +92,14 @@ public class ApplicationController {
 
         return AjaxResult.success(iApplicationService.getSessionLog(queryVo));
     }
+
+    /**
+     * 删除应用
+     */
+    @GetMapping("/del")
+    public AjaxResult<Object> del(@RequestParam("appId") String appId) {
+
+        iApplicationService.deleteApp(appId);
+        return AjaxResult.success();
+    }
 }

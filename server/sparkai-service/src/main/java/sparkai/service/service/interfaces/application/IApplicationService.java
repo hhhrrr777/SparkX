@@ -73,4 +73,10 @@ public interface IApplicationService {
      * @return PageResult<SessionListVo>
      */
     PageResult<SessionListVo> getSessionLog(SessionQueryVo queryVo);
+
+    /**
+     * 删除应用
+     * @param appId String
+     */
+    void deleteApp(String appId);
 }

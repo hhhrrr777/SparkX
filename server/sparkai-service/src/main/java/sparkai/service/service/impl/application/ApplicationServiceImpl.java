@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.core.PageResult;
@@ -520,6 +521,35 @@ public class ApplicationServiceImpl implements IApplicationService {
         }
 
         return PageResult.iPageHandle(sessionListRes.getTotal(), pageNo, pageSize, sessionList);
+    }
+
+    /**
+     * 删除应用
+     * @param appId String
+     */
+    @Override
+    @Transactional
+    public void deleteApp(String appId) {
+
+        String userId = "b6c67084-ad55-4ced-82c4-4d9d304e8616";
+
+        ApplicationEntity info = applicationMapper.selectOne(new QueryWrapper<ApplicationEntity>()
+                .eq("user_id", userId).eq("app_id", appId));
+        if (info == null) {
+            throw new BusinessException("该应用不存在");
+        }
+
+        applicationMapper.delete(new QueryWrapper<ApplicationEntity>()
+                .eq("user_id", userId).eq("app_id", appId));
+
+        applicationChatLogMapper.delete(new QueryWrapper<ApplicationChatLogEntity>()
+                .eq("app_id", appId));
+
+        applicationChatSessionMapper.delete(new QueryWrapper<ApplicationChatSessionEntity>()
+                .eq("user_id", userId).eq("app_id", appId));
+
+        applicationDatasetRelationMapper.delete(new QueryWrapper<ApplicationDatasetRelationEntity>()
+                .eq("app_id", appId));
     }
 
     private List<String> getOffsetDay(Integer offsetDays) {
