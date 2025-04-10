@@ -1,5 +1,65 @@
 <template>
 	<div id="container" class="container"></div>
+
+	<div class="operating">
+		<el-tooltip
+			class="item"
+			effect="light"
+			content="撤销"
+			placement="bottom"
+		>
+			<i
+				class="el-icon-refresh-left"
+				:class="{ opacity: !canUndo }"
+			></i>
+		</el-tooltip>
+		<el-tooltip
+			class="item"
+			effect="light"
+			content="重做"
+			placement="bottom"
+		>
+			<i
+				class="el-icon-refresh-right"
+				:class="{ opacity: !canRedo }"
+			></i>
+		</el-tooltip>
+		<el-tooltip
+			class="item"
+			effect="light"
+			content="放大"
+			placement="bottom"
+		>
+			<i class="el-icon-zoom-in" @click="zoomInFn"></i>
+		</el-tooltip>
+		<el-tooltip
+			class="item"
+			effect="light"
+			content="缩小"
+			placement="bottom"
+		>
+			<i
+				class="el-icon-zoom-out"
+				:class="{ opacity: !canZoomOut }"
+			></i>
+		</el-tooltip>
+		<el-tooltip
+			class="item"
+			effect="light"
+			content="重置"
+			placement="bottom"
+		>
+			<i class="el-icon-full-screen"></i>
+		</el-tooltip>
+		<el-tooltip
+			class="item"
+			effect="light"
+			content="保存"
+			placement="bottom"
+		>
+			<i class="el-icon-document-add"></i>
+		</el-tooltip>
+	</div>
 </template>
 
 <script>
@@ -7,7 +67,9 @@ import { Graph } from '@antv/x6';
 export default {
 	data() {
 		return {
-
+			canUndo: false,
+			canRedo: false,
+			canZoomOut: false
 		}
 	},
 	mounted() {
@@ -66,5 +128,26 @@ export default {
 .container {
 	width: 100%;
 	height: 100vh;
+}
+.operating {
+	position: absolute;
+	left: 160px;
+	bottom: 20px;
+	z-index: 999;
+	background-color: #ffffff;
+	padding: 10px;
+	box-shadow: 1px 1px 4px 0 #0a0a0a2e;
+	i {
+		font-size: 24px;
+		cursor: pointer;
+		margin: 0 10px;
+		color: #515a6e;
+		&:hover {
+			color: #2d8cf0;
+		}
+		&.opacity {
+			opacity: 0.5;
+		}
+	}
 }
 </style>

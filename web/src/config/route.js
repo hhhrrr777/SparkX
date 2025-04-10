@@ -62,6 +62,18 @@ menu[0].children.push({
 		"active": "/index/home",
 	}
 })
+menu[0].children.push({
+	"id": 104,
+	"pid": 1,
+	"name": '流程设计',
+	"path": "/workflow/index",
+	"component": "workflow",
+	"meta": {
+		"title": "应用详情",
+		"hidden": true,
+		"active": "/index/home",
+	}
+})
 
 const routes = menu
 

@@ -20,6 +20,28 @@
   resolved "https://registry.npmmirror.com/@antfu/utils/-/utils-8.1.1.tgz"
   integrity sha512-Mex9nXf9vR6AhcXmMrlz/HVgYYZpVGJ6YlPgwl7UnaFpnshXs6EK/oa5Gpf3CzENMjkvEx2tQtntGnb7UtSTOQ==
 
+"@antv/x6-common@^2.0.16":
+  version "2.0.17"
+  resolved "https://registry.npmmirror.com/@antv/x6-common/-/x6-common-2.0.17.tgz"
+  integrity sha512-37g7vmRkNdYzZPdwjaMSZEGv/MMH0S4r70/Jwoab1mioycmuIBN73iyziX8m56BvJSDucZ3J/6DU07otWqzS6A==
+  dependencies:
+    lodash-es "^4.17.15"
+    utility-types "^3.10.0"
+
+"@antv/x6-geometry@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.npmmirror.com/@antv/x6-geometry/-/x6-geometry-2.0.5.tgz"
+  integrity sha512-MId6riEQkxphBpVeTcL4ZNXL4lScyvDEPLyIafvWMcWNTGK0jgkK7N20XSzqt8ltJb0mGUso5s56mrk8ysHu2A==
+
+"@antv/x6@^2.18.1":
+  version "2.18.1"
+  resolved "https://registry.npmmirror.com/@antv/x6/-/x6-2.18.1.tgz"
+  integrity sha512-FkWdbLOpN9J7dfJ+kiBxzowSx2N6syBily13NMVdMs+wqC6Eo5sLXWCZjQHateTFWgFw7ZGi2y9o3Pmdov1sXw==
+  dependencies:
+    "@antv/x6-common" "^2.0.16"
+    "@antv/x6-geometry" "^2.0.5"
+    utility-types "^3.10.0"
+
 "@babel/code-frame@^7.0.0":
   version "7.23.5"
   resolved "https://repo.huaweicloud.com/repository/npm/@babel/code-frame/-/code-frame-7.23.5.tgz"
@@ -2123,7 +2145,7 @@ local-pkg@^1.0.0:
     pkg-types "^2.0.1"
     quansync "^0.2.8"
 
-lodash-es@*, lodash-es@^4.17.21, lodash-es@4.17.21:
+lodash-es@*, lodash-es@^4.17.15, lodash-es@^4.17.21, lodash-es@4.17.21:
   version "4.17.21"
   resolved "https://registry.npmmirror.com/lodash-es/-/lodash-es-4.17.21.tgz"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
@@ -2750,6 +2772,11 @@ unplugin@^1.4.0, unplugin@^1.5.1, unplugin@^1.6.0:
     chokidar "^3.5.3"
     webpack-sources "^3.2.3"
     webpack-virtual-modules "^0.6.1"
+
+utility-types@^3.10.0:
+  version "3.11.0"
+  resolved "https://registry.npmmirror.com/utility-types/-/utility-types-3.11.0.tgz"
+  integrity sha512-6Z7Ma2aVEWisaL6TvBCy7P8rm2LQoPv6dJ7ecIaIixHcwfbJ0x7mWdbcwlIM5IGQxPZSFYeqRCqlOOeKoJYMkw==
 
 uuid@^11.1.0:
   version "11.1.0"
