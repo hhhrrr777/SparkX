@@ -2,7 +2,7 @@
 <template>
 	<div class="start-node" :class="{'node-active': active}">
 		<div class="flex-center">
-			<el-icon color="var(--el-color-theme)" size="22"><SuccessFilled /></el-icon>
+			<el-icon color="#F56C6C" size="22"><SuccessFilled /></el-icon>
 			<span class="node-name">{{ name }}</span>
 		</div>
 	</div>

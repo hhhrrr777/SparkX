@@ -2,6 +2,8 @@
 	<div style="width:100%;height:100%;position: relative">
 		<top-menu class="top-menu"></top-menu>
 		<div id="container" class="container"/>
+
+		<menu-box v-if="visible" class="add-menu-box"></menu-box>
 		<bottom-menu class="bottom-menu"></bottom-menu>
 	</div>
 </template>
@@ -11,18 +13,21 @@ import { Graph, Shape } from '@antv/x6'
 import defaultNodeConfig from './node.js'
 import bottomMenu from './menu/bottomMenu.vue'
 import topMenu from './menu/topMenu.vue'
+import menuBox from './menu/menuBox.vue'
 
 export default {
 	components: {
 		bottomMenu,
-		topMenu
+		topMenu,
+		menuBox
 	},
 	mounted() {
 		this.initGraph()
 	},
 	data() {
 		return {
-			nowNode: null
+			nowNode: null,
+			visible: true,
 		}
 	},
 	methods: {
@@ -145,5 +150,10 @@ export default {
 	position: absolute;
 	top: 0;
 	z-index: 999;
+}
+.add-menu-box {
+	position: absolute;
+	bottom: 70px;
+	left: 100px;
 }
 </style>
