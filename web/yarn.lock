@@ -33,7 +33,14 @@
   resolved "https://registry.npmmirror.com/@antv/x6-geometry/-/x6-geometry-2.0.5.tgz"
   integrity sha512-MId6riEQkxphBpVeTcL4ZNXL4lScyvDEPLyIafvWMcWNTGK0jgkK7N20XSzqt8ltJb0mGUso5s56mrk8ysHu2A==
 
-"@antv/x6@^2.18.1":
+"@antv/x6-vue-shape@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.npmmirror.com/@antv/x6-vue-shape/-/x6-vue-shape-2.1.2.tgz"
+  integrity sha512-lfLNJ2ztK8NP2JBAWTD6m5Wol0u6tOqj2KdOhWZoT8EtEw9rMmAdxsr8uTi9MRJO9pDMM0nbsR3cidnMh7VeDQ==
+  dependencies:
+    vue-demi latest
+
+"@antv/x6@^2.18.1", "@antv/x6@^2.x":
   version "2.18.1"
   resolved "https://registry.npmmirror.com/@antv/x6/-/x6-2.18.1.tgz"
   integrity sha512-FkWdbLOpN9J7dfJ+kiBxzowSx2N6syBily13NMVdMs+wqC6Eo5sLXWCZjQHateTFWgFw7ZGi2y9o3Pmdov1sXw==
@@ -2829,7 +2836,7 @@ vscode-uri@~3.0.8:
   resolved "https://registry.npmmirror.com/vscode-uri/-/vscode-uri-3.0.8.tgz"
   integrity sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==
 
-vue-demi@*, vue-demi@>=0.14.5:
+vue-demi@*, vue-demi@>=0.14.5, vue-demi@latest:
   version "0.14.7"
   resolved "https://repo.huaweicloud.com/repository/npm/vue-demi/-/vue-demi-0.14.7.tgz"
   integrity sha512-EOG8KXDQNwkJILkx/gPcoL/7vH+hORoBaKgGe+6W7VFMvCYJfmF2dGbvgDroVnI8LU7/kTu8mbjRZGBU1z9NTA==
@@ -2857,7 +2864,7 @@ vue-router@^4.2.5:
   dependencies:
     "@vue/devtools-api" "^6.5.1"
 
-"vue@^2.6.14 || ^3.3.0", vue@^3, vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.2.0, vue@^3.2.25, vue@^3.4.15, vue@^3.5.3, vue@>=3.0.1, "vue@2 || 3", vue@3.5.13:
+"vue@^2.0.0 || >=3.0.0", "vue@^2.6.14 || ^3.3.0", vue@^3, vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.2.0, vue@^3.2.25, vue@^3.4.15, vue@^3.5.3, vue@>=3.0.1, "vue@2 || 3", vue@3.5.13:
   version "3.5.13"
   resolved "https://registry.npmmirror.com/vue/-/vue-3.5.13.tgz"
   integrity sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==
