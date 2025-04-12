@@ -13,6 +13,27 @@
 			@zoom-in="zoomInHandle"
 			@zoom-out="zoomOutHandle">
 		</bottom-menu>
+
+		<!-- 菜单设置 -->
+		<el-drawer
+			:size="600"
+			v-model="drawer"
+			append-to-body
+			destroy-on-close>
+			<div class="pages">
+				<Suspense>
+					<template #default>
+						<component
+							:form-data="formData"
+							:is="page"
+						/>
+					</template>
+					<template #fallback>
+						<el-skeleton :rows="3" />
+					</template>
+				</Suspense>
+			</div>
+		</el-drawer>
 	</div>
 </template>
 <script>
@@ -22,6 +43,7 @@ import defaultNodeConfig from './node.js'
 import bottomMenu from './menu/bottomMenu.vue'
 import topMenu from './menu/topMenu.vue'
 import menuBox from './menu/menuBox.vue'
+import {defineAsyncComponent} from "vue";
 
 export default {
 	components: {
@@ -39,6 +61,14 @@ export default {
 			graph: null,
 			outOpen: false,
 			randomKey: Math.random(),
+			drawer: false,
+			// 当前页面
+			page: '',
+			// 设置页面
+			pages: {
+				startDialog: defineAsyncComponent(() => import('./dialog/startDialog.vue')),
+			},
+			formData: {} // 配置数据
 		}
 	},
 	methods: {
@@ -60,20 +90,7 @@ export default {
 				},
 				// 网格
 				grid: {
-					size: 10,
-					visible: true,
-					type: "doubleMesh",
-					args: [
-						{
-							color: "#E7E8EA",
-							thickness: 1,
-						},
-						{
-							color: "#CBCED3",
-							thickness: 1,
-							factor: 5,
-						},
-					],
+					visible: true
 				},
 				// Scroller 使画布具备滚动、平移、居中、缩放等能力
 				scroller: {
@@ -125,6 +142,12 @@ export default {
 
 				this.nowNode = node
 				node.updateData({checked: true})
+
+				this.formData = node.getData()
+				if (this.formData.pages === 'start') {
+					this.page = this.pages.startDialog
+				}
+				this.drawer = true
 			})
 
 			// 点击空白处

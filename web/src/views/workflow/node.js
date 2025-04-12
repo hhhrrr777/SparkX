@@ -10,8 +10,17 @@ export default {
 			width: 190,
 			height: 40,
 			data: {
+				pages: 'start',
 				checked: false,
-				portsVisible: false
+				portsVisible: false,
+				sysData: [
+					{field: 'sys.question', name: '用户问题'},
+					{field: 'sys.time', name: '当前时间'},
+					{field: 'sys.ip', name: '用户IP'},
+					{field: 'sys.sessionId', name: '对话ID'},
+					{field: 'sys.appId', name: '应用ID'},
+				],
+				userData: []
 			},
 			ports: {
 				groups: {
@@ -44,6 +53,7 @@ export default {
 			width: 190,
 			height: 40,
 			data: {
+				pages: 'end',
 				checked: false,
 				portsVisible: false
 			},
