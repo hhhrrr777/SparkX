@@ -6,7 +6,7 @@
 			content="缩小"
 			placement="top-start"
 		>
-			<el-icon size="16"><ZoomOut /></el-icon>
+			<el-icon size="16" @click="$emit('zoomOut')"><ZoomOut /></el-icon>
 		</el-tooltip>
 		<el-tooltip
 			class="box-item"
@@ -14,7 +14,7 @@
 			content="放大"
 			placement="top-start"
 		>
-			<el-icon size="16"><ZoomIn /></el-icon>
+			<el-icon size="16" @click="$emit('zoomIn')"><ZoomIn /></el-icon>
 		</el-tooltip>
 		<el-tooltip
 			class="box-item"
@@ -22,7 +22,9 @@
 			content="添加节点"
 			placement="top-start"
 		>
-			<el-icon size="16"><CirclePlus /></el-icon>
+			<div :class="{'add-active': open}" class="add-btn">
+				<el-icon size="16" @click="openMenu"><CirclePlus /></el-icon>
+			</div>
 		</el-tooltip>
 		<el-tooltip
 			class="box-item"
@@ -30,7 +32,7 @@
 			content="整理布局"
 			placement="top-start"
 		>
-			<el-icon size="16"><SetUp /></el-icon>
+			<el-icon size="16" @click="$emit('reset')"><SetUp /></el-icon>
 		</el-tooltip>
 	</div>
 </template>
@@ -40,16 +42,25 @@ import {CirclePlus, SetUp, ZoomIn, ZoomOut} from "@element-plus/icons-vue";
 
 export default {
 	components: {ZoomOut, ZoomIn, SetUp, CirclePlus},
+	props: {
+		outOpen: {
+			type: Boolean,
+			default: false
+		}
+	},
 	data() {
 		return {
-
+			open: false
 		}
 	},
 	mounted() {
-
+		this.open = this.outOpen
 	},
 	methods: {
-
+		openMenu() {
+			this.open = !this.open;
+			this.$emit("openMenu", this.open)
+		}
 	}
 }
 </script>
@@ -64,5 +75,14 @@ export default {
 	justify-content: space-between;
 	padding: 0 20px;
 }
-
+.add-btn {
+	padding: 5px;
+	border-radius: 3px;
+	display: flex;
+	align-items: center;
+}
+.add-active {
+	background-color: #155aef14;
+	color: var(--el-color-theme);
+}
 </style>

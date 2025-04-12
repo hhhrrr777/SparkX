@@ -2,7 +2,9 @@
 <template>
 	<div class="start-node" :class="{'node-active': active}">
 		<div class="flex-center">
-			<el-icon color="#F56C6C" size="22"><SuccessFilled /></el-icon>
+			<div class="menu-icon" style="background: #f79009;color: #fff;padding: 3px;border-radius: 5px;">
+				<span class="iconfont icon-qizhi" style="font-size: 16px !important;"></span>
+			</div>
 			<span class="node-name">{{ name }}</span>
 		</div>
 	</div>

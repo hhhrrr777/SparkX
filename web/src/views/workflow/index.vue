@@ -1,10 +1,18 @@
 <template>
 	<div style="width:100%;height:100%;position: relative">
 		<top-menu class="top-menu"></top-menu>
-		<div id="container" class="container"/>
+		<div ref="containerRef" class="container"/>
 
 		<menu-box v-if="visible" class="add-menu-box"></menu-box>
-		<bottom-menu class="bottom-menu"></bottom-menu>
+		<bottom-menu
+			:key="randomKey"
+			:out-open="outOpen"
+			class="bottom-menu"
+			@open-menu="openMenuHandle"
+			@reset="resetHandle"
+			@zoom-in="zoomInHandle"
+			@zoom-out="zoomOutHandle">
+		</bottom-menu>
 	</div>
 </template>
 <script>
@@ -27,14 +35,22 @@ export default {
 	data() {
 		return {
 			nowNode: null,
-			visible: true,
+			visible: false,
+			graph: null,
+			outOpen: false,
+			randomKey: Math.random(),
 		}
 	},
 	methods: {
+		// 初始化
 		initGraph() {
+			const containerRef = this.$refs.containerRef;
 			// 初始化 Graph 对象
 			const graph = new Graph({
-				container: document.getElementById('container'), // 容器元素
+				container: containerRef, // 容器元素
+				selecting: true,
+				snapline: true, // 对齐线
+				history: true, // 启动历史记录
 				interacting: {
 					nodeMovable: true, // 可拖拽节点
 					edgeMovable: false // 可拖拽边
@@ -42,14 +58,36 @@ export default {
 				background: {
 					color: '#f4f4f4',
 				},
+				// 网格
 				grid: {
-					visible: true
+					size: 10,
+					visible: true,
+					type: "doubleMesh",
+					args: [
+						{
+							color: "#E7E8EA",
+							thickness: 1,
+						},
+						{
+							color: "#CBCED3",
+							thickness: 1,
+							factor: 5,
+						},
+					],
+				},
+				// Scroller 使画布具备滚动、平移、居中、缩放等能力
+				scroller: {
+					enabled: true,
+					pageVisible: true,
+					pageBreak: true,
+					pannable: true,
 				},
 				connecting: {
 					connector: 'smooth',
-					allowBlank: false, // 不允许链接空白处
-					connectionPoint: 'anchor', // 连接中心锚点
 					snap: true, // 自动吸附
+					allowBlank: false, // 是否允许连接到画布空白位置的点
+					allowLoop: false, // 是否允许创建循环连线，即边的起始节点和终止节点为同一节点
+					allowNode: false, // 是否允许边链接到节点（非节点上的链接桩）
 					createEdge() {
 						return new Shape.Edge({
 							attrs: {
@@ -58,7 +96,7 @@ export default {
 									strokeWidth: 2,    // 设置连接线宽度
 									targetMarker: null, // 去掉终点箭头
 									sourceMarker: null, // 去掉起点箭头
-								},
+								}
 							},
 							// 添加工具（删除按钮）
 							tools: [],
@@ -66,6 +104,8 @@ export default {
 					}
 				}
 			})
+
+			this.graph = graph
 
 			// 创建组件节点
 			let startNode = defaultNodeConfig.startNode(100, 240)
@@ -75,23 +115,27 @@ export default {
 			const branchNode2 = graph.addNode(endNode)
 
 			// 节点移入
-			graph.on('node:mouseenter', ({ node }) => {
+			graph.on('node:mouseenter', () => {
 				setVisible('visible')
 			})
 
 			// 节点点击
 			graph.on('node:click', ({ node }) => {
+				resetSel()
+
 				this.nowNode = node
 				node.updateData({checked: true})
 			})
 
 			// 点击空白处
 			graph.on('blank:click', () => {
-				if (this.nowNode)  {
-					this.nowNode.updateData({checked: false})
-					this.nowNode = null
-					setVisible('hidden')
-				}
+				resetSel()
+
+				this.outOpen = false
+				this.randomKey = Math.random()
+				this.visible = false
+				this.nowNode = null
+				setVisible('hidden')
 			})
 
 			// 节点移出
@@ -125,12 +169,43 @@ export default {
 
 			function setVisible(visibility) {
 				setTimeout(() => {
-					const ports = document.querySelectorAll(".x6-port-body");
+					const ports = document.querySelectorAll(".x6-port-body")
 					for (let i = 0, len = ports.length; i < len; i = i + 1) {
 						ports[i].style.visibility = visibility;
 					}
 				}, 100)
 			}
+
+			function resetSel() {
+				graph.getNodes().forEach(node => {
+					node.updateData({checked: false})
+				})
+			}
+		},
+		// 重新布局
+		resetHandle() {
+			this.graph.centerContent();
+			this.graph.zoom(0);
+		},
+		// 放大
+		zoomInHandle() {
+			this.graph.zoom(0.1);
+			this.canZoomOut = true;
+		},
+		// 缩小
+		zoomOutHandle() {
+			if (!this.canZoomOut) return;
+			const Num = Number(this.graph.zoom().toFixed(1));
+
+			if (Num > 0.1) {
+				this.graph.zoom(-0.1);
+			} else {
+				this.canZoomOut = false;
+			}
+		},
+		// 操作组件菜单
+		openMenuHandle(visible) {
+			this.visible = visible
 		}
 	}
 }

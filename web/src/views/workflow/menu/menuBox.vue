@@ -30,6 +30,18 @@
 			</div>
 			<div class="menu-title">回复</div>
 		</div>
+		<div class="menu-item flex-center">
+			<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 3px;border-radius: 5px;">
+				<span class="iconfont icon-fenzhi" style="font-size: 18px !important;"></span>
+			</div>
+			<div class="menu-title">条件分支</div>
+		</div>
+		<div class="menu-item flex-center">
+			<div class="menu-icon" style="background: #f79009;color: #fff;padding: 3px;border-radius: 5px;">
+				<span class="iconfont icon-qizhi" style="font-size: 18px !important;"></span>
+			</div>
+			<div class="menu-title">结束</div>
+		</div>
 	</div>
 </template>
 
@@ -46,12 +58,13 @@ export default {
 <style scoped>
 .add-menu-box {
 	width: 150px;
-	height: 200px;
+	height: 300px;
 	background: #ffffff;
 	display: flex;
 	flex-direction: column;
 	justify-content: left;
 	padding: 10px 20px;
+	border-radius: 5px;
 }
 .menu-item {
 	height: 100px;
