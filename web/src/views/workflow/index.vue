@@ -25,6 +25,7 @@
 					<template #default>
 						<component
 							:form-data="formData"
+							@port-del="portDelHandle"
 							@data-change="dataChangeHandle"
 							:is="page"
 						/>
@@ -70,7 +71,7 @@ export default {
 				startDialog: defineAsyncComponent(() => import('./dialog/startDialog.vue')),
 				purposeDialog: defineAsyncComponent(() => import('./dialog/purposeDialog.vue')),
 			},
-			formData: {} // 配置数据
+			formData: {}, // 配置数据
 		}
 	},
 	methods: {
@@ -126,15 +127,15 @@ export default {
 			this.graph = graph
 
 			// 创建组件节点
-			let startNode = defaultNodeConfig.startNode(100, 240)
-			graph.addNode(startNode)
+			let startNodeData = defaultNodeConfig.startNode(100, 240)
+			graph.addNode(startNodeData)
 
-			let endNode = defaultNodeConfig.endNode(900, 240)
-			graph.addNode(endNode)
+			let endNodeData = defaultNodeConfig.endNode(900, 240)
+			graph.addNode(endNodeData)
 
 			// 意图分类
-			let purposeNode = defaultNodeConfig.purposeNode(500, 240)
-			graph.addNode(purposeNode)
+			let purposeNodeData = defaultNodeConfig.purposeNode(500, 240)
+			graph.addNode(purposeNodeData)
 
 			// 节点移入
 			graph.on('node:mouseenter', () => {
@@ -239,7 +240,19 @@ export default {
 		},
 		// 节点内部设置
 		dataChangeHandle(val) {
-			console.log('xxx', val)
+			this.nowNode.updateData(val)
+			if (val.type === 'purpose') {
+				let len = val.cateList.length
+				let y = (len - 1) * 40 + 100
+				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }})
+			}
+		},
+		// 连接桩删除
+		portDelHandle() {
+			const ports = this.nowNode.getPorts()
+			if (ports.length) {
+				this.nowNode.removePortAt(ports.length - 1)
+			}
 		}
 	}
 }

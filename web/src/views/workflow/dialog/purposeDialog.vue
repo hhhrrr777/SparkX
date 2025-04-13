@@ -67,7 +67,7 @@
 			<div class="param-data">
 				<div class="flex-center" v-for="(item, index) in form.cateList" :key="index" style="padding: 0 0 10px 0;">
 					<el-input v-model="item.name" placeholder="请输入内容"></el-input>
-					<el-icon style="width: 40px;cursor: pointer;color: #F56C6C" v-if="index > 0">
+					<el-icon style="width: 40px;cursor: pointer;color: #F56C6C" v-if="index > 0" @click="delCate(index)">
 						<Delete />
 					</el-icon>
 					<div style="width: 40px" v-else></div>
@@ -103,14 +103,6 @@ export default {
 				range: [0, 1]
 			},
 			modelId: "",
-			rules: {
-				field: [
-					{required: true, message: '请输入字段', trigger: 'blur'}
-				],
-				name: [
-					{required: true, message: '请输入名称', trigger: 'blur'}
-				]
-			},
 			options: [],
 			inputOptions: [
 				{icon: 'iconfont icon-fenlei', label: '系统变量', children: [{label: '系统变量2', value: '222'}]}
@@ -118,13 +110,23 @@ export default {
 		}
 	},
 	mounted() {
+		console.log('formData', this.formData)
 		this.getModelsList()
 	},
 	methods: {
+		// 添加分类
 		addCate() {
 			this.form.cateList.push({
 				name: ""
 			})
+
+			this.$emit("dataChange", this.form)
+		},
+		// 删除分类
+		delCate(index) {
+			this.form.cateList.splice(index, 1)
+
+			this.$emit("portDel", this.form)
 		},
 		// 获取模型信息
 		async getModelInfo(modelId) {
