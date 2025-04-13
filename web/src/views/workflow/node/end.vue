@@ -1,6 +1,6 @@
 <!-- branch.vue -->
 <template>
-	<div class="start-node" :class="{'node-active': active}">
+	<div class="node-base" :class="{'node-active': active}">
 		<div class="flex-center">
 			<div class="menu-icon" style="background: #f79009;color: #fff;padding: 3px;border-radius: 5px;">
 				<span class="iconfont icon-qizhi" style="font-size: 16px !important;"></span>
@@ -33,22 +33,5 @@ export default {
 </script>
 
 <style scoped>
-.start-node {
-	display: flex;
-	flex-direction: column;
-	width: 190px;
-	min-height: 40px;
-	padding: 10px;
-	border: 1px solid #fff;
-	border-radius: 16px;
-	box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgba(16, 24, 40, 0.05);
-	background: #fff;
-}
-.node-name {
-	margin-left: 10px;
-	font-weight: bold;
-}
-.node-active {
-	border: 1px solid var(--el-color-theme);
-}
+
 </style>

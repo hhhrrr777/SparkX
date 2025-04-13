@@ -74,5 +74,29 @@ body {
 	color: #303133;
 	border-radius: 5px;
 }
+.node-base {
+	display: flex;
+	flex-direction: column;
+	width: 230px;
+	min-height: 40px;
+	padding: 10px;
+	border: 1px solid #f4f4f4;
+	border-radius: 16px;
+	box-shadow: 0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+	background: #fff;
+}
+.node-active {
+	border: 1px solid var(--el-color-theme);
+}
+.node-name {
+	margin-left: 10px;
+	font-weight: bold;
+}
+.set-content-box {
+	padding: 10px;
+	border-radius: 5px;
+	background: #fff;
+	margin-top: 10px;
+}
 @import '@/style/style.scss';
 </style>

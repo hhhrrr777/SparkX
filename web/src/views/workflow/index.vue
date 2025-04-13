@@ -25,6 +25,7 @@
 					<template #default>
 						<component
 							:form-data="formData"
+							@data-change="dataChangeHandle"
 							:is="page"
 						/>
 					</template>
@@ -67,6 +68,7 @@ export default {
 			// 设置页面
 			pages: {
 				startDialog: defineAsyncComponent(() => import('./dialog/startDialog.vue')),
+				purposeDialog: defineAsyncComponent(() => import('./dialog/purposeDialog.vue')),
 			},
 			formData: {} // 配置数据
 		}
@@ -79,7 +81,6 @@ export default {
 			const graph = new Graph({
 				container: containerRef, // 容器元素
 				selecting: true,
-				snapline: true, // 对齐线
 				history: true, // 启动历史记录
 				interacting: {
 					nodeMovable: true, // 可拖拽节点
@@ -126,10 +127,14 @@ export default {
 
 			// 创建组件节点
 			let startNode = defaultNodeConfig.startNode(100, 240)
-			const branchNode = graph.addNode(startNode)
+			graph.addNode(startNode)
 
-			let endNode = defaultNodeConfig.endNode(500, 240)
-			const branchNode2 = graph.addNode(endNode)
+			let endNode = defaultNodeConfig.endNode(900, 240)
+			graph.addNode(endNode)
+
+			// 意图分类
+			let purposeNode = defaultNodeConfig.purposeNode(500, 240)
+			graph.addNode(purposeNode)
 
 			// 节点移入
 			graph.on('node:mouseenter', () => {
@@ -146,6 +151,8 @@ export default {
 				this.formData = node.getData()
 				if (this.formData.pages === 'start') {
 					this.page = this.pages.startDialog
+				} else if (this.formData.pages === 'purpose') {
+					this.page = this.pages.purposeDialog
 				}
 				this.drawer = true
 			})
@@ -229,6 +236,10 @@ export default {
 		// 操作组件菜单
 		openMenuHandle(visible) {
 			this.visible = visible
+		},
+		// 节点内部设置
+		dataChangeHandle(val) {
+			console.log('xxx', val)
 		}
 	}
 }

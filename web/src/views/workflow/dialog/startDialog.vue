@@ -1,47 +1,52 @@
 <template>
 	<div class="opt-form">
 		<div class="flex-center title">
-			<el-icon color="var(--el-color-theme)" size="22"><HomeFilled /></el-icon>
+			<div class="menu-icon" style="background: var(--el-color-theme);color: #fff;padding: 3px;border-radius: 5px;">
+				<span class="iconfont icon-ai23" style="font-size: 18px !important;"></span>
+			</div>
 			<span class="node-name">开始</span>
 		</div>
 
-		<div style="margin-top: 10px">系统变量</div>
-		<div class="param-data">
-			<div class="flex-center data-item" v-for="(item, index) in formData.sysData" :key="index">
-				<div class="flex-center">
-					<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 3px;border-radius: 5px;">
-						<span class="iconfont icon-bianliang" style="font-size: 16px !important;"></span>
+		<div class="set-content-box">
+			<div>系统变量</div>
+			<div class="param-data">
+				<div class="flex-center data-item" v-for="(item, index) in formData.sysData" :key="index">
+					<div class="flex-center">
+						<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 3px;border-radius: 5px;">
+							<span class="iconfont icon-bianliang" style="font-size: 16px !important;"></span>
+						</div>
+						<div class="title" style="margin-left: 10px">{{ item.field }}</div>
 					</div>
-					<div class="title" style="margin-left: 10px">{{ item.field }}</div>
+					<div class="field">{{ item.name }}</div>
 				</div>
-				<div class="field">{{ item.name }}</div>
 			</div>
 		</div>
-
-		<div style="margin-top: 10px;justify-content: space-between" class="flex-center">
-			<span>自定义变量</span>
-			<el-button
-				icon="el-icon-Plus"
-				type="primary"
-				link
-				@click="addParam"
-			>
-				添加变量
-			</el-button>
-		</div>
-		<div class="param-data">
-			<div class="flex-center data-item" v-for="(item, index) in formData.userData" :key="index"
-				 v-if="formData.userData && formData.userData.length > 0">
-				<div class="flex-center">
-					<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 3px;border-radius: 5px;">
-						<span class="iconfont icon-bianliang" style="font-size: 16px !important;"></span>
-					</div>
-					<div class="title" style="margin-left: 10px">{{ item.field }}</div>
-				</div>
-				<div class="field">{{ item.name }}</div>
+		<div class="set-content-box">
+			<div style="justify-content: space-between" class="flex-center">
+				<span>自定义变量</span>
+				<el-button
+					icon="el-icon-Plus"
+					type="primary"
+					link
+					@click="addParam"
+				>
+					添加变量
+				</el-button>
 			</div>
-			<div class="no-param flex-center-all" v-else>
-				设置的变量可在工作流程中使用
+			<div class="param-data">
+				<div class="flex-center data-item" v-for="(item, index) in formData.userData" :key="index"
+					 v-if="formData.userData && formData.userData.length > 0">
+					<div class="flex-center">
+						<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 3px;border-radius: 5px;">
+							<span class="iconfont icon-bianliang" style="font-size: 16px !important;"></span>
+						</div>
+						<div class="title" style="margin-left: 10px">{{ item.field }}</div>
+					</div>
+					<div class="field">{{ item.name }}</div>
+				</div>
+				<div class="no-param flex-center-all" v-else>
+					设置的变量可在工作流程中使用
+				</div>
 			</div>
 		</div>
 	</div>
@@ -65,7 +70,7 @@
 </template>
 
 <script>
-import {HomeFilled, Plus} from "@element-plus/icons-vue";
+import {HomeFilled, Plus} from "@element-plus/icons-vue"
 
 export default {
 	components: {Plus, HomeFilled},
@@ -92,9 +97,7 @@ export default {
 			},
 		}
 	},
-	mounted() {
-
-	},
+	mounted() {},
 	methods: {
 		// 创建变量
 		optSubmit(formName) {
@@ -140,13 +143,13 @@ export default {
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 10px;
-	background: #fff;
+	background: #f4f4f4;
 	border-radius: 5px;
 }
 .no-param {
 	width: 100%;
 	height: 40px;
-	background: #fff;
+	background: #f4f4f4;
 	border-radius: 5px;
 	color: #98A2B2;
 }

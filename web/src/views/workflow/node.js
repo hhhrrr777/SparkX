@@ -1,4 +1,5 @@
 import { register } from '@antv/x6-vue-shape'
+import initConfig from "@/views/workflow/initConfig.js"
 
 export default {
 	// 开始节点
@@ -7,20 +8,22 @@ export default {
 			x: x,
 			y: y,
 			shape: 'start-node',
-			width: 190,
+			width: 230,
 			height: 40,
 			data: {
 				pages: 'start',
 				checked: false,
 				portsVisible: false,
-				sysData: [
+				sysData: initConfig.sysData,
+				userData: [],
+				// 输出参数
+				outData: [
 					{field: 'sys.question', name: '用户问题'},
 					{field: 'sys.time', name: '当前时间'},
 					{field: 'sys.ip', name: '用户IP'},
 					{field: 'sys.sessionId', name: '对话ID'},
 					{field: 'sys.appId', name: '应用ID'},
-				],
-				userData: []
+				]
 			},
 			ports: {
 				groups: {
@@ -50,7 +53,7 @@ export default {
 			x: x,
 			y: y,
 			shape: 'end-node',
-			width: 190,
+			width: 230,
 			height: 40,
 			data: {
 				pages: 'end',
@@ -78,11 +81,68 @@ export default {
 				]
 			}
 		}
+	},
+	// 意图分类
+	purposeNode: (x, y) => {
+		return {
+			x: x,
+			y: y,
+			shape: 'purpose-node',
+			width: 230,
+			height: 40,
+			data: {
+				pages: 'purpose',
+				checked: false,
+				portsVisible: false,
+				...
+				initConfig.purposeData,
+			},
+			ports: {
+				groups: {
+					leftPorts: {
+						position: 'left', // 端口位于节点左侧
+						attrs: {
+							circle: {
+								style: {visibility: 'hidden'},
+								r: 4,          // 端口半径
+								magnet: true,  // 启用磁吸
+								stroke: 'var(--el-color-theme)', // 边框颜色
+								strokeWidth: 1, // 边框宽度
+								fill: '#fff'    // 填充颜色
+							}
+						}
+					},
+					rightPorts: {
+						attrs: {
+							circle: {
+								style: {visibility: 'hidden'},
+								r: 4,          // 端口半径
+								magnet: true,  // 启用磁吸
+								stroke: 'var(--el-color-theme)', // 边框颜色
+								strokeWidth: 1, // 边框宽度
+								fill: '#fff'    // 填充颜色
+							}
+						},
+						position: {
+							name: 'absolute',
+						}
+					}
+				},
+				items: [
+					{ group: 'leftPorts' }, // 将端口分配到左侧分组
+					{
+						group: 'rightPorts',
+						args: { x: 230, y: 100 },
+					}
+				]
+			}
+		}
 	}
 }
 
 import Start from './node/start.vue'
 import End from './node/end.vue'
+import Purpose from './node/purpose.vue'
 
 // 制作组件节点
 register({
@@ -97,4 +157,11 @@ register({
 	width: 100,
 	height: 100,
 	component: End,
+})
+
+register({
+	shape: 'purpose-node',
+	width: 100,
+	height: 100,
+	component: Purpose,
 })
