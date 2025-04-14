@@ -25,5 +25,21 @@ export default {
 		outData: [
 			{field: 'sys.purposeName', name: '意图分类名'},
 		]
+	},
+	// llm节点初始数据
+	llmNode: {
+		type: 'llm',
+		modeInfo: {
+			modeId: "",
+			modeName: "",
+			temperature: 0
+		},
+		inputData: [],
+		memory: 2,
+		systemMsg: "",
+		userMsg: "",
+		outData: [
+			{field: 'sys.answer', name: '生成内容'},
+		]
 	}
 }
