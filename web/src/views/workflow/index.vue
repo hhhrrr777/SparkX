@@ -291,9 +291,9 @@ export default {
 
 			let cascaderData = []
 			const inputParams = this.getPreviousNodes(this.nowNode)
-			console.log('xx', inputParams)
+
 			inputParams.forEach(param => {
-				console.log(2233, param)
+
 				const data = param.getData()
 				if (data.pages === 'start') {
 
