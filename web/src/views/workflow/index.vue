@@ -319,8 +319,13 @@ export default {
 		},
 		// 添加节点
 		addNodeHandle(type) {
+
+			function getRandomInt(min, max) {
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			}
+
 			if (type === 'purpose') {
-				this.graph.addNode(defaultNodeConfig.purposeNode(400, 400))
+				this.graph.addNode(defaultNodeConfig.purposeNode(getRandomInt(300, 600), getRandomInt(300, 600)))
 			}
 		}
 	}
