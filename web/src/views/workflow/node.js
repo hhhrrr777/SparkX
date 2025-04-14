@@ -77,7 +77,7 @@ export default {
 		}
 	},
 	// 意图分类
-	purposeNode: (x, y) => {
+	purposeNode: (x, y, no) => {
 		return {
 			x: x,
 			y: y,
@@ -85,11 +85,11 @@ export default {
 			width: 230,
 			height: 40,
 			data: {
+				no: no,
 				pages: 'purpose',
 				checked: false,
 				portsVisible: false,
-				...
-				initConfig.purposeData,
+				...initConfig.purposeData,
 			},
 			ports: {
 				groups: {

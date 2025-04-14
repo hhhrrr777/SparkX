@@ -1,10 +1,11 @@
 <template>
-	<div class="node-base">
+	<div class="node-base" :class="{'node-active': active}">
 		<div class="flex-center">
 			<div class="menu-icon" style="background: #f79009;color: #fff;padding: 3px;border-radius: 5px;">
 				<span class="iconfont icon-fenlei" style="font-size: 18px !important;"></span>
 			</div>
-			<span class="node-name">{{ name }}</span>
+			<span class="node-name" v-if="no === 1">{{ name }}</span>
+			<span class="node-name" v-else>{{ name }}{{ no - 1 }}</span>
 		</div>
 
 		<div class="flex-center tips-text">
@@ -23,24 +24,26 @@
 import initConfig from '@/views/workflow/initConfig.js';
 
 export default {
-	props: {
-		nodeData: {
-			type: Object,
-			default: () => {}
-		}
-	},
+	inject: ["getGraph", "getNode"],
 	data() {
 		return {
+			no: 0,
 			name: "意图分类",
-			nodeInnerData: {}
+			nodeInnerData: {},
+			active: false
 		}
 	},
 	created() {
-		if (this.nodeData) {
-			this.nodeInnerData = this.nodeData
-		} else {
-			this.nodeInnerData = initConfig.purposeData
-		}
+		this.no = this.getNode().store.data.data.no
+		this.nodeInnerData = JSON.parse(JSON.stringify(initConfig.purposeData))
+	},
+	mounted() {
+		const node = this.getNode();
+		// 监听数据
+		node.on('change:data', ({ current }) => {
+			this.active = current.checked
+			this.nodeInnerData = current
+		})
 	},
 	methods: {
 

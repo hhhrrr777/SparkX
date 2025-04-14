@@ -56,6 +56,7 @@ import bottomMenu from './menu/bottomMenu.vue'
 import topMenu from './menu/topMenu.vue'
 import menuBox from './menu/menuBox.vue'
 import {defineAsyncComponent} from "vue";
+import inputDataUtil from './inputData.js'
 
 export default {
 	components: {
@@ -83,6 +84,14 @@ export default {
 			},
 			formData: {}, // 配置数据
 			inputOptions: [], // 入参
+			nodeNoData: { // 页面中不同组件的数量
+				purpose: 0,
+				agent: 0,
+				answer: 0,
+				llm: 0,
+				dataset: 0,
+				switch: 0
+			}
 		}
 	},
 	methods: {
@@ -162,7 +171,7 @@ export default {
 				} else if (this.formData.pages === 'purpose') {
 					this.page = this.pages.purposeDialog
 					// 计算节点前的数据
-					this.getCascaderData()
+					this.getNodeInputData()
 				}
 				this.drawer = true
 			})
@@ -235,9 +244,9 @@ export default {
 		// 缩小
 		zoomOutHandle() {
 			if (!this.canZoomOut) return;
-			const Num = Number(this.graph.zoom().toFixed(1));
+			const num = Number(this.graph.zoom().toFixed(1));
 
-			if (Num > 0.1) {
+			if (num > 0.1) {
 				this.graph.zoom(-0.1);
 			} else {
 				this.canZoomOut = false;
@@ -250,6 +259,7 @@ export default {
 		// 节点内部设置
 		dataChangeHandle(val) {
 			this.nowNode.updateData(val)
+
 			if (val.type === 'purpose') {
 				let len = val.cateList.length
 				let y = (len - 1) * 40 + 100
@@ -267,55 +277,9 @@ export default {
 		debugHandle() {
 
 		},
-		// 遍历节点
-		getPreviousNodes(currentNode) {
-			// 获取画布中所有边
-			const edges = this.graph.getEdges();
-			let nodesArr = []
-			let findNodeData = findNode(currentNode)
-			while (findNodeData.length > 0) {
-				nodesArr.push(findNodeData[0])
-				findNodeData = findNode(findNodeData[0])
-			}
-
-			function findNode(currentNode) {
-				return edges
-					.filter(edge => edge.getTargetNode().id === currentNode.id)
-					.map(edge => edge.getSourceNode())
-			}
-
-			return nodesArr
-		},
 		// 获取节点前数据
-		getCascaderData() {
-
-			let cascaderData = []
-			const inputParams = this.getPreviousNodes(this.nowNode)
-
-			inputParams.forEach(param => {
-
-				const data = param.getData()
-				if (data.pages === 'start') {
-
-					let comData = data.sysData.concat(data.userData)
-					let children = comData.map(item => {
-						return {
-							label: item.name,
-							value: item.field
-						}
-					})
-
-					cascaderData.push({
-						value: this.nowNode.id,
-						label: '开始',
-						icon: 'iconfont icon-ai23',
-						color: 'var(--el-color-theme)',
-						children: children
-					})
-				}
-			})
-
-			this.inputOptions = cascaderData
+		getNodeInputData() {
+			this.inputOptions = inputDataUtil.getNodeInputData(this.nowNode, this.graph)
 		},
 		// 添加节点
 		addNodeHandle(type) {
@@ -325,7 +289,9 @@ export default {
 			}
 
 			if (type === 'purpose') {
-				this.graph.addNode(defaultNodeConfig.purposeNode(getRandomInt(300, 600), getRandomInt(300, 600)))
+				this.nodeNoData.purpose += 1
+				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.purposeNode(getRandomInt(300, 600),
+					getRandomInt(300, 600), this.nodeNoData.purpose))))
 			}
 		}
 	}

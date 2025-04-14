@@ -106,7 +106,7 @@ export default {
 	data() {
 		return {
 			dialogVisible: false,
-			form: initConfig.purposeData,
+			form: JSON.parse(JSON.stringify(initConfig.purposeData)),
 			temperatureConfig: {
 				range: [0, 1]
 			},
@@ -116,7 +116,6 @@ export default {
 		}
 	},
 	mounted() {
-		console.log('formData', this.formData);
 		this.modelId = [this.formData.modeInfo.modeId, this.formData.modeInfo.modeName]
 		this.inputData = this.formData.inputData
 		this.getModelsList()
