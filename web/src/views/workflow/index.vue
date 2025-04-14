@@ -7,7 +7,12 @@
 		</top-menu>
 		<div ref="containerRef" class="container"/>
 
-		<menu-box v-if="visible" class="add-menu-box"></menu-box>
+		<menu-box
+			v-if="visible"
+			@add-node="addNodeHandle"
+			class="add-menu-box">
+		</menu-box>
+
 		<bottom-menu
 			:key="randomKey"
 			:out-open="outOpen"
@@ -139,10 +144,6 @@ export default {
 			let endNodeData = defaultNodeConfig.endNode(900, 240)
 			graph.addNode(endNodeData)
 
-			// 意图分类
-			let purposeNodeData = defaultNodeConfig.purposeNode(500, 240)
-			graph.addNode(purposeNodeData)
-
 			// 节点移入
 			graph.on('node:mouseenter', () => {
 				setVisible('visible')
@@ -270,18 +271,29 @@ export default {
 		getPreviousNodes(currentNode) {
 			// 获取画布中所有边
 			const edges = this.graph.getEdges();
-			// 筛选以当前节点为目标的边，并提取源节点
-			return edges
-				.filter(edge => edge.getTargetNode().id === currentNode.id)
-				.map(edge => edge.getSourceNode());
+			let nodesArr = []
+			let findNodeData = findNode(currentNode)
+			while (findNodeData.length > 0) {
+				nodesArr.push(findNodeData[0])
+				findNodeData = findNode(findNodeData[0])
+			}
+
+			function findNode(currentNode) {
+				return edges
+					.filter(edge => edge.getTargetNode().id === currentNode.id)
+					.map(edge => edge.getSourceNode())
+			}
+
+			return nodesArr
 		},
 		// 获取节点前数据
 		getCascaderData() {
 
 			let cascaderData = []
 			const inputParams = this.getPreviousNodes(this.nowNode)
+			console.log('xx', inputParams)
 			inputParams.forEach(param => {
-
+				console.log(2233, param)
 				const data = param.getData()
 				if (data.pages === 'start') {
 
@@ -304,6 +316,12 @@ export default {
 			})
 
 			this.inputOptions = cascaderData
+		},
+		// 添加节点
+		addNodeHandle(type) {
+			if (type === 'purpose') {
+				this.graph.addNode(defaultNodeConfig.purposeNode(400, 400))
+			}
 		}
 	}
 }

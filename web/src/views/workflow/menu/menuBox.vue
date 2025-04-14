@@ -12,7 +12,7 @@
 			</div>
 			<div class="menu-title">Agent</div>
 		</div>
-		<div class="menu-item flex-center">
+		<div class="menu-item flex-center" @click="$emit('addNode', 'purpose')">
 			<div class="menu-icon" style="background: #f79009;color: #fff;padding: 3px;border-radius: 5px;">
 				<span class="iconfont icon-fenlei" style="font-size: 18px !important;"></span>
 			</div>
