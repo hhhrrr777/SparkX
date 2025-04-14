@@ -10,7 +10,7 @@
 			<el-form-item label="应用类型" prop="type">
 				<el-radio-group v-model="form.type" class="tool-radio-list">
 					<el-radio :label="1" border class="radio-item">
-						<div class="radio-title">简单配置</div>
+						<div class="radio-title">简单Agent</div>
 						<div class="radio-desc">适合新手创建小助手</div>
 					</el-radio>
 					<el-radio :label="2" border class="radio-item">

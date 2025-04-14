@@ -42,7 +42,7 @@
 								</div>
 							</div>
 							<div class="title-right">
-								<el-tag type="success" v-if="item.type === 1">简单配置</el-tag>
+								<el-tag type="success" v-if="item.type === 1">简单Agent</el-tag>
 								<el-tag v-else>高级编排</el-tag>
 							</div>
 						</div>
