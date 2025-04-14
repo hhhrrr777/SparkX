@@ -1,6 +1,10 @@
 <template>
 	<div style="width:100%;height:100%;position: relative">
-		<top-menu class="top-menu"></top-menu>
+		<top-menu
+			class="top-menu"
+			@debug="debugHandle"
+		>
+		</top-menu>
 		<div ref="containerRef" class="container"/>
 
 		<menu-box v-if="visible" class="add-menu-box"></menu-box>
@@ -27,6 +31,7 @@
 							:form-data="formData"
 							@port-del="portDelHandle"
 							@data-change="dataChangeHandle"
+							:input-options="inputOptions"
 							:is="page"
 						/>
 					</template>
@@ -40,7 +45,7 @@
 </template>
 <script>
 // 引入 AntV X6 库
-import { Graph, Shape } from '@antv/x6'
+import {Graph, Shape} from '@antv/x6'
 import defaultNodeConfig from './node.js'
 import bottomMenu from './menu/bottomMenu.vue'
 import topMenu from './menu/topMenu.vue'
@@ -72,6 +77,7 @@ export default {
 				purposeDialog: defineAsyncComponent(() => import('./dialog/purposeDialog.vue')),
 			},
 			formData: {}, // 配置数据
+			inputOptions: [], // 入参
 		}
 	},
 	methods: {
@@ -154,6 +160,8 @@ export default {
 					this.page = this.pages.startDialog
 				} else if (this.formData.pages === 'purpose') {
 					this.page = this.pages.purposeDialog
+					// 计算节点前的数据
+					this.getCascaderData()
 				}
 				this.drawer = true
 			})
@@ -253,6 +261,49 @@ export default {
 			if (ports.length) {
 				this.nowNode.removePortAt(ports.length - 1)
 			}
+		},
+		// 调试链接
+		debugHandle() {
+
+		},
+		// 遍历节点
+		getPreviousNodes(currentNode) {
+			// 获取画布中所有边
+			const edges = this.graph.getEdges();
+			// 筛选以当前节点为目标的边，并提取源节点
+			return edges
+				.filter(edge => edge.getTargetNode().id === currentNode.id)
+				.map(edge => edge.getSourceNode());
+		},
+		// 获取节点前数据
+		getCascaderData() {
+
+			let cascaderData = []
+			const inputParams = this.getPreviousNodes(this.nowNode)
+			inputParams.forEach(param => {
+
+				const data = param.getData()
+				if (data.pages === 'start') {
+
+					let comData = data.sysData.concat(data.userData)
+					let children = comData.map(item => {
+						return {
+							label: item.name,
+							value: item.field
+						}
+					})
+
+					cascaderData.push({
+						value: this.nowNode.id,
+						label: '开始',
+						icon: 'iconfont icon-ai23',
+						color: 'var(--el-color-theme)',
+						children: children
+					})
+				}
+			})
+
+			this.inputOptions = cascaderData
 		}
 	}
 }

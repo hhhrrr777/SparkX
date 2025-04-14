@@ -21,6 +21,7 @@ export default {
 			modeName: "",
 			temperature: 0
 		},
+		inputData: [],
 		outData: [
 			{field: 'sys.purposeName', name: '意图分类名'},
 		]

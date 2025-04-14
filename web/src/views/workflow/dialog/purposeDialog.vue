@@ -11,10 +11,14 @@
 			<div>输入参数</div>
 			<div class="flex-center" style="margin-top: 10px;">
 				<div>查询内容</div>
-				<el-cascader :options="inputOptions" style="margin-left: 20px" clearable>
+				<el-cascader
+					v-model="inputData"
+					:options="inputOptions"
+					@change="inputChange"
+					style="margin-left: 20px;width: calc(100% - 80px)" clearable>
 					<template #default="{ node, data }">
 						<div class="flex-center">
-							<span :class="data.icon" style="font-size: 18px !important;"></span>
+							<span :class="data.icon" style="font-size: 18px !important;" :style="{color: data.color}"></span>
 							<span style="margin-left: 5px">{{ data.label }}</span>
 						</div>
 					</template>
@@ -25,14 +29,14 @@
 		<div class="set-content-box">
 			<div>输出参数</div>
 			<div class="param-data">
-				<div class="flex-center data-item">
+				<div class="flex-center data-item" v-for="(item, index) in form.outData" :key="index">
 					<div class="flex-center">
 						<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 3px;border-radius: 5px;">
 							<span class="iconfont icon-bianliang" style="font-size: 16px !important;"></span>
 						</div>
-						<div class="title" style="margin-left: 10px">sys.purposeName</div>
+						<div class="title" style="margin-left: 10px">{{ item.field }}</div>
 					</div>
-					<div class="field">意图分类名</div>
+					<div class="field">{{ item.name }}</div>
 				</div>
 			</div>
 		</div>
@@ -93,6 +97,10 @@ export default {
 		formData: {
 			type: Object,
 			default: () => {}
+		},
+		inputOptions: {
+			type: Array,
+			default: []
 		}
 	},
 	data() {
@@ -102,15 +110,15 @@ export default {
 			temperatureConfig: {
 				range: [0, 1]
 			},
-			modelId: "",
+			modelId: [],
 			options: [],
-			inputOptions: [
-				{icon: 'iconfont icon-fenlei', label: '系统变量', children: [{label: '系统变量2', value: '222'}]}
-			]
+			inputData: [], // 入参
 		}
 	},
 	mounted() {
-		console.log('formData', this.formData)
+		console.log('formData', this.formData);
+		this.modelId = [this.formData.modeInfo.modeId, this.formData.modeInfo.modeName]
+		this.inputData = this.formData.inputData
 		this.getModelsList()
 	},
 	methods: {
@@ -170,6 +178,11 @@ export default {
 			this.form.modeInfo.modeName = val[1]
 
 			this.getModelInfo(val[0])
+		},
+		// 输入选择
+		inputChange(val) {
+			this.form.inputData = val
+			this.$emit("dataChange", this.form)
 		}
 	}
 }

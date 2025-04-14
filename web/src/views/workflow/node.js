@@ -14,10 +14,10 @@ export default {
 				pages: 'start',
 				checked: false,
 				portsVisible: false,
-				sysData: initConfig.sysData,
+				sysData: initConfig.startData.sysData,
 				userData: [],
 				// 输出参数
-				outData: initConfig.sysData,
+				outData: initConfig.startData.sysData,
 			},
 			ports: {
 				groups: {
