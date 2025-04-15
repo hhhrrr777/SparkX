@@ -36,7 +36,7 @@ export default {
 					},
 				},
 				items: [
-					{ group: 'rightPorts' } // 将端口分配到右侧分组
+					{ group: 'rightPorts', type: 'output' } // 将端口分配到右侧分组
 				]
 			}
 		}
@@ -71,7 +71,7 @@ export default {
 					},
 				},
 				items: [
-					{ group: 'leftPorts' } // 将端口分配到左侧分组
+					{ group: 'leftPorts', type: 'input' } // 将端口分配到左侧分组
 				]
 			}
 		}
@@ -123,10 +123,11 @@ export default {
 					}
 				},
 				items: [
-					{ group: 'leftPorts' }, // 将端口分配到左侧分组
+					{ group: 'leftPorts', type: 'input' }, // 将端口分配到左侧分组
 					{
 						group: 'rightPorts',
 						args: { x: 230, y: 100 },
+					 	type: 'output'
 					}
 				]
 			}
@@ -177,8 +178,8 @@ export default {
 					},
 				},
 				items: [
-					{ group: 'leftPorts' }, // 将端口分配到左侧分组
-					{ group: 'rightPorts' }
+					{ group: 'leftPorts', type: 'input' }, // 将端口分配到左侧分组
+					{ group: 'rightPorts', type: 'output' }
 				]
 			}
 		}

@@ -143,8 +143,8 @@ export default {
 							tools: [],
 						});
 					},
-					validateConnection({ sourceCell, targetCell }) { // 验证是否可以连接
-						console.log('来源', sourceCell, '链接', targetCell)
+					allowPort(arg) { // 验证是否可以连接
+						console.log('Source port:', arg);
 						return true
 					}
 				}
@@ -274,7 +274,7 @@ export default {
 			if (val.type === 'purpose') {
 				let len = val.cateList.length
 				let y = (len - 1) * 40 + 100
-				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }})
+				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }, type: 'output'})
 			}
 		},
 		// 连接桩删除
