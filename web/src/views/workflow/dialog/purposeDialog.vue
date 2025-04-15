@@ -1,10 +1,13 @@
 <template>
 	<div class="opt-form">
-		<div class="flex-center title">
-			<div class="menu-icon" style="background: #f79009;color: #fff;padding: 3px;border-radius: 5px;">
-				<span class="iconfont icon-fenlei" style="font-size: 18px !important;"></span>
+		<div class="flex-center title" style="justify-content: space-between">
+			<div class="flex-center">
+				<div class="menu-icon" style="background: #f79009;color: #fff;padding: 3px;border-radius: 5px;">
+					<span class="iconfont icon-fenlei" style="font-size: 18px !important;"></span>
+				</div>
+				<span class="node-name">意图分类</span>
 			</div>
-			<span class="node-name">意图分类</span>
+			<el-button type="text" size="small">删除节点</el-button>
 		</div>
 
 		<div class="set-content-box">

@@ -1,10 +1,13 @@
 <template>
 	<div class="opt-form">
-		<div class="flex-center title">
-			<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 2px;border-radius: 5px;">
-				<span class="iconfont icon-a-zhuliudeLLM"></span>
+		<div class="flex-center title" style="justify-content: space-between">
+			<div class="flex-center">
+				<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 2px;border-radius: 5px;">
+					<span class="iconfont icon-a-zhuliudeLLM"></span>
+				</div>
+				<span class="node-name">LLM</span>
 			</div>
-			<span class="node-name">LLM</span>
+			<el-button type="text" size="small">删除节点</el-button>
 		</div>
 
 		<div class="set-content-box">
