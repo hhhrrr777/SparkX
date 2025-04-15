@@ -81,6 +81,7 @@ export default {
 			pages: {
 				startDialog: defineAsyncComponent(() => import('./dialog/startDialog.vue')),
 				purposeDialog: defineAsyncComponent(() => import('./dialog/purposeDialog.vue')),
+				llmDialog: defineAsyncComponent(() => import('./dialog/llmDialog.vue')),
 			},
 			formData: {}, // 配置数据
 			inputOptions: [], // 入参
@@ -170,6 +171,10 @@ export default {
 					this.page = this.pages.startDialog
 				} else if (this.formData.pages === 'purpose') {
 					this.page = this.pages.purposeDialog
+					// 计算节点前的数据
+					this.getNodeInputData()
+				} else if (this.formData.pages === 'llm') {
+					this.page = this.pages.llmDialog
 					// 计算节点前的数据
 					this.getNodeInputData()
 				}
@@ -292,6 +297,10 @@ export default {
 				this.nodeNoData.purpose += 1
 				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.purposeNode(getRandomInt(300, 600),
 					getRandomInt(300, 600), this.nodeNoData.purpose))))
+			} else if (type === 'llm') {
+				this.nodeNoData.llm += 1
+				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.llmNode(getRandomInt(300, 600),
+					getRandomInt(300, 600), this.nodeNoData.llm))))
 			}
 		}
 	}

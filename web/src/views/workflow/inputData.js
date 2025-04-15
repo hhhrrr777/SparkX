@@ -58,6 +58,20 @@ export default {
 					color: '#f79009',
 					children: formatData(data.outData)
 				})
+			} else if (data.pages === 'llm') {
+
+				let label = 'LLM'
+				if (data.no > 1) {
+					label += data.no
+				}
+
+				nodeInputData.push({
+					value: nowNode.id,
+					label: label,
+					icon: 'iconfont icon-a-zhuliudeLLM',
+					color: '#6172f3',
+					children: formatData(data.outData)
+				})
 			}
 		})
 

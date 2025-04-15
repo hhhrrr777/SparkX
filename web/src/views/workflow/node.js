@@ -145,6 +145,7 @@ export default {
 				pages: 'llm',
 				checked: false,
 				portsVisible: false,
+				...initConfig.llmData,
 			},
 			ports: {
 				groups: {
@@ -162,6 +163,7 @@ export default {
 						}
 					},
 					rightPorts: {
+						position: 'right', // 端口位于节点左侧
 						attrs: {
 							circle: {
 								style: {visibility: 'hidden'},
@@ -171,18 +173,12 @@ export default {
 								strokeWidth: 1, // 边框宽度
 								fill: '#fff'    // 填充颜色
 							}
-						},
-						position: {
-							name: 'absolute',
 						}
-					}
+					},
 				},
 				items: [
 					{ group: 'leftPorts' }, // 将端口分配到左侧分组
-					{
-						group: 'rightPorts',
-						args: { x: 230, y: 100 },
-					}
+					{ group: 'rightPorts' }
 				]
 			}
 		}

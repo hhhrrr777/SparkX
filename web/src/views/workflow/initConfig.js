@@ -27,7 +27,7 @@ export default {
 		]
 	},
 	// llm节点初始数据
-	llmNode: {
+	llmData: {
 		type: 'llm',
 		modeInfo: {
 			modeId: "",
@@ -39,7 +39,7 @@ export default {
 		systemMsg: "",
 		userMsg: "",
 		outData: [
-			{field: 'sys.answer', name: '生成内容'},
+			{field: 'sys.content', name: '生成内容'},
 		]
 	}
 }

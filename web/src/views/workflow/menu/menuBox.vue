@@ -1,6 +1,6 @@
 <template>
 	<div class="add-menu-box">
-		<div class="menu-item flex-center">
+		<div class="menu-item flex-center" @click="$emit('addNode', 'llm')">
 			<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 2px;border-radius: 5px;">
 				<span class="iconfont icon-a-zhuliudeLLM"></span>
 			</div>
