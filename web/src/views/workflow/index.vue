@@ -142,6 +142,10 @@ export default {
 							// 添加工具（删除按钮）
 							tools: [],
 						});
+					},
+					validateConnection({ sourceCell, targetCell }) { // 验证是否可以连接
+						console.log('来源', sourceCell, '链接', targetCell)
+						return true
 					}
 				}
 			})
