@@ -89,7 +89,6 @@
 
 <script>
 import {Delete, Plus} from "@element-plus/icons-vue";
-import initConfig from '@/views/workflow/initConfig.js';
 
 export default {
 	components: {Delete, Plus},
@@ -106,7 +105,7 @@ export default {
 	data() {
 		return {
 			dialogVisible: false,
-			form: JSON.parse(JSON.stringify(initConfig.purposeData)),
+			form: {},
 			temperatureConfig: {
 				range: [0, 1]
 			},
@@ -115,7 +114,8 @@ export default {
 			inputData: [], // 入参
 		}
 	},
-	mounted() {
+	created() {
+		this.form = this.formData
 		this.modelId = [this.formData.modeInfo.modeId, this.formData.modeInfo.modeName]
 		this.inputData = this.formData.inputData
 		this.getModelsList()

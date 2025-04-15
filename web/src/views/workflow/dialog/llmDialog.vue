@@ -84,18 +84,15 @@
 			<div style="justify-content: space-between" class="flex-center">
 				<span>提示词</span>
 			</div>
-			<el-input v-model="form.userMsg" type="textarea" placeholder="角色设置" :rows="4" style="margin-top: 10px"/>
+			<el-input v-model="form.userMsg" type="textarea" placeholder="用户提示词" :rows="4" style="margin-top: 10px"/>
 		</div>
 	</div>
 
 </template>
 
 <script>
-import {Delete, Plus} from "@element-plus/icons-vue";
-import initConfig from '@/views/workflow/initConfig.js';
 
 export default {
-	components: {Delete, Plus},
 	props: {
 		formData: {
 			type: Object,
@@ -109,7 +106,7 @@ export default {
 	data() {
 		return {
 			dialogVisible: false,
-			form: JSON.parse(JSON.stringify(initConfig.llmData)),
+			form: {},
 			temperatureConfig: {
 				range: [0, 1]
 			},
@@ -118,7 +115,20 @@ export default {
 			inputData: [], // 入参
 		}
 	},
-	mounted() {
+	watch: {
+		'form.systemMsg': {
+			handler(val) {
+				this.$emit("dataChange", this.form)
+			}
+		},
+		'form.userMsg': {
+			handler(val) {
+				this.$emit("dataChange", this.form)
+			}
+		},
+	},
+	created() {
+		this.form = this.formData
 		this.modelId = [this.formData.modeInfo.modeId, this.formData.modeInfo.modeName]
 		this.inputData = this.formData.inputData
 		this.getModelsList()

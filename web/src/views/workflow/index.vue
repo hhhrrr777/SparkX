@@ -33,6 +33,7 @@
 				<Suspense>
 					<template #default>
 						<component
+							:key="randomKey"
 							:form-data="formData"
 							@port-del="portDelHandle"
 							@data-change="dataChangeHandle"
@@ -178,6 +179,7 @@ export default {
 					// 计算节点前的数据
 					this.getNodeInputData()
 				}
+				this.randomKey = Math.random()
 				this.drawer = true
 			})
 

@@ -48,7 +48,7 @@ export default {
 
 				let label = '意图分类'
 				if (data.no > 1) {
-					label += data.no
+					label += parseInt(data.no) - 1
 				}
 
 				nodeInputData.push({
@@ -62,7 +62,7 @@ export default {
 
 				let label = 'LLM'
 				if (data.no > 1) {
-					label += data.no
+					label += parseInt(data.no) - 1
 				}
 
 				nodeInputData.push({
