@@ -83,6 +83,7 @@ export default {
 				startDialog: defineAsyncComponent(() => import('./dialog/startDialog.vue')),
 				purposeDialog: defineAsyncComponent(() => import('./dialog/purposeDialog.vue')),
 				llmDialog: defineAsyncComponent(() => import('./dialog/llmDialog.vue')),
+				datasetDialog: defineAsyncComponent(() => import('./dialog/datasetDialog.vue')),
 			},
 			formData: {}, // 配置数据
 			inputOptions: [], // 入参
@@ -93,13 +94,15 @@ export default {
 				llm: 0,
 				dataset: 0,
 				switch: 0
-			}
+			},
+			hasLinkedPort: [], // 已经连接过的桩
 		}
 	},
 	methods: {
 		// 初始化
 		initGraph() {
 			const containerRef = this.$refs.containerRef;
+			const that = this;
 			// 初始化 Graph 对象
 			const graph = new Graph({
 				container: containerRef, // 容器元素
@@ -126,6 +129,7 @@ export default {
 				connecting: {
 					connector: 'smooth',
 					snap: true, // 自动吸附
+					allowMulti: false, // 不允许想同的期间和中间直接连接多条线
 					allowBlank: false, // 是否允许连接到画布空白位置的点
 					allowLoop: false, // 是否允许创建循环连线，即边的起始节点和终止节点为同一节点
 					allowNode: false, // 是否允许边链接到节点（非节点上的链接桩）
@@ -144,7 +148,31 @@ export default {
 						});
 					},
 					allowPort(arg) { // 验证是否可以连接
-						console.log('Source port:', arg);
+						// 通用函数，根据端口 ID 查找端口类型
+						const getPortType = (ports, portId) => {
+							const port = ports.find(port => port.id === portId);
+							return port ? port.type : null;
+						};
+
+						const sourcePortType = getPortType(arg.sourceCell.port.ports, arg.sourcePort);
+						const targetPortType = getPortType(arg.targetCell.port.ports, arg.targetPort);
+
+						// 不允许反向链接
+						if (sourcePortType === 'input') {
+							return false;
+						}
+
+						// 相同类型的节点不允许连接
+						if (sourcePortType === targetPortType) {
+							return false;
+						}
+
+						// 一个output桩点不允许连出2条线
+						if (that.hasLinkedPort.indexOf(arg.sourcePort) !== -1) {
+							return false;
+						}
+						that.hasLinkedPort.push(arg.sourcePort)
+
 						return true
 					}
 				}
@@ -176,13 +204,18 @@ export default {
 					this.page = this.pages.startDialog
 				} else if (this.formData.pages === 'purpose') {
 					this.page = this.pages.purposeDialog
-					// 计算节点前的数据
-					this.getNodeInputData()
 				} else if (this.formData.pages === 'llm') {
 					this.page = this.pages.llmDialog
+				} else if (this.formData.pages === 'dataset') {
+					this.page = this.pages.datasetDialog
+				}
+
+				if (this.formData.pages !== 'start'
+					&& this.formData.pages !== 'end') {
 					// 计算节点前的数据
 					this.getNodeInputData()
 				}
+
 				this.randomKey = Math.random()
 				this.drawer = true
 			})
@@ -219,11 +252,14 @@ export default {
 				edge.attr('line', { stroke: '#d0d5dc', strokeWidth: 2 })
 			})
 
-			// 删除连线
-			graph.on('edge:tool:click', ({ edge, tool }) => {
-				if (tool.name === 'button-remove') {
-					// 删除连线
-					graph.removeCell(edge);
+			graph.on('edge:removed', ({ edge, options }) => {
+				if (!options.toolId) {
+					return false
+				}
+
+				let index = this.hasLinkedPort.indexOf(edge.store.data.source.port)
+				if (index !== -1) {
+					this.hasLinkedPort.splice(index, 1)
 				}
 			})
 
@@ -307,6 +343,10 @@ export default {
 				this.nodeNoData.llm += 1
 				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.llmNode(getRandomInt(300, 600),
 					getRandomInt(300, 600), this.nodeNoData.llm))))
+			} else if (type === 'dataset') {
+				this.nodeNoData.dataset += 1
+				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.datasetNode(getRandomInt(300, 600),
+					getRandomInt(300, 600), this.nodeNoData.dataset))))
 			}
 		}
 	}

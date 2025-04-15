@@ -72,6 +72,20 @@ export default {
 					color: '#6172f3',
 					children: formatData(data.outData)
 				})
+			} else if (data.pages === 'dataset') {
+
+				let label = '知识检索'
+				if (data.no > 1) {
+					label += parseInt(data.no) - 1
+				}
+
+				nodeInputData.push({
+					value: nowNode.id,
+					label: label,
+					icon: 'iconfont icon-zhishiku',
+					color: '#6172f3',
+					children: formatData(data.outData)
+				})
 			}
 		})
 

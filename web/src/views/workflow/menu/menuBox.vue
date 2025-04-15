@@ -18,7 +18,7 @@
 			</div>
 			<div class="menu-title">意图分类</div>
 		</div>
-		<div class="menu-item flex-center">
+		<div class="menu-item flex-center" @click="$emit('addNode', 'dataset')">
 			<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 3px;border-radius: 5px;">
 				<span class="iconfont icon-zhishiku" style="font-size: 18px !important;"></span>
 			</div>

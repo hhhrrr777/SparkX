@@ -41,5 +41,63 @@ export default {
 		outData: [
 			{field: 'sys.content', name: '生成内容'},
 		]
-	}
+	},
+	// 知识检索节点初始数据
+	datasetData: {
+		type: 'dataset',
+		inputData: [],
+		datasets: [],
+		outData: [
+			{field: 'sys.result', name: '检索结果'},
+		]
+	},
+	// 基础桩点
+	ports: {
+		groups: {
+			leftPorts: {
+				position: 'left', // 端口位于节点左侧
+				attrs: {
+					circle: {
+						style: {visibility: 'hidden'},
+						r: 4,          // 端口半径
+						magnet: true,  // 启用磁吸
+						stroke: 'var(--el-color-theme)', // 边框颜色
+						strokeWidth: 1, // 边框宽度
+						fill: '#fff'    // 填充颜色
+					}
+				}
+			},
+			rightPorts: {
+				position: 'right', // 端口位于节点左侧
+				attrs: {
+					circle: {
+						style: {visibility: 'hidden'},
+						r: 4,          // 端口半径
+						magnet: true,  // 启用磁吸
+						stroke: 'var(--el-color-theme)', // 边框颜色
+						strokeWidth: 1, // 边框宽度
+						fill: '#fff'    // 填充颜色
+					}
+				}
+			},
+		},
+		items: [
+			{ group: 'leftPorts', type: 'input' }, // 将端口分配到左侧分组
+			{ group: 'rightPorts', type: 'output' }
+		]
+	},
+	// 左边桩点
+	leftPorts: {
+		position: 'left', // 端口位于节点左侧
+		attrs: {
+			circle: {
+				style: {visibility: 'hidden'},
+				r: 4,          // 端口半径
+				magnet: true,  // 启用磁吸
+				stroke: 'var(--el-color-theme)', // 边框颜色
+				strokeWidth: 1, // 边框宽度
+				fill: '#fff'    // 填充颜色
+			}
+		}
+	},
 }

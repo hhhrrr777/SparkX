@@ -57,18 +57,8 @@ export default {
 			ports: {
 				groups: {
 					leftPorts: {
-						position: 'left', // 端口位于节点左侧
-						attrs: {
-							circle: {
-								style: {visibility: 'hidden'},
-								r: 4,          // 端口半径
-								magnet: true,  // 启用磁吸
-								stroke: 'var(--el-color-theme)', // 边框颜色
-								strokeWidth: 1, // 边框宽度
-								fill: '#fff'    // 填充颜色
-							}
-						}
-					},
+						...initConfig.leftPorts,
+					}
 				},
 				items: [
 					{ group: 'leftPorts', type: 'input' } // 将端口分配到左侧分组
@@ -94,17 +84,7 @@ export default {
 			ports: {
 				groups: {
 					leftPorts: {
-						position: 'left', // 端口位于节点左侧
-						attrs: {
-							circle: {
-								style: {visibility: 'hidden'},
-								r: 4,          // 端口半径
-								magnet: true,  // 启用磁吸
-								stroke: 'var(--el-color-theme)', // 边框颜色
-								strokeWidth: 1, // 边框宽度
-								fill: '#fff'    // 填充颜色
-							}
-						}
+						...initConfig.leftPorts,
 					},
 					rightPorts: {
 						attrs: {
@@ -135,6 +115,23 @@ export default {
 	},
 	// LLM节点
 	llmNode: (x, y, no) => {
+		console.log({
+			x: x,
+			y: y,
+			shape: 'llm-node',
+			width: 230,
+			height: 40,
+			data: {
+				no: no,
+				pages: 'llm',
+				checked: false,
+				portsVisible: false,
+				...initConfig.llmData,
+			},
+			ports: {
+				...initConfig.ports
+			}
+		})
 		return {
 			x: x,
 			y: y,
@@ -149,47 +146,37 @@ export default {
 				...initConfig.llmData,
 			},
 			ports: {
-				groups: {
-					leftPorts: {
-						position: 'left', // 端口位于节点左侧
-						attrs: {
-							circle: {
-								style: {visibility: 'hidden'},
-								r: 4,          // 端口半径
-								magnet: true,  // 启用磁吸
-								stroke: 'var(--el-color-theme)', // 边框颜色
-								strokeWidth: 1, // 边框宽度
-								fill: '#fff'    // 填充颜色
-							}
-						}
-					},
-					rightPorts: {
-						position: 'right', // 端口位于节点左侧
-						attrs: {
-							circle: {
-								style: {visibility: 'hidden'},
-								r: 4,          // 端口半径
-								magnet: true,  // 启用磁吸
-								stroke: 'var(--el-color-theme)', // 边框颜色
-								strokeWidth: 1, // 边框宽度
-								fill: '#fff'    // 填充颜色
-							}
-						}
-					},
-				},
-				items: [
-					{ group: 'leftPorts', type: 'input' }, // 将端口分配到左侧分组
-					{ group: 'rightPorts', type: 'output' }
-				]
+				...initConfig.ports
 			}
 		}
-	}
+	},
+	// 知识检索节点
+	datasetNode: (x, y, no) => {
+		return {
+			x: x,
+			y: y,
+			shape: 'dataset-node',
+			width: 230,
+			height: 40,
+			data: {
+				no: no,
+				pages: 'dataset',
+				checked: false,
+				portsVisible: false,
+				...initConfig.datasetData,
+			},
+			ports: {
+				...initConfig.ports
+			}
+		}
+	},
 }
 
 import Start from './node/start.vue'
 import End from './node/end.vue'
 import Purpose from './node/purpose.vue'
 import Llm from './node/llm.vue'
+import Dataset from './node/dataset.vue'
 
 // 制作组件节点
 register({
@@ -218,4 +205,11 @@ register({
 	width: 100,
 	height: 100,
 	component: Llm,
+})
+
+register({
+	shape: 'dataset-node',
+	width: 100,
+	height: 100,
+	component: Dataset,
 })

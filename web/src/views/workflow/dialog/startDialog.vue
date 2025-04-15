@@ -138,7 +138,7 @@ export default {
 }
 .data-item {
 	width: 100%;
-	padding: 0 20px;
+	padding: 10px;
 	height: 40px;
 	align-items: center;
 	justify-content: space-between;
