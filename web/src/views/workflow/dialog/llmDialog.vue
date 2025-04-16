@@ -7,7 +7,14 @@
 				</div>
 				<span class="node-name">LLM</span>
 			</div>
-			<el-button type="text" size="small">删除节点</el-button>
+			<el-dropdown>
+				<el-icon size="18"><MoreFilled /></el-icon>
+				<template #dropdown>
+					<el-dropdown-menu>
+						<el-dropdown-item style="font-size: 12px">删除节点</el-dropdown-item>
+					</el-dropdown-menu>
+				</template>
+			</el-dropdown>
 		</div>
 
 		<div class="set-content-box">
