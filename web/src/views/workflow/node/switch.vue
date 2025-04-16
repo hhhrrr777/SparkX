@@ -8,7 +8,25 @@
 			<span class="node-name" v-else>{{ name }}{{ no - 1 }}</span>
 		</div>
 
-		<div class="flex-center tips-text" v-for="(item, index) in nodeInnerData.cateList" :key="index">{{ item.name }}</div>
+		<div class="tips-text" style="flex-direction: column;display: flex">
+			<div>IF</div>
+			<div class="flex-center tips-item">
+				输入变量 大于 2
+			</div>
+			<div class="flex-center tips-item">
+				输入变量 大于 2
+			</div>
+		</div>
+
+		<div class="tips-text" style="flex-direction: column;display: flex">
+			<div>ELSEIF</div>
+			<div class="flex-center tips-item">
+				输入变量 大于 2
+			</div>
+			<div class="flex-center tips-item">
+				输入变量 大于 2
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -22,12 +40,18 @@ export default {
 			no: 0,
 			name: "条件分支",
 			nodeInnerData: {},
-			active: false
+			active: false,
+			optionsMap: new Map()
 		}
 	},
 	created() {
 		this.no = this.getNode().store.data.data.no
 		this.nodeInnerData = JSON.parse(JSON.stringify(initConfig.switchData))
+
+		let options = JSON.parse(JSON.stringify(initConfig.switchOptions))
+		options.forEach(item => {
+			this.optionsMap.set(item.type, item.label)
+		})
 	},
 	mounted() {
 		const node = this.getNode();
@@ -46,10 +70,16 @@ export default {
 <style scoped>
 .tips-text {
 	width: 100%;
-	height: 30px;
 	background: #f4f4f4;
 	padding: 5px 10px;
 	border-radius: 5px;
 	margin-top: 10px;
+}
+.tips-item {
+	background: #fff;
+	padding: 5px 10px;
+	border-radius: 5px;
+	font-size: 12px;
+	margin-top: 5px;
 }
 </style>

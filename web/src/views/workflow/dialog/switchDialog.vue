@@ -19,10 +19,21 @@
 
 		<div class="set-content-box">
 			<div>条件分支</div>
-			<div class="flex-center item-box" v-for="(item2, index) in form.ifBranch" :key="index">
-				<div style="width: 60px" v-if="index === 0">IF</div>
-				<div style="width: 60px" v-else>ELSEIF</div>
-				<div class="flex-center" style="flex-direction: column">
+			<div class="item-box" v-for="(item2, index) in form.ifBranch" :key="index" style="display: flex;flex-direction: column;">
+				<div class="flex-center" style="justify-content: space-between">
+					<div style="width: 60px" v-if="index === 0">IF</div>
+					<div style="width: 60px" v-else>ELSEIF</div>
+					<el-switch
+						size="small"
+						v-model="item2.switch"
+						:active-value="1"
+						:inactive-value="2"
+						active-text="全部满足"
+						inactive-text="满足一个">
+					</el-switch>
+				</div>
+
+				<div style="flex-direction: column;display: flex;">
 					<div v-for="(item3, index2) in item2.data" :key="index2" style="margin-top: 10px">
 						<div class="tips-data flex-center">
 							<el-cascader
@@ -41,16 +52,17 @@
 							<el-select
 								v-model="item3.tips"
 								placeholder="请选择"
-								style="width: 100px;margin-left: 5px;"
+								style="width: 130px;margin-left: 5px;"
+								clearable
 							>
 								<el-option
 									v-for="item in options"
-									:key="item.value"
+									:key="item.type"
 									:label="item.label"
-									:value="item.value"
+									:value="item.type"
 								/>
 							</el-select>
-							<el-input v-model="item3.value" style="width: 100px;margin-left: 5px" placeholder="" />
+							<el-input v-model="item3.value" style="width: 100px;margin-left: 5px" placeholder="" v-if="item3.tips > 2"/>
 							<div style="width: 40px;" v-if="index === 0 && index2 === 0"></div>
 							<el-icon style="width: 40px;cursor: pointer;color: #F56C6C" v-else @click="delBranch(index, index2)">
 								<Delete />
@@ -73,33 +85,7 @@
 			</div>
 
 			<div class="flex-center item-box">
-				<div style="width: 60px">ELSE</div>
-				<el-cascader
-					v-model="form.elseBranch.input"
-					:options="inputOptions"
-					@change="inputChange"
-					style="margin-left: 20px;width: 150px"
-					clearable>
-					<template #default="{ node, data }">
-						<div class="flex-center">
-							<span :class="data.icon" style="font-size: 18px !important;" :style="{color: data.color}"></span>
-							<span style="margin-left: 5px">{{ data.label }}</span>
-						</div>
-					</template>
-				</el-cascader>
-				<el-select
-					v-model="form.elseBranch.tips"
-					placeholder="请选择"
-					style="width: 100px;margin-left: 5px;"
-				>
-					<el-option
-						v-for="item in options"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
-					/>
-				</el-select>
-				<el-input v-model="form.elseBranch.value" style="width: 100px;margin-left: 5px" placeholder="" />
+				<div style="width: 50px">ELSE</div>
 			</div>
 		</div>
 
@@ -123,6 +109,7 @@
 
 <script>
 import {Delete, MoreFilled, Plus} from "@element-plus/icons-vue";
+import initConfig from "@/views/workflow/initConfig.js";
 
 export default {
 	components: {MoreFilled, Delete, Plus},
@@ -142,9 +129,7 @@ export default {
 			form: {},
 			value: "",
 			input: "",
-			options: [
-				{label: '等于', value: '='}
-			],
+			options: JSON.parse(JSON.stringify(initConfig.switchOptions)),
 			inputData: [], // 入参
 		}
 	},

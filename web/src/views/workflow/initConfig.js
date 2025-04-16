@@ -66,9 +66,9 @@ export default {
 		type: 'switch',
 		inputData: [],
 		ifBranch: [
-			{type: 'if', data:[{input: "", tips: "", value: ""}]}
+			{type: 'if', data:[{input: "", tips: "", value: ""}], 'switch': 1}
 		],
-		elseBranch: {input: "", tips: "", value: ""},
+		elseBranch: "",
 		outData: [
 			{field: 'sys.branchName', name: '分支名称'},
 		]
@@ -122,4 +122,19 @@ export default {
 			}
 		}
 	},
+	// 选择条件
+	switchOptions: [
+		{type: 1, label: '为空', value: ''},
+		{type: 2, label: '不为空', value: ''},
+		{type: 3, label: '包含', value: ''},
+		{type: 4, label: '不包含', value: ''},
+		{type: 5, label: '等于', value: ''},
+		{type: 6, label: '大于等于', value: ''},
+		{type: 7, label: '小于', value: ''},
+		{type: 8, label: '长度等于', value: ''},
+		{type: 9, label: '长度大于等于', value: ''},
+		{type: 10, label: '长度大于', value: ''},
+		{type: 11, label: '长度小于等于', value: ''},
+		{type: 12, label: '长度小于', value: ''},
+	]
 }
