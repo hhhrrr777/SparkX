@@ -48,12 +48,12 @@
 					/>
 				</el-select>
 				<el-input v-model="item.value" style="width: 100px;margin-left: 5px" placeholder="" />
-				<el-icon style="width: 40px;cursor: pointer;color: #F56C6C" v-if="index > 0">
+				<el-icon style="width: 40px;cursor: pointer;color: #F56C6C" v-if="index > 0" @click="delBranch(index)">
 					<Delete />
 				</el-icon>
 			</div>
 
-			<div class="flex-center-all item-box" style="cursor: pointer" @click="addSwitch">
+			<div class="flex-center-all item-box" style="cursor: pointer" @click="addBranch">
 				<el-icon style="margin-right: 5px;margin-top: 3px">
 					<Plus />
 				</el-icon> 添加 ELSEIF
@@ -146,8 +146,12 @@ export default {
 			this.$emit("dataChange", this.form)
 		},
 		// 添加分支
-		addSwitch() {
+		addBranch() {
 			this.form.ifBranch.push({input: "", tips: "", value: ""})
+		},
+		// 删除分支
+		delBranch(index) {
+			this.form.ifBranch.splice(index, 1)
 		}
 	}
 }
