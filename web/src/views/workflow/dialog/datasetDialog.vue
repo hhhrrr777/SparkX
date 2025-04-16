@@ -47,25 +47,37 @@
 		<div class="set-content-box">
 			<div>知识库</div>
 			<div class="param-data">
-				<div class="flex-center" v-for="(item, index) in form.datasets" :key="index" style="padding: 0 0 10px 0;">
+				<div class="flex-center" v-for="(item, index) in form.datasets" :key="index" style="padding: 0 0 10px 0;" v-if="form.datasets.length > 0">
 					<div class="flex-center dataset-item">
 						<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 3px;border-radius: 5px;">
 							<span class="iconfont icon-zhishiku" style="font-size: 18px !important;"></span>
 						</div>
-						<span class="node-name">{{ item.name }}</span>
+						<span class="node-name">{{ item.title }}</span>
 					</div>
-					<el-icon style="width: 40px;cursor: pointer;color: #F56C6C">
+					<el-icon style="width: 40px;cursor: pointer;color: #F56C6C" @click="delDataset(index)">
 						<Delete />
 					</el-icon>
 				</div>
-				<div class="no-param flex-center-all">
-					<el-icon style="margin-right: 10px;">
-						<Plus />
-					</el-icon> 添加知识库
+				<div class="no-param flex-center-all" style="background: #f4f4f4;margin-right: 10px;">
+					<div class="flex-center" @click="datasetVisible=true">
+						<el-icon style="margin-top: 3px">
+							<Plus />
+						</el-icon>
+						<div style="margin-left: 5px">添加知识库</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
+		<el-dialog
+			title="选择知识库"
+			v-model="datasetVisible"
+			width="800px"
+			destroy-on-close
+			:close-on-click-modal="false"
+			class="select-dataset">
+			<dataset-dialog @success="handleSuccess" @doClose="datasetVisible=false"></dataset-dialog>
+		</el-dialog>
 	</div>
 
 </template>
@@ -73,9 +85,10 @@
 <script>
 
 import {Delete, Plus} from "@element-plus/icons-vue";
+import datasetDialog from "@/components/dataset/multiple.vue";
 
 export default {
-	components: {Plus, Delete},
+	components: {datasetDialog, Plus, Delete},
 	props: {
 		formData: {
 			type: Object,
@@ -92,6 +105,7 @@ export default {
 			form: {},
 			options: [],
 			inputData: [], // 入参
+			datasetVisible: false
 		}
 	},
 	created() {
@@ -102,6 +116,24 @@ export default {
 		// 输入选择
 		inputChange(val) {
 			this.form.inputData = val
+			this.$emit("dataChange", this.form)
+		},
+		// 处理选择的知识库
+		handleSuccess(datasets) {
+			this.form.datasets = []
+			datasets.forEach(dataset => {
+				this.form.datasets.push({
+					datasetId: dataset.datasetId,
+					title: dataset.title
+				})
+			})
+			this.datasetVisible = false
+
+			this.$emit("dataChange", this.form)
+		},
+		// 删除知识库
+		delDataset(index) {
+			this.form.datasets.splice(index, 1)
 			this.$emit("dataChange", this.form)
 		}
 	}
