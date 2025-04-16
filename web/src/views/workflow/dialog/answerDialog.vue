@@ -24,14 +24,14 @@
 				<el-switch
 					style="margin-left: 20px"
 					size="small"
-					v-model="form.answer_type"
+					v-model="form.answerType"
 					:active-value="1"
 					:inactive-value="2"
 					active-text="引用变量"
 					inactive-text="自定义"
 				/>
 			</div>
-			<div class="flex-center" style="background: #f4f4f4;padding: 10px;" v-if="form.answer_type === 1">
+			<div class="flex-center" style="background: #f4f4f4;padding: 10px;" v-if="form.answerType === 1">
 				<div>引用变量</div>
 				<el-cascader
 					v-model="inputData"
@@ -46,7 +46,7 @@
 					</template>
 				</el-cascader>
 			</div>
-			<div class="flex-center" style="background: #f4f4f4;padding: 10px;" v-if="form.answer_type === 2">
+			<div class="flex-center" style="background: #f4f4f4;padding: 10px;" v-if="form.answerType === 2">
 				<div style="justify-content: space-between;width: 80px" class="flex-center">
 					<span>自定义</span>
 				</div>

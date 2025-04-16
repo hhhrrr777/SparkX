@@ -4,16 +4,19 @@
 			<el-icon size="22" style="margin-right: 5px" color="#17b26a"><VideoPlay /></el-icon> 调试
 		</div>
 		<div class="menu-btn flex-center" @click="$emit('publish')">
+			<el-icon size="21" style="margin-right: 5px" color="#6172f3"><Document /></el-icon> 保存
+		</div>
+		<div class="menu-btn flex-center" @click="$emit('publish')">
 			<el-icon size="22" style="margin-right: 5px" color="#6172f3"><Promotion /></el-icon> 发布
 		</div>
 	</div>
 </template>
 
 <script>
-import {Promotion, VideoPlay} from "@element-plus/icons-vue";
+import {Promotion, VideoPlay, Document} from "@element-plus/icons-vue";
 
 export default {
-	components: {Promotion, VideoPlay},
+	components: {Document, Promotion, VideoPlay},
 	data() {
 		return {
 

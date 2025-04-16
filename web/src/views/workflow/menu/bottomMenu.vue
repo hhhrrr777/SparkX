@@ -29,10 +29,10 @@
 		<el-tooltip
 			class="box-item"
 			effect="dark"
-			content="整理布局"
+			content="居中显示"
 			placement="top-start"
 		>
-			<el-icon size="16" @click="$emit('reset')"><SetUp /></el-icon>
+			<el-icon size="16" @click="$emit('center')"><SetUp /></el-icon>
 		</el-tooltip>
 	</div>
 </template>

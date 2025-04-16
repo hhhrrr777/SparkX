@@ -55,10 +55,22 @@ export default {
 	answerData: {
 		type: 'answer',
 		inputData: [],
-		answer_type: 1,
+		answerType: 1,
 		answer: "",
 		outData: [
 			{field: 'sys.answer', name: '回复内容'},
+		]
+	},
+	// 条件分支节点的初始数据
+	switchData: {
+		type: 'switch',
+		inputData: [],
+		ifBranch: [
+			{input: "", tips: "", value: ""}
+		],
+		elseBranch: {input: "", tips: "", value: ""},
+		outData: [
+			{field: 'sys.branchName', name: '分支名称'},
 		]
 	},
 	// 基础桩点

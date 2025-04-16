@@ -18,7 +18,7 @@
 			:out-open="outOpen"
 			class="bottom-menu"
 			@open-menu="openMenuHandle"
-			@reset="resetHandle"
+			@center="centerHandle"
 			@zoom-in="zoomInHandle"
 			@zoom-out="zoomOutHandle">
 		</bottom-menu>
@@ -85,6 +85,7 @@ export default {
 				llmDialog: defineAsyncComponent(() => import('./dialog/llmDialog.vue')),
 				datasetDialog: defineAsyncComponent(() => import('./dialog/datasetDialog.vue')),
 				answerDialog: defineAsyncComponent(() => import('./dialog/answerDialog.vue')),
+				switchDialog: defineAsyncComponent(() => import('./dialog/switchDialog.vue')),
 			},
 			formData: {}, // 配置数据
 			inputOptions: [], // 入参
@@ -211,6 +212,8 @@ export default {
 					this.page = this.pages.datasetDialog
 				} else if (this.formData.pages === 'answer') {
 					this.page = this.pages.answerDialog
+				} else if (this.formData.pages === 'switch') {
+					this.page = this.pages.switchDialog
 				}
 
 				if (this.formData.pages !== 'start'
@@ -281,8 +284,8 @@ export default {
 				})
 			}
 		},
-		// 重新布局
-		resetHandle() {
+		// 居中布局
+		centerHandle() {
 			this.graph.centerContent();
 			this.graph.zoom(0);
 		},
@@ -354,6 +357,10 @@ export default {
 				this.nodeNoData.answer += 1
 				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.answerNode(getRandomInt(300, 600),
 					getRandomInt(300, 600), this.nodeNoData.answer))))
+			} else if (type === 'switch') {
+				this.nodeNoData.switch += 1
+				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.switchNode(getRandomInt(300, 600),
+					getRandomInt(300, 600), this.nodeNoData.switch))))
 			}
 		}
 	}

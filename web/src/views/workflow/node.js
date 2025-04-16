@@ -115,23 +115,6 @@ export default {
 	},
 	// LLM节点
 	llmNode: (x, y, no) => {
-		console.log({
-			x: x,
-			y: y,
-			shape: 'llm-node',
-			width: 230,
-			height: 40,
-			data: {
-				no: no,
-				pages: 'llm',
-				checked: false,
-				portsVisible: false,
-				...initConfig.llmData,
-			},
-			ports: {
-				...initConfig.ports
-			}
-		})
 		return {
 			x: x,
 			y: y,
@@ -190,6 +173,33 @@ export default {
 			}
 		}
 	},
+	// 条件分支
+	switchNode: (x, y, no) => {
+		return {
+			x: x,
+			y: y,
+			shape: 'switch-node',
+			width: 230,
+			height: 40,
+			data: {
+				no: no,
+				pages: 'switch',
+				checked: false,
+				portsVisible: false,
+				...initConfig.switchData,
+			},
+			ports: {
+				groups: {
+					leftPorts: {
+						...initConfig.leftPorts,
+					}
+				},
+				items: [
+					{ group: 'leftPorts', type: 'input' }, // 将端口分配到左侧分组
+				]
+			}
+		}
+	},
 }
 
 import Start from './node/start.vue'
@@ -198,6 +208,7 @@ import Purpose from './node/purpose.vue'
 import Llm from './node/llm.vue'
 import Dataset from './node/dataset.vue'
 import Answer from './node/answer.vue'
+import Switch from './node/switch.vue'
 
 // 制作组件节点
 register({
@@ -240,4 +251,11 @@ register({
 	width: 100,
 	height: 100,
 	component: Answer,
+})
+
+register({
+	shape: 'switch-node',
+	width: 100,
+	height: 100,
+	component: Switch,
 })
