@@ -24,7 +24,7 @@
 			</div>
 			<div class="menu-title">知识检索</div>
 		</div>
-		<div class="menu-item flex-center">
+		<div class="menu-item flex-center" @click="$emit('addNode', 'answer')">
 			<div class="menu-icon" style="background: #06ae4d;color: #fff;padding: 3px;border-radius: 5px;">
 				<span class="iconfont icon-pinglun3-copy" style="font-size: 18px !important;"></span>
 			</div>

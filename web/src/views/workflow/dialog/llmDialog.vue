@@ -102,7 +102,10 @@
 
 <script>
 
+import {MoreFilled} from "@element-plus/icons-vue";
+
 export default {
+	components: {MoreFilled},
 	props: {
 		formData: {
 			type: Object,

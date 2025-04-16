@@ -84,6 +84,7 @@ export default {
 				purposeDialog: defineAsyncComponent(() => import('./dialog/purposeDialog.vue')),
 				llmDialog: defineAsyncComponent(() => import('./dialog/llmDialog.vue')),
 				datasetDialog: defineAsyncComponent(() => import('./dialog/datasetDialog.vue')),
+				answerDialog: defineAsyncComponent(() => import('./dialog/answerDialog.vue')),
 			},
 			formData: {}, // 配置数据
 			inputOptions: [], // 入参
@@ -208,6 +209,8 @@ export default {
 					this.page = this.pages.llmDialog
 				} else if (this.formData.pages === 'dataset') {
 					this.page = this.pages.datasetDialog
+				} else if (this.formData.pages === 'answer') {
+					this.page = this.pages.answerDialog
 				}
 
 				if (this.formData.pages !== 'start'
@@ -347,6 +350,10 @@ export default {
 				this.nodeNoData.dataset += 1
 				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.datasetNode(getRandomInt(300, 600),
 					getRandomInt(300, 600), this.nodeNoData.dataset))))
+			} else if (type === 'answer') {
+				this.nodeNoData.answer += 1
+				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.answerNode(getRandomInt(300, 600),
+					getRandomInt(300, 600), this.nodeNoData.answer))))
 			}
 		}
 	}

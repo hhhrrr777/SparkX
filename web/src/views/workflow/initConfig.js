@@ -51,6 +51,16 @@ export default {
 			{field: 'sys.result', name: '检索结果'},
 		]
 	},
+	// 回复节点的初始数据
+	answerData: {
+		type: 'answer',
+		inputData: [],
+		answer_type: 1,
+		answer: "",
+		outData: [
+			{field: 'sys.answer', name: '回复内容'},
+		]
+	},
 	// 基础桩点
 	ports: {
 		groups: {

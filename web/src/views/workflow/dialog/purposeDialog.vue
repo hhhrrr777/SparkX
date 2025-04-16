@@ -98,10 +98,10 @@
 </template>
 
 <script>
-import {Delete, Plus} from "@element-plus/icons-vue";
+import {Delete, MoreFilled, Plus} from "@element-plus/icons-vue";
 
 export default {
-	components: {Delete, Plus},
+	components: {MoreFilled, Delete, Plus},
 	props: {
 		formData: {
 			type: Object,

@@ -170,6 +170,26 @@ export default {
 			}
 		}
 	},
+	// 回复节点
+	answerNode: (x, y, no) => {
+		return {
+			x: x,
+			y: y,
+			shape: 'answer-node',
+			width: 230,
+			height: 40,
+			data: {
+				no: no,
+				pages: 'answer',
+				checked: false,
+				portsVisible: false,
+				...initConfig.answerData,
+			},
+			ports: {
+				...initConfig.ports
+			}
+		}
+	},
 }
 
 import Start from './node/start.vue'
@@ -177,6 +197,7 @@ import End from './node/end.vue'
 import Purpose from './node/purpose.vue'
 import Llm from './node/llm.vue'
 import Dataset from './node/dataset.vue'
+import Answer from './node/answer.vue'
 
 // 制作组件节点
 register({
@@ -212,4 +233,11 @@ register({
 	width: 100,
 	height: 100,
 	component: Dataset,
+})
+
+register({
+	shape: 'answer-node',
+	width: 100,
+	height: 100,
+	component: Answer,
 })
