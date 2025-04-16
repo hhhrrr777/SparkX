@@ -19,38 +19,51 @@
 
 		<div class="set-content-box">
 			<div>条件分支</div>
-			<div class="flex-center item-box" v-for="(item, index) in form.ifBranch" :key="index">
+			<div class="flex-center item-box" v-for="(item2, index) in form.ifBranch" :key="index">
 				<div style="width: 60px" v-if="index === 0">IF</div>
 				<div style="width: 60px" v-else>ELSEIF</div>
-				<el-cascader
-					v-model="item.input"
-					:options="inputOptions"
-					@change="inputChange"
-					style="margin-left: 20px;width: 150px"
-					clearable>
-					<template #default="{ node, data }">
-						<div class="flex-center">
-							<span :class="data.icon" style="font-size: 18px !important;" :style="{color: data.color}"></span>
-							<span style="margin-left: 5px">{{ data.label }}</span>
+				<div class="flex-center" style="flex-direction: column">
+					<div v-for="(item3, index2) in item2.data" :key="index2" style="margin-top: 10px">
+						<div class="tips-data flex-center">
+							<el-cascader
+								v-model="item3.input"
+								:options="inputOptions"
+								@change="inputChange"
+								style="width: 150px"
+								clearable>
+								<template #default="{ node, data }">
+									<div class="flex-center">
+										<span :class="data.icon" style="font-size: 18px !important;" :style="{color: data.color}"></span>
+										<span style="margin-left: 5px">{{ data.label }}</span>
+									</div>
+								</template>
+							</el-cascader>
+							<el-select
+								v-model="item3.tips"
+								placeholder="请选择"
+								style="width: 100px;margin-left: 5px;"
+							>
+								<el-option
+									v-for="item in options"
+									:key="item.value"
+									:label="item.label"
+									:value="item.value"
+								/>
+							</el-select>
+							<el-input v-model="item3.value" style="width: 100px;margin-left: 5px" placeholder="" />
+							<div style="width: 40px;" v-if="index === 0 && index2 === 0"></div>
+							<el-icon style="width: 40px;cursor: pointer;color: #F56C6C" v-else @click="delBranch(index, index2)">
+								<Delete />
+							</el-icon>
 						</div>
-					</template>
-				</el-cascader>
-				<el-select
-					v-model="item.tips"
-					placeholder="请选择"
-					style="width: 100px;margin-left: 5px;"
-				>
-					<el-option
-						v-for="item in options"
-						:key="item.value"
-						:label="item.label"
-						:value="item.value"
-					/>
-				</el-select>
-				<el-input v-model="item.value" style="width: 100px;margin-left: 5px" placeholder="" />
-				<el-icon style="width: 40px;cursor: pointer;color: #F56C6C" v-if="index > 0" @click="delBranch(index)">
-					<Delete />
-				</el-icon>
+					</div>
+					<div class="flex-center" style="margin-top: 10px;cursor: pointer" @click="addTips(index)">
+						<el-icon style="margin-right: 5px;">
+							<Plus />
+						</el-icon> 添加条件
+					</div>
+				</div>
+
 			</div>
 
 			<div class="flex-center-all item-box" style="cursor: pointer" @click="addBranch">
@@ -147,11 +160,18 @@ export default {
 		},
 		// 添加分支
 		addBranch() {
-			this.form.ifBranch.push({input: "", tips: "", value: ""})
+			this.form.ifBranch.push({type: 'elseif', data: [{input: "", tips: "", value: ""}]})
 		},
 		// 删除分支
-		delBranch(index) {
-			this.form.ifBranch.splice(index, 1)
+		delBranch(index, index2) {
+			this.form.ifBranch[index].data.splice(index2, 1)
+			if (this.form.ifBranch[index].data.length === 0) {
+				this.form.ifBranch.splice(index, 1)
+			}
+		},
+		// 添加条件
+		addTips(index) {
+			this.form.ifBranch[index].data.push({input: "", tips: "", value: ""})
 		}
 	}
 }
