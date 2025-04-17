@@ -142,6 +142,7 @@ export default {
 		// 添加分支
 		addBranch() {
 			this.form.ifBranch.push({type: 'elseif', data: [{input: [], tips: "", value: ""}], switch: 1})
+			this.$emit('portAdd', this.form)
 		},
 		// 删除分支
 		delBranch(index, index2) {
@@ -150,11 +151,12 @@ export default {
 				this.form.ifBranch.splice(index, 1)
 			}
 
-			this.$emit('dataChange', this.form)
+			this.$emit('portDel', this.form)
 		},
 		// 添加条件
 		addTips(index) {
 			this.form.ifBranch[index].data.push({input: [], tips: "", value: ""})
+			this.$emit('portUpdate', this.form)
 		}
 	}
 }

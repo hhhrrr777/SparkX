@@ -192,10 +192,35 @@ export default {
 				groups: {
 					leftPorts: {
 						...initConfig.leftPorts,
+					},
+					rightPorts: {
+						attrs: {
+							circle: {
+								style: {visibility: 'hidden'},
+								r: 4,          // 端口半径
+								magnet: true,  // 启用磁吸
+								stroke: 'var(--el-color-theme)', // 边框颜色
+								strokeWidth: 1, // 边框宽度
+								fill: '#fff'    // 填充颜色
+							}
+						},
+						position: {
+							name: 'absolute',
+						}
 					}
 				},
 				items: [
 					{ group: 'leftPorts', type: 'input' }, // 将端口分配到左侧分组
+					{
+						group: 'rightPorts',
+						args: { x: 230, y: 80 },
+						type: 'output'
+					},
+					/*{
+						group: 'rightPorts',
+						args: { x: 230, y: 130 },
+						type: 'output'
+					}*/
 				]
 			}
 		}

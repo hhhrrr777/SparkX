@@ -137,7 +137,7 @@ export default {
 				name: ""
 			})
 
-			this.$emit("dataChange", this.form)
+			this.$emit("portAdd", this.form)
 		},
 		// 删除分类
 		delCate(index) {

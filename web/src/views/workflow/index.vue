@@ -36,6 +36,8 @@
 							:key="randomKey"
 							:form-data="formData"
 							@port-del="portDelHandle"
+							@port-add="portAddHandle"
+							@port-update="portUpdate"
 							@data-change="dataChangeHandle"
 							:input-options="inputOptions"
 							:is="page"
@@ -291,15 +293,40 @@ export default {
 		openMenuHandle(visible) {
 			this.visible = visible
 		},
-		// 节点内部设置
-		dataChangeHandle(val) {
-			this.nowNode.updateData(val)
-
+		// 连接桩增加
+		portAddHandle(val) {
 			if (val.type === 'purpose') {
 				let len = val.cateList.length
 				let y = (len - 1) * 40 + 100
 				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }, type: 'output'})
+			} else if (val.type === 'switch') {
+				let totalNodes = -1
+				this.nowNode.store.data.data.ifBranch.forEach((node) => {
+					totalNodes += node.data.length
+				})
+
+				let y = 80 + totalNodes * 35
+				console.log('数量', totalNodes)
+				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }, type: 'output'})
+				//this.portUpdate(val)
 			}
+		},
+		// 连接桩更新
+		portUpdate(val) {
+
+			if (val.type === 'switch') {
+
+				// 更新else节点的位置
+				let totalNodes = 0 - this.nowNode.store.data.data.ifBranch.length
+				this.nowNode.store.data.data.ifBranch.forEach((node) => {
+					totalNodes += node.data.length
+				})
+
+				this.nowNode.port.ports[2].args.y = 130 + totalNodes * 35
+				this.nowNode.setPropByPath('ports/items', this.nowNode.port.ports)
+			}
+
+			console.log('xx 最新位置', this.nowNode)
 		},
 		// 连接桩删除
 		portDelHandle() {
@@ -307,6 +334,10 @@ export default {
 			if (ports.length) {
 				this.nowNode.removePortAt(ports.length - 1)
 			}
+		},
+		// 节点内部设置
+		dataChangeHandle(val) {
+			this.nowNode.updateData(val)
 		},
 		// 调试链接
 		debugHandle() {
