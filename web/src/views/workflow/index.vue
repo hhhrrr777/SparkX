@@ -304,17 +304,15 @@ export default {
 				let data = this.nowNode.store.data.data.ifBranch
 				let y = 0
 				let totalNodes = data[data.length - 2].data.length
-				console.log('ports', ports, 'ifBranch', data)
-				console.log('小节点数', totalNodes)
 				if (ports.length === 3) {
 					y = ports[1].args.y + totalNodes * 30 + 50
 				} else {
-					y = ports[ports.length - 1].args.y + totalNodes * 30 + 40 * (ports.length - 2)
-					console.log('上层y', ports[ports.length - 1].args.y)
+					y = ports[ports.length - 1].args.y + totalNodes * 30 + 20 * (ports.length - 2)
+					console.log('ports', ports, 'y', ports[ports.length - 1].args.y, 'ifBranch', data)
 				}
 
 				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }, type: 'output'})
-				this.portUpdate(val)
+				//this.portUpdate(val)
 			}
 		},
 		// 连接桩更新
@@ -323,13 +321,11 @@ export default {
 			if (val.type === 'switch') {
 
 				// 更新else节点的位置
-				let len = this.nowNode.store.data.data.ifBranch.length
-				let totalNodes = 0 - len
-				this.nowNode.store.data.data.ifBranch.forEach((node) => {
-					totalNodes += node.data.length
-				})
+				let data = this.nowNode.store.data.data.ifBranch
+				let totalNodes = data[data.length - 1].data.length
 
-				this.nowNode.port.ports[2].args.y = 130 + totalNodes * 35 + (len - 1) * 25
+				let ports = this.nowNode.port.ports
+				this.nowNode.port.ports[2].args.y = ports[ports.length - 1].args.y + totalNodes * 30 + 40
 				this.nowNode.setPropByPath('ports/items', this.nowNode.port.ports)
 			}
 		},

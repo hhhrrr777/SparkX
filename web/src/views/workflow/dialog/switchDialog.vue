@@ -165,7 +165,6 @@ export default {
 <style scoped>
 .opt-form {
 	width: 100%;
-	height: calc(100vh - 200px);
 	background: #f4f4f4;
 	border-radius: 5px;
 	padding: 20px;
