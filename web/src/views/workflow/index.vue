@@ -303,16 +303,16 @@ export default {
 				let ports = this.nowNode.port.ports
 				let data = this.nowNode.store.data.data.ifBranch
 				let y = 0
-				let totalNodes = data[data.length - 2].data.length
+				let totalNodes = data[data.length - 1].data.length
 				if (ports.length === 3) {
-					y = ports[1].args.y + totalNodes * 30 + 50
+					y = ports[1].args.y + totalNodes * 50 + 40
 				} else {
-					y = ports[ports.length - 1].args.y + totalNodes * 30 + 20 * (ports.length - 2)
+					y = ports[ports.length - 1].args.y + totalNodes * 50 + (ports.length - 2) * 20
 					console.log('ports', ports, 'y', ports[ports.length - 1].args.y, 'ifBranch', data)
 				}
 
 				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }, type: 'output'})
-				//this.portUpdate(val)
+				this.portUpdate(val)
 			}
 		},
 		// 连接桩更新
@@ -325,7 +325,7 @@ export default {
 				let totalNodes = data[data.length - 1].data.length
 
 				let ports = this.nowNode.port.ports
-				this.nowNode.port.ports[2].args.y = ports[ports.length - 1].args.y + totalNodes * 30 + 40
+				this.nowNode.port.ports[2].args.y = ports[ports.length - 1].args.y + totalNodes * 50 + (ports.length - 2) * 20
 				this.nowNode.setPropByPath('ports/items', this.nowNode.port.ports)
 			}
 		},
