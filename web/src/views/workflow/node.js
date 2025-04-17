@@ -216,11 +216,11 @@ export default {
 						args: { x: 230, y: 80 },
 						type: 'output'
 					},
-					/*{
+					{
 						group: 'rightPorts',
 						args: { x: 230, y: 130 },
 						type: 'output'
-					}*/
+					}
 				]
 			}
 		}

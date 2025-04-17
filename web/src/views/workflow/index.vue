@@ -305,10 +305,10 @@ export default {
 					totalNodes += node.data.length
 				})
 
-				let y = 80 + totalNodes * 35
-				console.log('数量', totalNodes)
+				let len = this.nowNode.store.data.data.ifBranch.length
+				let y = 100 + totalNodes * 40 + (len - 1) * 25
 				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }, type: 'output'})
-				//this.portUpdate(val)
+				this.portUpdate(val)
 			}
 		},
 		// 连接桩更新
@@ -317,16 +317,15 @@ export default {
 			if (val.type === 'switch') {
 
 				// 更新else节点的位置
-				let totalNodes = 0 - this.nowNode.store.data.data.ifBranch.length
+				let len = this.nowNode.store.data.data.ifBranch.length
+				let totalNodes = 0 - len
 				this.nowNode.store.data.data.ifBranch.forEach((node) => {
 					totalNodes += node.data.length
 				})
 
-				this.nowNode.port.ports[2].args.y = 130 + totalNodes * 35
+				this.nowNode.port.ports[2].args.y = 130 + totalNodes * 35 + (len - 1) * 25
 				this.nowNode.setPropByPath('ports/items', this.nowNode.port.ports)
 			}
-
-			console.log('xx 最新位置', this.nowNode)
 		},
 		// 连接桩删除
 		portDelHandle() {
