@@ -300,13 +300,19 @@ export default {
 				let y = (len - 1) * 40 + 100
 				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }, type: 'output'})
 			} else if (val.type === 'switch') {
-				let totalNodes = -1
-				this.nowNode.store.data.data.ifBranch.forEach((node) => {
-					totalNodes += node.data.length
-				})
+				let ports = this.nowNode.port.ports
+				let data = this.nowNode.store.data.data.ifBranch
+				let y = 0
+				let totalNodes = data[data.length - 2].data.length
+				console.log('ports', ports, 'ifBranch', data)
+				console.log('小节点数', totalNodes)
+				if (ports.length === 3) {
+					y = ports[1].args.y + totalNodes * 30 + 50
+				} else {
+					y = ports[ports.length - 1].args.y + totalNodes * 30 + 40 * (ports.length - 2)
+					console.log('上层y', ports[ports.length - 1].args.y)
+				}
 
-				let len = this.nowNode.store.data.data.ifBranch.length
-				let y = 100 + totalNodes * 40 + (len - 1) * 25
 				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }, type: 'output'})
 				this.portUpdate(val)
 			}
