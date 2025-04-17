@@ -28,8 +28,8 @@
 						v-model="item2.switch"
 						:active-value="1"
 						:inactive-value="2"
-						active-text="全部满足"
-						inactive-text="满足一个">
+						active-text="AND"
+						inactive-text="OR">
 					</el-switch>
 				</div>
 
@@ -145,7 +145,7 @@ export default {
 		},
 		// 添加分支
 		addBranch() {
-			this.form.ifBranch.push({type: 'elseif', data: [{input: "", tips: "", value: ""}]})
+			this.form.ifBranch.push({type: 'elseif', data: [{input: "", tips: "", value: ""}], switch: 1})
 		},
 		// 删除分支
 		delBranch(index, index2) {

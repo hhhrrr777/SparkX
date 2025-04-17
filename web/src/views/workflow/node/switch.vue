@@ -8,24 +8,25 @@
 			<span class="node-name" v-else>{{ name }}{{ no - 1 }}</span>
 		</div>
 
-		<div class="tips-text" style="flex-direction: column;display: flex">
-			<div>IF</div>
-			<div class="flex-center tips-item">
-				输入变量 大于 2
+		<div class="tips-text" style="flex-direction: column;display: flex" v-for="(item, index) in nodeInnerData.ifBranch" :key="index">
+			<div class="flex-center" style="justify-content: space-between">
+				<div v-if="index === 0">IF</div>
+				<div v-else>ELSEIF</div>
+				<div style="font-size: 12px" v-if="item.switch === 1">AND</div>
+				<div style="font-size: 12px" v-if="item.switch === 2">OR</div>
 			</div>
 			<div class="flex-center tips-item">
-				输入变量 大于 2
+				<span class="iconfont icon-bianliang" style="font-size: 20px !important;color: #6172f3"></span>
+				<div class="line1">开始 / 用户问题 大于 2</div>
+			</div>
+			<div class="flex-center tips-item">
+				<span class="iconfont icon-bianliang" style="font-size: 20px !important;color: #6172f3"></span>
+				<div class="line1">开始 / 用户问题 大于 2</div>
 			</div>
 		</div>
 
-		<div class="tips-text" style="flex-direction: column;display: flex">
-			<div>ELSEIF</div>
-			<div class="flex-center tips-item">
-				输入变量 大于 2
-			</div>
-			<div class="flex-center tips-item">
-				输入变量 大于 2
-			</div>
+		<div class="tips-text">
+			<div>ELSE</div>
 		</div>
 	</div>
 </template>

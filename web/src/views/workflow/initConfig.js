@@ -66,7 +66,7 @@ export default {
 		type: 'switch',
 		inputData: [],
 		ifBranch: [
-			{type: 'if', data:[{input: "", tips: "", value: ""}], 'switch': 1}
+			{type: 'if', data:[{input: "", tips: "", value: ""}], switch: 1}
 		],
 		elseBranch: "",
 		outData: [

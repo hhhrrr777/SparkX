@@ -97,7 +97,6 @@ export default {
 				dataset: 0,
 				switch: 0
 			},
-			hasLinkedPort: [], // 已经连接过的桩
 		}
 	},
 	methods: {
@@ -168,12 +167,6 @@ export default {
 						if (sourcePortType === targetPortType) {
 							return false;
 						}
-
-						// 一个output桩点不允许连出2条线
-						if (that.hasLinkedPort.indexOf(arg.sourcePort) !== -1) {
-							return false;
-						}
-						that.hasLinkedPort.push(arg.sourcePort)
 
 						return true
 					}
@@ -256,17 +249,6 @@ export default {
 			graph.on('edge:mouseleave', ({ edge }) => {
 				edge.removeTools()
 				edge.attr('line', { stroke: '#d0d5dc', strokeWidth: 2 })
-			})
-
-			graph.on('edge:removed', ({ edge, options }) => {
-				if (!options.toolId) {
-					return false
-				}
-
-				let index = this.hasLinkedPort.indexOf(edge.store.data.source.port)
-				if (index !== -1) {
-					this.hasLinkedPort.splice(index, 1)
-				}
 			})
 
 			function setVisible(visibility) {
