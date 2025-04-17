@@ -15,13 +15,9 @@
 				<div style="font-size: 12px" v-if="item.switch === 1">AND</div>
 				<div style="font-size: 12px" v-if="item.switch === 2">OR</div>
 			</div>
-			<div class="flex-center tips-item">
+			<div class="flex-center tips-item" v-for="(item2, index2) in item.data" :key="index2">
 				<span class="iconfont icon-bianliang" style="font-size: 20px !important;color: #6172f3"></span>
-				<div class="line1">开始 / 用户问题 大于 2</div>
-			</div>
-			<div class="flex-center tips-item">
-				<span class="iconfont icon-bianliang" style="font-size: 20px !important;color: #6172f3"></span>
-				<div class="line1">开始 / 用户问题 大于 2</div>
+				<div class="line1">{{ item2.input[1] }} {{ optionsMap.get(item2.tips) }} {{ item2.value }}</div>
 			</div>
 		</div>
 

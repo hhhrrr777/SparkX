@@ -39,7 +39,7 @@
 							<el-cascader
 								v-model="item3.input"
 								:options="inputOptions"
-								@change="inputChange"
+								@change="$emit('dataChange', form)"
 								style="width: 150px"
 								clearable>
 								<template #default="{ node, data }">
@@ -53,6 +53,7 @@
 								v-model="item3.tips"
 								placeholder="请选择"
 								style="width: 130px;margin-left: 5px;"
+								@change="$emit('dataChange', form)"
 								clearable
 							>
 								<el-option
@@ -62,7 +63,7 @@
 									:value="item.type"
 								/>
 							</el-select>
-							<el-input v-model="item3.value" style="width: 100px;margin-left: 5px" placeholder="" v-if="item3.tips > 2"/>
+							<el-input v-model="item3.value" style="width: 100px;margin-left: 5px" placeholder="" v-if="item3.tips > 2" @blur="$emit('dataChange', form)"/>
 							<div style="width: 40px;" v-if="index === 0 && index2 === 0"></div>
 							<el-icon style="width: 40px;cursor: pointer;color: #F56C6C" v-else @click="delBranch(index, index2)">
 								<Delete />
@@ -138,14 +139,9 @@ export default {
 		this.inputData = this.formData.inputData
 	},
 	methods: {
-		// 输入选择
-		inputChange(val) {
-			this.form.inputData = val
-			this.$emit("dataChange", this.form)
-		},
 		// 添加分支
 		addBranch() {
-			this.form.ifBranch.push({type: 'elseif', data: [{input: "", tips: "", value: ""}], switch: 1})
+			this.form.ifBranch.push({type: 'elseif', data: [{input: [], tips: "", value: ""}], switch: 1})
 		},
 		// 删除分支
 		delBranch(index, index2) {
@@ -153,10 +149,12 @@ export default {
 			if (this.form.ifBranch[index].data.length === 0) {
 				this.form.ifBranch.splice(index, 1)
 			}
+
+			this.$emit('dataChange', this.form)
 		},
 		// 添加条件
 		addTips(index) {
-			this.form.ifBranch[index].data.push({input: "", tips: "", value: ""})
+			this.form.ifBranch[index].data.push({input: [], tips: "", value: ""})
 		}
 	}
 }
