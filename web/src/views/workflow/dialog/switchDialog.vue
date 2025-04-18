@@ -156,7 +156,7 @@ export default {
 		// 添加条件
 		addTips(index) {
 			this.form.ifBranch[index].data.push({input: [], tips: "", value: ""})
-			this.$emit('portUpdate', this.form)
+			this.$emit('portUpdate', this.form, index)
 		}
 	}
 }

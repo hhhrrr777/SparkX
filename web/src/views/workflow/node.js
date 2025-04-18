@@ -213,12 +213,12 @@ export default {
 					{ group: 'leftPorts', type: 'input' }, // 将端口分配到左侧分组
 					{
 						group: 'rightPorts',
-						args: { x: 230, y: 80 },
+						args: { x: 230, y: 130 },
 						type: 'output'
 					},
 					{
 						group: 'rightPorts',
-						args: { x: 230, y: 130 },
+						args: { x: 230, y: 80 },
 						type: 'output'
 					}
 				]

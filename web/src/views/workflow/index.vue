@@ -302,32 +302,39 @@ export default {
 			} else if (val.type === 'switch') {
 				let ports = this.nowNode.port.ports
 				let data = this.nowNode.store.data.data.ifBranch
-				let y = 0
-				let totalNodes = data[data.length - 1].data.length
-				if (ports.length === 3) {
-					y = ports[1].args.y + totalNodes * 50 + 40
-				} else {
-					y = ports[ports.length - 1].args.y + totalNodes * 50 + (ports.length - 2) * 20
-					console.log('ports', ports, 'y', ports[ports.length - 1].args.y, 'ifBranch', data)
-				}
+				let totalNodes = data[data.length - 2].data.length
+
+				let y = ports[ports.length - 1].args.y + (totalNodes - 1) * 35 + 70
 
 				this.nowNode.addPort({ group: 'rightPorts', args: { x: 230, y: y }, type: 'output'})
-				this.portUpdate(val)
+				this.endPortUpdate()
 			}
 		},
 		// 连接桩更新
-		portUpdate(val) {
-
+		portUpdate(val, index) {
 			if (val.type === 'switch') {
 
-				// 更新else节点的位置
-				let data = this.nowNode.store.data.data.ifBranch
-				let totalNodes = data[data.length - 1].data.length
-
 				let ports = this.nowNode.port.ports
-				this.nowNode.port.ports[2].args.y = ports[ports.length - 1].args.y + totalNodes * 50 + (ports.length - 2) * 20
-				this.nowNode.setPropByPath('ports/items', this.nowNode.port.ports)
+				let data = this.nowNode.store.data.data.ifBranch
+				if (ports.length > 3) {
+					for (let i = index + 3; i < ports.length; i++) {
+						let totalNodes = data[i - 3].data.length
+						this.nowNode.port.ports[i].args.y = ports[i - 1].args.y + (totalNodes - 1) * 35 + 70
+					}
+
+					this.nowNode.setPropByPath('ports/items', this.nowNode.port.ports)
+					this.endPortUpdate()
+				}
 			}
+		},
+		// 更新最后一个节点的位置
+		endPortUpdate() {
+			let data = this.nowNode.store.data.data.ifBranch
+			let totalNodes = data[data.length - 1].data.length
+			let ports = this.nowNode.port.ports
+			this.nowNode.port.ports[1].args.y = ports[ports.length - 1].args.y + (totalNodes - 1) * 35 + 60
+
+			this.nowNode.setPropByPath('ports/items', this.nowNode.port.ports)
 		},
 		// 连接桩删除
 		portDelHandle() {
