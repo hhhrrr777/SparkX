@@ -173,6 +173,26 @@ export default {
 			}
 		}
 	},
+	// agent节点
+	agentNode: (x, y, no) => {
+		return {
+			x: x,
+			y: y,
+			shape: 'agent-node',
+			width: 230,
+			height: 40,
+			data: {
+				no: no,
+				pages: 'agent',
+				checked: false,
+				portsVisible: false,
+				...initConfig.agentData,
+			},
+			ports: {
+				...initConfig.ports
+			}
+		}
+	},
 	// 条件分支
 	switchNode: (x, y, no) => {
 		return {
@@ -234,6 +254,7 @@ import Llm from './node/llm.vue'
 import Dataset from './node/dataset.vue'
 import Answer from './node/answer.vue'
 import Switch from './node/switch.vue'
+import Agent from './node/agent.vue'
 
 // 制作组件节点
 register({
@@ -283,4 +304,11 @@ register({
 	width: 100,
 	height: 100,
 	component: Switch,
+})
+
+register({
+	shape: 'agent-node',
+	width: 100,
+	height: 100,
+	component: Agent,
 })

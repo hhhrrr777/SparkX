@@ -73,6 +73,17 @@ export default {
 			{field: 'sys.branchName', name: '分支名称'},
 		]
 	},
+	// agent节点的初始数据
+	agentData: {
+		type: 'agent',
+		inputData: [],
+		agentId: "",
+		agentName: "",
+		agentLogo: "",
+		outData: [
+			{field: 'sys.agentContent', name: 'agent输出数据'},
+		]
+	},
 	// 基础桩点
 	ports: {
 		groups: {

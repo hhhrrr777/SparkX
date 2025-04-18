@@ -12,7 +12,7 @@
 			</div>
 			<div class="menu-title">LLM</div>
 		</div>
-		<div class="menu-item flex-center">
+		<div class="menu-item flex-center" @click="$emit('addNode', 'agent')">
 			<div class="menu-icon" style="background: #17b26a;color: #fff;padding: 2px;border-radius: 5px;">
 				<span class="iconfont icon-a-agent1"></span>
 			</div>

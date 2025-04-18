@@ -100,6 +100,20 @@ export default {
 					color: '#06ae4d',
 					children: formatData(data.outData)
 				})
+			} else if (data.pages === 'agent') {
+
+				let label = 'Agent'
+				if (data.no > 1) {
+					label += parseInt(data.no) - 1
+				}
+
+				nodeInputData.push({
+					value: nowNode.id,
+					label: label,
+					icon: 'iconfont icon-a-agent1',
+					color: '#17b26a',
+					children: formatData(data.outData)
+				})
 			}
 		})
 

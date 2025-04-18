@@ -88,6 +88,7 @@ export default {
 				datasetDialog: defineAsyncComponent(() => import('./dialog/datasetDialog.vue')),
 				answerDialog: defineAsyncComponent(() => import('./dialog/answerDialog.vue')),
 				switchDialog: defineAsyncComponent(() => import('./dialog/switchDialog.vue')),
+				agentDialog: defineAsyncComponent(() => import('./dialog/agentDialog.vue')),
 			},
 			formData: {}, // 配置数据
 			inputOptions: [], // 入参
@@ -132,7 +133,6 @@ export default {
 				connecting: {
 					connector: 'smooth',
 					snap: true, // 自动吸附
-					allowMulti: false, // 不允许想同的期间和中间直接连接多条线
 					allowBlank: false, // 是否允许连接到画布空白位置的点
 					allowLoop: false, // 是否允许创建循环连线，即边的起始节点和终止节点为同一节点
 					allowNode: false, // 是否允许边链接到节点（非节点上的链接桩）
@@ -209,6 +209,8 @@ export default {
 					this.page = this.pages.answerDialog
 				} else if (this.formData.pages === 'switch') {
 					this.page = this.pages.switchDialog
+				} else if (this.formData.pages === 'agent') {
+					this.page = this.pages.agentDialog
 				}
 
 				if (this.formData.pages !== 'start'
@@ -382,6 +384,10 @@ export default {
 				this.nodeNoData.switch += 1
 				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.switchNode(getRandomInt(300, 600),
 					getRandomInt(300, 600), this.nodeNoData.switch))))
+			} else if (type === 'agent') {
+				this.nodeNoData.agent += 1
+				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.agentNode(getRandomInt(300, 600),
+					getRandomInt(300, 600), this.nodeNoData.agent))))
 			}
 		}
 	}
