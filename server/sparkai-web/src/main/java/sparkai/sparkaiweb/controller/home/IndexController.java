@@ -10,22 +10,27 @@
 package sparkai.sparkaiweb.controller.home;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.core.AjaxResult;
-import sparkai.service.service.interfaces.system.ISystemUserService;
+import sparkai.service.service.interfaces.home.IHomeService;
 
 @RestController
-@RequestMapping("api/application")
+@RequestMapping("/api/index")
 public class IndexController {
 
     @Autowired
-    ISystemUserService iUserService;
+    IHomeService iHomeService;
 
-    @GetMapping("/index")
-    public AjaxResult<Object> index() {
+    /**
+     * 上传图片
+     */
+    @PostMapping("/upload")
+    public AjaxResult<Object> image(@RequestParam("file") MultipartFile file) {
 
-        return AjaxResult.success();
+        return AjaxResult.success(iHomeService.uploadImage(file));
     }
 }

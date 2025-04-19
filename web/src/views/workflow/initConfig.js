@@ -81,7 +81,7 @@ export default {
 		agentName: "",
 		agentLogo: "",
 		outData: [
-			{field: 'sys.agentContent', name: 'agent输出数据'},
+			{field: 'sys.agentContent', name: 'agent输出内容'},
 		]
 	},
 	// 基础桩点

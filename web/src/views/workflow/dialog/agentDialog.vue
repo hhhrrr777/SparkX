@@ -18,6 +18,25 @@
 		</div>
 
 		<div class="set-content-box">
+			<div>输入参数</div>
+			<div class="flex-center" style="margin-top: 10px;">
+				<div>查询内容</div>
+				<el-cascader
+					v-model="inputData"
+					:options="inputOptions"
+					@change="inputChange"
+					style="margin-left: 20px;width: calc(100% - 80px)" clearable>
+					<template #default="{ node, data }">
+						<div class="flex-center">
+							<span :class="data.icon" style="font-size: 18px !important;" :style="{color: data.color}"></span>
+							<span style="margin-left: 5px">{{ data.label }}</span>
+						</div>
+					</template>
+				</el-cascader>
+			</div>
+		</div>
+
+		<div class="set-content-box">
 			<div>输出参数</div>
 			<div class="param-data">
 				<div class="flex-center data-item" v-for="(item, index) in form.outData" :key="index">
@@ -31,16 +50,38 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="set-content-box">
+			<div>Agent</div>
+			<div class="param-data">
+				<div class="flex-center" v-if="form.agentId !== ''">
+					<div class="flex-center dataset-item">
+						<div class="menu-icon" style="background: #17b26a;color: #fff;padding: 3px;border-radius: 5px;">
+							<span class="iconfont icon-a-agent1" style="font-size: 18px !important;"></span>
+						</div>
+						<span class="node-name">{{ form.agentName }}</span>
+					</div>
+				</div>
+				<div class="no-param flex-center-all" style="background: #f4f4f4;margin-right: 10px;">
+					<div class="flex-center">
+						<el-icon style="margin-top: 3px">
+							<Plus />
+						</el-icon>
+						<div style="margin-left: 5px">选择Agent</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </template>
 
 <script>
 
-import {MoreFilled} from "@element-plus/icons-vue";
+import {MoreFilled, Plus} from "@element-plus/icons-vue";
 
 export default {
-	components: {MoreFilled},
+	components: {Plus, MoreFilled},
 	props: {
 		formData: {
 			type: Object,

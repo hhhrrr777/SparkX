@@ -82,13 +82,13 @@ export default {
 			page: '',
 			// 设置页面
 			pages: {
-				startDialog: defineAsyncComponent(() => import('./dialog/startDialog.vue')),
-				purposeDialog: defineAsyncComponent(() => import('./dialog/purposeDialog.vue')),
-				llmDialog: defineAsyncComponent(() => import('./dialog/llmDialog.vue')),
-				datasetDialog: defineAsyncComponent(() => import('./dialog/datasetDialog.vue')),
-				answerDialog: defineAsyncComponent(() => import('./dialog/answerDialog.vue')),
-				switchDialog: defineAsyncComponent(() => import('./dialog/switchDialog.vue')),
-				agentDialog: defineAsyncComponent(() => import('./dialog/agentDialog.vue')),
+				start: defineAsyncComponent(() => import('./dialog/startDialog.vue')),
+				purpose: defineAsyncComponent(() => import('./dialog/purposeDialog.vue')),
+				llm: defineAsyncComponent(() => import('./dialog/llmDialog.vue')),
+				dataset: defineAsyncComponent(() => import('./dialog/datasetDialog.vue')),
+				answer: defineAsyncComponent(() => import('./dialog/answerDialog.vue')),
+				switch: defineAsyncComponent(() => import('./dialog/switchDialog.vue')),
+				agent: defineAsyncComponent(() => import('./dialog/agentDialog.vue')),
 			},
 			formData: {}, // 配置数据
 			inputOptions: [], // 入参
@@ -197,24 +197,9 @@ export default {
 				node.updateData({checked: true})
 
 				this.formData = node.getData()
-				if (this.formData.pages === 'start') {
-					this.page = this.pages.startDialog
-				} else if (this.formData.pages === 'purpose') {
-					this.page = this.pages.purposeDialog
-				} else if (this.formData.pages === 'llm') {
-					this.page = this.pages.llmDialog
-				} else if (this.formData.pages === 'dataset') {
-					this.page = this.pages.datasetDialog
-				} else if (this.formData.pages === 'answer') {
-					this.page = this.pages.answerDialog
-				} else if (this.formData.pages === 'switch') {
-					this.page = this.pages.switchDialog
-				} else if (this.formData.pages === 'agent') {
-					this.page = this.pages.agentDialog
-				}
-
-				if (this.formData.pages !== 'start'
-					&& this.formData.pages !== 'end') {
+				let nowPage = this.formData.pages
+				this.page = this.pages[nowPage]
+				if (['start', 'end'].indexOf(nowPage) === -1) {
 					// 计算节点前的数据
 					this.getNodeInputData()
 				}
@@ -359,36 +344,19 @@ export default {
 		},
 		// 添加节点
 		addNodeHandle(type) {
-
 			function getRandomInt(min, max) {
 				return Math.floor(Math.random() * (max - min + 1)) + min;
 			}
 
-			if (type === 'purpose') {
-				this.nodeNoData.purpose += 1
-				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.purposeNode(getRandomInt(300, 600),
-					getRandomInt(300, 600), this.nodeNoData.purpose))))
-			} else if (type === 'llm') {
-				this.nodeNoData.llm += 1
-				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.llmNode(getRandomInt(300, 600),
-					getRandomInt(300, 600), this.nodeNoData.llm))))
-			} else if (type === 'dataset') {
-				this.nodeNoData.dataset += 1
-				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.datasetNode(getRandomInt(300, 600),
-					getRandomInt(300, 600), this.nodeNoData.dataset))))
-			} else if (type === 'answer') {
-				this.nodeNoData.answer += 1
-				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.answerNode(getRandomInt(300, 600),
-					getRandomInt(300, 600), this.nodeNoData.answer))))
-			} else if (type === 'switch') {
-				this.nodeNoData.switch += 1
-				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.switchNode(getRandomInt(300, 600),
-					getRandomInt(300, 600), this.nodeNoData.switch))))
-			} else if (type === 'agent') {
-				this.nodeNoData.agent += 1
-				this.graph.addNode(JSON.parse(JSON.stringify(defaultNodeConfig.agentNode(getRandomInt(300, 600),
-					getRandomInt(300, 600), this.nodeNoData.agent))))
-			}
+			// 更新节点计数并添加节点
+			this.nodeNoData[type] += 1
+			this.graph.addNode(JSON.parse(JSON.stringify(
+				defaultNodeConfig[type + 'Node'](
+					getRandomInt(300, 600),
+					getRandomInt(300, 600),
+					this.nodeNoData[type]
+				)
+			)))
 		}
 	}
 }
