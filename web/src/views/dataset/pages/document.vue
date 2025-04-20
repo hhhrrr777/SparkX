@@ -379,9 +379,16 @@ export default {
 				}
 			}).catch(() => {});
 		},
-		handleSuccess() {
-			this.datasetVisible = false
-			this.getList()
+		async handleSuccess(data) {
+			let res = await this.$API.dataset.transfer.post(data)
+
+			if (res.code === 0) {
+				this.$message.success(res.msg)
+				this.datasetVisible = false
+				this.getList()
+			} else {
+				this.$message.error(res.msg)
+			}
 		}
 	}
 }

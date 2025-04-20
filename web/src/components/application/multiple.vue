@@ -1,11 +1,10 @@
 <template>
-	<span class="notice">需确保选中的知识库采用相同的 Embedding 模型</span>
 	<div class="dataset-list">
-		<el-checkbox-group v-model="selectedDatasetIds" class="too-radio-list">
-			<el-checkbox :label="item.datasetId" border class="radio-item" v-for="item in datasetList" :key="item.datasetId">
+		<el-checkbox-group v-model="selectedAppIds" class="too-radio-list">
+			<el-checkbox :label="item.appId" border class="radio-item" v-for="item in appList" :key="item.appId">
 				<div style="display: flex;align-items: center;">
-					<el-icon size="26" color="var(--el-color-theme)"><Management /></el-icon>
-					<div class="line1 name">{{ item.title }}</div>
+					<img :src="item.icon" style="width: 45px;height: 40px;" />
+					<div class="line1 name">{{ item.name }}</div>
 				</div>
 			</el-checkbox>
 		</el-checkbox-group>
@@ -17,43 +16,40 @@
 </template>
 
 <script>
-import {Management} from "@element-plus/icons-vue";
-
 export default {
-	components: {Management},
 	props: {
-		datasetIds: {
+		applicationIds: {
 			type: Array,
 			default: []
 		}
 	},
 	data() {
 		return {
-			datasetList: [],
-			selectedDatasetIds: [],
+			appList: [],
+			selectedAppIds: [],
 		}
 	},
 	mounted() {
-		this.selectedDatasetIds = this.datasetIds;
-		this.getDatasetList();
+		this.selectedAppIds = this.applicationIds;
+		this.getAppList();
 	},
 	methods: {
-		// 获取知识库列表
-		async getDatasetList() {
-			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: ''})
-			this.datasetList = res.data.data
+		// 获取应用列表
+		async getAppList() {
+			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: ''})
+			this.appList = res.data.data
 		},
 		// 保存
 		async optSubmit() {
-			let selectedDataset = []
-			this.datasetList.forEach(item => {
+			let selectedApplication = []
+			this.appList.forEach(item => {
 
-				if (this.selectedDatasetIds.indexOf(item.datasetId) !== -1) {
-					selectedDataset.push(item)
+				if (this.selectedAppIds.indexOf(item.appId) !== -1) {
+					selectedApplication.push(item)
 				}
 			})
 
-			this.$emit('success', selectedDataset)
+			this.$emit('success', selectedApplication)
 		}
 	}
 }

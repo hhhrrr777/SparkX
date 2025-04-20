@@ -8,7 +8,35 @@
 			<el-col :span="10" class="setting-div-setting">
 				<el-form ref="form" :model="form" :rules="rules" label-position="top" label-width="80px" style="padding: 10px 20px">
 					<el-form-item label="应用名称" prop="name">
-						<el-input v-model="form.name" maxlength="25" show-word-limit></el-input>
+						<div class="flex-center" style="width: 100%">
+							<el-input v-model="form.name" maxlength="25" show-word-limit style="width: calc(100% - 80px)"></el-input>
+							<ul class="img-list" style="margin-left: 10px">
+								<li v-if="form.icon">
+									<img :src="form.icon" alt="图片" style="width: 58px;height: 58px">
+									<div class="img-tools" @click="delImg">
+										<el-icon color="#fff">
+											<Delete />
+										</el-icon>
+									</div>
+								</li>
+								<li v-else>
+									<el-upload
+										class="upload-demo"
+										:action="uploadImgUrl"
+										:headers="header"
+										:on-success="handleUploadSuccess"
+										:show-file-list="false"
+										:limit="1"
+									>
+										<div class="addImg">
+											<el-icon>
+												<Plus />
+											</el-icon>
+										</div>
+									</el-upload>
+								</li>
+							</ul>
+						</div>
 					</el-form-item>
 					<el-form-item label="应用描述" prop="description">
 						<el-input type="textarea" v-model="form.description" rows="3" maxlength="255" show-word-limit></el-input>
@@ -229,14 +257,17 @@
 
 <script>
 import chatBox from '@/components/chatContent/index.vue'
-import {Plus, Setting, Document, Delete, InfoFilled} from "@element-plus/icons-vue";
-import datasetDialog from "@/components/dataset/multiple.vue";
-import saveDialog from "@/views/index/dialog/params.vue";
+import {Plus, Setting, Document, Delete, InfoFilled} from "@element-plus/icons-vue"
+import datasetDialog from "@/components/dataset/multiple.vue"
+import saveDialog from "@/views/index/dialog/params.vue"
+import config from "@/config"
+import tool from "@/utils/tool"
 
 export default {
 	components: {saveDialog, datasetDialog, InfoFilled, Document, Plus, chatBox, Setting, Delete},
 	data() {
 		return {
+			domain: config.API_URL.replace("/api", ""),
 			form: {},
 			rules: {
 				name: [
@@ -260,7 +291,12 @@ export default {
 			chatBoxKey: Math.random(),
 			datasetVisible: false,
 			paramsVisible: false,
-			modelId: []
+			modelId: [],
+			uploadImgUrl: config.API_URL + "/index/upload",
+			header: {
+				Authorization:
+					config.TOKEN_PREFIX + tool.cookie.get("TOKEN"),
+			},
 		}
 	},
 	mounted() {
@@ -273,6 +309,7 @@ export default {
 		async getInfo() {
 			let res = await this.$API.application.info.get({appId: this.appId})
 			this.form = res.data
+			this.form.icon = this.domain + this.form.icon
 			if (res.data.prologue !== '') {
 				this.welcomeList = this.form.prologue = JSON.parse(res.data.prologue)
 			}
@@ -390,6 +427,18 @@ export default {
 					this.form.maxReplyToken = item.value
 				}
 			})
+		},
+		// 删除logo
+		delImg() {
+			this.form.icon = ''
+		},
+		// 上传文件
+		handleUploadSuccess(res) {
+			if (res.code !== 0) {
+				this.$message.error(res.msg)
+				return
+			}
+			this.form.icon = this.domain + res.msg
 		}
 	}
 }
@@ -469,5 +518,34 @@ export default {
 	line-height: 40px;
 	color: #646a73;
 	font-size: 13px;
+}
+.img-list li:first-child {
+	margin-left: 0;
+}
+.img-list li {
+	width: 58px;
+	height: 58px;
+	float: left;
+	margin-left: 5px;
+	cursor: pointer;
+	position: relative;
+}
+.addImg {
+	height: 56px;
+	width: 56px;
+	line-height: 56px;
+	text-align: center;
+	border: 1px dashed rgb(221, 221, 221);
+}
+ul li {list-style: none}
+.img-list .img-tools {
+	position: absolute;
+	width: 58px;
+	height: 15px;
+	line-height: 15px;
+	text-align: center;
+	top: 43px;
+	background: rgba(0, 0, 0, 0.6);
+	cursor: pointer;
 }
 </style>

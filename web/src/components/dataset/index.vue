@@ -11,7 +11,7 @@
 	</div>
 	<div class="dialog-footer">
 		<el-button @click="$emit('doClose')">取 消</el-button>
-		<el-button type="primary" @click="optSubmit()" :loading="loading">确定迁移</el-button>
+		<el-button type="primary" @click="optSubmit()" :loading="loading">确认选择</el-button>
 	</div>
 </template>
 
@@ -48,18 +48,11 @@ export default {
 		},
 		// 保存
 		async optSubmit() {
-			let res = await this.$API.dataset.transfer.post({
+			this.$emit('success', {
 				datasetId: this.datasetId,
 				documentIds: this.documentIds,
 				oldDatasetId: this.diffDatasetId
 			})
-
-			if (res.code === 0) {
-				this.$message.success(res.msg)
-				this.$emit('success')
-			} else {
-				this.$message.error(res.msg)
-			}
 		}
 	}
 }

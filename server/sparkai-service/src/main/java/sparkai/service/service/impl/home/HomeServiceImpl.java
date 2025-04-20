@@ -49,7 +49,7 @@ public class HomeServiceImpl implements IHomeService {
 
         // 校验文件后缀
         if (!ALLOWED_EXTENSIONS.contains(fileExtension)) {
-            throw new BusinessException("不支持的文件类型: " + fileExtension);
+            throw new BusinessException("只支持 png,jpg,jpeg,gif,webp");
         }
 
         try {
@@ -64,7 +64,7 @@ public class HomeServiceImpl implements IHomeService {
             Path targetLocation = imagePath.resolve(newFileName);
             Files.copy(file.getInputStream(), targetLocation);
 
-            return path + newFileName;
+            return path.substring(1) + newFileName;
         } catch (IOException ex) {
             throw new BusinessException("上传失败" + ex.getMessage());
         }

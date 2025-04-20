@@ -150,6 +150,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         ApplicationEntity entity = new ApplicationEntity();
         entity.setAppId(IdUtil.randomUUID());
         entity.setName(validate.getName());
+        entity.setIcon("/icons/default_logo.png");
         entity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
         entity.setDescription(validate.getDescription());
         entity.setType(validate.getType());

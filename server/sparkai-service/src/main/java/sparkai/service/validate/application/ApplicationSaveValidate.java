@@ -55,6 +55,7 @@ public class ApplicationSaveValidate implements Serializable {
     /**
     * 应用的头像
     */
+    @NotEmpty(message = "应用的logo不能为空")
     private String icon;
 
     /**

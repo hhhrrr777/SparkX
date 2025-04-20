@@ -35,7 +35,9 @@
 					<el-card style="height: 170px;padding: 10px" shadow="never">
 						<div class="title-box" @click="goDetail(item.appId)">
 							<div class="title-left">
-								<div class="title-label">{{ item.name.substring(0, 1) }}</div>
+								<div class="title-label">
+									<img :src="domain + item.icon" style="width: 45px;height: 40px"/>
+								</div>
 								<div class="title-info">
 									<div class="line1 knowledge-title">{{ item.name }}</div>
 									<div class="author">创建者: {{ item.author }}</div>
@@ -93,6 +95,7 @@
 import saveDialog from './save.vue';
 import Pages from "@/components/pages/index.vue";
 import {Delete, Plus, Setting, VideoPlay} from "@element-plus/icons-vue";
+import config from "@/config"
 
 export default{
 	components: {
@@ -115,7 +118,8 @@ export default{
 			},
 			applicationList: [],
 			dialogVisible: false,
-			mode: 'add'
+			mode: 'add',
+			domain: config.API_URL.replace("/api", ""),
 		}
 	},
 	mounted() {
@@ -233,14 +237,9 @@ export default{
 	font-size: 12px;
 }
 .title-label {
-	background: var(--el-color-theme);
-	color: #fff;
 	border-radius: 10px;
-	height: 40px;
+	height: 45px;
 	width: 40px;
-	line-height: 40px;
-	text-align: center;
-	font-weight: bold;
 }
 .add-store-name {
 	font-size: 16px;margin-left: 10px
@@ -282,5 +281,8 @@ export default{
 .tool-box-left {
 	display: flex;
 	align-items: center;
+}
+.title-info {
+	margin-left: 10px;
 }
 </style>

@@ -30,7 +30,10 @@
 </template>
 
 <script>
+import {Delete, Plus} from "@element-plus/icons-vue";
+
 export default {
+	components: {Plus, Delete},
 	emits: ['success', 'closed'],
 	data() {
 		return {

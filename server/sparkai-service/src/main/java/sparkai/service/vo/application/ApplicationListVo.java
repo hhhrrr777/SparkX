@@ -44,4 +44,9 @@ public class ApplicationListVo implements Serializable {
      * 创建人
      */
     private String author;
+
+    /**
+     * 图标
+     */
+    private String icon;
 }
