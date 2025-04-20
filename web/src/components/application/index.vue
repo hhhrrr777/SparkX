@@ -3,7 +3,7 @@
 		<el-radio-group v-model="appId" class="too-radio-list">
 			<el-radio :label="item.appId" border class="radio-item" v-for="item in appList" :key="item.appId">
 				<div style="display: flex;align-items: center;">
-					<img :src="item.icon" style="width: 45px;height: 40px;" />
+					<img :src="domain + item.icon" style="width: 45px;height: 40px;" />
 					<div class="line1 name">{{ item.name }}</div>
 				</div>
 			</el-radio>
@@ -16,12 +16,15 @@
 </template>
 
 <script>
+import config from "@/config"
+
 export default {
 	data() {
 		return {
 			appId: "",
 			appList: [],
-			loading: false
+			loading: false,
+			domain: config.API_URL.replace("/api", ""),
 		}
 	},
 	mounted() {
@@ -31,7 +34,7 @@ export default {
 		// 获取应用列表
 		async getAppList() {
 			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: ''})
-			this.appList = res.data
+			this.appList = res.data.data
 		},
 		// 保存
 		optSubmit() {

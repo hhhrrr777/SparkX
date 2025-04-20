@@ -63,7 +63,7 @@
 					</div>
 				</div>
 				<div class="no-param flex-center-all" style="background: #f4f4f4;margin-right: 10px;">
-					<div class="flex-center">
+					<div class="flex-center" @click="addAgent">
 						<el-icon style="margin-top: 3px">
 							<Plus />
 						</el-icon>
@@ -72,16 +72,27 @@
 				</div>
 			</div>
 		</div>
+
+		<el-dialog
+			title="选择Agent"
+			v-model="dialogVisible"
+			width="800px"
+			destroy-on-close
+			:close-on-click-modal="false"
+			class="select-dataset">
+			<agent-dialog @success="handleSuccess" @doClose="dialogVisible=false"></agent-dialog>
+		</el-dialog>
 	</div>
 
 </template>
 
 <script>
 
-import {MoreFilled, Plus} from "@element-plus/icons-vue";
+import {MoreFilled, Plus} from "@element-plus/icons-vue"
+import agentDialog from "@/components/application/index.vue"
 
 export default {
-	components: {Plus, MoreFilled},
+	components: {agentDialog, Plus, MoreFilled},
 	props: {
 		formData: {
 			type: Object,
@@ -108,6 +119,14 @@ export default {
 		inputChange(val) {
 			this.form.inputData = val
 			this.$emit("dataChange", this.form)
+		},
+		// 添加agent
+		addAgent() {
+			this.dialogVisible = true
+		},
+		// 选择了应用
+		handleSuccess() {
+
 		}
 	}
 }
