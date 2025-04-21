@@ -61,6 +61,15 @@
 										<el-icon size="16" @click="goChat(item.appId)"><VideoPlay /></el-icon>
 									</el-tooltip>
 								</div>
+								<el-divider direction="vertical" v-if="item.type === 2"></el-divider>
+								<div class="box-item" v-if="item.type === 2">
+									<el-tooltip
+										effect="dark"
+										content="工作流"
+									>
+										<el-icon size="16" @click="goFlow(item.appId)"><Share /></el-icon>
+									</el-tooltip>
+								</div>
 								<el-divider direction="vertical"></el-divider>
 								<div class="box-item">
 									<el-tooltip
@@ -94,11 +103,12 @@
 <script>
 import saveDialog from './save.vue';
 import Pages from "@/components/pages/index.vue";
-import {Delete, Plus, Setting, VideoPlay} from "@element-plus/icons-vue";
+import {Delete, Plus, Setting, Share, VideoPlay} from "@element-plus/icons-vue";
 import config from "@/config"
 
 export default{
 	components: {
+		Share,
 		VideoPlay,
 		Delete,
 		Setting,
@@ -161,6 +171,10 @@ export default{
 		// 前往聊天
 		goChat(appId) {
 			this.$router.push('/chat/' + appId)
+		},
+		// 工作流
+		goFlow(appId) {
+			this.$router.push('/workflow/index?appId=' + appId)
 		},
 		// 删除应用
 		async deleteApp(appId) {

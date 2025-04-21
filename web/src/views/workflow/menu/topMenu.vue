@@ -1,5 +1,8 @@
 <template>
 	<div class="top-menu flex-center">
+		<div class="menu-btn flex-center" @click="$emit('back')">
+			<el-icon size="20" style="margin-right: 5px" color="var(--el-color-theme)"><ArrowLeft /></el-icon> 返回
+		</div>
 		<div class="menu-btn flex-center" @click="$emit('debug')">
 			<el-icon size="22" style="margin-right: 5px" color="#17b26a"><VideoPlay /></el-icon> 调试
 		</div>
@@ -13,10 +16,10 @@
 </template>
 
 <script>
-import {Promotion, VideoPlay, Document} from "@element-plus/icons-vue";
+import {Promotion, VideoPlay, Document, ArrowLeft} from "@element-plus/icons-vue";
 
 export default {
-	components: {Document, Promotion, VideoPlay},
+	components: {ArrowLeft, Document, Promotion, VideoPlay},
 	data() {
 		return {
 

@@ -4,6 +4,7 @@
 			class="top-menu"
 			@debug="debugHandle"
 			@save="saveHandle"
+			@back="backHandle"
 		>
 		</top-menu>
 		<div ref="containerRef" class="container"/>
@@ -378,6 +379,10 @@ export default {
 					this.nodeNoData[type]
 				)
 			)))
+		},
+		// 返回列表
+		backHandle() {
+			this.$router.push('/index/home')
 		}
 	}
 }
