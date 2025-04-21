@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import initConfig from '@/views/workflow/initConfig.js';
-
 export default {
 	inject: ["getGraph", "getNode"],
 	data() {
@@ -34,8 +32,9 @@ export default {
 		}
 	},
 	created() {
-		this.no = this.getNode().store.data.data.no
-		this.nodeInnerData = JSON.parse(JSON.stringify(initConfig.purposeData))
+		let nodeData = this.getNode().store.data.data
+		this.no = nodeData.no
+		this.nodeInnerData = nodeData
 	},
 	mounted() {
 		const node = this.getNode();

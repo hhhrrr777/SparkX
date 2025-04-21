@@ -3,7 +3,7 @@
 		<div class="menu-btn flex-center" @click="$emit('debug')">
 			<el-icon size="22" style="margin-right: 5px" color="#17b26a"><VideoPlay /></el-icon> 调试
 		</div>
-		<div class="menu-btn flex-center" @click="$emit('publish')">
+		<div class="menu-btn flex-center" @click="$emit('save')">
 			<el-icon size="21" style="margin-right: 5px" color="#6172f3"><Document /></el-icon> 保存
 		</div>
 		<div class="menu-btn flex-center" @click="$emit('publish')">

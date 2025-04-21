@@ -430,3 +430,20 @@ COMMENT ON TABLE "public"."models" IS '模型表';
 
 INSERT INTO "public"."models" VALUES ('5f4f2e11-df8b-408d-a54b-ed271b6cf5c4', '百度千帆', 'qianfan',1, '[{"field": "apiKey", "value": ""}, {"field": "secretKey", "value": ""}]', '[{"field": "temperature", "name": "温度" , "range": [0.01, 1.0], "value": 0.95}]', 1, 'ERNIE-Bot,ERNIE-Bot 4.0,ERNIE-Bot-8K,ERNIE-Bot-turbo,ERNIE-Speed-128K,EB-turbo-AppBuilder,Yi-34B-Chat,BLOOMZ-7B,Qianfan-BLOOMZ-7B-compressed,Mixtral-8x7B-Instruct,Llama-2-7b-chat,Llama-2-13b-chat,Llama-2-70b-chat,Qianfan-Chinese-Llama-2-7B,ChatGLM2-6B-32K,AquilaChat-7B', '/icons/baidu.png', '2025-03-30 21:22:35', NULL);
 INSERT INTO "public"."models" VALUES ('a4bc4132-d274-411d-89e2-ba7d98778754', 'SparkAI', 'sparkai',2, '[]', '[]', 1, 'AllMiniLmL6V2Embedding', '/icons/sparkai.png', '2025-03-31 14:58:46', NULL);
+
+CREATE TABLE "public"."application_workflow" (
+    "id" INT8 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1),
+    "app_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "flow_data" TEXT COLLATE "pg_catalog"."default" DEFAULT '' :: TEXT,
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6),
+    CONSTRAINT "application_workflow_pkey" PRIMARY KEY ("id")
+);
+ALTER TABLE "public"."application_workflow" OWNER TO "postgres";
+CREATE INDEX "idx_app" ON "public"."application_workflow" USING btree ("app_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST);
+COMMENT ON COLUMN "public"."application_workflow"."id" IS 'id';
+COMMENT ON COLUMN "public"."application_workflow"."app_id" IS '应用id';
+COMMENT ON COLUMN "public"."application_workflow"."flow_data" IS '设计的数据';
+COMMENT ON COLUMN "public"."application_workflow"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."application_workflow"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."application_workflow" IS '编排流程表';

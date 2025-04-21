@@ -42,8 +42,9 @@ export default {
 		}
 	},
 	created() {
-		this.no = this.getNode().store.data.data.no
-		this.nodeInnerData = JSON.parse(JSON.stringify(initConfig.switchData))
+		let nodeData = this.getNode().store.data.data
+		this.no = nodeData.no
+		this.nodeInnerData = nodeData
 
 		let options = JSON.parse(JSON.stringify(initConfig.switchOptions))
 		options.forEach(item => {

@@ -3,6 +3,7 @@
 		<top-menu
 			class="top-menu"
 			@debug="debugHandle"
+			@save="saveHandle"
 		>
 		</top-menu>
 		<div ref="containerRef" class="container"/>
@@ -67,9 +68,6 @@ export default {
 		topMenu,
 		menuBox
 	},
-	mounted() {
-		this.initGraph()
-	},
 	data() {
 		return {
 			nowNode: null,
@@ -100,13 +98,19 @@ export default {
 				dataset: 0,
 				switch: 0
 			},
+			appId: '',
+			flowData: null
 		}
+	},
+	mounted() {
+		this.appId = this.$route.query.appId
+		this.initGraph()
+		this.getWorkflowInfo()
 	},
 	methods: {
 		// 初始化
 		initGraph() {
-			const containerRef = this.$refs.containerRef;
-			const that = this;
+			const containerRef = this.$refs.containerRef
 			// 初始化 Graph 对象
 			const graph = new Graph({
 				container: containerRef, // 容器元素
@@ -337,6 +341,23 @@ export default {
 		// 调试链接
 		debugHandle() {
 
+		},
+		// 获取流程信息
+		async getWorkflowInfo() {
+			let res = await this.$API.workflow.info.get({appId: this.appId})
+			if (res.data) {
+				this.flowData = JSON.parse(res.data.flowData)
+				this.graph.fromJSON(this.flowData)
+			}
+		},
+		// 保存设计
+		async saveHandle() {
+			let res = await this.$API.workflow.save.post({appId: this.appId, flowData: JSON.stringify(this.graph.toJSON())})
+			if (res.code === 0) {
+				this.$message.success(res.msg)
+			} else {
+				this.$message.error(res.msg)
+			}
 		},
 		// 获取节点前数据
 		getNodeInputData() {

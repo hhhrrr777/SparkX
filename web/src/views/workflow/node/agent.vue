@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import initConfig from "@/views/workflow/initConfig.js";
 import config from "@/config"
 
 export default {
@@ -35,8 +34,9 @@ export default {
 		}
 	},
 	created() {
-		this.no = this.getNode().store.data.data.no
-		this.nodeInnerData = JSON.parse(JSON.stringify(initConfig.agentData))
+		let nodeData = this.getNode().store.data.data
+		this.no = nodeData.no
+		this.nodeInnerData = nodeData
 	},
 	mounted() {
 		const node = this.getNode();
