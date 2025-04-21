@@ -55,10 +55,8 @@
 			<div>Agent</div>
 			<div class="param-data">
 				<div class="flex-center" v-if="form.agentId !== ''">
-					<div class="flex-center dataset-item">
-						<div class="menu-icon" style="background: #17b26a;color: #fff;padding: 3px;border-radius: 5px;">
-							<span class="iconfont icon-a-agent1" style="font-size: 18px !important;"></span>
-						</div>
+					<div class="flex-center app-item">
+						<img :src="domain + form.agentLogo" style="width: 45px;height: 40px;" />
 						<span class="node-name">{{ form.agentName }}</span>
 					</div>
 				</div>
@@ -90,6 +88,7 @@
 
 import {MoreFilled, Plus} from "@element-plus/icons-vue"
 import agentDialog from "@/components/application/index.vue"
+import config from "@/config"
 
 export default {
 	components: {agentDialog, Plus, MoreFilled},
@@ -108,6 +107,7 @@ export default {
 			dialogVisible: false,
 			form: {},
 			inputData: [], // 入参
+			domain: config.API_URL.replace("/api", ""),
 		}
 	},
 	created() {
@@ -125,8 +125,14 @@ export default {
 			this.dialogVisible = true
 		},
 		// 选择了应用
-		handleSuccess() {
+		handleSuccess(row) {
+			let app = row[0].appInfo
+			this.form.agentId = app.appId
+			this.form.agentName = app.name
+			this.form.agentLogo = app.icon
 
+			this.$emit("dataChange", this.form)
+			this.dialogVisible = false
 		}
 	}
 }
@@ -168,5 +174,9 @@ export default {
 	border-radius: 5px;
 	color: #98A2B2;
 	cursor: pointer;
+}
+.app-item {
+	padding: 10px;
+	margin-bottom: 10px;
 }
 </style>

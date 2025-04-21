@@ -1,5 +1,5 @@
 <template>
-	<div class="dataset-list">
+	<div class="dataset-list" v-if="appList.length > 0">
 		<el-checkbox-group v-model="selectedAppIds" class="too-radio-list">
 			<el-checkbox :label="item.appId" border class="radio-item" v-for="item in appList" :key="item.appId">
 				<div style="display: flex;align-items: center;">
@@ -8,6 +8,12 @@
 				</div>
 			</el-checkbox>
 		</el-checkbox-group>
+	</div>
+	<div v-else>
+		<div class="flex-center-all" style="padding: 20px 10px;background: #f4f4f4">
+			暂无Agent应用
+			<el-button @click="goTo" type="text" style="margin-top: 3px;margin-left: 10px">创建</el-button>
+		</div>
 	</div>
 	<div class="dialog-footer">
 		<el-button @click="$emit('doClose')">取 消</el-button>
@@ -21,6 +27,10 @@ export default {
 		applicationIds: {
 			type: Array,
 			default: []
+		},
+		type: {
+			type: Number,
+			default: 0
 		}
 	},
 	data() {
@@ -36,7 +46,7 @@ export default {
 	methods: {
 		// 获取应用列表
 		async getAppList() {
-			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: ''})
+			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: '', type: this.type})
 			this.appList = res.data.data
 		},
 		// 保存
@@ -50,6 +60,11 @@ export default {
 			})
 
 			this.$emit('success', selectedApplication)
+		},
+		goTo() {
+			this.$router.push({
+				path: '/index/home'
+			})
 		}
 	}
 }

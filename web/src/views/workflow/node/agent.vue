@@ -10,7 +10,10 @@
 		</div>
 
 		<div class="flex-center tips-text">
-			<span style="font-size: 13px;margin-left: 5px" class="line1" v-if="nodeInnerData.agentLogo !== ''">{{ nodeInnerData.agentLogo }}</span>
+			<div style="font-size: 13px;margin-left: 5px" class="flex-center line1" v-if="nodeInnerData.agentLogo !== ''">
+				<img :src="domain + nodeInnerData.agentLogo" alt="" style="width: 22px;height: 20px;margin-right: 10px" />
+				{{ nodeInnerData.agentName }}
+			</div>
 			<span style="font-size: 13px;margin-left: 5px" class="line1" v-else>请设置代理</span>
 		</div>
 	</div>
@@ -18,6 +21,7 @@
 
 <script>
 import initConfig from "@/views/workflow/initConfig.js";
+import config from "@/config"
 
 export default {
 	inject: ["getNode"],
@@ -26,7 +30,8 @@ export default {
 			no: 0,
 			name: 'Agent',
 			active: false,
-			nodeInnerData: []
+			nodeInnerData: [],
+			domain: config.API_URL.replace("/api", ""),
 		}
 	},
 	created() {
@@ -38,6 +43,7 @@ export default {
 		// 监听数据
 		node.on('change:data', ({ current }) => {
 			this.active = current.checked
+			this.nodeInnerData = current
 		})
 	}
 }

@@ -26,6 +26,11 @@ public class ApplicationQueryVo implements Serializable {
     private String name;
 
     /**
+     * 应用类型
+     */
+    private Integer type;
+
+    /**
      * 分页号
      */
     private long page;

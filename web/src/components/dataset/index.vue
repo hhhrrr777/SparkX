@@ -1,5 +1,5 @@
 <template>
-	<div class="dataset-list">
+	<div class="dataset-list" v-if="datasetList.length > 0">
 		<el-radio-group v-model="datasetId" class="too-radio-list">
 			<el-radio :label="item.datasetId" border class="radio-item" v-for="item in datasetList" :key="item.datasetId">
 				<div style="display: flex;align-items: center;">
@@ -8,6 +8,12 @@
 				</div>
 			</el-radio>
 		</el-radio-group>
+	</div>
+	<div v-else>
+		<div class="flex-center-all" style="padding: 20px 10px;background: #f4f4f4">
+			暂无知识库
+			<el-button @click="goTo" type="text" style="margin-top: 3px;margin-left: 10px">创建</el-button>
+		</div>
 	</div>
 	<div class="dialog-footer">
 		<el-button @click="$emit('doClose')">取 消</el-button>
@@ -52,6 +58,11 @@ export default {
 				datasetId: this.datasetId,
 				documentIds: this.documentIds,
 				oldDatasetId: this.diffDatasetId
+			})
+		},
+		goTo() {
+			this.$router.push({
+				path: '/dataset/index'
 			})
 		}
 	}

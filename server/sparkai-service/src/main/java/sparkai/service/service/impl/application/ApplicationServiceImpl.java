@@ -120,6 +120,10 @@ public class ApplicationServiceImpl implements IApplicationService {
             queryWrapper.like("name", queryVo.getName());
         }
 
+        if (queryVo.getType() > 0) {
+            queryWrapper.eq("type", queryVo.getType());
+        }
+
         // TODO 查询属于自己的应用
         queryWrapper.eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616");
 

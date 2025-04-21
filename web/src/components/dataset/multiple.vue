@@ -1,6 +1,6 @@
 <template>
 	<span class="notice">需确保选中的知识库采用相同的 Embedding 模型</span>
-	<div class="dataset-list">
+	<div class="dataset-list" v-if="datasetList.length > 0">
 		<el-checkbox-group v-model="selectedDatasetIds" class="too-radio-list">
 			<el-checkbox :label="item.datasetId" border class="radio-item" v-for="item in datasetList" :key="item.datasetId">
 				<div style="display: flex;align-items: center;">
@@ -9,6 +9,12 @@
 				</div>
 			</el-checkbox>
 		</el-checkbox-group>
+	</div>
+	<div v-else>
+		<div class="flex-center-all" style="padding: 20px 10px;background: #f4f4f4">
+			暂无知识库
+			<el-button @click="goTo" type="text" style="margin-top: 3px;margin-left: 10px">创建</el-button>
+		</div>
 	</div>
 	<div class="dialog-footer">
 		<el-button @click="$emit('doClose')">取 消</el-button>
@@ -54,6 +60,11 @@ export default {
 			})
 
 			this.$emit('success', selectedDataset)
+		},
+		goTo() {
+			this.$router.push({
+				path: '/dataset/index'
+			})
 		}
 	}
 }

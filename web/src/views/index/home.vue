@@ -109,6 +109,7 @@ export default{
 	data() {
 		return {
 			searchForm: {
+				type: 0,
 				name: '',
 				page: 1,
 				limit: 15

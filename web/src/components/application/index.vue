@@ -1,13 +1,19 @@
 <template>
-	<div class="dataset-list">
-		<el-radio-group v-model="appId" class="too-radio-list">
-			<el-radio :label="item.appId" border class="radio-item" v-for="item in appList" :key="item.appId">
+	<div class="dataset-list" v-if="appList.length > 0">
+		<el-radio-group v-model="appIndex" class="too-radio-list">
+			<el-radio :label="index" border class="radio-item" v-for="(item, index) in appList" :key="item.appId">
 				<div style="display: flex;align-items: center;">
 					<img :src="domain + item.icon" style="width: 45px;height: 40px;" />
 					<div class="line1 name">{{ item.name }}</div>
 				</div>
 			</el-radio>
 		</el-radio-group>
+	</div>
+	<div v-else>
+		<div class="flex-center-all" style="padding: 20px 10px;background: #f4f4f4">
+			暂无Agent应用
+			<el-button @click="goTo" type="text" style="margin-top: 3px;margin-left: 10px">创建</el-button>
+		</div>
 	</div>
 	<div class="dialog-footer">
 		<el-button @click="$emit('doClose')">取 消</el-button>
@@ -19,9 +25,15 @@
 import config from "@/config"
 
 export default {
+	props: {
+		type: {
+			type: Number,
+			default: 0
+		}
+	},
 	data() {
 		return {
-			appId: "",
+			appIndex: "",
 			appList: [],
 			loading: false,
 			domain: config.API_URL.replace("/api", ""),
@@ -33,12 +45,17 @@ export default {
 	methods: {
 		// 获取应用列表
 		async getAppList() {
-			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: ''})
+			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: '', type: this.type})
 			this.appList = res.data.data
 		},
 		// 保存
 		optSubmit() {
-			this.$emit('success', [{datasetId: this.datasetId}])
+			this.$emit('success', [{appInfo: this.appList[this.appIndex]}])
+		},
+		goTo() {
+			this.$router.push({
+				path: '/index/home'
+			})
 		}
 	}
 }
