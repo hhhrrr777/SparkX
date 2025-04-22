@@ -102,4 +102,12 @@ public class ApplicationController {
         iApplicationService.deleteApp(appId);
         return AjaxResult.success();
     }
+
+    @GetMapping("/test")
+    public AjaxResult<Object> testChat() {
+        ApplicationSaveValidate validate = new ApplicationSaveValidate();
+        validate.setAppId("94a6e316-69b4-490d-800e-46f1331d994f");
+        iApplicationService.sseChat(validate);
+        return AjaxResult.success();
+    }
 }

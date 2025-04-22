@@ -11,7 +11,7 @@ package sparkai.common.enums;
 
 public enum AppType {
 
-    AGENT(1, "agent"),
+    AGENT(1, "普通"),
     WORKFLOW(2, "编排");
 
     /**

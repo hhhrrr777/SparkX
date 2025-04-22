@@ -31,8 +31,6 @@ import sparkai.common.core.PageResult;
 import sparkai.common.enums.AppType;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
-import sparkai.service.chat.AgentChat;
-import sparkai.service.chat.IAIChat;
 import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
@@ -40,6 +38,8 @@ import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.extend.chat.AgentChat;
+import sparkai.service.extend.chat.WorkflowChat;
 import sparkai.service.helper.AssistantBuildHelper;
 import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.helper.SseEmitterHelper;
@@ -96,6 +96,9 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     AgentChat agentChat;
+
+    @Autowired
+    WorkflowChat workflowChat;
 
     /**
      * 应用列表
@@ -267,15 +270,18 @@ public class ApplicationServiceImpl implements IApplicationService {
             // 获取应用信息
             ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
 
-            TokenStream tokenStream;
+            // 根据应用模式分流处理
             if (applicationInfo.getType().equals(AppType.AGENT.getCode())) {
-                tokenStream = agentChat.streamChat(validate, applicationInfo);
+
+                TokenStream tokenStream = agentChat.streamChat(applicationInfo, validate);
+                // 异步发送消息
+                sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
             } else {
-                tokenStream = null;
+
+                workflowChat.setEmitter(emitter);
+                workflowChat.streamChat(applicationInfo, validate);
             }
 
-            // 异步发送消息
-            sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
         } catch (Exception e) {
             log.error("构建ai服务出现了问题：", e);
             try {

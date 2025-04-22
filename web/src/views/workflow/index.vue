@@ -346,7 +346,7 @@ export default {
 		// 获取流程信息
 		async getWorkflowInfo() {
 			let res = await this.$API.workflow.info.get({appId: this.appId})
-			if (res.data) {
+			if (res.data.flowData) {
 				this.flowData = JSON.parse(res.data.flowData)
 				this.graph.fromJSON(this.flowData)
 			}
