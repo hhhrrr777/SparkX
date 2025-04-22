@@ -18,7 +18,7 @@ public class NodeProvider {
 
         try {
 
-            String className = "sparkai.service.extend.workflow." + kebabToPascalCase(nodeName);
+            String className = "sparkai.service.extend.workflow.node." + kebabToPascalCase(nodeName);
             // 使用Class.forName()获取Class对象
             Class<?> clazz = Class.forName(className);
 
