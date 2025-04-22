@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.core.PageResult;
+import sparkai.common.enums.AppType;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationChatLogEntity;
@@ -37,6 +38,8 @@ import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.extend.chat.AgentChat;
+import sparkai.service.extend.chat.WorkflowChat;
 import sparkai.service.helper.AssistantBuildHelper;
 import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.helper.SseEmitterHelper;
@@ -83,25 +86,19 @@ public class ApplicationServiceImpl implements IApplicationService {
     KnowledgeDatasetMapper knowledgeDatasetMapper;
 
     @Autowired
-    AssistantBuildHelper assistantBuildHelper;
-
-    @Autowired
-    StreamChatModelBuildHelper streamChatModelBuildHelper;
-
-    @Autowired
-    ChatModelBuildHelper chatModelBuildHelper;
-
-    @Autowired
     SseEmitterHelper sseEmitterHelper;
-
-    @Autowired
-    ModelsMapper modelsMapper;
 
     @Autowired
     ApplicationChatLogMapper applicationChatLogMapper;
 
     @Autowired
     ApplicationChatSessionMapper applicationChatSessionMapper;
+
+    @Autowired
+    AgentChat agentChat;
+
+    @Autowired
+    WorkflowChat workflowChat;
 
     /**
      * 应用列表
@@ -272,25 +269,19 @@ public class ApplicationServiceImpl implements IApplicationService {
 
             // 获取应用信息
             ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
-            // 获取模型信息
-            ModelsEntity modelInfo = modelsMapper.selectById(validate.getModelId());
 
-            // step 1 构建模型流式应答对象
-            StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);
-            // step 2 构建模型普通对象，用于问题优化下使用
-            ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
-            // step 3 构建 IAiService
-            IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel, chatLanguageModel);
+            // 根据应用模式分流处理
+            if (applicationInfo.getType().equals(AppType.AGENT.getCode())) {
 
-            TokenStream tokenStream;
-            if (validate.getPrompt().isBlank()) {
-                tokenStream = assistant.chatInTokenStream(validate.getContent());
+                TokenStream tokenStream = agentChat.streamChat(applicationInfo, validate);
+                // 异步发送消息
+                sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
             } else {
-                tokenStream = assistant.chatWithSystem(validate.getPrompt(), validate.getContent());
+
+                workflowChat.setEmitter(emitter);
+                workflowChat.streamChat(applicationInfo, validate);
             }
 
-            // 异步发送消息
-            sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
         } catch (Exception e) {
             log.error("构建ai服务出现了问题：", e);
             try {

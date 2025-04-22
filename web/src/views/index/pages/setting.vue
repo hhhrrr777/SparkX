@@ -12,7 +12,7 @@
 							<el-input v-model="form.name" maxlength="25" show-word-limit style="width: calc(100% - 80px)"></el-input>
 							<ul class="img-list" style="margin-left: 10px">
 								<li v-if="form.icon">
-									<img :src="form.icon" alt="图片" style="width: 58px;height: 58px">
+									<img :src="domain + form.icon" alt="图片" style="width: 58px;height: 58px">
 									<div class="img-tools" @click="delImg">
 										<el-icon color="#fff">
 											<Delete />
@@ -309,7 +309,6 @@ export default {
 		async getInfo() {
 			let res = await this.$API.application.info.get({appId: this.appId})
 			this.form = res.data
-			this.form.icon = this.domain + this.form.icon
 			if (res.data.prologue !== '') {
 				this.welcomeList = this.form.prologue = JSON.parse(res.data.prologue)
 			}
