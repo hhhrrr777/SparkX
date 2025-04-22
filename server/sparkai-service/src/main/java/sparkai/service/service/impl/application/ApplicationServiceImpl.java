@@ -28,8 +28,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.core.PageResult;
+import sparkai.common.enums.AppType;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
+import sparkai.service.chat.AgentChat;
+import sparkai.service.chat.IAIChat;
 import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
@@ -83,25 +86,16 @@ public class ApplicationServiceImpl implements IApplicationService {
     KnowledgeDatasetMapper knowledgeDatasetMapper;
 
     @Autowired
-    AssistantBuildHelper assistantBuildHelper;
-
-    @Autowired
-    StreamChatModelBuildHelper streamChatModelBuildHelper;
-
-    @Autowired
-    ChatModelBuildHelper chatModelBuildHelper;
-
-    @Autowired
     SseEmitterHelper sseEmitterHelper;
-
-    @Autowired
-    ModelsMapper modelsMapper;
 
     @Autowired
     ApplicationChatLogMapper applicationChatLogMapper;
 
     @Autowired
     ApplicationChatSessionMapper applicationChatSessionMapper;
+
+    @Autowired
+    AgentChat agentChat;
 
     /**
      * 应用列表
@@ -272,21 +266,12 @@ public class ApplicationServiceImpl implements IApplicationService {
 
             // 获取应用信息
             ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
-            // 获取模型信息
-            ModelsEntity modelInfo = modelsMapper.selectById(validate.getModelId());
-
-            // step 1 构建模型流式应答对象
-            StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);
-            // step 2 构建模型普通对象，用于问题优化下使用
-            ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
-            // step 3 构建 IAiService
-            IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel, chatLanguageModel);
 
             TokenStream tokenStream;
-            if (validate.getPrompt().isBlank()) {
-                tokenStream = assistant.chatInTokenStream(validate.getContent());
+            if (applicationInfo.getType().equals(AppType.AGENT.getCode())) {
+                tokenStream = agentChat.streamChat(validate, applicationInfo);
             } else {
-                tokenStream = assistant.chatWithSystem(validate.getPrompt(), validate.getContent());
+                tokenStream = null;
             }
 
             // 异步发送消息

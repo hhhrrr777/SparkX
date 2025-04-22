@@ -6,7 +6,7 @@
 					<div class="chat-msg-content" style="width: 50px">
 						<div class="chat-user">
 							<div class="user-icon">
-								<img src="/src/assets/robot.gif" style="width: 30px;height: 30px;"/>
+								<img :src="logo" style="width: 50px;height: 45px;"/>
 							</div>
 							<div class="chat-user-name"></div>
 						</div>
@@ -29,7 +29,7 @@
 						<div class="chat-user">
 							<div class="user-icon">
 								<img src="/src/assets/user.png" style="width: 30px;height: 30px;" v-if="item.source === 'user'"/>
-								<img src="/src/assets/robot.gif" style="width: 30px;height: 30px;" v-if="item.source === 'ai' || item.source === 'system'"/>
+								<img :src="logo" style="width: 50px;height: 45px;" v-if="item.source === 'ai' || item.source === 'system'"/>
 							</div>
 							<div class="chat-user-name"></div>
 						</div>
@@ -174,6 +174,10 @@ export default {
 		writeLog: {
 			type: Boolean,
 			default: false
+		},
+		logo: {
+			type: String,
+			default: "/src/assets/robot.gif"
 		}
 	},
 	data() {

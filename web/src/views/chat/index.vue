@@ -5,7 +5,7 @@
 				<el-col :span="3" class="left-side">
 					<div style="padding: 20px">
 						<div class="logo">
-							<img src="/src/assets/robot.gif" style="width: 30px; height: 30px" alt="" />
+							<img :src="logo" style="width: 30px; height: 30px" alt="" />
 							<span class="font-weight-700">{{ title }}</span>
 						</div>
 						<div class="chat-tool" style="margin-bottom: 10px">
@@ -28,6 +28,7 @@
 				</el-col>
 				<el-col :span="21" class="right-side" style="padding: 50px 20%">
 					<chat-box
+						:logo="logo"
 						:setting="setting"
 						:chat-log-msg="chatLogMsg"
 						:welcome-word="welcomeWord"
@@ -45,6 +46,7 @@
 <script>
 import chatBox from '@/components/chatContent/index.vue'
 import {Delete, Plus} from "@element-plus/icons-vue";
+import config from "@/config"
 
 export default {
 	components: {Delete, Plus, chatBox},
@@ -61,7 +63,9 @@ export default {
 			title: '', // 应用标题
 			randomKey: Math.random(),
 			nowSessionId: "",
-			hoverIndex: -1
+			hoverIndex: -1,
+			domain: config.API_URL.replace("/api", ""),
+			logo: ""
 		}
 	},
 	mounted() {
@@ -75,13 +79,14 @@ export default {
 			let res = await this.$API.chat.getInfo.get({appId: this.appId})
 			if (res.code === 0) {
 				let appInfo = res.data
-				if (appInfo.prologue != '') {
+				if (appInfo.prologue !== '') {
 					this.welcomeWord = JSON.parse(appInfo.prologue)
 					appInfo.prologue = JSON.parse(appInfo.prologue)
 				}
 				this.setting = appInfo
 				this.randomKey = Math.random()
 				this.title = appInfo.name
+				this.logo = this.domain + appInfo.icon
 			}
 		},
 		// 获取会话列表
