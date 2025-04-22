@@ -87,6 +87,7 @@ public class FlowNodeParser {
 
                 // 获取node处理方法
                 IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
+                flowNode.setEmitter(this.emitter);
                 flowNode.handle(nodeInfo.getData());
             }
         }
