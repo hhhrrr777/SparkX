@@ -52,7 +52,7 @@ public class FlowNodeParser {
                 // TODO 流程结束
             } else {
 
-                // 获取node处理方法
+                // 获取node处理方法 所有的节点对应的指定方法在 sparkai.service.extend.workflow 下
                 IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
                 flowNode.setEmitter(this.emitter);
                 flowNode.handle(nodeInfo.getData());
