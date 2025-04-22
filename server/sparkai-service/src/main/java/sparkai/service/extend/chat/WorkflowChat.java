@@ -46,8 +46,7 @@ public class WorkflowChat implements IChat {
         }
 
         flowNodeParser.setEmitter(this.emitter);
-        flowNodeParser.buildData(info.getFlowData());
-        flowNodeParser.run();
+        flowNodeParser.run(info.getFlowData());
 
         return null;
     }

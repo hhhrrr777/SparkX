@@ -35,10 +35,36 @@ public class FlowNodeParser {
     }
 
     /**
+     * 执行编排流程
+     * @param flowData String
+     */
+    public void run(String flowData) {
+        // 构建执行流
+        this.buildData(flowData);
+
+        // 开始节点指向的对象
+        List<EdgeVo> edgeVoList = this.edges.get(this.startId);
+        // TODO 处理并发数据
+        for (EdgeVo edgeVo : edgeVoList) {
+
+            NodeVo nodeInfo = this.nodes.get(edgeVo.getTarget());
+            if (nodeInfo.getShape().equals("end-node")) {
+                // TODO 流程结束
+            } else {
+
+                // 获取node处理方法
+                IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
+                flowNode.setEmitter(this.emitter);
+                flowNode.handle(nodeInfo.getData());
+            }
+        }
+    }
+
+    /**
      * 构建节点数据
      * @param flowData String
      */
-    public void buildData(String flowData) {
+    protected void buildData(String flowData) {
 
         JSONObject flowObject = JSONUtil.parseObj(flowData);
 
@@ -66,29 +92,6 @@ public class FlowNodeParser {
                 nodeVo.setData(item.getJSONObject("data"));
 
                 this.nodes.put(item.get("id").toString(), nodeVo);
-            }
-        }
-    }
-
-    /**
-     * 执行编排流程
-     */
-    public void run() {
-
-        // 开始节点指向的对象
-        List<EdgeVo> edgeVoList = this.edges.get(this.startId);
-        // TODO 处理并发数据
-        for (EdgeVo edgeVo : edgeVoList) {
-
-            NodeVo nodeInfo = this.nodes.get(edgeVo.getTarget());
-            if (nodeInfo.getShape().equals("end-node")) {
-                // TODO 流程结束
-            } else {
-
-                // 获取node处理方法
-                IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
-                flowNode.setEmitter(this.emitter);
-                flowNode.handle(nodeInfo.getData());
             }
         }
     }
