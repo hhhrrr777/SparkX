@@ -45,6 +45,7 @@ public class WorkflowChat implements IChat {
             throw new BusinessException("流程未配置");
         }
 
+        flowNodeParser.setEmitter(this.emitter);
         flowNodeParser.buildData(info.getFlowData());
         flowNodeParser.run();
 

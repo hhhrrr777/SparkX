@@ -4,6 +4,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
@@ -26,6 +27,12 @@ public class FlowNodeParser {
 
     // 开始节点
     private String startId = "";
+
+    public SseEmitter emitter;
+
+    public void setEmitter(SseEmitter emitter) {
+        this.emitter = emitter;
+    }
 
     /**
      * 构建节点数据
