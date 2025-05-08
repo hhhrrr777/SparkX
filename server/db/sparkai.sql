@@ -447,3 +447,45 @@ COMMENT ON COLUMN "public"."application_workflow"."flow_data" IS '设计的数�
 COMMENT ON COLUMN "public"."application_workflow"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."application_workflow"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."application_workflow" IS '编排流程表';
+
+CREATE TABLE "public"."application_workflow_runtime" (
+    "id" INT4 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1),
+    "user_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "flow_id" INT4 DEFAULT 0,
+    "title" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6),
+    CONSTRAINT "application_workflow_runtime_pkey" PRIMARY KEY ("id")
+);
+ALTER TABLE "public"."application_workflow_runtime" OWNER TO "postgres";
+COMMENT ON COLUMN "public"."application_workflow_runtime"."id" IS '主键';
+COMMENT ON COLUMN "public"."application_workflow_runtime"."user_id" IS '用户id';
+COMMENT ON COLUMN "public"."application_workflow_runtime"."flow_id" IS '关联的流程id';
+COMMENT ON COLUMN "public"."application_workflow_runtime"."title" IS '首个问题';
+COMMENT ON COLUMN "public"."application_workflow_runtime"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."application_workflow_runtime"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."application_workflow_runtime" IS '流程运行时';
+
+CREATE TABLE "public"."application_workflow_runtime_context" (
+    "id" INT4 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1),
+    "runtime_id" INT4 DEFAULT 0,
+    "node_type" VARCHAR (55) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "step" INT2 DEFAULT 0,
+    "input_data" TEXT COLLATE "pg_catalog"."default",
+    "output_data" TEXT COLLATE "pg_catalog"."default",
+    "model_data" TEXT COLLATE "pg_catalog"."default",
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6),
+    CONSTRAINT "application_workflow_runtime_context_pkey" PRIMARY KEY ("id")
+);
+ALTER TABLE "public"."application_workflow_runtime_context" OWNER TO "postgres";
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."id" IS '主键';
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."runtime_id" IS '运行时id';
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."node_type" IS '节点类型';
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."step" IS '步骤号';
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."input_data" IS '入参数据';
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."output_data" IS '出参数据';
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."model_data" IS '模型数据';
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."application_workflow_runtime_context" IS '工作流运行时上下文';

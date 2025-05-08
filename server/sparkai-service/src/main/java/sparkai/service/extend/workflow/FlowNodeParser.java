@@ -42,13 +42,19 @@ public class FlowNodeParser {
     public void run(String flowData) {
         // 构建执行流
         this.buildData(flowData);
+        System.out.println("-------------------------------");
+        System.out.println(this.edges);
+        System.out.println("-------------------------------");
 
         // 开始节点指向的对象
         List<EdgeVo> edgeVoList = this.edges.get(this.startId);
-        // TODO 处理并发数据
         execute(edgeVoList);
     }
 
+    /**
+     * 节点逻辑执行
+     * @param edgeVoList List<EdgeVo>
+     */
     private void execute(List<EdgeVo> edgeVoList) {
 
         if (CollectionUtils.isEmpty(edgeVoList)) {
