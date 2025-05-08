@@ -4,6 +4,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
@@ -45,18 +46,24 @@ public class FlowNodeParser {
         // 开始节点指向的对象
         List<EdgeVo> edgeVoList = this.edges.get(this.startId);
         // TODO 处理并发数据
+        execute(edgeVoList);
+    }
+
+    private void execute(List<EdgeVo> edgeVoList) {
+
+        if (CollectionUtils.isEmpty(edgeVoList)) {
+            return;
+        }
+
         for (EdgeVo edgeVo : edgeVoList) {
 
             NodeVo nodeInfo = this.nodes.get(edgeVo.getTarget());
-            if (nodeInfo.getShape().equals("end-node")) {
-                // TODO 流程结束
-            } else {
 
-                // 获取node处理方法 所有的节点对应的指定方法在 sparkai.service.extend.workflow.node 下
-                IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
-                flowNode.setEmitter(this.emitter);
-                flowNode.handle(nodeInfo.getData());
-            }
+            // 获取node处理方法 所有的节点对应的指定方法在 sparkai.service.extend.workflow.node 下
+            IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
+            flowNode.setEmitter(this.emitter);
+            flowNode.handle(nodeInfo.getData());
+            //execute(nextEdgeVoList);
         }
     }
 

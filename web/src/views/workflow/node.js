@@ -173,26 +173,6 @@ export default {
 			}
 		}
 	},
-	// agent节点
-	agentNode: (x, y, no) => {
-		return {
-			x: x,
-			y: y,
-			shape: 'agent-node',
-			width: 230,
-			height: 40,
-			data: {
-				no: no,
-				pages: 'agent',
-				checked: false,
-				portsVisible: false,
-				...initConfig.agentData,
-			},
-			ports: {
-				...initConfig.ports
-			}
-		}
-	},
 	// 条件分支
 	switchNode: (x, y, no) => {
 		return {
@@ -248,7 +228,6 @@ export default {
 }
 
 import Start from './node/start.vue'
-import End from './node/end.vue'
 import Purpose from './node/purpose.vue'
 import Llm from './node/llm.vue'
 import Dataset from './node/dataset.vue'
@@ -262,13 +241,6 @@ register({
 	width: 100,
 	height: 100,
 	component: Start,
-})
-
-register({
-	shape: 'end-node',
-	width: 100,
-	height: 100,
-	component: End,
 })
 
 register({

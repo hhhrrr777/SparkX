@@ -186,9 +186,6 @@ export default {
 			let startNodeData = defaultNodeConfig.startNode(100, 240)
 			graph.addNode(startNodeData)
 
-			let endNodeData = defaultNodeConfig.endNode(900, 240)
-			graph.addNode(endNodeData)
-
 			// 节点移入
 			graph.on('node:mouseenter', () => {
 				setVisible('visible')
