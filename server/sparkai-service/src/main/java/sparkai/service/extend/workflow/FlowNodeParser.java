@@ -35,6 +35,13 @@ public class FlowNodeParser {
         this.emitter = emitter;
     }
 
+    // 运行时id
+    public Long runtimeId;
+
+    public void setRuntimeId(long runtimeId) {
+        this.runtimeId = runtimeId;
+    }
+
     /**
      * 执行编排流程
      * @param flowData String
@@ -42,9 +49,6 @@ public class FlowNodeParser {
     public void run(String flowData) {
         // 构建执行流
         this.buildData(flowData);
-        System.out.println("-------------------------------");
-        System.out.println(this.edges);
-        System.out.println("-------------------------------");
 
         // 开始节点指向的对象
         List<EdgeVo> edgeVoList = this.edges.get(this.startId);
