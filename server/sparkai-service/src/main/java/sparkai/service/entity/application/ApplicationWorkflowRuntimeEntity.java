@@ -34,7 +34,7 @@ public class ApplicationWorkflowRuntimeEntity implements Serializable {
     * 关联的流程id
     */
     @TableField(value = "flow_id")
-    private Integer flowId;
+    private long flowId;
 
     /**
     * 首个问题
