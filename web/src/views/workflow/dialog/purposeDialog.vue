@@ -66,7 +66,7 @@
 			<div class="flex-center no-param" style="margin-top: 10px;background: #fff">
 				<span style="width: 60px;color: #1a1a1a">温度</span>
 				<el-slider
-					v-model="form.modeInfo.temperature"
+					v-model="form.modelInfo.temperature"
 					:min="temperatureConfig.range[0]"
 					:max="temperatureConfig.range[1]"
 					show-input>
@@ -126,7 +126,7 @@ export default {
 	},
 	created() {
 		this.form = this.formData
-		this.modelId = [this.formData.modeInfo.modeId, this.formData.modeInfo.modeName]
+		this.modelId = [this.formData.modelInfo.modeId, this.formData.modelInfo.modeName]
 		this.inputData = this.formData.inputData
 		this.getModelsList()
 	},
@@ -154,7 +154,7 @@ export default {
 					this.temperatureConfig = item
 				}
 			})
-			this.form.modeInfo.temperature = this.temperatureConfig.value
+			this.form.modelInfo.temperature = this.temperatureConfig.value
 
 			this.$emit("dataChange", this.form)
 		},
@@ -183,8 +183,8 @@ export default {
 		},
 		// 选择了模型
 		handleChange(val) {
-			this.form.modeInfo.modeId = val[0]
-			this.form.modeInfo.modeName = val[1]
+			this.form.modelInfo.modelId = val[0]
+			this.form.modelInfo.modelName = val[1]
 
 			this.getModelInfo(val[0])
 		},

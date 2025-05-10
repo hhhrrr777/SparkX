@@ -22,7 +22,7 @@ public class ApplicationWorkflowRuntimeEntity implements Serializable {
     */
     @TableId(value="id", type= IdType.AUTO)
     @TableField(value = "id")
-    private Integer id;
+    private Long id;
 
     /**
     * 用户id

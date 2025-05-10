@@ -106,8 +106,8 @@ public class ApplicationController {
     @GetMapping("/test")
     public AjaxResult<Object> testChat() {
         ApplicationSaveValidate validate = new ApplicationSaveValidate();
-        validate.setAppId("5b782fa4-976f-4f6f-bf16-cf2b46836642");
-        validate.setContent("叶凡是谁啊");
+        validate.setAppId("8779087a-8a1f-4421-bbcf-c81aebc7e056");
+        validate.setContent("今天的天气如何");
         iApplicationService.sseChat(validate);
         return AjaxResult.success();
     }

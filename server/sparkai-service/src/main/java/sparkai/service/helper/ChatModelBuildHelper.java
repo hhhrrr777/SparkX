@@ -48,11 +48,13 @@ public class ChatModelBuildHelper {
         String key = jsonConfig.getJSONObject(0).getStr("value");
         String secret = jsonConfig.getJSONObject(1).getStr("value");
 
+        Integer maxOutputTokens = applicationInfo.getMaxReplyToken() == null ? 4096 : applicationInfo.getMaxReplyToken();
+
         return QianfanChatModel.builder()
                 .apiKey(key)
                 .secretKey(secret)
                 .temperature(applicationInfo.getTemperature()) // 温度
-                .maxOutputTokens(applicationInfo.getMaxReplyToken())
+                .maxOutputTokens(maxOutputTokens)
                 .modelName(applicationInfo.getModelName())
                 .build();
     }

@@ -2,6 +2,9 @@ package sparkai.service.extend.workflow;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -29,18 +32,12 @@ public class FlowNodeParser {
     // 开始节点
     private String startId = "";
 
+    @Setter
     public SseEmitter emitter;
 
-    public void setEmitter(SseEmitter emitter) {
-        this.emitter = emitter;
-    }
-
     // 运行时id
+    @Setter
     public Long runtimeId;
-
-    public void setRuntimeId(long runtimeId) {
-        this.runtimeId = runtimeId;
-    }
 
     /**
      * 执行编排流程
@@ -72,7 +69,7 @@ public class FlowNodeParser {
             // 获取node处理方法 所有的节点对应的指定方法在 sparkai.service.extend.workflow.node 下
             IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
             flowNode.setEmitter(this.emitter);
-            flowNode.handle(nodeInfo.getData());
+            flowNode.handle(nodeInfo.getData(), this.runtimeId);
             //execute(nextEdgeVoList);
         }
     }

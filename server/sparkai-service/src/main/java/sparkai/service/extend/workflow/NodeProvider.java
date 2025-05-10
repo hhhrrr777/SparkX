@@ -2,12 +2,17 @@ package sparkai.service.extend.workflow;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import sparkai.common.exception.BusinessException;
 
 @Slf4j
 @Component
 public class NodeProvider {
+
+    @Autowired
+    private ApplicationContext context;
 
     /**
      * 根据节点名称去节点
@@ -22,13 +27,10 @@ public class NodeProvider {
             // 使用Class.forName()获取Class对象
             Class<?> clazz = Class.forName(className);
 
-            return (IWorkflowNode) clazz.getDeclaredConstructor().newInstance();
+            return (IWorkflowNode) context.getBean(clazz);
 
         } catch (ClassNotFoundException e) {
-            log.error("Class not found: " + e.getMessage());
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
-                 java.lang.reflect.InvocationTargetException e) {
-            log.error("Failed to instantiate class: " + e.getMessage());
+            log.error("Class not found: {}", e.getMessage());
         }
 
         throw new BusinessException("系统异常");

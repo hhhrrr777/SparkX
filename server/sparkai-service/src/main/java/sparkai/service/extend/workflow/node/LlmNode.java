@@ -1,6 +1,7 @@
 package sparkai.service.extend.workflow.node;
 
 import cn.hutool.json.JSONObject;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.service.extend.workflow.IWorkflowNode;
@@ -8,14 +9,11 @@ import sparkai.service.extend.workflow.IWorkflowNode;
 @Component
 public class LlmNode implements IWorkflowNode {
 
+    @Setter
     public SseEmitter emitter;
 
-    public void setEmitter(SseEmitter emitter) {
-        this.emitter = emitter;
-    }
-
     @Override
-    public void handle(JSONObject nodeObject) {
+    public void handle(JSONObject nodeObject, long runtimeId) {
 
     }
 }

@@ -261,6 +261,9 @@ public class ApplicationServiceImpl implements IApplicationService {
 
             // 获取应用信息
             ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
+            if (applicationInfo == null) {
+                throw new BusinessException("应用配置错误");
+            }
 
             // 根据应用模式分流处理
             if (applicationInfo.getType().equals(AppType.AGENT.getCode())) {

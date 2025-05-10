@@ -15,9 +15,9 @@ export default {
 		cateList: [
 			{name: '分类1'}
 		],
-		modeInfo: {
-			modeId: "",
-			modeName: "",
+		modelInfo: {
+			modelId: "",
+			modelName: "",
 			temperature: 0
 		},
 		inputData: [],
@@ -28,9 +28,9 @@ export default {
 	// llm节点初始数据
 	llmData: {
 		type: 'llm',
-		modeInfo: {
-			modeId: "",
-			modeName: "",
+		modelInfo: {
+			modelId: "",
+			modelName: "",
 			temperature: 0
 		},
 		inputData: [],

@@ -7,5 +7,5 @@ public interface IWorkflowNode {
 
     void setEmitter(SseEmitter emitter);
 
-    void handle(JSONObject nodeObject);
+    void handle(JSONObject nodeObject, long runtimeId);
 }

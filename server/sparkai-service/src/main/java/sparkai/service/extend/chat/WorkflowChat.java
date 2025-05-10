@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import dev.langchain4j.service.TokenStream;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -37,11 +38,8 @@ public class WorkflowChat implements IChat {
     @Autowired
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
 
+    @Setter
     public SseEmitter emitter;
-
-    public void setEmitter(SseEmitter emitter) {
-        this.emitter = emitter;
-    }
 
     /**
      * 编排模式聊天

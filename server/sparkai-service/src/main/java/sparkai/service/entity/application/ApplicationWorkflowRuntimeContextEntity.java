@@ -28,7 +28,7 @@ public class ApplicationWorkflowRuntimeContextEntity implements Serializable {
     * 运行时id
     */
     @TableField(value = "runtime_id")
-    private Integer runtimeId;
+    private Long runtimeId;
 
     /**
     * 节点类型
