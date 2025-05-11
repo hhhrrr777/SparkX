@@ -69,7 +69,7 @@ export default {
 		],
 		elseBranch: "",
 		outData: [
-			{field: 'sys.branchName', name: '分支名称'},
+			//{field: 'sys.branchName', name: '分支名称'},
 		]
 	},
 	// agent节点的初始数据

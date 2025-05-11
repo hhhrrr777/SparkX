@@ -20,6 +20,12 @@ public class SwitchNode implements IWorkflowNode {
     @Override
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
 
+        JSONObject nodeObject = nodeInfo.getData();
+        System.out.println("----------------------------------------");
+        System.out.println("节点触发");
+        System.out.println(nodeInfo);
+        System.out.println(nodeObject);
+        System.out.println("----------------------------------------");
         return null;
     }
 }

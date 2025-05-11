@@ -90,7 +90,7 @@
 			</div>
 		</div>
 
-		<div class="set-content-box">
+		<div class="set-content-box" v-if="form.outData.length > 0">
 			<div>输出参数</div>
 			<div class="param-data">
 				<div class="flex-center data-item" v-for="(item, index) in form.outData" :key="index">
