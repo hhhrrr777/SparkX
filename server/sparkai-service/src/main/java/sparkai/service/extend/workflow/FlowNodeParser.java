@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
+import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
@@ -22,6 +24,9 @@ public class FlowNodeParser {
 
     @Autowired
     NodeProvider nodeProvider;
+
+    @Autowired
+    ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
 
     // 所有的连线
     private final Map<String, List<EdgeVo>> edges = new HashMap<>();
@@ -88,6 +93,11 @@ public class FlowNodeParser {
             Object shape = item.get("shape");
             if (shape.equals("start-node")) {
                 this.startId = item.get("id").toString();
+                // 更新节点id
+                ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
+                contextEntity.setId(this.runtimeId);
+                contextEntity.setCell(this.startId);
+                applicationWorkflowRuntimeContextMapper.updateById(contextEntity);
             }
 
             if (shape.equals("edge")) {

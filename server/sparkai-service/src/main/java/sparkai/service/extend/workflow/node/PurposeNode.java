@@ -100,6 +100,7 @@ public class PurposeNode implements IWorkflowNode {
         modelData.set("totalTokenCount", chatResponse.tokenUsage().totalTokenCount());
         contextEntity.setModelData(modelData.toString());
 
+        contextEntity.setCell(inputArr.get(0).toString());
         contextEntity.setCreateTime(Tool.nowDateTime());
         applicationWorkflowRuntimeContextMapper.insert(contextEntity);
     }

@@ -22,7 +22,7 @@ public class ApplicationWorkflowRuntimeContextEntity implements Serializable {
     */
     @TableId(value="id", type= IdType.AUTO)
     @TableField(value = "id")
-    private Integer id;
+    private Long id;
 
     /**
     * 运行时id
@@ -59,6 +59,12 @@ public class ApplicationWorkflowRuntimeContextEntity implements Serializable {
     */
     @TableField(value = "model_data")
     private String modelData;
+
+    /**
+     * 节点id
+     */
+    @TableField(value = "cell")
+    private String cell;
 
     /**
     * 创建时间

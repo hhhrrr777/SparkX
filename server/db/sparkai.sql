@@ -474,6 +474,7 @@ CREATE TABLE "public"."application_workflow_runtime_context" (
     "input_data" TEXT COLLATE "pg_catalog"."default",
     "output_data" TEXT COLLATE "pg_catalog"."default",
     "model_data" TEXT COLLATE "pg_catalog"."default",
+    "cell" VARCHAR (155) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
     "create_time" TIMESTAMP (6),
     "update_time" TIMESTAMP (6),
     CONSTRAINT "application_workflow_runtime_context_pkey" PRIMARY KEY ("id")
@@ -486,6 +487,7 @@ COMMENT ON COLUMN "public"."application_workflow_runtime_context"."step" IS '步
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."input_data" IS '入参数据';
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."output_data" IS '出参数据';
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."model_data" IS '模型数据';
+COMMENT ON COLUMN "public"."application_workflow_runtime_context"."cell" IS '节点id';
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."application_workflow_runtime_context" IS '工作流运行时上下文';
