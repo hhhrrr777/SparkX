@@ -273,8 +273,10 @@ public class ApplicationServiceImpl implements IApplicationService {
                 sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
             } else {
 
+                sseEmitterHelper.sendStartSse(emitter);
                 workflowChat.setEmitter(emitter);
                 workflowChat.streamChat(applicationInfo, validate);
+                sseEmitterHelper.sendEndSse(emitter, "END");
             }
 
         } catch (Exception e) {

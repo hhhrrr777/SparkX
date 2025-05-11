@@ -107,7 +107,7 @@ public class SseEmitterHelper {
      * 发送sse开始信号
      * @param sseEmitter SseEmitter
      */
-    private void sendStartSse(SseEmitter sseEmitter) {
+    public void sendStartSse(SseEmitter sseEmitter) {
 
         try {
 
@@ -123,7 +123,7 @@ public class SseEmitterHelper {
      * @param sseEmitter SseEmitter
      * @param resVo String
      */
-    private void sendEndSse(SseEmitter sseEmitter, String resVo) {
+    public void sendEndSse(SseEmitter sseEmitter, String resVo) {
 
         try {
 
@@ -140,7 +140,7 @@ public class SseEmitterHelper {
      * @param sseEmitter SseEmitter
      * @param metaData List<Map<String, Object>>
      */
-    private void sendMetaSse(SseEmitter sseEmitter, List<Map<String, Object>> metaData) {
+    public void sendMetaSse(SseEmitter sseEmitter, List<Map<String, Object>> metaData) {
 
         try {
 
@@ -157,7 +157,7 @@ public class SseEmitterHelper {
      * @param sseEmitter SseEmitter
      * @param msg String
      */
-    private void sendErrorSse(SseEmitter sseEmitter, String msg) {
+    public void sendErrorSse(SseEmitter sseEmitter, String msg) {
 
         try {
 

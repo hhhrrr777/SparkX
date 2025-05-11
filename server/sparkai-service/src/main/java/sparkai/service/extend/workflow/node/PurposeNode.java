@@ -21,6 +21,12 @@ import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.system.ModelsMapper;
+import sparkai.service.vo.workflow.EdgeVo;
+import sparkai.service.vo.workflow.NodeVo;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class PurposeNode implements IWorkflowNode {
@@ -38,8 +44,9 @@ public class PurposeNode implements IWorkflowNode {
     public SseEmitter emitter;
 
     @Override
-    public void handle(JSONObject nodeObject, long runtimeId) {
+    public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
 
+        JSONObject nodeObject = nodeInfo.getData();
         JSONObject modeData = nodeObject.getJSONObject("modelInfo");
         String modelId = modeData.get("modelId").toString();
 
@@ -64,7 +71,7 @@ public class PurposeNode implements IWorkflowNode {
 
         // 获取上一个节点的信息
         ApplicationWorkflowRuntimeContextEntity context = applicationWorkflowRuntimeContextMapper.selectOne(
-                new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", runtimeId).orderByDesc("id"));
+                new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", runtimeId).eq("cell", sourceId));
 
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
@@ -90,7 +97,8 @@ public class PurposeNode implements IWorkflowNode {
 
         // 记录问题分类节点的输出
         JSONObject dbOutputData = JSONUtil.createObj();
-        dbOutputData.set("sys.purposeName", cateList.getJSONObject(Integer.parseInt(answer) - 1).get("name"));
+        int index = Integer.parseInt(answer) - 1;
+        dbOutputData.set("sys.purposeName", cateList.getJSONObject(index).get("name"));
         contextEntity.setOutputData(dbOutputData.toString());
 
         // 模型使用情况
@@ -103,5 +111,12 @@ public class PurposeNode implements IWorkflowNode {
         contextEntity.setCell(inputArr.get(0).toString());
         contextEntity.setCreateTime(Tool.nowDateTime());
         applicationWorkflowRuntimeContextMapper.insert(contextEntity);
+
+        // 获取下一个节点
+        List<EdgeVo> nextEdgeVoList = edges.get(nodeInfo.getId());
+        List<EdgeVo> newEdgeVoList = new LinkedList<>();
+        newEdgeVoList.add(nextEdgeVoList.get(index));
+
+        return newEdgeVoList;
     }
 }
