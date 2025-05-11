@@ -81,6 +81,7 @@ public class AnswerNode implements IWorkflowNode {
             sseEmitterHelper.sendErrorSse(emitter, e.getMessage());
         }
 
-        return null;
+        // 获取下一个节点
+        return edges.get(nodeInfo.getId());
     }
 }

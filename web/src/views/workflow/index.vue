@@ -305,7 +305,7 @@ export default {
 
 				let ports = this.nowNode.port.ports
 				let data = this.nowNode.store.data.data.ifBranch
-				if (ports.length > 3) {
+				if (ports.length >= 3) {
 					for (let i = index + 3; i < ports.length; i++) {
 						let totalNodes = data[i - 3].data.length
 						this.nowNode.port.ports[i].args.y = ports[i - 1].args.y + (totalNodes - 1) * 35 + 70

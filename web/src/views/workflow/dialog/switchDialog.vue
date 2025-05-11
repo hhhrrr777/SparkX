@@ -149,9 +149,10 @@ export default {
 			this.form.ifBranch[index].data.splice(index2, 1)
 			if (this.form.ifBranch[index].data.length === 0) {
 				this.form.ifBranch.splice(index, 1)
+				this.$emit('portDel', this.form)
+			} else {
+				this.$emit('portUpdate', this.form, index)
 			}
-
-			this.$emit('portDel', this.form)
 		},
 		// 添加条件
 		addTips(index) {
