@@ -94,7 +94,7 @@
 			<div style="justify-content: space-between" class="flex-center">
 				<span>提示词</span>
 			</div>
-			<el-input v-model="form.userMsg" type="textarea" placeholder="用户提示词" :rows="4" style="margin-top: 10px"/>
+			<el-input v-model="form.userMsg" type="textarea" placeholder="用户提示词,默认为设置的输入参数" :rows="4" style="margin-top: 10px"/>
 		</div>
 	</div>
 
@@ -142,7 +142,7 @@ export default {
 	},
 	created() {
 		this.form = this.formData
-		this.modelId = [this.formData.modelInfo.modeId, this.formData.modelInfo.modeName]
+		this.modelId = [this.formData.modelInfo.modelId, this.formData.modelInfo.modelName]
 		this.inputData = this.formData.inputData
 		this.getModelsList()
 	},
@@ -185,8 +185,8 @@ export default {
 		},
 		// 选择了模型
 		handleChange(val) {
-			this.form.modelInfo.modeId = val[0]
-			this.form.modelInfo.modeName = val[1]
+			this.form.modelInfo.modelId = val[0]
+			this.form.modelInfo.modelName = val[1]
 
 			this.getModelInfo(val[0])
 		},

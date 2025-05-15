@@ -13,7 +13,7 @@
 			<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 2px;border-radius: 5px;">
 				<span class="iconfont icon-a-zhuliudeLLM"></span>
 			</div>
-			<span style="font-size: 13px;margin-left: 5px" class="line1" v-if="nodeInnerData.modelInfo.modeName !== ''">{{ nodeInnerData.modelInfo.modeName }}</span>
+			<span style="font-size: 13px;margin-left: 5px" class="line1" v-if="nodeInnerData.modelInfo.modelName !== ''">{{ nodeInnerData.modelInfo.modelName }}</span>
 			<span style="font-size: 13px;margin-left: 5px" class="line1" v-else>请设置语言模型</span>
 		</div>
 	</div>
