@@ -50,6 +50,7 @@ public class AnswerNode implements IWorkflowNode {
             contextEntity.setNodeType("answer-node");
             contextEntity.setRuntimeId(runtimeId);
 
+            JSONObject dbOutputData = JSONUtil.createObj();
             if (answerType.equals(1)) {
 
                 // 找出回复内容
@@ -62,17 +63,15 @@ public class AnswerNode implements IWorkflowNode {
                 contextEntity.setInputData(context.getOutputData());
 
                 // 记录问题分类节点的输出
-                JSONObject dbOutputData = JSONUtil.createObj();
                 dbOutputData.set("sys.answer", answer);
-                contextEntity.setOutputData(dbOutputData.toString());
             } else {
                 emitter.send(nodeObject.getStr("answer"));
 
                 // 记录问题分类节点的输出
-                JSONObject dbOutputData = JSONUtil.createObj();
                 dbOutputData.set("sys.answer", nodeObject.getStr("answer"));
             }
 
+            contextEntity.setOutputData(dbOutputData.toString());
             contextEntity.setCell(nodeInfo.getId());
             contextEntity.setCreateTime(Tool.nowDateTime());
             applicationWorkflowRuntimeContextMapper.insert(contextEntity);
