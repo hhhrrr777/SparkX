@@ -107,7 +107,7 @@ public class ApplicationController {
     public AjaxResult<Object> testChat() {
         ApplicationSaveValidate validate = new ApplicationSaveValidate();
         validate.setAppId("5b782fa4-976f-4f6f-bf16-cf2b46836642");
-        validate.setContent("叶凡是谁啊");
+        validate.setContent("叶凡在遮天中的成就");
         iApplicationService.sseChat(validate);
         return AjaxResult.success();
     }

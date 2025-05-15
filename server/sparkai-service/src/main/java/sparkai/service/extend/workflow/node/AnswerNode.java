@@ -50,28 +50,24 @@ public class AnswerNode implements IWorkflowNode {
             contextEntity.setNodeType("answer-node");
             contextEntity.setRuntimeId(runtimeId);
 
-            JSONObject dbOutputData = JSONUtil.createObj();
+            JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
             if (answerType.equals(1)) {
 
                 // 找出回复内容
                 JSONArray inputArr = nodeObject.getJSONArray("inputData");
-                JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
                 String answer = preOutput.get(inputArr.get(1).toString()).toString();
                 emitter.send(answer);
 
-                // 记录问题分类节点的输入
-                contextEntity.setInputData(context.getOutputData());
-
                 // 记录问题分类节点的输出
-                dbOutputData.set("sys.answer", answer);
+                preOutput.set("sys.answer", answer);
             } else {
                 emitter.send(nodeObject.getStr("answer"));
 
                 // 记录问题分类节点的输出
-                dbOutputData.set("sys.answer", nodeObject.getStr("answer"));
+                preOutput.set("sys.answer", nodeObject.getStr("answer"));
             }
 
-            contextEntity.setOutputData(dbOutputData.toString());
+            contextEntity.setOutputData(preOutput.toString());
             contextEntity.setCell(nodeInfo.getId());
             contextEntity.setCreateTime(Tool.nowDateTime());
             applicationWorkflowRuntimeContextMapper.insert(contextEntity);

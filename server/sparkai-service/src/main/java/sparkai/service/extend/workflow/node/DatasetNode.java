@@ -1,15 +1,27 @@
 package sparkai.service.extend.workflow.node;
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sparkai.common.utils.Tool;
+import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
+import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
+import sparkai.service.service.interfaces.dataset.IHitTestService;
+import sparkai.service.vo.dataset.HitTestVo;
+import sparkai.service.vo.dataset.SearchVo;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class DatasetNode implements IWorkflowNode {
@@ -17,8 +29,56 @@ public class DatasetNode implements IWorkflowNode {
     @Setter
     public SseEmitter emitter;
 
+    @Autowired
+    ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
+
+    @Autowired
+    IHitTestService searchService;
+
     @Override
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
-        return  null;
+
+        JSONObject nodeObject = nodeInfo.getData();
+
+        // 上个节点的信息
+        ApplicationWorkflowRuntimeContextEntity context = applicationWorkflowRuntimeContextMapper.selectOne(
+                new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", runtimeId).eq("cell", sourceId));
+
+        JSONArray inputArr = nodeObject.getJSONArray("inputData");
+        String inputData = inputArr.get(1).toString();
+        JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
+        String question = preOutput.get(inputData).toString();
+
+        JSONArray datasetsArr = nodeObject.getJSONArray("datasets");
+        List<String> datasetIds = new ArrayList<>();
+        for (int i = 0; i < datasetsArr.size(); i++) {
+            datasetIds.add(datasetsArr.getJSONObject(i).getStr("datasetId"));
+        }
+
+        HitTestVo searchDataVo = new HitTestVo();
+        searchDataVo.setKeyword(question);
+        searchDataVo.setDatasetIds(String.join(", ", datasetIds));
+        searchDataVo.setSimilarity(0.9);
+        searchDataVo.setTopRank(5);
+        searchDataVo.setType("embedding");
+        List<SearchVo> searchRes = searchService.search(searchDataVo);
+
+        // 记录运行时数据
+        ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
+        contextEntity.setStep(context.getStep() + 1);
+        contextEntity.setNodeType("dataset-node");
+        contextEntity.setRuntimeId(runtimeId);
+
+        // 记录问题分类节点的输出
+        String result = searchRes.stream().map(SearchVo::getContent).collect(Collectors.joining());
+        preOutput.set("sys.result", JSONUtil.toJsonStr(result));
+        contextEntity.setOutputData(preOutput.toString());
+
+        contextEntity.setCell(nodeInfo.getId());
+        contextEntity.setCreateTime(Tool.nowDateTime());
+        applicationWorkflowRuntimeContextMapper.insert(contextEntity);
+
+        // 获取下一个节点
+        return edges.get(nodeInfo.getId());
     }
 }

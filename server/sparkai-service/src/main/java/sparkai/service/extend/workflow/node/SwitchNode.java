@@ -97,7 +97,7 @@ public class SwitchNode implements IWorkflowNode {
         contextEntity.setNodeType("switch-node");
         contextEntity.setRuntimeId(runtimeId);
         // 记录问题分类节点的输入
-        contextEntity.setInputData(preOutput.toString());
+        contextEntity.setOutputData(preOutput.toString());
         contextEntity.setCell(nodeInfo.getId());
         contextEntity.setCreateTime(Tool.nowDateTime());
         applicationWorkflowRuntimeContextMapper.insert(contextEntity);

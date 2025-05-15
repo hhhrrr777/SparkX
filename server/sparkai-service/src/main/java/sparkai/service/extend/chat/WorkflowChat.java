@@ -80,7 +80,6 @@ public class WorkflowChat implements IChat {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         inputData.set("sys.ip", request.getRemoteAddr());
         inputData.set("sys.appId", info.getAppId());
-        contextEntity.setInputData(inputData.toString());
         contextEntity.setOutputData(inputData.toString());
 
         contextEntity.setCreateTime(Tool.nowDateTime());

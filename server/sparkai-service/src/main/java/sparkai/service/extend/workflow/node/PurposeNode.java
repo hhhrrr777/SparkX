@@ -90,16 +90,10 @@ public class PurposeNode implements IWorkflowNode {
         contextEntity.setNodeType("purpose-node");
         contextEntity.setRuntimeId(runtimeId);
 
-        // 记录问题分类节点的输入
-        JSONObject dbInputData = JSONUtil.createObj();
-        dbInputData.set(inputData, preOutput.get(inputData).toString());
-        contextEntity.setInputData(dbInputData.toString());
-
         // 记录问题分类节点的输出
-        JSONObject dbOutputData = JSONUtil.createObj();
         int index = Integer.parseInt(answer) - 1;
-        dbOutputData.set("sys.purposeName", cateList.getJSONObject(index).get("name"));
-        contextEntity.setOutputData(dbOutputData.toString());
+        preOutput.set("sys.purposeName", cateList.getJSONObject(index).get("name"));
+        contextEntity.setOutputData(preOutput.toString());
 
         // 模型使用情况
         JSONObject modelData = JSONUtil.createObj();
@@ -108,7 +102,7 @@ public class PurposeNode implements IWorkflowNode {
         modelData.set("totalTokenCount", chatResponse.tokenUsage().totalTokenCount());
         contextEntity.setModelData(modelData.toString());
 
-        contextEntity.setCell(inputArr.get(0).toString());
+        contextEntity.setCell(nodeInfo.getId());
         contextEntity.setCreateTime(Tool.nowDateTime());
         applicationWorkflowRuntimeContextMapper.insert(contextEntity);
 

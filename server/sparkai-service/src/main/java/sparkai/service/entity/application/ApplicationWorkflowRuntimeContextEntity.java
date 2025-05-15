@@ -43,12 +43,6 @@ public class ApplicationWorkflowRuntimeContextEntity implements Serializable {
     private Integer step;
 
     /**
-    * 入参数据
-    */
-    @TableField(value = "input_data")
-    private String inputData;
-
-    /**
     * 出参数据
     */
     @TableField(value = "output_data")
