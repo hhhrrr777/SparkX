@@ -1,29 +1,17 @@
 package sparkai.service.extend.workflow.node;
 
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
-import dev.langchain4j.service.AiServices;
-import dev.langchain4j.service.TokenStream;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.enums.NodeTypeEnum;
-import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
-import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
-import sparkai.service.helper.SseEmitterHelper;
-import sparkai.service.helper.StreamChatModelBuildHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
-import sparkai.service.mapper.system.ModelsMapper;
-import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
 

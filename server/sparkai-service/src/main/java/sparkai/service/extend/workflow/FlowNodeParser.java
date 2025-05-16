@@ -53,10 +53,6 @@ public class FlowNodeParser {
         // 构建执行流
         this.buildData(flowData);
 
-        System.out.println("-------------------------------------");
-        System.out.println(this.edges);
-        System.out.println("-------------------------------------");
-
         // 开始节点指向的对象
         List<EdgeVo> edgeVoList = this.edges.get(this.startId);
         execute(edgeVoList, this.startId);

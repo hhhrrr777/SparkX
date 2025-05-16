@@ -15,6 +15,7 @@ import cn.hutool.json.JSONUtil;
 import dev.langchain4j.service.TokenStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.constant.SparkAIConstant;
@@ -22,6 +23,7 @@ import sparkai.service.extend.workflow.SendEndCallback;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Future;
 
 @Slf4j
 @Component

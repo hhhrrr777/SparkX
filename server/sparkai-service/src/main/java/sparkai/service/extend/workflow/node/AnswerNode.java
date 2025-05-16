@@ -8,6 +8,7 @@ import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.service.TokenStream;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -37,9 +38,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class AnswerNode implements IWorkflowNode {
 
     @Autowired
@@ -103,7 +107,16 @@ public class AnswerNode implements IWorkflowNode {
                 } else if (context.getNodeType().equals(NodeTypeEnum.LLM.getCode())
                         && returnAnswerType.equals("sys.content")) {
 
-                    answer = llmAnswer(context.getOutputData(), context.getModelData());
+                    String llmRes = llmAnswer(context.getOutputData(), context.getModelData());
+                    JSONObject llmResData = JSONUtil.parseObj(llmRes);
+                    answer = llmResData.getStr("content");
+
+                    // 模型使用情况
+                    JSONObject modelData = JSONUtil.createObj();
+                    modelData.set("inputTokenCount", llmResData.getStr("inputTokenCount"));
+                    modelData.set("outputTokenCount", llmResData.getStr("outputTokenCount"));
+                    modelData.set("totalTokenCount", llmResData.getStr("totalTokenCount"));
+                    contextEntity.setModelData(modelData.toString());
                 } else {
 
                     answer = preOutput.get(returnAnswerType).toString();
@@ -158,60 +171,76 @@ public class AnswerNode implements IWorkflowNode {
      */
     private String llmAnswer(String inputData, String modelInfo) {
 
-        JSONObject inputObject = JSONUtil.parseObj(inputData);
-        JSONObject modelObject = JSONUtil.parseObj(modelInfo);
+        try {
 
-        JSONObject modelDataInfo = modelObject.getJSONObject("modelInfo");
-        // 获取模型信息
-        ModelsEntity modelResInfo = modelsMapper.selectById(modelDataInfo.getStr("modelId"));
+            JSONObject inputObject = JSONUtil.parseObj(inputData);
+            JSONObject modelObject = JSONUtil.parseObj(modelInfo);
 
-        // step 1 构建模型流式应答对象
-        ApplicationEntity applicationInfo = new ApplicationEntity();
-        applicationInfo.setTemperature(modelDataInfo.getDouble("temperature"));
-        applicationInfo.setModelName(modelDataInfo.getStr("modelName"));
-        StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelResInfo, applicationInfo);
+            JSONObject modelDataInfo = modelObject.getJSONObject("modelInfo");
+            // 获取模型信息
+            ModelsEntity modelResInfo = modelsMapper.selectById(modelDataInfo.getStr("modelId"));
 
-        // step 2 构建模型普通对象，用于问题优化下使用
-        ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelResInfo, applicationInfo);
+            // step 1 构建模型流式应答对象
+            ApplicationEntity applicationInfo = new ApplicationEntity();
+            applicationInfo.setTemperature(modelDataInfo.getDouble("temperature"));
+            applicationInfo.setModelName(modelDataInfo.getStr("modelName"));
+            StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelResInfo, applicationInfo);
 
-        ApplicationSaveValidate validate = new ApplicationSaveValidate();
-        // 写入引用的知识库
-        List<DatasetSimpleVo> dataListVo = new ArrayList<>();
-        if (inputObject.containsKey("sys.result") && !inputObject.getStr("sys.result").isBlank()) {
-            List<String> datasetIdsArr = Arrays.stream(inputObject.getStr("sys.result").split(",")).toList();
+            // step 2 构建模型普通对象，用于问题优化下使用
+            ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelResInfo, applicationInfo);
 
-            for (String datasetId : datasetIdsArr) {
-                DatasetSimpleVo datasetSimpleVo = new DatasetSimpleVo();
-                datasetSimpleVo.setDatasetId(datasetId);
+            ApplicationSaveValidate validate = new ApplicationSaveValidate();
+            // 写入引用的知识库
+            List<DatasetSimpleVo> dataListVo = new ArrayList<>();
+            if (inputObject.containsKey("sys.result") && !inputObject.getStr("sys.result").isBlank()) {
+                List<String> datasetIdsArr = Arrays.stream(inputObject.getStr("sys.result").split(",")).toList();
 
-                dataListVo.add(datasetSimpleVo);
+                for (String datasetId : datasetIdsArr) {
+                    DatasetSimpleVo datasetSimpleVo = new DatasetSimpleVo();
+                    datasetSimpleVo.setDatasetId(datasetId);
+
+                    dataListVo.add(datasetSimpleVo);
+                }
             }
+            validate.setDatasetList(dataListVo);
+
+            validate.setMemoryNum(modelObject.getInt("memory"));
+            validate.setCompressingQuery(1);
+            validate.setSearchMode("embedding");
+            validate.setTopRank(3);
+            validate.setPrompt(modelObject.getStr("systemMsg"));
+            validate.setSimilarity(modelDataInfo.getDouble("temperature"));
+
+            JSONArray inputArr = modelObject.getJSONArray("inputData");
+            String inputNodeData = inputArr.get(1).toString();
+            String question = inputObject.get(inputNodeData).toString();
+
+            validate.setContent(modelObject.getStr("userMsg") + question);
+
+            // step 3 构建 IAiService
+            IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel, chatLanguageModel);
+
+            TokenStream tokenStream;
+            if (validate.getPrompt().isBlank()) {
+                tokenStream = assistant.chatInTokenStream(validate.getContent());
+            } else {
+                tokenStream = assistant.chatWithSystem(validate.getPrompt(), validate.getContent());
+            }
+
+            AtomicReference<String> answer = new AtomicReference<>("");
+            CountDownLatch latch = new CountDownLatch(1);
+            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, (response) -> {
+
+                answer.set(response);
+                latch.countDown();
+            });
+
+            latch.await();
+
+            return answer.get();
+        } catch (Exception e) {
+            log.error("回复节点构建llm错误：", e);
+            return null;
         }
-        validate.setDatasetList(dataListVo);
-
-        validate.setMemoryNum(modelObject.getInt("memory"));
-        validate.setCompressingQuery(1);
-        validate.setSearchMode("embedding");
-        validate.setTopRank(3);
-        validate.setPrompt(modelObject.getStr("systemMsg"));
-        validate.setSimilarity(modelDataInfo.getDouble("temperature"));
-
-        JSONArray inputArr = modelObject.getJSONArray("inputData");
-        String inputNodeData = inputArr.get(1).toString();
-        String question = inputObject.get(inputNodeData).toString();
-
-        validate.setContent(modelObject.getStr("userMsg") + question);
-
-        // step 3 构建 IAiService
-        IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel, chatLanguageModel);
-
-        TokenStream tokenStream;
-        if (validate.getPrompt().isBlank()) {
-            tokenStream = assistant.chatInTokenStream(validate.getContent());
-        } else {
-            tokenStream = assistant.chatWithSystem(validate.getPrompt(), validate.getContent());
-        }
-
-        return "";
     }
 }
