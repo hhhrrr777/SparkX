@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sparkai.common.enums.NodeTypeEnum;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
@@ -94,7 +95,7 @@ public class SwitchNode implements IWorkflowNode {
         // 记录运行时数据
         ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
         contextEntity.setStep(context.getStep() + 1);
-        contextEntity.setNodeType("switch-node");
+        contextEntity.setNodeType(NodeTypeEnum.SWITCH.getCode());
         contextEntity.setRuntimeId(runtimeId);
         // 记录问题分类节点的输入
         contextEntity.setOutputData(preOutput.toString());

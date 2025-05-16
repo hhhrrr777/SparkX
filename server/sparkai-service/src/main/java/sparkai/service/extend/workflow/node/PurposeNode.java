@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sparkai.common.enums.NodeTypeEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationEntity;
@@ -87,7 +88,7 @@ public class PurposeNode implements IWorkflowNode {
         // 记录运行时数据
         ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
         contextEntity.setStep(context.getStep() + 1);
-        contextEntity.setNodeType("purpose-node");
+        contextEntity.setNodeType(NodeTypeEnum.PURPOSE.getCode());
         contextEntity.setRuntimeId(runtimeId);
 
         // 记录问题分类节点的输出

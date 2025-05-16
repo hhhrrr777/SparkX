@@ -8,20 +8,18 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sparkai.common.enums.NodeTypeEnum;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.service.interfaces.dataset.IHitTestService;
-import sparkai.service.vo.dataset.HitTestVo;
-import sparkai.service.vo.dataset.SearchVo;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class DatasetNode implements IWorkflowNode {
@@ -31,9 +29,6 @@ public class DatasetNode implements IWorkflowNode {
 
     @Autowired
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
-
-    @Autowired
-    IHitTestService searchService;
 
     @Override
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
@@ -55,23 +50,15 @@ public class DatasetNode implements IWorkflowNode {
             datasetIds.add(datasetsArr.getJSONObject(i).getStr("datasetId"));
         }
 
-        HitTestVo searchDataVo = new HitTestVo();
-        searchDataVo.setKeyword(question);
-        searchDataVo.setDatasetIds(String.join(", ", datasetIds));
-        searchDataVo.setSimilarity(0.9);
-        searchDataVo.setTopRank(5);
-        searchDataVo.setType("embedding");
-        List<SearchVo> searchRes = searchService.search(searchDataVo);
-
         // 记录运行时数据
         ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
         contextEntity.setStep(context.getStep() + 1);
-        contextEntity.setNodeType("dataset-node");
+        contextEntity.setNodeType(NodeTypeEnum.DATASET.getCode());
         contextEntity.setRuntimeId(runtimeId);
 
         // 记录问题分类节点的输出
-        String result = searchRes.stream().map(SearchVo::getContent).collect(Collectors.joining());
-        preOutput.set("sys.result", JSONUtil.toJsonStr(result));
+        preOutput.set("node_question", question);
+        preOutput.set("sys.result", datasetIds);
         contextEntity.setOutputData(preOutput.toString());
 
         contextEntity.setCell(nodeInfo.getId());
