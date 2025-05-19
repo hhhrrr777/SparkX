@@ -50,4 +50,14 @@ public class PreviewVo implements Serializable {
      * 自动清洗
      */
     private Integer autoClean;
+
+    /**
+     * 文档模式 text:文本文件 excel:Excel表格 qa:QA问答
+     */
+    private String fileType;
+
+    /**
+     * 所属知识库id
+     */
+    private String datasetId;
 }

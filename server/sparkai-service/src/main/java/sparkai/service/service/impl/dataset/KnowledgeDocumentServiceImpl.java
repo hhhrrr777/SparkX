@@ -10,9 +10,12 @@
 package sparkai.service.service.impl.dataset;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,9 +39,7 @@ import sparkai.service.task.EmbeddingDocumentTask;
 import sparkai.service.vo.document.*;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
@@ -125,6 +126,71 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             }
 
             return splitList;
+
+        } catch (IllegalStateException | IOException e) {
+            throw new BusinessException("上传失败" + e.getMessage());
+        }
+    }
+
+    /**
+     * 上传文件
+     * @param previewVo PreviewVo
+     */
+    @Override
+    public void uploadFile(PreviewVo previewVo) {
+
+        try {
+
+            for (MultipartFile file : previewVo.getFiles()) {
+
+                ExcelReader reader = ExcelUtil.getReader(file.getInputStream());
+                // 获取所有sheet的名称列表
+                List<String> sheetNames = reader.getSheetNames();
+
+                // 遍历所有sheet并读取数据
+                for (String sheetName : sheetNames) {
+                    // 切换到指定的sheet
+                    reader.setSheet(sheetName);
+                    // 读取当前sheet的所有行数据，每行数据为一个Map对象，键为列名，值为列值
+                    List<Map<String, Object>> rows = reader.readAll();
+                    System.out.println("Sheet Name: " + sheetName);
+                    for (Map<String, Object> row : rows) {
+                        System.out.println("-------------------------");
+                        System.out.println(row);
+                        System.out.println("-------------------------");
+                    }
+                }
+
+                reader.close();
+                /*System.out.println(listSheet);
+                for (int i = 0; i < listSheet.size(); i++) {
+
+                    List<List<Object>> readAll = reader.read(i);
+
+                    // 写入文档
+                   *//* KnowledgeDocumentEntity knowledgeDocument = new KnowledgeDocumentEntity();
+                    knowledgeDocument.setName(listSheet.get(i).getSheetName());
+                    String documentId = IdUtil.randomUUID();
+                    knowledgeDocument.setDocumentId(documentId);
+                    knowledgeDocument.setStatus(StatusEnum.YES.getCode());
+                    knowledgeDocument.setQuestionStatus(StatusEnum.YES.getCode());
+                    knowledgeDocument.setActive(StatusEnum.YES.getCode());
+                    knowledgeDocument.setDatasetId(previewVo.getDatasetId());
+                    knowledgeDocument.setParagraphNum(listSheet.size() - 1);
+                    knowledgeDocument.setAnswerType("model");
+                    knowledgeDocument.setRedirectSimilar(0.900);
+                    knowledgeDocument.setCreateTime(Tool.nowDateTime());
+
+                    knowledgeDocumentMapper.insert(knowledgeDocument);*//*
+
+                    for (List<Object> data : readAll) {
+
+                        System.out.println("-----------------");
+                        System.out.println(data);
+                        System.out.println("-----------------");
+                    }
+                }*/
+            }
 
         } catch (IllegalStateException | IOException e) {
             throw new BusinessException("上传失败" + e.getMessage());

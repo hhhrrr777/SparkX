@@ -44,6 +44,16 @@ public class DocumentController {
     }
 
     /**
+     * 直接导入excel文档
+     */
+    @PostMapping("/uploadFile")
+    public AjaxResult<Object> uploadFile(PreviewVo previewVo) {
+
+        iKnowledgeDocumentService.uploadFile(previewVo);
+        return AjaxResult.success();
+    }
+
+    /**
      * 保存文档入库
      */
     @PostMapping("/save")

@@ -15,7 +15,7 @@
 			</el-steps>
 			<div class="upload-box" v-if="active === 0">
 				<h4 class="upload-title">上传文档</h4>
-				<el-radio-group v-model="fileType" class="btn-group">
+				<el-radio-group v-model="fileType" class="btn-group" @change="typeChange">
 					<el-radio-button label="txt">文本文件</el-radio-button>
 					<el-radio-button label="excel">Excel表格</el-radio-button>
 					<el-radio-button label="qa">QA 问答对</el-radio-button>
@@ -25,7 +25,7 @@
 					<p>2、每次最多上传 50 个文件，每个文件不超过 100MB</p>
 				</div>
 				<div class="notice-box" v-if="fileType === 'excel'">
-					<p>1、下载系统提供的模板进行操作：</p>
+					<p>1、下载系统提供的模板进行操作：<a :href="excelTpl" style="color: var(--el-color-primary)">下载模板</a></p>
 					<p>2、数据表须采用标准结构化格式，第一行须有业务语义，系统将表中的每一条记录结合表头作为一个段落处理</p>
 					<p>3、如果您设置了多个sheet，则系统将会把这些sheet当做多个文档来处理，每个文档的标题即sheet的标题</p>
 					<p>4、每次最多上传 50 个文件，每个文件不超过 100MB</p>
@@ -42,7 +42,7 @@
 					style="margin-top: 20px"
 					class="upload-demo"
 					:limit="50"
-					accept=".txt,.md,.pdf,.docx,.html,.xls,.xlsx,.csv"
+					:acceptConfig="acceptConfig"
 					:action="uploadUrl"
 					:auto-upload="false"
 					:show-file-list="false"
@@ -55,7 +55,8 @@
 					</el-icon>
 					<div class="el-upload__text">
 						拖拽文件至此上传或 <em>选择文件</em>
-						<p style="margin-top: 5px;font-size: 12px">支持格式：TXT、Markdown、PDF、DOCX、HTML、XLS、XLSX、CSV </p>
+						<p style="margin-top: 5px;font-size: 12px" v-if="fileType === 'txt'">支持格式：TXT、Markdown、PDF、DOCX、HTML、XLS、XLSX、CSV </p>
+						<p style="margin-top: 5px;font-size: 12px" v-else>支持格式：XLSX </p>
 					</div>
 				</el-upload>
 
@@ -208,7 +209,9 @@ export default {
 			documentList: [],
 			datasetId: '',
 			nowSegmentData: [],
-			fileType: 'txt'
+			fileType: 'txt',
+			acceptConfig: '.txt,.md,.pdf,.docx,.html,.xls,.xlsx,.csv',
+			excelTpl: './tpl/excel表格模版.xlsx'
 		}
 	},
 	mounted() {
@@ -246,18 +249,24 @@ export default {
 			formData.append('fileType', this.fileType) // 上传的文件类型
 
 			this.active = 1
-			let res = await this.$API.document.preview.post(formData)
-			this.documentList = res.data
-			this.nowFileIndex = 0
-			this.segmentTitle = []
-			this.segmentData = []
+			let res;
+			if (this.fileType === 'txt') {
+				res = await this.$API.document.preview.post(formData)
+				this.documentList = res.data
+				this.nowFileIndex = 0
+				this.segmentTitle = []
+				this.segmentData = []
 
-			this.documentList.forEach(doc => {
-				this.segmentTitle.push(doc.name)
-				this.segmentData.push(doc.content)
-			})
+				this.documentList.forEach(doc => {
+					this.segmentTitle.push(doc.name)
+					this.segmentData.push(doc.content)
+				})
 
-			this.nowSegmentData = this.segmentData[this.nowFileIndex]
+				this.nowSegmentData = this.segmentData[this.nowFileIndex]
+			} else {
+				formData.append('datasetId', this.datasetId) // 上传的文件类型
+				res = await this.$API.document.uploadFile.post(formData)
+			}
 		},
 		// 上一步
 		preStep() {
@@ -285,6 +294,14 @@ export default {
 				this.$router.push('/dataset/detail?datasetId=' + this.datasetId)
 			} else {
 				this.$message.error(res.msg)
+			}
+		},
+		// 上传类型改变
+		typeChange(fileType) {
+			if (fileType === 'txt') {
+				this.acceptConfig = '.txt,.md,.pdf,.docx,.html,.xls,.xlsx,.csv'
+			} else {
+				this.acceptConfig = '.xlsx'
 			}
 		}
 	}

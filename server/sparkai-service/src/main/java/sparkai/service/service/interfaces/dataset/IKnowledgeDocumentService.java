@@ -39,6 +39,12 @@ public interface IKnowledgeDocumentService {
     List<DocumentSplitVo> previewFile(PreviewVo previewVo);
 
     /**
+     * 上传文件
+     * @param previewVo PreviewVo
+     */
+    void uploadFile(PreviewVo previewVo);
+
+    /**
      * 保存文档
      * @param documentSaveVo DocumentSaveVo
      */

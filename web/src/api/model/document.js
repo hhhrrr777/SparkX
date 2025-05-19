@@ -16,6 +16,13 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
+	uploadFile: {
+		url: `${config.API_URL}/document/uploadFile`,
+		name: "上传文档",
+		post: async function(data={}){
+			return await http.post(this.url, data);
+		}
+	},
 	save: {
 		url: `${config.API_URL}/document/save`,
 		name: "保存文档",
