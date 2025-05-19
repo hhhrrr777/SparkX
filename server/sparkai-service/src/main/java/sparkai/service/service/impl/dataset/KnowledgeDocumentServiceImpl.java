@@ -175,15 +175,22 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
                     int fileSize = 0;
                     for (Map<String, Object> row : rows) {
                         StringBuilder content = new StringBuilder();
+                        String title = "";
 
-                        for (Map.Entry<String, Object> entry : row.entrySet()) {
-                            content.append(entry.getKey()).append(":").append(entry.getValue()).append(" ");
+                        if (previewVo.getFileType().equals("excel")) {
+                            for (Map.Entry<String, Object> entry : row.entrySet()) {
+                                content.append(entry.getKey()).append(":").append(entry.getValue()).append(" ");
+                            }
+                        } else {
+                            
                         }
+
                         int byteSize = String.valueOf(content).getBytes(StandardCharsets.UTF_8).length;
                         fileSize += byteSize;
 
                         KnowledgeParagraphEntity paragraph = new KnowledgeParagraphEntity();
                         paragraph.setParagraphId(IdUtil.randomUUID());
+                        paragraph.setTitle(title);
                         paragraph.setContent(content.toString());
                         paragraph.setDatasetId(previewVo.getDatasetId());
                         paragraph.setDocumentId(documentId);
