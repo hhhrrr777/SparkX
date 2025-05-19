@@ -20,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.core.PageResult;
 import sparkai.common.enums.DocumentStatusEnum;
@@ -39,6 +40,7 @@ import sparkai.service.task.EmbeddingDocumentTask;
 import sparkai.service.vo.document.*;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -146,50 +148,59 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
                 ExcelReader reader = ExcelUtil.getReader(file.getInputStream());
                 // 获取所有sheet的名称列表
                 List<String> sheetNames = reader.getSheetNames();
-
                 // 遍历所有sheet并读取数据
                 for (String sheetName : sheetNames) {
                     // 切换到指定的sheet
                     reader.setSheet(sheetName);
                     // 读取当前sheet的所有行数据，每行数据为一个Map对象，键为列名，值为列值
                     List<Map<String, Object>> rows = reader.readAll();
-                    System.out.println("Sheet Name: " + sheetName);
-                    for (Map<String, Object> row : rows) {
-                        System.out.println("-------------------------");
-                        System.out.println(row);
-                        System.out.println("-------------------------");
+                    if (CollectionUtils.isEmpty(rows)) {
+                        continue;
                     }
-                }
 
-                reader.close();
-                /*System.out.println(listSheet);
-                for (int i = 0; i < listSheet.size(); i++) {
-
-                    List<List<Object>> readAll = reader.read(i);
-
-                    // 写入文档
-                   *//* KnowledgeDocumentEntity knowledgeDocument = new KnowledgeDocumentEntity();
-                    knowledgeDocument.setName(listSheet.get(i).getSheetName());
+                    KnowledgeDocumentEntity knowledgeDocument = new KnowledgeDocumentEntity();
+                    knowledgeDocument.setName(sheetName);
                     String documentId = IdUtil.randomUUID();
                     knowledgeDocument.setDocumentId(documentId);
                     knowledgeDocument.setStatus(StatusEnum.YES.getCode());
                     knowledgeDocument.setQuestionStatus(StatusEnum.YES.getCode());
                     knowledgeDocument.setActive(StatusEnum.YES.getCode());
                     knowledgeDocument.setDatasetId(previewVo.getDatasetId());
-                    knowledgeDocument.setParagraphNum(listSheet.size() - 1);
+                    knowledgeDocument.setParagraphNum(rows.size());
                     knowledgeDocument.setAnswerType("model");
                     knowledgeDocument.setRedirectSimilar(0.900);
                     knowledgeDocument.setCreateTime(Tool.nowDateTime());
 
-                    knowledgeDocumentMapper.insert(knowledgeDocument);*//*
+                    knowledgeDocumentMapper.insert(knowledgeDocument);
+                    int fileSize = 0;
+                    for (Map<String, Object> row : rows) {
+                        StringBuilder content = new StringBuilder();
 
-                    for (List<Object> data : readAll) {
+                        for (Map.Entry<String, Object> entry : row.entrySet()) {
+                            content.append(entry.getKey()).append(":").append(entry.getValue()).append(" ");
+                        }
+                        int byteSize = String.valueOf(content).getBytes(StandardCharsets.UTF_8).length;
+                        fileSize += byteSize;
 
-                        System.out.println("-----------------");
-                        System.out.println(data);
-                        System.out.println("-----------------");
+                        KnowledgeParagraphEntity paragraph = new KnowledgeParagraphEntity();
+                        paragraph.setParagraphId(IdUtil.randomUUID());
+                        paragraph.setContent(content.toString());
+                        paragraph.setDatasetId(previewVo.getDatasetId());
+                        paragraph.setDocumentId(documentId);
+                        paragraph.setStatus(DocumentStatusEnum.PENDING.getCode());
+                        paragraph.setActive(DocumentStatusEnum.PENDING.getCode());
+                        paragraph.setCreateTime(Tool.nowDateTime());
+
+                        knowledgeParagraphMapper.insert(paragraph);
                     }
-                }*/
+
+                    // 更新文件大小
+                    KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(documentId);
+                    documentInfo.setFileSize(fileSize);
+                    knowledgeDocumentMapper.updateById(documentInfo);
+                }
+
+                reader.close();
             }
 
         } catch (IllegalStateException | IOException e) {

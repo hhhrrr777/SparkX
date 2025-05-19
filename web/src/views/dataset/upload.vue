@@ -248,7 +248,6 @@ export default {
 			formData.append('autoClean', this.diyForm.autoClean)
 			formData.append('fileType', this.fileType) // 上传的文件类型
 
-			this.active = 1
 			let res;
 			if (this.fileType === 'txt') {
 				res = await this.$API.document.preview.post(formData)
@@ -263,9 +262,18 @@ export default {
 				})
 
 				this.nowSegmentData = this.segmentData[this.nowFileIndex]
+				this.active = 1
 			} else {
 				formData.append('datasetId', this.datasetId) // 上传的文件类型
 				res = await this.$API.document.uploadFile.post(formData)
+				if (res.code === 0) {
+					this.$message.success('操作成功')
+					setTimeout(() => {
+						this.$router.push('/dataset/detail?datasetId=' + this.datasetId)
+					}, 800)
+				} else {
+					this.$message.error(res.msg)
+				}
 			}
 		},
 		// 上一步
