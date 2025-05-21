@@ -7,7 +7,7 @@
 						   :disabled="selectedDocumentIds.length === 0">迁移文档</el-button>
 				<el-button type="primary" @click="embeddingAll" style="margin-top: -10px;" :disabled="selectedDocumentIds.length === 0">
 					<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量文档</el-button>
-				<el-button type="primary" icon="el-icon-QuestionFilled" @click="uploadFile" style="margin-top: -10px;"
+				<el-button type="primary" icon="el-icon-QuestionFilled" @click="makeQuestion" style="margin-top: -10px;"
 						   :disabled="selectedDocumentIds.length === 0">生成问题</el-button>
 				<el-button type="primary" icon="el-icon-Setting" @click="setting" style="margin-top: -10px;"
 						   :disabled="selectedDocumentIds.length === 0">设置</el-button>
@@ -197,10 +197,27 @@
 	</el-dialog>
 
 	<!-- 迁移文档 -->
-	<el-dialog title="迁移文档" v-model="datasetVisible" width="800px" destroy-on-close :close-on-click-modal="false">
-		<dataset-dialog @success="handleSuccess" :diff-dataset-id="datasetId" :document-ids="selectedDocumentIds.join(',')"
-						@doClose="datasetVisible=false"></dataset-dialog>
+	<el-dialog
+		title="迁移文档"
+		v-model="datasetVisible"
+		width="800px"
+		destroy-on-close
+		:close-on-click-modal="false">
+		<dataset-dialog
+			@success="handleSuccess"
+			:diff-dataset-id="datasetId"
+			:document-ids="selectedDocumentIds.join(',')"
+			@doClose="datasetVisible=false">
+		</dataset-dialog>
 	</el-dialog>
+
+	<question-dialog
+		v-if="questionVisible"
+		ref="questionDialog"
+		@success="handleQuestionSuccess"
+		@closed="questionVisible=false"
+		:close-on-click-modal="false">
+	</question-dialog>
 </template>
 
 <script>
@@ -208,9 +225,21 @@ import Pages from "@/components/pages/index.vue";
 import Paragraph from "@/views/dataset/pages/docsub/paragraph.vue";
 import {Delete, Loading, MoreFilled, QuestionFilled, Setting, Switch} from "@element-plus/icons-vue";
 import datasetDialog from "@/components/dataset/index.vue";
+import questionDialog from "@/views/dataset/questionDialog.vue";
 
 export default {
-	components: {datasetDialog, Delete, Switch, QuestionFilled, MoreFilled, Setting, Loading, Paragraph, Pages},
+	components: {
+		questionDialog,
+		datasetDialog,
+		Delete,
+		Switch,
+		QuestionFilled,
+		MoreFilled,
+		Setting,
+		Loading,
+		Paragraph,
+		Pages
+	},
 	data() {
 		return {
 			tableData: [],
@@ -230,6 +259,7 @@ export default {
 			nowDocumentId: "",
 			selectedDocumentIds: [], // 已选择的文档
 			dialogVisible: false,
+			questionVisible: false,
 			loading: false,
 			settingForm: {
 				documentIds: "",
@@ -389,6 +419,23 @@ export default {
 			} else {
 				this.$message.error(res.msg)
 			}
+		},
+		// 生成问题
+		makeQuestion() {
+			if (this.selectedDocumentIds.length === 0) {
+				this.$message.error('请勾选文档')
+				return false
+			}
+
+			this.questionVisible = true
+			this.$nextTick(() => {
+				this.$refs.questionDialog.open('add').setData(this.selectedDocumentIds)
+			})
+		},
+		// 问题生成成功
+		handleQuestionSuccess() {
+			this.questionVisible = false
+			this.getList()
 		}
 	}
 }

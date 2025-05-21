@@ -51,4 +51,11 @@ export default {
 			return await http.get(this.url, data);
 		}
 	},
+	question: {
+		url: `${config.API_URL}/document/question`,
+		name: "生成问题",
+		post: async function(data={}){
+			return await http.post(this.url, data);
+		}
+	}
 }

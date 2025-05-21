@@ -67,4 +67,10 @@ public interface IKnowledgeDocumentService {
      * @param documentIds String
      */
     void delDocumentByIds(String documentIds);
+
+    /**
+     * 生成问题
+     * @param questionVo QuestionVo
+     */
+    void makeQuestion(QuestionVo questionVo);
 }

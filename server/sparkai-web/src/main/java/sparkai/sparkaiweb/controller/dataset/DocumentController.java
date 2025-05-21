@@ -92,4 +92,14 @@ public class DocumentController {
         iKnowledgeDocumentService.delDocumentByIds(documentIds);
         return AjaxResult.success();
     }
+
+    /**
+     * 生成问题
+     */
+    @PostMapping("/question")
+    public AjaxResult<Object> question(@RequestBody QuestionVo questionVo) {
+
+        iKnowledgeDocumentService.makeQuestion(questionVo);
+        return AjaxResult.success();
+    }
 }
