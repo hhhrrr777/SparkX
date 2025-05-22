@@ -95,10 +95,10 @@ export default {
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
 					this.loading = true
-					let res = this.$API.document.question.post(this.form);
+					let res = await this.$API.document.question.post(this.form);
 
 					this.loading = false
-					if (res.code === 0) {
+					if (res.code == 0) {
 						this.$message.success(res.msg)
 						this.$emit('success')
 					} else {

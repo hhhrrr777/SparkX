@@ -285,7 +285,7 @@ export default {
 			// 没有在向量化的文档，则清理定时器
 			let running = false
 			res.data.data.forEach(item => {
-				if (item.status === 2) {
+				if (item.status === 2 || item.questionStatus === 2) {
 					running = true
 				}
 			})
@@ -342,7 +342,7 @@ export default {
 			if (res.code === 0) {
 				setTimeout(() => {
 					this.getList()
-				}, 1000)
+				}, 1500)
 			} else {
 				this.$message.error(res.msg)
 			}
@@ -435,7 +435,9 @@ export default {
 		// 问题生成成功
 		handleQuestionSuccess() {
 			this.questionVisible = false
-			this.getList()
+			setTimeout(() => {
+				this.getList()
+			}, 1500)
 		}
 	}
 }

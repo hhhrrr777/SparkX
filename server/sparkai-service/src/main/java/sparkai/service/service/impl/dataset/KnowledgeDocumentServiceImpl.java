@@ -17,6 +17,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -32,14 +36,13 @@ import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
+import sparkai.service.entity.dataset.KnowledgeQuestionEntity;
+import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.fileSplitter.FileHandleFactory;
 import sparkai.service.fileSplitter.FileHandleInterface;
 import sparkai.service.helper.ChatModelBuildHelper;
-import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
-import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
-import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
-import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
+import sparkai.service.mapper.dataset.*;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDocumentService;
 import sparkai.service.task.EmbeddingDocumentTask;
@@ -69,9 +72,6 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
     @Autowired
     private ModelsMapper modelsMapper;
-
-    @Autowired
-    ChatModelBuildHelper chatModelBuildHelper;
 
     /**
      * 知识库下文档列表
@@ -359,47 +359,6 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
             throw new BusinessException("模型异常");
         }
 
-        executeAsyncTask(modelSetData, modelInfo, documentIds, questionVo);
-    }
-
-    /**
-     * 异步执行段落生成问题
-     * @param modelSetData List<String>
-     * @param modelInfo ModelsEntity
-     * @param documentIds List<String>
-     * @param questionVo QuestionVo
-     */
-    @Async
-    public void executeAsyncTask(List<String> modelSetData, ModelsEntity modelInfo, List<String> documentIds, QuestionVo questionVo) {
-
-        // 构建模型普通对象
-        ApplicationEntity applicationInfo = new ApplicationEntity();
-        applicationInfo.setTemperature(0.95);
-        applicationInfo.setModelName(modelSetData.get(1));
-        ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
-
-        for (String documentId : documentIds) {
-
-           /* KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(documentId);
-            documentInfo.setQuestionStatus(2); // 生成中
-            knowledgeDocumentMapper.updateById(documentInfo);*/
-
-            // 查出分段内容
-            List<KnowledgeParagraphEntity> paragraphList = knowledgeParagraphMapper.selectList(
-                    new QueryWrapper<KnowledgeParagraphEntity>().eq("document_id", documentId).eq("status", 1));
-
-            for (KnowledgeParagraphEntity paragraph : paragraphList) {
-
-                String question = questionVo.getPrompt().replace("{data}", paragraph.getContent());
-                System.out.println("------------------------------------------------------");
-                System.out.println(question);
-                System.out.println("------------------------------------------------------");
-            }
-
-            /*String answer = chatLanguageModel.chat("Say 'Hello World'");
-
-            documentInfo.setQuestionStatus(3); // 已生成
-            knowledgeDocumentMapper.updateById(documentInfo);*/
-        }
+        task.executeAsyncQuestionTask(modelSetData, modelInfo, documentIds, questionVo);
     }
 }

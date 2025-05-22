@@ -11,8 +11,13 @@ package sparkai.service.task;
 
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -23,8 +28,12 @@ import sparkai.common.enums.StatusEnum;
 import sparkai.common.utils.MarkChunk;
 import sparkai.common.utils.Tool;
 import sparkai.common.utils.TsVectorGenerator;
+import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.*;
+import sparkai.service.entity.system.ModelsEntity;
+import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.mapper.dataset.*;
+import sparkai.service.vo.document.QuestionVo;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -50,6 +59,9 @@ public class EmbeddingDocumentTask {
 
     @Autowired
     MarkChunk markChunk;
+
+    @Autowired
+    ChatModelBuildHelper chatModelBuildHelper;
 
     private EmbeddingModel embeddingModel;
 
@@ -99,6 +111,68 @@ public class EmbeddingDocumentTask {
         // 默认的内存型的embedding模型
         embeddingModel = new AllMiniLmL6V2EmbeddingModel();
         this.embeddingSingleParagraph(paragraphInfo);
+    }
+
+    /**
+     * 异步执行段落生成问题
+     * @param modelSetData List<String>
+     * @param modelInfo ModelsEntity
+     * @param documentIds List<String>
+     * @param questionVo QuestionVo
+     */
+    @Async
+    public void executeAsyncQuestionTask(List<String> modelSetData, ModelsEntity modelInfo, List<String> documentIds, QuestionVo questionVo) {
+
+        // 构建模型普通对象
+        ApplicationEntity applicationInfo = new ApplicationEntity();
+        applicationInfo.setTemperature(0.95);
+        applicationInfo.setModelName(modelSetData.get(1));
+        ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
+
+        for (String documentId : documentIds) {
+
+            KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(documentId);
+            documentInfo.setQuestionStatus(2); // 生成中
+            knowledgeDocumentMapper.updateById(documentInfo);
+
+            // 查出分段内容
+            List<KnowledgeParagraphEntity> paragraphList = knowledgeParagraphMapper.selectList(
+                    new QueryWrapper<KnowledgeParagraphEntity>().eq("document_id", documentId).eq("status", 1));
+
+            for (KnowledgeParagraphEntity paragraph : paragraphList) {
+
+                String question = questionVo.getPrompt().replace("{data}", paragraph.getContent());
+                String answer = chatLanguageModel.chat(question);
+
+                Document doc = Jsoup.parse(answer);
+                Elements questions = doc.select("question");
+
+                for (Element questionMatch : questions) {
+
+                    // 写入问题
+                    KnowledgeQuestionEntity questionEntity = new KnowledgeQuestionEntity();
+                    questionEntity.setQuestionId(IdUtil.randomUUID());
+                    questionEntity.setContent(questionMatch.text());
+                    questionEntity.setHitNums(0);
+                    questionEntity.setDatasetId(paragraph.getDatasetId());
+                    questionEntity.setCreateTime(Tool.nowDateTime());
+                    knowledgeQuestionMapper.insert(questionEntity);
+
+                    // 写入问题关联
+                    KnowledgeQuestionParagraphEntity questionParagraph = new KnowledgeQuestionParagraphEntity();
+                    questionParagraph.setUuid(IdUtil.randomUUID());
+                    questionParagraph.setDatasetId(paragraph.getDatasetId());
+                    questionParagraph.setDocumentId(paragraph.getDocumentId());
+                    questionParagraph.setParagraphId(paragraph.getParagraphId());
+                    questionParagraph.setQuestionId(questionEntity.getQuestionId());
+                    questionParagraph.setCreateTime(Tool.nowDateTime());
+                    knowledgeQuestionParagraphMapper.insert(questionParagraph);
+                }
+            }
+
+            documentInfo.setQuestionStatus(3); // 已生成
+            knowledgeDocumentMapper.updateById(documentInfo);
+        }
     }
 
     /**
