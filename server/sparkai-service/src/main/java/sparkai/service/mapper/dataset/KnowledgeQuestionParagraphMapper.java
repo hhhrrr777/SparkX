@@ -34,4 +34,15 @@ public interface KnowledgeQuestionParagraphMapper extends IBaseMapper<KnowledgeQ
             "</script>"
     })
     void deleteByDocumentIds(@Param("list") List<String> documentIds);
+
+    @Update({
+            "<script>",
+            "UPDATE knowledge_question_paragraph SET dataset_id = #{datasetId} ",
+            "WHERE document_id IN",
+            "<foreach item='id' collection='list' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"
+    })
+    void updateDatasetByIds(@Param("list") List<String> documentIds, @Param("datasetId") String datasetId);
 }

@@ -40,6 +40,7 @@ import sparkai.service.vo.dataset.TransferDatasetVo;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
@@ -259,8 +260,16 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
         knowledgeDocumentMapper.updateDatasetByIds(documentIds, transferDatasetVo.getDatasetId());
         // 更改段落的知识库id
         knowledgeParagraphMapper.updateDatasetByIds(documentIds, transferDatasetVo.getDatasetId());
+        // 获取全部关联的问题id
+        List<KnowledgeQuestionParagraphEntity> questionRelationList = knowledgeQuestionParagraphMapper.selectList(
+                new QueryWrapper<KnowledgeQuestionParagraphEntity>().in("document_id", documentIds));
+        List<String> questionIds = questionRelationList.stream().map(KnowledgeQuestionParagraphEntity::getQuestionId).toList();
+        KnowledgeQuestionEntity questionEntity = new KnowledgeQuestionEntity();
+        questionEntity.setDatasetId(transferDatasetVo.getDatasetId());
+        knowledgeQuestionMapper.update(questionEntity, new QueryWrapper<KnowledgeQuestionEntity>().in("question_id", questionIds));
+
         // 删除问题关联的知识库id
-        knowledgeQuestionParagraphMapper.deleteByDocumentIds(documentIds);
+        knowledgeQuestionParagraphMapper.updateDatasetByIds(documentIds, transferDatasetVo.getDatasetId());
         // 删除embedding的问题
         knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>()
                         .eq("source_type", SourceType.QUESTION.getCode())

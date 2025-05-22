@@ -3,7 +3,7 @@
 		<div class="search-box">
 			<div>
 				<el-button type="primary" icon="el-icon-UploadFilled" @click="uploadFile" style="margin-top: -10px;">上传文档</el-button>
-				<el-button type="primary" icon="el-icon-Switch" @click="uploadFile" style="margin-top: -10px;"
+				<el-button type="primary" icon="el-icon-Switch" @click="switchFile" style="margin-top: -10px;"
 						   :disabled="selectedDocumentIds.length === 0">迁移文档</el-button>
 				<el-button type="primary" @click="embeddingAll" style="margin-top: -10px;" :disabled="selectedDocumentIds.length === 0">
 					<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量文档</el-button>
@@ -340,6 +340,7 @@ export default {
 
 			let res = await this.$API.document.embedding.get({documentIds: this.selectedDocumentIds.join(",")})
 			if (res.code === 0) {
+				this.$message.success(res.msg)
 				setTimeout(() => {
 					this.getList()
 				}, 1500)
@@ -438,6 +439,15 @@ export default {
 			setTimeout(() => {
 				this.getList()
 			}, 1500)
+		},
+		// 迁移文档
+		switchFile() {
+			if (this.selectedDocumentIds.length === 0) {
+				this.$message.error('请勾选文档')
+				return false
+			}
+
+			this.datasetVisible = true
 		}
 	}
 }

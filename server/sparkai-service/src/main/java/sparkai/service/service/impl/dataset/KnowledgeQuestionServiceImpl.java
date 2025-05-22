@@ -58,6 +58,7 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
             queryWrapper.like("content", queryVo.getContent());
         }
 
+        queryWrapper.eq("dataset_id", queryVo.getDatasetId());
         queryWrapper.orderByDesc("create_time");
 
         IPage<KnowledgeQuestionEntity> questionListRes =
