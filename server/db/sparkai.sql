@@ -489,3 +489,39 @@ COMMENT ON COLUMN "public"."application_workflow_runtime_context"."cell" IS '节
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."application_workflow_runtime_context" IS '工作流运行时上下文';
+
+CREATE TABLE "public"."system_team" (
+    "team_id" INT4 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1),
+    "team_code" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "user_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6),
+    CONSTRAINT "system_team_pkey" PRIMARY KEY ("team_id")
+);
+ALTER TABLE "public"."system_team" OWNER TO "postgres";
+COMMENT ON COLUMN "public"."system_team"."team_id" IS '团队id';
+COMMENT ON COLUMN "public"."system_team"."team_code" IS '团队编码';
+COMMENT ON COLUMN "public"."system_team"."user_id" IS '团队管理员';
+COMMENT ON COLUMN "public"."system_team"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."system_team"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."system_team" IS '团队表';
+
+CREATE TABLE "public"."system_team_user" (
+    "id" INT4 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1),
+    "team_id" INT4 DEFAULT 0,
+    "user_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "dataset_permission" TEXT COLLATE "pg_catalog"."default" DEFAULT '' :: TEXT,
+    "app_permission" TEXT COLLATE "pg_catalog"."default" DEFAULT '' :: TEXT,
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6),
+    CONSTRAINT "system_team_user_pkey" PRIMARY KEY ("id")
+);
+ALTER TABLE "public"."system_team_user" OWNER TO "postgres";
+COMMENT ON COLUMN "public"."system_team_user"."id" IS 'id';
+COMMENT ON COLUMN "public"."system_team_user"."team_id" IS '团队id';
+COMMENT ON COLUMN "public"."system_team_user"."user_id" IS '用户id';
+COMMENT ON COLUMN "public"."system_team_user"."dataset_permission" IS '知识库权限';
+COMMENT ON COLUMN "public"."system_team_user"."app_permission" IS '应用权限';
+COMMENT ON COLUMN "public"."system_team_user"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."system_team_user"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."system_team_user" IS '团队用户表';

@@ -3,7 +3,7 @@
 		<el-card shadow="never">
 			<div class="title">系统设置</div>
 			<el-row class="tac">
-				<el-col :span="2">
+				<el-col :span="2" style="margin-right: 20px">
 					<div class="menu">
 						<el-menu
 							style="background: #f5f5f5"
@@ -29,7 +29,6 @@
 						</el-menu>
 					</div>
 				</el-col>
-				<el-col :span="1"></el-col>
 				<el-col :span="21">
 					<div class="pages">
 						<Suspense>
