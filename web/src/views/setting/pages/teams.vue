@@ -8,7 +8,7 @@
 						style="margin-top: 10px"
 						placeholder="请输入用户名"
 						suffix-icon="el-icon-search"
-						v-model="form.name">
+						v-model="searchForm.name">
 					</el-input>
 
 					<div class="user-item">admin <el-tag style="margin-left: 10px">创始人</el-tag></div>
@@ -79,6 +79,20 @@
 			</el-col>
 		</el-row>
 	</div>
+
+	<el-dialog title="添加成员" v-model="dialogVisible" width="500px" destroy-on-close :close-on-click-modal="false">
+		<el-form :model="form" label-width="80px">
+			<el-form-item label="用户昵称" prop="nickname">
+				<el-input v-model="form.nickname" placeholder="请输入用户昵称"></el-input>
+			</el-form-item>
+		</el-form>
+		<template #footer>
+			<div class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="optSubmit('ruleForm')">确 定</el-button>
+			</div>
+		</template>
+	</el-dialog>
 </template>
 
 <script>
@@ -88,8 +102,12 @@ export default {
 	components: {Delete},
 	data() {
 		return {
-			form: {
+			searchForm: {
 				name: ""
+			},
+			form: {
+				teamId: 0,
+				nickname: "",
 			},
 			activeName: "1",
 			tableData: [],
@@ -98,6 +116,12 @@ export default {
 			checkAdminAll: false,
 			checkViewAll: false,
 			allIndeterminate: [], // 全选
+			dialogVisible: false,
+			rules: {
+				nickname: [
+					{required: true, message: '请输入昵称', trigger: 'blur'}
+				]
+			}
 		}
 	},
 	mounted() {
@@ -130,6 +154,14 @@ export default {
 		// 查看选择
 		viewChange(row) {
 			console.log(333, row)
+		},
+		// 保存添加用户
+		optSubmit(formName) {
+			this.$refs[formName].validate(async (valid) => {
+				if (valid) {
+
+				}
+			})
 		}
 	}
 }

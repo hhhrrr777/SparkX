@@ -3,25 +3,11 @@
 		<el-form-item prop="user">
 			<el-input v-model="form.user" prefix-icon="el-icon-user" clearable
 					  :placeholder="$t('login.userPlaceholder')">
-				<template #append>
-					<el-select v-model="userType" style="width: 130px;">
-						<el-option :label="$t('login.admin')" value="admin"></el-option>
-						<el-option :label="$t('login.user')" value="user"></el-option>
-					</el-select>
-				</template>
 			</el-input>
 		</el-form-item>
 		<el-form-item prop="password">
 			<el-input v-model="form.password" prefix-icon="el-icon-lock" clearable show-password
 					  :placeholder="$t('login.PWPlaceholder')"></el-input>
-		</el-form-item>
-		<el-form-item style="margin-bottom: 10px;">
-			<el-col :span="12">
-				<el-checkbox :label="$t('login.rememberMe')" v-model="form.autologin"></el-checkbox>
-			</el-col>
-			<el-col :span="12" class="login-forgot">
-				<router-link to="/reset_password">{{ $t('login.forgetPassword') }}？</router-link>
-			</el-col>
 		</el-form-item>
 		<el-form-item>
 			<el-button type="primary" style="width: 100%;" :loading="islogin" round @click="login">{{
@@ -29,10 +15,6 @@
 				}}
 			</el-button>
 		</el-form-item>
-		<div class="login-reg">
-			{{ $t('login.noAccount') }}
-			<router-link to="/user_register">{{ $t('login.createAccount') }}</router-link>
-		</div>
 	</el-form>
 </template>
 
@@ -45,8 +27,8 @@ export default {
 		return {
 			userType: 'admin',
 			form: {
-				user: "admin",
-				password: "admin",
+				user: "",
+				password: "",
 				autologin: false
 			},
 			rules: {
@@ -77,44 +59,33 @@ export default {
 	methods: {
 		async login() {
 
-			var validate = await this.$refs.loginForm.validate().catch(() => {
-			})
+			var validate = await this.$refs.loginForm.validate().catch(() => {})
 			if (!validate) {
 				return false
 			}
 
 			this.islogin = true
-			var data = {
+			let res = await this.$API.auth.login.post({
 				username: this.form.user,
-				password: this.$TOOL.crypto.MD5(this.form.password)
-			}
-			this.$TOOL.cookie.set("TOKEN", 'xxx', {
-				expires: this.form.autologin ? 24 * 60 * 60 : 0
+				password: this.form.password
 			})
-			this.$TOOL.data.set("USER_INFO", {
-				id: 1,
-				userName: 'test'
-			})
-			//获取token
-			/*var user = await authApi.token.post(data)
-			if (user.code == 200) {
-				this.$TOOL.cookie.set("TOKEN", user.data.token, {
+			this.islogin = false
+
+			if (res.code === 0) {
+				this.$TOOL.cookie.set("TOKEN", res.msg, {
 					expires: this.form.autologin ? 24 * 60 * 60 : 0
 				})
-				this.$TOOL.data.set("USER_INFO", user.data.userInfo)
-			} else {
-				this.islogin = false
-				this.$message.warning(user.message)
-				return false
-			}*/
-			//获取菜单
-			this.$TOOL.data.set("MENU", menu)
 
-			this.$router.replace({
-				path: '/'
-			})
-			this.$message.success("Login Success 登录成功")
-			this.islogin = false
+				// 获取菜单
+				this.$TOOL.data.set("MENU", menu)
+
+				this.$router.replace({
+					path: '/'
+				})
+				this.$message.success("登录成功")
+			} else {
+				this.$message.error(res.msg)
+			}
 		},
 	}
 }

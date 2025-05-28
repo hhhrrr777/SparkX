@@ -2,24 +2,11 @@
 	<div class="login_bg">
 		<div class="login_adv" style="background-image: url(img/auth_banner.jpg);">
 			<div class="login_adv__title">
-				<h2>SCUI</h2>
-				<h4>{{ $t('login.slogan') }}</h4>
-				<p>{{ $t('login.describe') }}</p>
-				<div>
-					<span>
-						<el-icon><sc-icon-vue/></el-icon>
-					</span>
-					<span>
-						<el-icon class="add"><el-icon-plus/></el-icon>
-					</span>
-					<span>
-						<el-icon><el-icon-eleme-filled/></el-icon>
-					</span>
-				</div>
+
 			</div>
 			<div class="login_adv__mask"></div>
 			<div class="login_adv__bottom">
-				© {{ config.APP_NAME }} {{ config.APP_VER }}
+
 			</div>
 		</div>
 		<div class="login_main">
@@ -52,17 +39,10 @@
 				<div class="login-header">
 					<div class="logo">
 						<img :alt="config.APP_NAME" src="/img/logo.png">
-						<label>{{ config.APP_NAME }}</label>
+						<label>SparkAI</label>
 					</div>
 				</div>
-				<el-tabs>
-					<el-tab-pane :label="$t('login.accountLogin')" lazy>
-						<password-form></password-form>
-					</el-tab-pane>
-					<el-tab-pane :label="$t('login.mobileLogin')" lazy>
-						<phone-form></phone-form>
-					</el-tab-pane>
-				</el-tabs>
+				<password-form></password-form>
 				<template v-if="config.MY_SHOW_LOGIN_OAUTH">
 					<el-divider>{{ $t('login.signInOther') }}</el-divider>
 					<div class="login-oauth">
@@ -86,7 +66,6 @@
 
 <script>
 import passwordForm from './components/passwordForm.vue'
-import phoneForm from './components/phoneForm.vue'
 import config from '@/config'
 import {useViewTagsStore} from "@/stores/viewTags.js";
 import {useKeepAliveStore} from "@/stores/keepAlive.js";
@@ -94,8 +73,7 @@ import {useIframeStore} from "@/stores/iframe.js";
 
 export default {
 	components: {
-		passwordForm,
-		phoneForm
+		passwordForm
 	},
 	data() {
 		return {
