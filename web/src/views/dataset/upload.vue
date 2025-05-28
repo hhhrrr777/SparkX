@@ -31,7 +31,7 @@
 					<p>4、每次最多上传 50 个文件，每个文件不超过 100MB</p>
 				</div>
 				<div class="notice-box" v-if="fileType === 'qa'">
-					<p>1、下载系统提供的模板进行操作：</p>
+					<p>1、下载系统提供的模板进行操作：<a :href="qaTpl" style="color: var(--el-color-primary)">下载模板</a></p>
 					<p>2、如果您设置了多个sheet，则系统将会把这些sheet当做多个文档来处理，每个文档的标题即sheet的标题</p>
 					<p>3、每次最多上传 50 个文件，每个文件不超过 100MB</p>
 				</div>
@@ -211,7 +211,8 @@ export default {
 			nowSegmentData: [],
 			fileType: 'txt',
 			acceptConfig: '.txt,.md,.pdf,.docx,.html,.xls,.xlsx,.csv',
-			excelTpl: './tpl/excel表格模版.xlsx'
+			excelTpl: './tpl/excel表格模版.xlsx',
+			qaTpl: './tpl/qa模板.xlsx',
 		}
 	},
 	mounted() {
