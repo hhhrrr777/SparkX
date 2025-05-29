@@ -9,16 +9,15 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.system;
 
-import sparkai.service.vo.system.LoginVo;
+import sparkai.service.vo.system.TeamUserVo;
 
-import java.util.Map;
+import java.util.List;
 
-public interface ILoginService {
+public interface ITeamService {
 
     /**
-     * 登录操作
-     * @param loginVo LoginVo
-     * @return String
+     * 获取团队成员
+     * @return List<TeamUserVo>
      */
-    Map<String, String> doLogin(LoginVo loginVo);
+    List<TeamUserVo> getTeamUserList();
 }

@@ -7,54 +7,36 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.entity.system;
+package sparkai.service.vo.system;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
-@TableName("public.system_team")
-public class SystemTeamEntity implements Serializable {
+public class LocalUserVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-    * 团队id
-    */
-    @TableId(value="team_id", type= IdType.AUTO)
-    @TableField(value = "team_id")
+     * 团队id
+     */
     private Integer teamId;
 
     /**
-    * 团队编码
-    */
-    @TableField(value = "team_code")
-    private String teamCode;
-
-    /**
-    * 团队管理员
-    */
-    @TableField(value = "user_id")
+     * 用户id
+     */
     private String userId;
 
     /**
-    * 创建时间
-    */
-    @TableField(value = "create_time")
-    private LocalDateTime createTime;
+     * 用户名
+     */
+    private String name;
 
     /**
-    * 更新时间
-    */
-    @TableField(value = "update_time")
-    private LocalDateTime updateTime;
-
+     * 用户昵称
+     */
+    private String nickName;
 }

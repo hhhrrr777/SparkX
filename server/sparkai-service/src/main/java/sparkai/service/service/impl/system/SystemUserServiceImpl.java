@@ -17,11 +17,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sparkai.common.core.PageResult;
 import sparkai.common.enums.StatusEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.system.SystemTeamEntity;
+import sparkai.service.entity.system.SystemTeamUserEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.mapper.system.SystemTeamMapper;
+import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.system.ISystemUserService;
 import sparkai.service.validate.system.UserValidate;
@@ -36,6 +41,12 @@ public class SystemUserServiceImpl implements ISystemUserService {
 
     @Autowired
     SystemUserMapper userMapper;
+
+    @Autowired
+    SystemTeamMapper systemTeamMapper;
+
+    @Autowired
+    SystemTeamUserMapper systemTeamUserMapper;
 
     /**
      * 获取用户列表
@@ -78,6 +89,7 @@ public class SystemUserServiceImpl implements ISystemUserService {
      * @param validate UserValidate
      */
     @Override
+    @Transactional
     public void addUser(UserValidate validate) {
 
         if (validate.getPassword().isBlank()) {
@@ -107,8 +119,20 @@ public class SystemUserServiceImpl implements ISystemUserService {
         usersEntity.setPassword(Tool.makePassword(validate.getPassword(), salt));
         usersEntity.setSalt(salt);
         usersEntity.setCreateTime(Tool.nowDateTime());
-
         userMapper.insert(usersEntity);
+
+        // 建立属于这个用户的工作团队，并让该用户加入
+        SystemTeamEntity teamEntity = new SystemTeamEntity();
+        teamEntity.setTeamCode(IdUtil.simpleUUID());
+        teamEntity.setUserId(usersEntity.getUserId());
+        teamEntity.setCreateTime(Tool.nowDateTime());
+        systemTeamMapper.insert(teamEntity);
+
+        SystemTeamUserEntity teamUserEntity = new SystemTeamUserEntity();
+        teamUserEntity.setTeamId(teamEntity.getTeamId());
+        teamUserEntity.setUserId(usersEntity.getUserId());
+        teamUserEntity.setCreateTime(Tool.nowDateTime());
+        systemTeamUserMapper.insert(teamUserEntity);
     }
 
     /**

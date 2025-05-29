@@ -124,9 +124,6 @@ export default {
 			}
 		}
 	},
-	mounted() {
-		this.getDatabaseList()
-	},
 	watch: {
 		checkAdminAll: {
 			handler(value) {
@@ -141,11 +138,19 @@ export default {
 			deep: true,
 		}
 	},
+	mounted() {
+		this.getDatabaseList()
+		this.getTeamUserList()
+	},
 	methods: {
 		// 获取知识库列表
 		async getDatabaseList() {
 			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: ''})
 			this.tableData = res.data.data
+		},
+		// 获取团队成员
+		async getTeamUserList() {
+			let res = await this.$API.team.userList.get()
 		},
 		// 更选选择
 		adminChange(row) {

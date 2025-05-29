@@ -16,6 +16,19 @@
 						</el-menu>
 					</el-scrollbar>
 				</div>
+				<el-dropdown @command="handleCommand">
+					<div class="user-info" style="margin-bottom: 20px">
+						<el-avatar style="width: 35px;height: 35px;margin-left: 13px;cursor: pointer;" :src="userAvatar" />
+						<div style="font-size:12px;width: 50px;margin-left: 10px;text-align: center;" class="line1">{{ nickname }}</div>
+					</div>
+					<template #dropdown>
+						<el-dropdown-menu>
+							<el-dropdown-item command="password">修改密码</el-dropdown-item>
+							<el-dropdown-item command="loginOut">退出登录</el-dropdown-item>
+						</el-dropdown-menu>
+					</template>
+				</el-dropdown>
+
 				<div class="adminui-side-bottom">
 					<span>社区版</span>
 				</div>
@@ -45,7 +58,7 @@
 		<header class="adminui-header">
 			<div class="adminui-header-left">
 				<div class="logo-bar">
-					<img class="logo" src="/img/logo.png">
+					<img class="logo" src="/img/logo_bak.png">
 					<span>{{ config.APP_NAME }}</span>
 				</div>
 			</div>
@@ -92,7 +105,7 @@
 		<header class="adminui-header">
 			<div class="adminui-header-left">
 				<div class="logo-bar">
-					<img class="logo" src="/img/logo.png">
+					<img class="logo" src="/img/logo_bak.png">
 					<span>{{ config.APP_NAME }}</span>
 				</div>
 			</div>
@@ -217,6 +230,7 @@ import {useKeepAliveStore} from "@/stores/keepAlive.js";
 import {ref, nextTick} from "vue";
 
 import {useRoute, useRouter} from 'vue-router'
+import tool from "@/utils/tool.js";
 
 const route = useRoute()
 const router = useRouter()
@@ -228,6 +242,8 @@ const menu = ref([])
 const nextMenu = ref([])
 const pmenu = ref({})
 const active = ref('')
+const userAvatar = "./img/avatar.png"
+const nickname = tool.cookie.get("nickname")
 
 onMounted(() => {
 	onLayoutResize();
@@ -292,4 +308,21 @@ watch(router, () => {
 watch(() => globalStore.layout, (newVal, oldVal) => {
 	document.body.setAttribute('data-layout', newVal)
 })
+
+const handleCommand = (event) => {
+	if (event === 'password') {
+
+	} else if (event === 'loginOut') {
+		tool.cookie.remove('TOKEN')
+		router.push('/login')
+	}
+}
 </script>
+
+<style scoped>
+.line1 {
+	overflow: hidden;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+}
+</style>

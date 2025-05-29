@@ -10,6 +10,17 @@ import sysConfig from "@/config";
 
 const tool = {}
 
+const seen = new WeakSet();
+function replacer(key, value) {
+	if (typeof value === "object" && value !== null) {
+		if (seen.has(value)) {
+			return; // 或者返回一个标识符，如 "[Circular]"
+		}
+		seen.add(value);
+	}
+	return value;
+}
+
 /* localStorage */
 tool.data = {
 	set(key, data, datetime = 0) {
@@ -21,7 +32,8 @@ tool.data = {
             content: data,
             datetime: parseInt(datetime) === 0 ? 0 : new Date().getTime() + parseInt(datetime) * 1000
         }
-        return localStorage.setItem(key, JSON.stringify(cacheValue))
+
+        return localStorage.setItem(key, JSON.stringify(cacheValue, replacer))
 	},
 	get(key) {
         try {

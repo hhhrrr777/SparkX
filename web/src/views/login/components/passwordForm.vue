@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import authApi from '@/api/model/auth.js'
 import menu from '@/config/menu.js'
 
 export default {
@@ -39,7 +38,7 @@ export default {
 					{required: true, message: this.$t('login.PWError'), trigger: 'blur'}
 				]
 			},
-			islogin: false,
+			islogin: false
 		}
 	},
 	watch: {
@@ -72,7 +71,10 @@ export default {
 			this.islogin = false
 
 			if (res.code === 0) {
-				this.$TOOL.cookie.set("TOKEN", res.msg, {
+				this.$TOOL.cookie.set("TOKEN", res.data.token, {
+					expires: this.form.autologin ? 24 * 60 * 60 : 0
+				})
+				this.$TOOL.cookie.set("nickname", res.data.name, {
 					expires: this.form.autologin ? 24 * 60 * 60 : 0
 				})
 

@@ -3,9 +3,11 @@ package sparkai.sparkaiweb.config;
 import cn.hutool.jwt.JWT;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import sparkai.common.constant.SparkAIConstant;
+import sparkai.service.helper.UserContextHelper;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
@@ -38,5 +40,11 @@ public class LoginInterceptor implements HandlerInterceptor {
             // 不放行
             return false;
         }
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        // 清除 ThreadLocal 中的用户数据，避免内存泄漏
+        UserContextHelper.clearUser();
     }
 }

@@ -10,29 +10,28 @@
 package sparkai.sparkaiweb.controller.system;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sparkai.common.core.AjaxResult;
-import sparkai.service.service.interfaces.system.ILoginService;
-import sparkai.service.vo.system.LoginVo;
+import sparkai.service.service.interfaces.system.ITeamService;
+import sparkai.service.vo.system.TeamUserVo;
 
-import java.util.Map;
+import java.util.List;
 
-@RequestMapping("api/login")
+@RequestMapping("api/team")
 @RestController
-public class LoginController {
+public class TeamController {
 
     @Autowired
-    ILoginService iLoginService;
+    ITeamService iTeamService;
 
     /**
-     * 登录
+     * 获取团队成员
      */
-    @PostMapping("/doLogin")
-    public AjaxResult<Map<String, String>> login(@RequestBody LoginVo loginVo) {
+    @GetMapping("/userList")
+    public AjaxResult<List<TeamUserVo>> getTeamUser() {
 
-        return AjaxResult.success(iLoginService.doLogin(loginVo));
+        return AjaxResult.success(iTeamService.getTeamUserList());
     }
 }
