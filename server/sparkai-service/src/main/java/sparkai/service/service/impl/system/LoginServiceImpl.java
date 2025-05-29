@@ -68,16 +68,10 @@ public class LoginServiceImpl implements ILoginService {
         SystemTeamEntity teamInfo = systemTeamMapper.selectOne(new QueryWrapper<SystemTeamEntity>()
                 .eq("user_id", userInfo.getUserId()));
 
-        LocalUserVo localUser = new LocalUserVo();
-        localUser.setUserId(userInfo.getUserId());
-        localUser.setNickName(userInfo.getNickname());
-        localUser.setName(userInfo.getName());
-        localUser.setTeamId(teamInfo.getTeamId());
-        UserContextHelper.setUser(localUser);
-
         Map<String, String> returnData = new HashMap<>();
         returnData.put("token", JWT.create()
                 .setPayload("userId", userInfo.getUserId())
+                .setPayload("teamId", teamInfo.getTeamId())
                 .setKey(SparkAIConstant.CommonData.passwordSalt.getBytes())
                 .sign());
         returnData.put("name", userInfo.getNickname());

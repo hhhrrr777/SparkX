@@ -14,7 +14,7 @@ public class TeamUserVo implements Serializable {
     /**
      * 团队id
      */
-    private String teamId;
+    private Integer teamId;
 
     /**
      * 用户id
@@ -30,4 +30,14 @@ public class TeamUserVo implements Serializable {
      * 是否管理员
      */
     private Integer isAdmin;
+
+    /**
+     * 知识库权限
+     */
+    private String datasetPermission;
+
+    /**
+     * 应用权限
+     */
+    private String appPermission;
 }

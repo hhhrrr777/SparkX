@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import sparkai.common.constant.SparkAIConstant;
 import sparkai.service.helper.UserContextHelper;
+import sparkai.service.vo.system.LocalUserVo;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
@@ -25,6 +26,12 @@ public class LoginInterceptor implements HandlerInterceptor {
             if (!validate) {
                throw new Exception();
             }
+
+            JWT jwt = JWT.of(token);
+            LocalUserVo localUser = new LocalUserVo();
+            localUser.setUserId(String.valueOf(jwt.getPayload("userId")));
+            localUser.setTeamId(Integer.valueOf(String.valueOf(jwt.getPayload("teamId"))));
+            UserContextHelper.setUser(localUser);
 
             // 放行
             return true;
