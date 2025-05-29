@@ -5,16 +5,19 @@
 				<div class="user-list">
 					<el-button type="primary" icon="el-icon-plus" circle style="float: right" size="small"></el-button>
 					<el-input
-						style="margin-top: 10px"
+						style="margin-top: 10px;margin-bottom: 10px;"
 						placeholder="请输入用户名"
 						suffix-icon="el-icon-search"
 						v-model="searchForm.name">
 					</el-input>
 
-					<div class="user-item">admin <el-tag style="margin-left: 10px">创始人</el-tag></div>
-					<div class="user-item span-between user-active">
-						admin2
-						<el-icon style="margin-right: 10px">
+					<div class="user-item"
+						 v-for="item in userList"
+						 :key="item.userId"
+						 :class="{'span-between': item.isAdmin === 2, 'user-active': nowUserId === item.userId}"
+					>{{ item.name }}
+						<el-tag style="margin-left: 10px" v-if="item.isAdmin === 1">创始人</el-tag>
+						<el-icon style="margin-right: 10px" v-if="item.isAdmin === 2">
 							<Delete />
 						</el-icon>
 					</div>
@@ -121,7 +124,9 @@ export default {
 				nickname: [
 					{required: true, message: '请输入昵称', trigger: 'blur'}
 				]
-			}
+			},
+			userList: [],
+			nowUserId: ""
 		}
 	},
 	watch: {
@@ -151,6 +156,10 @@ export default {
 		// 获取团队成员
 		async getTeamUserList() {
 			let res = await this.$API.team.userList.get()
+			this.userList = res.data
+			if (this.userList.length > 0) {
+				this.nowUserId = this.userList[0].userId
+			}
 		},
 		// 更选选择
 		adminChange(row) {
