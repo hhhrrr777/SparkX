@@ -38,7 +38,7 @@
 			<div class="login-form">
 				<div class="login-header">
 					<div class="logo">
-						<img :alt="config.APP_NAME" src="/img/logo_bak.png">
+						<img :alt="config.APP_NAME" src="/img/logo.png">
 						<label>SparkAI</label>
 					</div>
 				</div>
