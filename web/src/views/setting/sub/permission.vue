@@ -65,6 +65,7 @@ export default {
 			checkAdminAll: false,
 			checkViewAll: false,
 			allIndeterminate: [], // 全选
+			needSend: false
 		}
 	},
 	watch: {

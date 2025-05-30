@@ -112,14 +112,17 @@ export default {
 		dataChange(data) {
 			let saveData = []
 			data.forEach((item) => {
-				saveData.push({
-					id: (this.activeName === '1') ? item.datasetId : item.appId,
-					manage: item.manage,
-					view: item.view
-				})
+				if (item.manage || item.view) {
+					saveData.push({
+						id: (this.activeName === '1') ? item.datasetId : item.appId,
+						manage: (typeof item.manage === 'undefined') ? false : item.manage,
+						view: (typeof item.view === 'undefined') ? false : item.view,
+					})
+				}
 			})
 
 			this.permissionData = saveData
+			console.log(222, this.permissionData)
 		}
 	}
 }
