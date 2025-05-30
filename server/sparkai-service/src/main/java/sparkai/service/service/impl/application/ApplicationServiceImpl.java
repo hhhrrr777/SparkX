@@ -38,6 +38,7 @@ import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.extend.chat.AgentChat;
 import sparkai.service.extend.chat.WorkflowChat;
 import sparkai.service.helper.SseEmitterHelper;
+import sparkai.service.helper.UserContextHelper;
 import sparkai.service.mapper.application.ApplicationChatLogMapper;
 import sparkai.service.mapper.application.ApplicationChatSessionMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
@@ -49,6 +50,7 @@ import sparkai.service.validate.application.ApplicationAddValidate;
 import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.*;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
+import sparkai.service.vo.system.LocalUserVo;
 
 import java.io.IOException;
 import java.util.*;
@@ -113,8 +115,8 @@ public class ApplicationServiceImpl implements IApplicationService {
             queryWrapper.eq("type", queryVo.getType());
         }
 
-        // TODO 查询属于自己的应用
-        queryWrapper.eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        LocalUserVo userData = UserContextHelper.getUser();
+        queryWrapper.eq("user_id", userData.getUserId());
 
         queryWrapper.orderByDesc("create_time");
         IPage<ApplicationEntity> applicationListRes = applicationMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
@@ -144,7 +146,8 @@ public class ApplicationServiceImpl implements IApplicationService {
         entity.setAppId(IdUtil.randomUUID());
         entity.setName(validate.getName());
         entity.setIcon("/icons/default_logo.png");
-        entity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        LocalUserVo userData = UserContextHelper.getUser();
+        entity.setUserId(userData.getUserId());
         entity.setDescription(validate.getDescription());
         entity.setType(validate.getType());
         entity.setCreateTime(Tool.nowDateTime());
@@ -162,10 +165,12 @@ public class ApplicationServiceImpl implements IApplicationService {
     @Override
     public ApplicationVo getApplicationInfo(String appId) {
 
+        LocalUserVo userData = UserContextHelper.getUser();
+
         ApplicationVo applicationVo = new ApplicationVo();
         ApplicationEntity info = applicationMapper.selectOne(
                 new QueryWrapper<ApplicationEntity>()
-                        .eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616")
+                        .eq("user_id", userData.getUserId())
                         .eq("app_id", appId));
         BeanUtils.copyProperties(info, applicationVo);
 
@@ -494,8 +499,8 @@ public class ApplicationServiceImpl implements IApplicationService {
             queryWrapper.le("create_time", queryVo.getEndTime() + " 23:59:59");
         }
 
-        // TODO 查询属于自己的应用
-        queryWrapper.eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        LocalUserVo userData = UserContextHelper.getUser();
+        queryWrapper.eq("user_id", userData.getUserId());
 
         queryWrapper.orderByDesc("create_time");
         IPage<ApplicationChatSessionEntity> sessionListRes = applicationChatSessionMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
@@ -524,7 +529,8 @@ public class ApplicationServiceImpl implements IApplicationService {
     @Transactional
     public void deleteApp(String appId) {
 
-        String userId = "b6c67084-ad55-4ced-82c4-4d9d304e8616";
+        LocalUserVo userData = UserContextHelper.getUser();
+        String userId = userData.getUserId();
 
         ApplicationEntity info = applicationMapper.selectOne(new QueryWrapper<ApplicationEntity>()
                 .eq("user_id", userId).eq("app_id", appId));

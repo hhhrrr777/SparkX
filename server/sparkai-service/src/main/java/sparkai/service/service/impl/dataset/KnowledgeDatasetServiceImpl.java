@@ -26,6 +26,7 @@ import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.dataset.*;
 import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.helper.UserContextHelper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.dataset.*;
 import sparkai.service.mapper.system.SystemUserMapper;
@@ -36,6 +37,7 @@ import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
 import sparkai.service.vo.dataset.OtherDatasetVo;
 import sparkai.service.vo.dataset.TransferDatasetVo;
+import sparkai.service.vo.system.LocalUserVo;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -89,8 +91,8 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
             queryWrapper.like("title", queryVo.getTitle());
         }
 
-        // TODO 查询属于自己的知识库
-        queryWrapper.eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        LocalUserVo userData = UserContextHelper.getUser();
+        queryWrapper.eq("user_id", userData.getUserId());
 
         queryWrapper.orderByDesc("create_time");
         IPage<KnowledgeDatasetEntity> datasetListRes = datasetMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
@@ -139,9 +141,9 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
         KnowledgeDatasetEntity datasetEntity = new KnowledgeDatasetEntity();
         BeanUtils.copyProperties(validate, datasetEntity);
 
-        // TODO 此处的uuid随机生成
+        LocalUserVo userData = UserContextHelper.getUser();
         datasetEntity.setType(1); // 写死通用类型
-        datasetEntity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        datasetEntity.setUserId(userData.getUserId());
         datasetEntity.setDatasetId(IdUtil.randomUUID());
         datasetEntity.setEmbeddingModeId(validate.getEmbedding_mode_id());
         datasetEntity.setCreateTime(Tool.nowDateTime());
@@ -226,8 +228,8 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
     public List<OtherDatasetVo> getOtherDatasetList(String datasetId) {
 
         QueryWrapper<KnowledgeDatasetEntity> queryWrapper = new QueryWrapper<>();
-        // TODO 查询属于自己的知识库
-        queryWrapper.eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        LocalUserVo userData = UserContextHelper.getUser();
+        queryWrapper.eq("user_id", userData.getUserId());
         queryWrapper.ne("dataset_id", datasetId);
         queryWrapper.orderByDesc("create_time");
 

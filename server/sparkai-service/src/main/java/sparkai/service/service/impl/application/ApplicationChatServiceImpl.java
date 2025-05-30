@@ -21,6 +21,7 @@ import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
+import sparkai.service.helper.UserContextHelper;
 import sparkai.service.mapper.application.ApplicationChatLogMapper;
 import sparkai.service.mapper.application.ApplicationChatSessionMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
@@ -28,6 +29,7 @@ import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.service.interfaces.application.IApplicationChatService;
 import sparkai.service.vo.application.*;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
+import sparkai.service.vo.system.LocalUserVo;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -86,10 +88,11 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     @Override
     public List<ApplicationSimpleSessionVo> getChatSesstionList(String appId) {
 
+        LocalUserVo userData = UserContextHelper.getUser();
         // 设置会话信息
         List<ApplicationChatSessionEntity> sessionList = applicationChatSessionMapper
                 .selectList(new QueryWrapper<ApplicationChatSessionEntity>()
-                        .eq("user_id", "b6c67084-ad55-4ced-82c4-4d9d304e8616")
+                        .eq("user_id", userData.getUserId())
                         .eq("app_id", appId).orderByDesc("create_time").last("LIMIT 20"));
         List<ApplicationSimpleSessionVo> sessionVoList = new LinkedList<>();
         for (ApplicationChatSessionEntity entity : sessionList) {
@@ -110,10 +113,11 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     @Override
     public String createSession(SessionVo sessionVo) {
 
+        LocalUserVo userData = UserContextHelper.getUser();
         ApplicationChatSessionEntity entity = new ApplicationChatSessionEntity();
         entity.setAppId(sessionVo.getAppId());
         entity.setSessionId(IdUtil.randomUUID());
-        entity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        entity.setUserId(userData.getUserId());
         entity.setCreateTime(Tool.nowDateTime());
 
         applicationChatSessionMapper.insert(entity);
@@ -147,9 +151,11 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     @Override
     public Integer writeLog(ApplicationLogVo logVo) {
 
+        LocalUserVo userData = UserContextHelper.getUser();
+
         ApplicationChatLogEntity entity = new ApplicationChatLogEntity();
         entity.setAppId(logVo.getAppId());
-        entity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        entity.setUserId(userData.getUserId());
         entity.setSessionId(logVo.getSessionId());
         entity.setQuestion(logVo.getQuestion());
         entity.setContent(logVo.getAnswer());
