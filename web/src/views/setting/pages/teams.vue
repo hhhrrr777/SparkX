@@ -25,13 +25,13 @@
 			</el-col>
 			<el-col :span="19" style="margin-left: 20px">
 				<div class="data-list">
-					<el-button type="primary" icon="el-icon-Document">保存权限</el-button>
+					<el-button type="primary" icon="el-icon-Document" @click="savePermission">保存权限</el-button>
 					<el-tabs v-model="activeName" style="margin-top: 10px">
 						<el-tab-pane label="知识库" name="1">
-							<permission title="知识库名称" activeName="1"></permission>
+							<permission title="知识库名称" activeName="1" @update="dataChange"></permission>
 						</el-tab-pane>
 						<el-tab-pane label="应用" name="2">
-							<permission title="应用名称" activeName="2"></permission>
+							<permission title="应用名称" activeName="2" @update="dataChange"></permission>
 						</el-tab-pane>
 					</el-tabs>
 				</div>
@@ -80,7 +80,8 @@ export default {
 				]
 			},
 			userList: [],
-			nowUserId: ""
+			nowUserId: "",
+			permissionData: []
 		}
 	},
 	mounted() {
@@ -102,6 +103,23 @@ export default {
 
 				}
 			})
+		},
+		// 保存权限
+		savePermission() {
+
+		},
+		// 权限数据
+		dataChange(data) {
+			let saveData = []
+			data.forEach((item) => {
+				saveData.push({
+					id: (this.activeName === '1') ? item.datasetId : item.appId,
+					manage: item.manage,
+					view: item.view
+				})
+			})
+
+			this.permissionData = saveData
 		}
 	}
 }

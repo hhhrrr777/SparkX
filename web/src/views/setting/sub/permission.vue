@@ -79,6 +79,7 @@ export default {
 				})
 				this.dataTable = data
 				this.checkViewAll = value
+				this.$emit('update', this.dataTable)
 			},
 			deep: true,
 		},
@@ -91,6 +92,7 @@ export default {
 					data.push(item)
 				})
 				this.dataTable = data
+				this.$emit('update', this.dataTable)
 			},
 			deep: true,
 		}
@@ -127,6 +129,8 @@ export default {
 				this.checkAdminAll = this.checkViewAll = true
 				this.allIndeterminate[1] = this.allIndeterminate[2] = false
 			}
+
+			this.$emit('update', this.dataTable)
 		},
 		// 查看选择
 		viewChange(index, value) {
@@ -148,6 +152,8 @@ export default {
 				this.checkViewAll = true
 				this.allIndeterminate[2] = false
 			}
+
+			this.$emit('update', this.dataTable)
 		},
 	}
 }
