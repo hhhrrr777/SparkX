@@ -143,7 +143,7 @@ export default {
 			this.title = "编辑用户"
 			this.initForm()
 
-			this.form.id = row.id
+			this.form.userId = row.userId
 			this.form.name = row.name
 			this.form.nickname = row.nickname
 			this.form.status = row.status
@@ -157,7 +157,7 @@ export default {
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(async () => {
-				let res = await this.$API.label.del.get({id: item.id})
+				let res = await this.$API.label.del.get({userId: item.userId})
 				if (res.code == 0) {
 					this.$message.success(res.msg)
 					this.getList()
@@ -178,7 +178,7 @@ export default {
 				if (valid) {
 					this.loading = true
 					let res;
-					if (this.form.id) {
+					if (this.form.userId) {
 						res = await this.$API.users.edit.post(this.form)
 					} else {
 						res = await this.$API.users.add.post(this.form)

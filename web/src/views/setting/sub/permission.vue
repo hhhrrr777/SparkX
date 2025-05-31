@@ -56,12 +56,15 @@ export default {
 		title: {
 			type: String,
 			default: "知识库名称"
+		},
+		isAdmin: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {
 		return {
 			dataTable: [],
-			isAdmin: false,
 			checkAdminAll: false,
 			checkViewAll: false,
 			allIndeterminate: [], // 全选
@@ -79,7 +82,8 @@ export default {
 					data.push(item)
 				})
 				this.dataTable = data
-				this.checkViewAll = value
+				this.checkAdminAll = this.checkViewAll = value
+				this.allIndeterminate[1] = this.allIndeterminate[2] = !value
 				this.$emit('update', this.dataTable)
 			},
 			deep: true,
@@ -108,6 +112,11 @@ export default {
 		async getDatabaseList() {
 			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: ''})
 			this.dataTable = res.data.data
+
+			if (this.isAdmin) {
+				this.checkAdminAll = true
+				this.checkViewAll = true
+			}
 		},
 		// 更选选择
 		adminChange(index, value) {

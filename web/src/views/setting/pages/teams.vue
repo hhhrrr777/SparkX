@@ -25,13 +25,13 @@
 			</el-col>
 			<el-col :span="19" style="margin-left: 20px">
 				<div class="data-list">
-					<el-button type="primary" icon="el-icon-Document" @click="savePermission">保存权限</el-button>
+					<el-button type="primary" icon="el-icon-Document" @click="savePermission" :disabled="isAdmin">保存权限</el-button>
 					<el-tabs v-model="activeName" style="margin-top: 10px">
 						<el-tab-pane label="知识库" name="1">
-							<permission title="知识库名称" activeName="1" @update="dataChange"></permission>
+							<permission title="知识库名称" activeName="1" :is-admin="isAdmin" @update="dataChange" :key="datasetkey"></permission>
 						</el-tab-pane>
 						<el-tab-pane label="应用" name="2">
-							<permission title="应用名称" activeName="2" @update="dataChange"></permission>
+							<permission title="应用名称" activeName="2" :is-admin="isAdmin" @update="dataChange" :key="appKey"></permission>
 						</el-tab-pane>
 					</el-tabs>
 				</div>
@@ -81,6 +81,9 @@ export default {
 			},
 			userList: [],
 			nowUserId: "",
+			isAdmin: false,
+			datasetkey: Math.random(),
+			appKey: Math.random(),
 			permissionData: []
 		}
 	},
@@ -94,7 +97,9 @@ export default {
 			this.userList = res.data
 			if (this.userList.length > 0) {
 				this.nowUserId = this.userList[0].userId
+				this.isAdmin = this.userList[0].isAdmin === 1
 			}
+			this.datasetkey = Math.random()
 		},
 		// 保存添加用户
 		optSubmit(formName) {
