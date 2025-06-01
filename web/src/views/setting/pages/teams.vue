@@ -90,13 +90,12 @@ export default {
 		async getTeamUserList() {
 			let res = await this.$API.team.userList.get()
 			this.userList = res.data
-			if (this.userList.length > 0) {
+			if (this.userList.length > 0 && this.nowUserId === '') {
 				this.nowUserId = this.userList[0].userId
 				this.isAdmin = this.userList[0].isAdmin === 1
 			}
 			this.datasetkey = Math.random()
 		},
-
 		// 保存权限
 		savePermission() {
 
@@ -117,10 +116,11 @@ export default {
 			this.permissionData = saveData
 		},
 		// 添加用户成功
-		handleSuccess(userIds) {
+		handleSuccess(userId) {
 			this.dialogVisible = false
 
-			console.log(22, userIds)
+			this.nowUserId = userId
+			this.getTeamUserList()
 		}
 	}
 }

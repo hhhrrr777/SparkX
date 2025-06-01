@@ -81,8 +81,17 @@ export default {
 		},
 		// 确认选择
 		handleSelect(row) {
-			this.form.users.push(row)
-			this.nickname = ''
+			let hasAdded = false
+			this.form.users.forEach(item => {
+				if (item.userId === row.userId) {
+					hasAdded = true
+				}
+			})
+			
+			if (!hasAdded) {
+				this.form.users.push(row)
+				this.nickname = ''
+			}
 		},
 		delUser(index) {
 			this.form.users.splice(index, 1)
