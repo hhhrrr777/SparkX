@@ -120,6 +120,7 @@ export default {
 			this.dialogVisible = false
 
 			this.nowUserId = userId
+			this.isAdmin = false
 			this.getTeamUserList()
 		}
 	}

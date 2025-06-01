@@ -72,6 +72,11 @@ export default {
 		},
 		// 异步查询
 		async querySearchAsync(queryString, cb) {
+			if (queryString === '') {
+				cb([])
+				return false
+			}
+
 			let res = await this.$API.team.searchUser.get({nickname: queryString})
 			cb(res.data.map(item => ({
 				value: item.nickname,
@@ -85,9 +90,11 @@ export default {
 			this.form.users.forEach(item => {
 				if (item.userId === row.userId) {
 					hasAdded = true
+					this.$message.error('该用户已经添加')
+					this.nickname = ''
 				}
 			})
-			
+
 			if (!hasAdded) {
 				this.form.users.push(row)
 				this.nickname = ''
