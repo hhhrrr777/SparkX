@@ -118,6 +118,10 @@ export default {
 				this.checkViewAll = true
 			}
 		},
+		// 获取应用列表
+		async getAppList() {
+
+		},
 		// 更选选择
 		adminChange(index, value) {
 			this.dataTable[index].manage = value

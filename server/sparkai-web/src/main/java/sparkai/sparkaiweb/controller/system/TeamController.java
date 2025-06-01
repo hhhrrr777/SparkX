@@ -10,12 +10,13 @@
 package sparkai.sparkaiweb.controller.system;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.service.service.interfaces.system.ITeamService;
+import sparkai.service.validate.system.AddTeamUserValidate;
 import sparkai.service.vo.system.TeamUserVo;
+import sparkai.service.vo.system.UsersVo;
 
 import java.util.List;
 
@@ -33,5 +34,32 @@ public class TeamController {
     public AjaxResult<List<TeamUserVo>> getTeamUser() {
 
         return AjaxResult.success(iTeamService.getTeamUserList());
+    }
+
+    /**
+     * 搜索用户
+     */
+    @GetMapping("/searchUser")
+    public AjaxResult<List<UsersVo>> searchUser(@RequestParam("nickname") String nickname) {
+
+        return AjaxResult.success(iTeamService.searchUser(nickname));
+    }
+
+    /**
+     * 添加用户
+     */
+    @PostMapping("/addUser")
+    public AjaxResult<Object> addUser(@RequestBody AddTeamUserValidate validate) {
+
+        return AjaxResult.success(iTeamService.addUser(validate));
+    }
+
+    /**
+     * 更新权限
+     */
+    @PostMapping("/updatePermission")
+    public AjaxResult<Object> updatePermission(@RequestBody @Validated AddTeamUserValidate validate) {
+
+        return AjaxResult.success();
     }
 }

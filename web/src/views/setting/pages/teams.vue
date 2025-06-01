@@ -3,7 +3,7 @@
 		<el-row style="height: 100%;">
 			<el-col :span="4">
 				<div class="user-list">
-					<el-button type="primary" icon="el-icon-plus" circle style="float: right" size="small"></el-button>
+					<el-button type="primary" icon="el-icon-plus" circle style="float: right" size="small" @click="addUser"></el-button>
 					<el-input
 						style="margin-top: 10px;margin-bottom: 10px;"
 						placeholder="请输入用户名"
@@ -39,29 +39,21 @@
 		</el-row>
 	</div>
 
-	<el-dialog title="添加成员" v-model="dialogVisible" width="500px" destroy-on-close :close-on-click-modal="false">
-		<el-form :model="form" label-width="80px">
-			<el-form-item label="用户昵称" prop="nickname">
-				<el-input v-model="form.nickname" placeholder="请输入用户昵称"></el-input>
-			</el-form-item>
-		</el-form>
-		<template #footer>
-			<div class="dialog-footer">
-				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="optSubmit('ruleForm')">确 定</el-button>
-			</div>
-		</template>
-	</el-dialog>
+	<add-user ref="addUser" v-if="dialogVisible" @success="handleSuccess" @closed="dialogVisible=false" :close-on-click-modal="false"></add-user>
 </template>
 
 <script>
 import {Delete} from "@element-plus/icons-vue";
 import permission from "@/views/setting/sub/permission.vue"
+import addUser from "@/views/setting/sub/addUser.vue"
+import saveDialog from "@/views/dataset/save.vue";
 
 export default {
 	components: {
+		saveDialog,
 		Delete,
-		permission
+		permission,
+		addUser
 	},
 	data() {
 		return {
@@ -74,11 +66,6 @@ export default {
 			},
 			activeName: "1",
 			dialogVisible: false,
-			rules: {
-				nickname: [
-					{required: true, message: '请输入昵称', trigger: 'blur'}
-				]
-			},
 			userList: [],
 			nowUserId: "",
 			isAdmin: false,
@@ -91,6 +78,14 @@ export default {
 		this.getTeamUserList()
 	},
 	methods: {
+		// 添加用成员
+		addUser() {
+			this.dialogVisible = true
+
+			this.$nextTick(() => {
+				this.$refs.addUser.open()
+			})
+		},
 		// 获取团队成员
 		async getTeamUserList() {
 			let res = await this.$API.team.userList.get()
@@ -101,14 +96,7 @@ export default {
 			}
 			this.datasetkey = Math.random()
 		},
-		// 保存添加用户
-		optSubmit(formName) {
-			this.$refs[formName].validate(async (valid) => {
-				if (valid) {
 
-				}
-			})
-		},
 		// 保存权限
 		savePermission() {
 
@@ -127,7 +115,12 @@ export default {
 			})
 
 			this.permissionData = saveData
-			console.log(222, this.permissionData)
+		},
+		// 添加用户成功
+		handleSuccess(userIds) {
+			this.dialogVisible = false
+
+			console.log(22, userIds)
 		}
 	}
 }
