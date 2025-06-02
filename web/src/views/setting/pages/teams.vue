@@ -15,6 +15,7 @@
 						 v-for="item in userList"
 						 :key="item.userId"
 						 :class="{'span-between': item.isAdmin === 2, 'user-active': nowUserId === item.userId}"
+						 @click="selectUser(item)"
 					>{{ item.name }}
 						<el-tag style="margin-left: 10px" v-if="item.isAdmin === 1">创始人</el-tag>
 						<el-icon style="margin-right: 10px" v-if="item.isAdmin === 2">
@@ -28,10 +29,24 @@
 					<el-button type="primary" icon="el-icon-Document" @click="savePermission" :disabled="isAdmin">保存权限</el-button>
 					<el-tabs v-model="activeName" style="margin-top: 10px">
 						<el-tab-pane label="知识库" name="1">
-							<permission title="知识库名称" activeName="1" :is-admin="isAdmin" @update="dataChange" :key="datasetkey"></permission>
+							<permission
+								title="知识库名称"
+								activeName="1"
+								:is-admin="isAdmin"
+								@update="dataChange"
+								:key="datasetKey"
+								:permission-data="userPermissionData"
+							></permission>
 						</el-tab-pane>
 						<el-tab-pane label="应用" name="2">
-							<permission title="应用名称" activeName="2" :is-admin="isAdmin" @update="dataChange" :key="appKey"></permission>
+							<permission
+								title="应用名称"
+								activeName="2"
+								:is-admin="isAdmin"
+								@update="dataChange"
+								:permission-data="userPermissionData"
+								:key="appKey">
+							</permission>
 						</el-tab-pane>
 					</el-tabs>
 				</div>
@@ -69,9 +84,10 @@ export default {
 			userList: [],
 			nowUserId: "",
 			isAdmin: false,
-			datasetkey: Math.random(),
+			datasetKey: Math.random(),
 			appKey: Math.random(),
-			permissionData: []
+			permissionData: [],
+			userPermissionData: {}
 		}
 	},
 	mounted() {
@@ -94,7 +110,7 @@ export default {
 				this.nowUserId = this.userList[0].userId
 				this.isAdmin = this.userList[0].isAdmin === 1
 			}
-			this.datasetkey = Math.random()
+			this.datasetKey = Math.random()
 		},
 		// 保存权限
 		savePermission() {
@@ -122,6 +138,21 @@ export default {
 			this.nowUserId = userId
 			this.isAdmin = false
 			this.getTeamUserList()
+		},
+		// 选择团队用户
+		selectUser(row) {
+			this.nowUserId = row.userId
+			this.isAdmin = row.isAdmin === 1
+			this.userPermissionData = {
+				manage: row.dataset_permission ?? [],
+				view: row.app_permission ?? [],
+			}
+
+			if (this.activeName === '1') {
+				this.datasetKey = Math.random()
+			} else {
+				this.appKey = Math.random()
+			}
 		}
 	}
 }
@@ -142,6 +173,10 @@ export default {
 	display: flex;
 	align-items: center;
 	padding-left: 10px;
+	cursor: pointer;
+}
+.user-item:hover {
+	background: rgba(238, 231, 253, 0.5);
 }
 .user-active {
 	background: #EEE7fd;

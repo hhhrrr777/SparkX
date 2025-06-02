@@ -60,6 +60,13 @@ export default {
 		isAdmin: {
 			type: Boolean,
 			default: false
+		},
+		permissionData: {
+			type: Object,
+			default: {
+				manage: [],
+				view: []
+			}
 		}
 	},
 	data() {
@@ -68,7 +75,6 @@ export default {
 			checkAdminAll: false,
 			checkViewAll: false,
 			allIndeterminate: [], // 全选
-			needSend: false
 		}
 	},
 	watch: {
@@ -116,6 +122,41 @@ export default {
 			if (this.isAdmin) {
 				this.checkAdminAll = true
 				this.checkViewAll = true
+			} else {
+
+				// 管理权限
+				let count = 0
+				let viewCount = 0
+				this.dataTable.forEach(item => {
+					if (this.activeName === '1') {
+						if (this.permissionData.manage?.indexOf(item.datasetId) !== -1) {
+							count += 1
+						}
+
+						if (this.permissionData.view?.indexOf(item.datasetId) !== -1) {
+							viewCount += 1
+						}
+					}
+				})
+
+				let len = this.dataTable.length
+				if (count < len && count > 0) {
+					this.allIndeterminate[1] = true
+				}
+
+				if (count === len) {
+					this.checkAdminAll = this.checkViewAll = true
+					this.allIndeterminate[1] = false
+				}
+
+				if (viewCount < len && viewCount > 0) {
+					this.allIndeterminate[2] = true
+				}
+
+				if (viewCount === len) {
+					this.checkViewAll = true
+					this.allIndeterminate[2] = false
+				}
 			}
 		},
 		// 获取应用列表
