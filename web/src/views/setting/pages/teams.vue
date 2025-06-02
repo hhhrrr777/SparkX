@@ -27,10 +27,9 @@
 			<el-col :span="19" style="margin-left: 20px">
 				<div class="data-list">
 					<el-button type="primary" icon="el-icon-Document" @click="savePermission" :disabled="isAdmin">保存权限</el-button>
-					<el-tabs v-model="activeName" style="margin-top: 10px">
+					<el-tabs v-model="activeName" style="margin-top: 10px" @tabChange="tabChange">
 						<el-tab-pane label="知识库" name="1">
 							<permission
-								title="知识库名称"
 								activeName="1"
 								:is-admin="isAdmin"
 								@update="dataChange"
@@ -40,7 +39,6 @@
 						</el-tab-pane>
 						<el-tab-pane label="应用" name="2">
 							<permission
-								title="应用名称"
 								activeName="2"
 								:is-admin="isAdmin"
 								@update="dataChange"
@@ -149,6 +147,14 @@ export default {
 			}
 
 			if (this.activeName === '1') {
+				this.datasetKey = Math.random()
+			} else {
+				this.appKey = Math.random()
+			}
+		},
+		// tab切换
+		tabChange(row) {
+			if (row === '1') {
 				this.datasetKey = Math.random()
 			} else {
 				this.appKey = Math.random()

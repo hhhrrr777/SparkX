@@ -1,6 +1,7 @@
 <template>
 	<el-table :data="dataTable" :header-cell-style="{ backgroundColor: '#f5f6f7' }">
-		<el-table-column prop="title" :label="title"/>
+		<el-table-column prop="title" :label="title" v-if="activeName === '1'"/>
+		<el-table-column prop="name" :label="title" v-else/>
 		<el-table-column
 			align="center"
 			width="100"
@@ -53,10 +54,6 @@ export default {
 			type: String,
 			default: '1',
 		},
-		title: {
-			type: String,
-			default: "知识库名称"
-		},
 		isAdmin: {
 			type: Boolean,
 			default: false
@@ -71,6 +68,7 @@ export default {
 	},
 	data() {
 		return {
+			title: '',
 			dataTable: [],
 			checkAdminAll: false,
 			checkViewAll: false,
@@ -111,6 +109,10 @@ export default {
 	created() {
 		if (this.activeName === '1') {
 			this.getDatabaseList()
+			this.title = '知识库名称'
+		} else {
+			this.getAppList()
+			this.title = '应用名称'
 		}
 	},
 	methods: {
@@ -118,7 +120,16 @@ export default {
 		async getDatabaseList() {
 			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: ''})
 			this.dataTable = res.data.data
-
+			this.defaultSelect()
+		},
+		// 获取应用列表
+		async getAppList() {
+			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: '', type: 0})
+			this.dataTable = res.data.data
+			this.defaultSelect()
+		},
+		// 默认勾选
+		defaultSelect() {
 			if (this.isAdmin) {
 				this.checkAdminAll = true
 				this.checkViewAll = true
@@ -159,10 +170,6 @@ export default {
 				}
 			}
 		},
-		// 获取应用列表
-		async getAppList() {
-
-		},
 		// 更选选择
 		adminChange(index, value) {
 			this.dataTable[index].manage = value
@@ -176,7 +183,7 @@ export default {
 			})
 
 			let len = this.dataTable.length
-			if (count < len) {
+			if (count < len && count > 0) {
 				this.allIndeterminate[1] = this.allIndeterminate[2] = true
 			}
 
@@ -199,7 +206,7 @@ export default {
 			})
 
 			let len = this.dataTable.length
-			if (count < len) {
+			if (count < len && count > 0) {
 				this.allIndeterminate[2] = true
 			}
 
