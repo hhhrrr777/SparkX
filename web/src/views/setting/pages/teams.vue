@@ -42,6 +42,7 @@
 								:now-user-id="nowUserId"
 								:key="datasetKey"
 								:permission-data="userPermissionData"
+								:table-data="datasetTableData"
 								@update="dataChange"
 							></permission>
 						</el-tab-pane>
@@ -52,6 +53,7 @@
 								:now-user-id="nowUserId"
 								:key="appKey"
 								:permission-data="userPermissionData"
+								:table-data="appTableData"
 								@update="dataChange"
 							></permission>
 						</el-tab-pane>
@@ -98,11 +100,17 @@ export default {
 			isAdmin: false,
 			datasetKey: Math.random(),
 			appKey: Math.random(),
-			userPermissionData: {}
+			userPermissionData: {},
+			datasetTableData: [],
+			appTableData: [],
+			datasetPermission: {},
+			appPermission: {},
 		}
 	},
 	mounted() {
 		this.getTeamUserList()
+		this.getDatabaseList()
+		this.getAppList()
 	},
 	methods: {
 		// 添加用成员
@@ -112,6 +120,18 @@ export default {
 			this.$nextTick(() => {
 				this.$refs.addUser.open()
 			})
+		},
+		// 获取知识库列表
+		async getDatabaseList() {
+			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: ''})
+			this.datasetTableData = res.data.data
+			this.datasetKey = Math.random()
+		},
+		// 获取应用列表
+		async getAppList() {
+			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: '', type: 0})
+			this.appTableData = res.data.data
+			this.appKey = Math.random()
 		},
 		// 获取团队成员
 		async getTeamUserList() {
@@ -140,6 +160,13 @@ export default {
 				this.$message.success("保存成功")
 			} else {
 				this.$message.error(res.msg)
+			}
+
+			this.getTeamUserList()
+			if (this.activeName === "1") {
+				this.getDatabaseList()
+			} else {
+				this.getAppList()
 			}
 		},
 		// 权限数据
@@ -170,13 +197,14 @@ export default {
 			this.nowUserId = row.userId
 			this.isAdmin = row.isAdmin === 1
 
-			if (this.activeName === '1') {
-				if (row.datasetPermission !== '') {
-					this.userPermissionData = JSON.parse(row.datasetPermission)
-				}
-			} else {
-				if (row.appPermission !== '') {
-					this.userPermissionData = JSON.parse(row.appPermission)
+			if (row.datasetPermission !== '') {
+				this.datasetPermission = this.userPermissionData = JSON.parse(row.datasetPermission)
+			}
+
+			if (row.appPermission !== '') {
+				this.appPermission = JSON.parse(row.appPermission)
+				if (this.activeName === '2') {
+					this.userPermissionData = this.appPermission
 				}
 			}
 
@@ -189,8 +217,10 @@ export default {
 		// tab切换
 		tabChange(row) {
 			if (row === '1') {
+				this.userPermissionData = this.datasetPermission
 				this.datasetKey = Math.random()
 			} else {
+				this.userPermissionData = this.appPermission
 				this.appKey = Math.random()
 			}
 		},

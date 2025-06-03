@@ -68,6 +68,10 @@ export default {
 		nowUserId: {
 			type: String,
 			default: ''
+		},
+		tableData: {
+			type: Array,
+			default: () => []
 		}
 	},
 	data() {
@@ -112,26 +116,15 @@ export default {
 	},
 	created() {
 		if (this.activeName === '1') {
-			this.getDatabaseList()
 			this.title = '知识库名称'
 		} else {
-			this.getAppList()
 			this.title = '应用名称'
 		}
+
+		this.dataTable = this.tableData
+		this.defaultSelect()
 	},
 	methods: {
-		// 获取知识库列表
-		async getDatabaseList() {
-			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: ''})
-			this.dataTable = res.data.data
-			this.defaultSelect()
-		},
-		// 获取应用列表
-		async getAppList() {
-			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: '', type: 0})
-			this.dataTable = res.data.data
-			this.defaultSelect()
-		},
 		// 默认勾选
 		defaultSelect() {
 			if (this.isAdmin) {
@@ -141,6 +134,7 @@ export default {
 				let count = 0
 				let viewCount = 0
 				let len = this.dataTable.length
+
 				this.dataTable.forEach(item => {
 					let id = ""
 					if (this.activeName === '1') {
@@ -210,6 +204,9 @@ export default {
 		// 查看选择
 		viewChange(index, value) {
 			this.dataTable[index].view = value
+			if (!value) {
+				this.dataTable[index].manage = value
+			}
 
 			let count = 0;
 			this.dataTable.forEach(item => {
