@@ -160,7 +160,7 @@ public class TeamImpl implements ITeamService {
             }
         });
 
-        permissionData.put("mange", manageList);
+        permissionData.put("manage", manageList);
         permissionData.put("view", viewList);
 
         SystemTeamUserEntity teamUserInfo = systemTeamUserMapper.selectOne(

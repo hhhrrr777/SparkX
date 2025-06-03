@@ -169,9 +169,15 @@ export default {
 		selectUser(row) {
 			this.nowUserId = row.userId
 			this.isAdmin = row.isAdmin === 1
-			this.userPermissionData = {
-				manage: row.datasetPermission ?? [],
-				view: row.appPermission ?? [],
+
+			if (this.activeName === '1') {
+				if (row.datasetPermission !== '') {
+					this.userPermissionData = JSON.parse(row.datasetPermission)
+				}
+			} else {
+				if (row.appPermission !== '') {
+					this.userPermissionData = JSON.parse(row.appPermission)
+				}
 			}
 
 			if (this.activeName === '1') {

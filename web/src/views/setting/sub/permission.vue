@@ -137,38 +137,32 @@ export default {
 			if (this.isAdmin) {
 				this.checkAdminAll = true
 				this.checkViewAll = true
-			} /*else {
-
-				// 管理权限
+			} else {
 				let count = 0
 				let viewCount = 0
+				let len = this.dataTable.length
 				this.dataTable.forEach(item => {
-					if (item.userId === this.nowUserId) {
+					let id = ""
+					if (this.activeName === '1') {
+						id = item.datasetId
+					} else {
+						id = item.appId
+					}
 
-						let id = item.datasetId
-						if (this.activeName === '2') {
-							id = item.appId
-						}
+					if (this.permissionData.manage && this.permissionData.manage.indexOf(id) !== -1) {
+						item.manage = true
+						count += 1
+					} else {
+						item.manage = false
+					}
 
-						if (this.permissionData.manage?.indexOf(id) !== -1) {
-							count += 1
-						}
-
-						if (this.permissionData.view?.indexOf(id) !== -1) {
-							viewCount += 1
-						}
+					if (this.permissionData.view && this.permissionData.view.indexOf(id) !== -1) {
+						item.view = true
+						viewCount += 1
+					} else {
+						item.view = false
 					}
 				})
-
-				let len = this.dataTable.length
-				if (count < len && count > 0) {
-					this.allIndeterminate[1] = true
-				}
-
-				if (count === len) {
-					this.checkAdminAll = this.checkViewAll = true
-					this.allIndeterminate[1] = false
-				}
 
 				if (viewCount < len && viewCount > 0) {
 					this.allIndeterminate[2] = true
@@ -179,8 +173,15 @@ export default {
 					this.allIndeterminate[2] = false
 				}
 
-				this.$emit('update', this.dataTable)
-			}*/
+				if (count < len && count > 0) {
+					this.allIndeterminate[1] = this.allIndeterminate[2] = true
+				}
+
+				if (count === len) {
+					this.checkAdminAll = this.checkViewAll = true
+					this.allIndeterminate[1] = this.allIndeterminate[2] = false
+				}
+			}
 		},
 		// 更选选择
 		adminChange(index, value) {
