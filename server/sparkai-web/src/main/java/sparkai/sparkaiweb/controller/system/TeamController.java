@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.service.service.interfaces.system.ITeamService;
 import sparkai.service.validate.system.AddTeamUserValidate;
-import sparkai.service.validate.system.UpdateTeamUserValidate;
+import sparkai.service.validate.system.PermissionValidate;
 import sparkai.service.vo.system.TeamUserVo;
 import sparkai.service.vo.system.UsersVo;
 
@@ -59,8 +59,9 @@ public class TeamController {
      * 更新权限
      */
     @PostMapping("/updatePermission")
-    public AjaxResult<Object> updatePermission(@RequestBody @Validated UpdateTeamUserValidate validate) {
+    public AjaxResult<Object> updatePermission(@RequestBody @Validated PermissionValidate validate) {
 
+        iTeamService.updateUserPermission(validate);
         return AjaxResult.success();
     }
 

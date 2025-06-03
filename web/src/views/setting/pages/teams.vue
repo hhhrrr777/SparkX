@@ -26,7 +26,14 @@
 			</el-col>
 			<el-col :span="19" style="margin-left: 20px">
 				<div class="data-list">
-					<el-button type="primary" icon="el-icon-Document" @click="savePermission" :disabled="isAdmin">保存权限</el-button>
+					<el-button
+						type="primary"
+						icon="el-icon-Document"
+						@click="savePermission"
+						:disabled="isAdmin || (!isAdmin && permissionForm.permissionData.length === 0)"
+					>
+						保存权限
+					</el-button>
 					<el-tabs v-model="activeName" style="margin-top: 10px" @tabChange="tabChange">
 						<el-tab-pane label="知识库" name="1">
 							<permission
@@ -79,6 +86,11 @@ export default {
 				teamId: 0,
 				nickname: "",
 			},
+			permissionForm: {
+				type: "",
+				userId: "",
+				permissionData: []
+			},
 			activeName: "1",
 			dialogVisible: false,
 			userList: [],
@@ -86,7 +98,6 @@ export default {
 			isAdmin: false,
 			datasetKey: Math.random(),
 			appKey: Math.random(),
-			permissionData: [],
 			userPermissionData: {}
 		}
 	},
@@ -111,12 +122,25 @@ export default {
 				this.nowUserId = this.userList[0].userId
 				this.isAdmin = this.userList[0].isAdmin === 1
 			}
-
+			this.permissionForm.permissionData = []
 			this.datasetKey = Math.random()
 		},
 		// 保存权限
-		savePermission() {
+		async savePermission() {
+			if (this.permissionForm.permissionData.length === 0) {
+				this.$message.error("请勾选权限")
+				return false
+			}
 
+			this.permissionForm.type = this.activeName
+			this.permissionForm.userId = this.nowUserId
+
+			let res = await this.$API.team.updatePermission.post(this.permissionForm)
+			if (res.code === 0) {
+				this.$message.success("保存成功")
+			} else {
+				this.$message.error(res.msg)
+			}
 		},
 		// 权限数据
 		dataChange(data) {
@@ -131,7 +155,7 @@ export default {
 				}
 			})
 
-			this.permissionData = saveData
+			this.permissionForm.permissionData = saveData
 		},
 		// 添加用户成功
 		handleSuccess(userId) {
@@ -146,8 +170,8 @@ export default {
 			this.nowUserId = row.userId
 			this.isAdmin = row.isAdmin === 1
 			this.userPermissionData = {
-				manage: row.dataset_permission ?? [],
-				view: row.app_permission ?? [],
+				manage: row.datasetPermission ?? [],
+				view: row.appPermission ?? [],
 			}
 
 			if (this.activeName === '1') {

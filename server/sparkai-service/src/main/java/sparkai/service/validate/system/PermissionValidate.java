@@ -7,46 +7,37 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.vo.system;
+package sparkai.service.validate.system;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import sparkai.service.vo.system.PermissionDataItemVo;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
-public class TeamUserVo implements Serializable {
+public class PermissionValidate implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 团队id
-     */
-    private Integer teamId;
-
-    /**
      * 用户id
      */
+    @NotEmpty(message = "设置的用户不能为空")
     private String userId;
 
     /**
-     * 用户名
+     * 权限类型 1:知识库 2:应用
      */
-    private String name;
+    @NotEmpty(message = "权限类型不能为空")
+    private String type;
 
     /**
-     * 是否管理员
+     * 权限数据
      */
-    private Integer isAdmin;
-
-    /**
-     * 知识库权限
-     */
-    private String datasetPermission;
-
-    /**
-     * 应用权限
-     */
-    private String appPermission;
+    @NotEmpty(message = "请勾选权限")
+    private List<PermissionDataItemVo> permissionData;
 }

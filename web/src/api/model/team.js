@@ -33,5 +33,13 @@ export default {
 
 			return await http.get(this.url, data);
 		}
-	}
+	},
+	updatePermission: {
+		url: `${config.API_URL}/team/updatePermission`,
+		name: "更新权限",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
+	},
 }

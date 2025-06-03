@@ -137,7 +137,7 @@ export default {
 			if (this.isAdmin) {
 				this.checkAdminAll = true
 				this.checkViewAll = true
-			} else {
+			} /*else {
 
 				// 管理权限
 				let count = 0
@@ -178,7 +178,9 @@ export default {
 					this.checkViewAll = true
 					this.allIndeterminate[2] = false
 				}
-			}
+
+				this.$emit('update', this.dataTable)
+			}*/
 		},
 		// 更选选择
 		adminChange(index, value) {

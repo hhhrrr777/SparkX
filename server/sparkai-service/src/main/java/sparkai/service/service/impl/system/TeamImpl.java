@@ -1,12 +1,11 @@
 package sparkai.service.service.impl.system;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.apache.catalina.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sparkai.common.core.AjaxResult;
 import sparkai.common.enums.StatusEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
@@ -17,13 +16,12 @@ import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.system.ITeamService;
 import sparkai.service.validate.system.AddTeamUserValidate;
+import sparkai.service.validate.system.PermissionValidate;
 import sparkai.service.vo.system.LocalUserVo;
 import sparkai.service.vo.system.TeamUserVo;
 import sparkai.service.vo.system.UsersVo;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TeamImpl implements ITeamService {
@@ -136,5 +134,46 @@ public class TeamImpl implements ITeamService {
 
         systemTeamUserMapper.delete(new QueryWrapper<SystemTeamUserEntity>()
                 .eq("user_id", userId).eq("team_id", localUser.getTeamId()));
+    }
+
+    /**
+     * 更新用户权限
+     * @param validate PermissionValidate
+     */
+    @Override
+    public void updateUserPermission(PermissionValidate validate) {
+
+        LocalUserVo localUser = UserContextHelper.getUser();
+
+        Map<String, List<String>> permissionData = new HashMap<>();
+        List<String> manageList = new ArrayList<>();
+        List<String> viewList = new ArrayList<>();
+
+        validate.getPermissionData().forEach(item -> {
+
+            if (item.getManage()) {
+                manageList.add(item.getId());
+            }
+
+            if (item.getView()) {
+                viewList.add(item.getId());
+            }
+        });
+
+        permissionData.put("mange", manageList);
+        permissionData.put("view", viewList);
+
+        SystemTeamUserEntity teamUserInfo = systemTeamUserMapper.selectOne(
+                new QueryWrapper<SystemTeamUserEntity>().eq("user_id", validate.getUserId())
+                        .eq("team_id", localUser.getTeamId()));
+
+        if (validate.getType().equals("1")) {
+            teamUserInfo.setDatasetPermission(JSONUtil.toJsonStr(permissionData));
+        } else {
+            teamUserInfo.setAppPermission(JSONUtil.toJsonStr(permissionData));
+        }
+
+        teamUserInfo.setUpdateTime(Tool.nowDateTime());
+        systemTeamUserMapper.updateById(teamUserInfo);
     }
 }

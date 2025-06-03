@@ -15,38 +15,23 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
-public class TeamUserVo implements Serializable {
+public class PermissionDataItemVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 团队id
+     * 应用或知识库id
      */
-    private Integer teamId;
+    private String id;
 
     /**
-     * 用户id
+     * 管理权限
      */
-    private String userId;
+    private Boolean manage;
 
     /**
-     * 用户名
+     * 查看权限
      */
-    private String name;
-
-    /**
-     * 是否管理员
-     */
-    private Integer isAdmin;
-
-    /**
-     * 知识库权限
-     */
-    private String datasetPermission;
-
-    /**
-     * 应用权限
-     */
-    private String appPermission;
+    private Boolean view;
 }
