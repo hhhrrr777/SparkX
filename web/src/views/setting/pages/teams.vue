@@ -8,7 +8,7 @@
 						style="margin-top: 10px;margin-bottom: 10px;"
 						placeholder="请输入用户名"
 						suffix-icon="el-icon-search"
-						v-model="searchForm.name">
+						v-model="nickName">
 					</el-input>
 
 					<div class="user-item"
@@ -105,6 +105,22 @@ export default {
 			appTableData: [],
 			datasetPermission: {},
 			appPermission: {},
+			nickName: "",
+			originalUserList: []
+		}
+	},
+	watch: {
+		nickName: {
+			handler(val) {
+				if (val) {
+					this.userList = this.userList.filter((v) =>
+						v.name.toLowerCase().includes(val.toLowerCase())
+					)
+				} else {
+					this.userList = this.originalUserList
+				}
+			},
+			deep: true
 		}
 	},
 	mounted() {
@@ -136,7 +152,7 @@ export default {
 		// 获取团队成员
 		async getTeamUserList() {
 			let res = await this.$API.team.userList.get()
-			this.userList = res.data
+			this.originalUserList = this.userList = res.data
 
 			if (this.userList.length > 0 && this.nowUserId === '') {
 				this.nowUserId = this.userList[0].userId
@@ -242,7 +258,7 @@ export default {
 					this.$message.error(res.msg)
 				}
 			}).catch(() => {});
-		}
+		},
 	}
 }
 </script>
