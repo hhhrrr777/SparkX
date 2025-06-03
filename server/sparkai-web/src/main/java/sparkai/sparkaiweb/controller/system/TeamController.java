@@ -63,4 +63,14 @@ public class TeamController {
 
         return AjaxResult.success();
     }
+
+    /**
+     * 删除用户
+     */
+    @GetMapping("/delUser")
+    public AjaxResult<Object> delUser(@RequestParam("userId") String userId) {
+
+        iTeamService.delUser(userId);
+        return AjaxResult.success();
+    }
 }

@@ -64,6 +64,10 @@ export default {
 				manage: [],
 				view: []
 			}
+		},
+		nowUserId: {
+			type: String,
+			default: ''
 		}
 	},
 	data() {
@@ -139,12 +143,18 @@ export default {
 				let count = 0
 				let viewCount = 0
 				this.dataTable.forEach(item => {
-					if (this.activeName === '1') {
-						if (this.permissionData.manage?.indexOf(item.datasetId) !== -1) {
+					if (item.userId === this.nowUserId) {
+
+						let id = item.datasetId
+						if (this.activeName === '2') {
+							id = item.appId
+						}
+
+						if (this.permissionData.manage?.indexOf(id) !== -1) {
 							count += 1
 						}
 
-						if (this.permissionData.view?.indexOf(item.datasetId) !== -1) {
+						if (this.permissionData.view?.indexOf(id) !== -1) {
 							viewCount += 1
 						}
 					}

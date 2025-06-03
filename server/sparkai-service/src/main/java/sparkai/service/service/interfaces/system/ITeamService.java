@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.system;
 
+import sparkai.common.core.AjaxResult;
 import sparkai.service.validate.system.AddTeamUserValidate;
 import sparkai.service.vo.system.TeamUserVo;
 import sparkai.service.vo.system.UsersVo;
@@ -36,4 +37,10 @@ public interface ITeamService {
      * @return String
      */
     String addUser(AddTeamUserValidate validate);
+
+    /**
+     * 删除用户
+     * @param userId String
+     */
+    void delUser(String userId);
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sparkai.common.core.AjaxResult;
 import sparkai.common.enums.StatusEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
@@ -119,5 +120,21 @@ public class TeamImpl implements ITeamService {
         }
 
         return addUserIds.get(0);
+    }
+
+    /**
+     * 删除团队用户
+     * @param userId String
+     */
+    @Override
+    public void delUser(String userId) {
+        if (userId.isBlank()) {
+            throw new BusinessException("删除的用户不能为空");
+        }
+
+        LocalUserVo localUser = UserContextHelper.getUser();
+
+        systemTeamUserMapper.delete(new QueryWrapper<SystemTeamUserEntity>()
+                .eq("user_id", userId).eq("team_id", localUser.getTeamId()));
     }
 }

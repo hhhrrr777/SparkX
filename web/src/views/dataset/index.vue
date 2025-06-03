@@ -6,8 +6,8 @@
 				<el-form-item style="margin-right: 10px !important;">
 					<el-select v-model="searchForm.type" placeholder="选择范围" style="width: 110px" clearable>
 						<el-option label="全部" value="0"></el-option>
-						<el-option label="我的团队" value="1"></el-option>
-						<el-option label="我的" value="2"></el-option>
+						<el-option label="我的" value="1"></el-option>
+						<el-option label="我的团队" value="2"></el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item>
@@ -117,6 +117,7 @@ export default{
 		return {
 			searchForm: {
 				title: '',
+				type: '0',
 				page: 1,
 				limit: 15
 			},

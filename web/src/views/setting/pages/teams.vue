@@ -18,7 +18,7 @@
 						 @click="selectUser(item)"
 					>{{ item.name }}
 						<el-tag style="margin-left: 10px" v-if="item.isAdmin === 1">创始人</el-tag>
-						<el-icon style="margin-right: 10px" v-if="item.isAdmin === 2">
+						<el-icon style="margin-right: 10px" v-if="item.isAdmin === 2" @click="delUser($event, item.userId)">
 							<Delete />
 						</el-icon>
 					</div>
@@ -32,19 +32,21 @@
 							<permission
 								activeName="1"
 								:is-admin="isAdmin"
-								@update="dataChange"
+								:now-user-id="nowUserId"
 								:key="datasetKey"
 								:permission-data="userPermissionData"
+								@update="dataChange"
 							></permission>
 						</el-tab-pane>
 						<el-tab-pane label="应用" name="2">
 							<permission
 								activeName="2"
 								:is-admin="isAdmin"
-								@update="dataChange"
+								:now-user-id="nowUserId"
+								:key="appKey"
 								:permission-data="userPermissionData"
-								:key="appKey">
-							</permission>
+								@update="dataChange"
+							></permission>
 						</el-tab-pane>
 					</el-tabs>
 				</div>
@@ -104,10 +106,12 @@ export default {
 		async getTeamUserList() {
 			let res = await this.$API.team.userList.get()
 			this.userList = res.data
+
 			if (this.userList.length > 0 && this.nowUserId === '') {
 				this.nowUserId = this.userList[0].userId
 				this.isAdmin = this.userList[0].isAdmin === 1
 			}
+
 			this.datasetKey = Math.random()
 		},
 		// 保存权限
@@ -159,6 +163,25 @@ export default {
 			} else {
 				this.appKey = Math.random()
 			}
+		},
+		// 删除用户
+		async delUser(event, userId) {
+			event.stopPropagation()
+
+			this.$confirm('此操作将永久删除该用户 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(async () => {
+				let res = await this.$API.team.delUser.get({userId: userId})
+				if (res.code === 0) {
+					this.nowUserId = ''
+					this.$message.success(res.msg)
+					this.getTeamUserList()
+				} else {
+					this.$message.error(res.msg)
+				}
+			}).catch(() => {});
 		}
 	}
 }

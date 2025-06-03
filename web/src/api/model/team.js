@@ -26,4 +26,12 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
+	delUser: {
+		url: `${config.API_URL}/team/delUser`,
+		name: "删除用户",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
+	}
 }
