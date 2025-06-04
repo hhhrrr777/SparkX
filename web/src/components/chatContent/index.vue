@@ -177,7 +177,7 @@ export default {
 		},
 		logo: {
 			type: String,
-			default: "/src/assets/robot.gif"
+			default: "/src/assets/logo.png"
 		}
 	},
 	data() {

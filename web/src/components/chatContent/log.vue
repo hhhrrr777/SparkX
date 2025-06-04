@@ -8,7 +8,7 @@
 						<div class="chat-user">
 							<div class="user-icon">
 								<img src="/src/assets/user.png" style="width: 30px;height: 30px;" v-if="item.source === 'user'"/>
-								<img src="/src/assets/robot.gif" style="width: 30px;height: 30px;" v-if="item.source === 'ai' || item.source === 'system'"/>
+								<img src="/src/assets/logo.png" style="width: 30px;height: 30px;" v-if="item.source === 'ai' || item.source === 'system'"/>
 							</div>
 							<div class="chat-user-name"></div>
 						</div>
