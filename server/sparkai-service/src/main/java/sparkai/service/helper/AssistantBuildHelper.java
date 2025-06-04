@@ -21,12 +21,13 @@ import dev.langchain4j.rag.query.transformer.QueryTransformer;
 import dev.langchain4j.service.AiServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.extend.SparkEmbeddingStoreContentRetriever;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.dataset.IHitTestService;
-import sparkai.service.validate.application.ApplicationSaveValidate;
+import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
 
@@ -49,7 +50,7 @@ public class AssistantBuildHelper {
      * @param chatLanguageModel ChatLanguageModel
      * @return IAiService
      */
-    public IAiService build(ApplicationSaveValidate validate,
+    public IAiService build(ApplicationEntity applicationInfo, ApplicationChatValidate validate,
                             StreamingChatLanguageModel streamingChatLanguageModel, ChatLanguageModel chatLanguageModel) {
 
         // 未关联知识库
@@ -57,7 +58,7 @@ public class AssistantBuildHelper {
 
             return AiServices.builder(IAiService.class)
                     .streamingChatLanguageModel(streamingChatLanguageModel)
-                    .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(validate.getMemoryNum())) // 聊天上下文
+                    .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(applicationInfo.getMemoryNum())) // 聊天上下文
                     .build();
         }
 
@@ -66,13 +67,13 @@ public class AssistantBuildHelper {
         // 关联了知识库
         QueryTransformer queryTransformer = null;
         // 开启问题优化
-        if (validate.getCompressingQuery().equals(1)) {
+        if (applicationInfo.getCompressingQuery().equals(1)) {
             queryTransformer = new CompressingQueryTransformer(chatLanguageModel);
         }
 
         // 构建交互数据
         HitTestVo searchDataVo = new HitTestVo();
-        searchDataVo.setType(validate.getSearchMode());
+        searchDataVo.setType(applicationInfo.getSearchMode());
         String[] datasetIds = validate.getDatasetList().stream().map(DatasetSimpleVo::getDatasetId).toArray(String[]::new);
         searchDataVo.setDatasetIds(String.join(",", datasetIds));
 
@@ -86,8 +87,8 @@ public class AssistantBuildHelper {
                 .embeddingModel(embeddingModel)
                 .searchService(iHitTestService)
                 .searchDataVo(searchDataVo)
-                .maxResults(validate.getTopRank()) // 召回条数
-                .minScore(validate.getSimilarity()) // 相似度
+                .maxResults(applicationInfo.getTopRank()) // 召回条数
+                .minScore(applicationInfo.getSimilarity().doubleValue()) // 相似度
                 .build();
 
         // 检索增强
@@ -105,7 +106,7 @@ public class AssistantBuildHelper {
 
         return AiServices.builder(IAiService.class)
                 .streamingChatLanguageModel(streamingChatLanguageModel)
-                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(validate.getMemoryNum())) // 聊天上下文
+                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(applicationInfo.getMemoryNum())) // 聊天上下文
                 .retrievalAugmentor(retrievalAugmentor)
                 .build();
     }

@@ -15,7 +15,6 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import dev.langchain4j.service.TokenStream;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +32,10 @@ import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
-import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.extend.chat.AgentChat;
 import sparkai.service.extend.chat.WorkflowChat;
+import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.helper.UserContextHelper;
 import sparkai.service.mapper.application.ApplicationChatLogMapper;
@@ -47,9 +46,9 @@ import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
+import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.*;
-import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.system.LocalUserVo;
 
 import java.io.IOException;
@@ -93,6 +92,9 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     WorkflowChat workflowChat;
+
+    @Autowired
+    ApplicationHelper applicationHelper;
 
     /**
      * 应用列表
@@ -175,23 +177,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         BeanUtils.copyProperties(info, applicationVo);
 
         // 查询关联的知识库信息
-        List<ApplicationDatasetRelationEntity> relationEntityList =
-                applicationDatasetRelationMapper.selectList(new QueryWrapper<ApplicationDatasetRelationEntity>()
-                        .eq("app_id", appId));
-        if (!CollectionUtils.isEmpty(relationEntityList)) {
-
-            List<String> datasetIds = relationEntityList.stream().map(ApplicationDatasetRelationEntity::getDatasetId).toList();
-            List<KnowledgeDatasetEntity> datasetList = knowledgeDatasetMapper.selectByIds(datasetIds);
-            List<DatasetSimpleVo> datasetSimpleVoList = new LinkedList<>();
-            for (KnowledgeDatasetEntity entity : datasetList) {
-
-                DatasetSimpleVo vo = new DatasetSimpleVo();
-                BeanUtils.copyProperties(entity, vo);
-
-                datasetSimpleVoList.add(vo);
-            }
-            applicationVo.setDatasetList(datasetSimpleVoList);
-        }
+        applicationVo.setDatasetList(applicationHelper.getRelationDatasetList(appId));
 
         return applicationVo;
     }
@@ -258,7 +244,7 @@ public class ApplicationServiceImpl implements IApplicationService {
      * @param validate ApplicationSaveValidate
      */
     @Override
-    public SseEmitter sseChat(ApplicationSaveValidate validate) {
+    public SseEmitter sseChat(ApplicationChatValidate validate) {
 
         SseEmitter emitter = new SseEmitter();
 

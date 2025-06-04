@@ -2,9 +2,9 @@ package sparkai.service.extend.chat;
 
 import dev.langchain4j.service.TokenStream;
 import sparkai.service.entity.application.ApplicationEntity;
-import sparkai.service.validate.application.ApplicationSaveValidate;
+import sparkai.service.validate.application.ApplicationChatValidate;
 
 public interface IChat {
 
-    TokenStream streamChat(ApplicationEntity applicationInfo, ApplicationSaveValidate validate);
+    TokenStream streamChat(ApplicationEntity applicationInfo, ApplicationChatValidate validate);
 }

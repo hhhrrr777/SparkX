@@ -12,6 +12,7 @@ package sparkai.service.service.interfaces.application;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.core.PageResult;
 import sparkai.service.validate.application.ApplicationAddValidate;
+import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.*;
 
@@ -56,7 +57,7 @@ public interface IApplicationService {
      * 应用内聊天测试
      * @param validate ApplicationSaveValidate
      */
-    SseEmitter sseChat(ApplicationSaveValidate validate);
+    SseEmitter sseChat(ApplicationChatValidate validate);
 
     /**
      * 获取统计数据

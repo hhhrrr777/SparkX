@@ -18,10 +18,12 @@ import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntit
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowEntity;
 import sparkai.service.extend.workflow.FlowNodeParser;
+import sparkai.service.helper.UserContextHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeMapper;
 import sparkai.service.mapper.workflow.ApplicationWorkflowMapper;
-import sparkai.service.validate.application.ApplicationSaveValidate;
+import sparkai.service.validate.application.ApplicationChatValidate;
+import sparkai.service.vo.system.LocalUserVo;
 
 @Component
 public class WorkflowChat implements IChat {
@@ -48,7 +50,7 @@ public class WorkflowChat implements IChat {
      * @return TokenStream
      */
     @Override
-    public TokenStream streamChat(ApplicationEntity applicationInfo, ApplicationSaveValidate validate) {
+    public TokenStream streamChat(ApplicationEntity applicationInfo, ApplicationChatValidate validate) {
 
         // 流程配置
         ApplicationWorkflowEntity info = applicationWorkflowMapper.selectOne(new QueryWrapper<ApplicationWorkflowEntity>()
@@ -64,7 +66,8 @@ public class WorkflowChat implements IChat {
             title = title.substring(0, 25);
         }
         runtimeEntity.setTitle(title);
-        runtimeEntity.setUserId("b6c67084-ad55-4ced-82c4-4d9d304e8616");
+        LocalUserVo userData = UserContextHelper.getUser();
+        runtimeEntity.setUserId(userData.getUserId());
         runtimeEntity.setFlowId(info.getId());
         runtimeEntity.setCreateTime(Tool.nowDateTime());
         applicationWorkflowRuntimeMapper.insert(runtimeEntity);

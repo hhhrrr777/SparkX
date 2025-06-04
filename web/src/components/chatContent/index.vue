@@ -260,9 +260,13 @@ export default {
 					'Content-Type': 'application/json',
 					//'Authorization': tool.cookie.get("TOKEN")
 				},
-				body: JSON.stringify(data),
+				body: JSON.stringify({
+					sessionId: data.sessionId,
+					content: data.content,
+					appId: data.appId
+				}),
 				onmessage(ev) {
-					
+
 					let event = ev.event
 					if (event === '[START]') { // 回答开始
 						that.nowIndex = that.chatLogList.length - 1

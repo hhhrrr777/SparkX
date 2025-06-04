@@ -18,7 +18,6 @@ import sparkai.service.vo.dataset.DatasetSimpleVo;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -26,11 +25,6 @@ public class ApplicationSaveValidate implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 会听id
-     */
-    private String sessionId;
 
     /**
     * id
