@@ -32,9 +32,6 @@ public class AgentChat implements IChat {
     ChatModelBuildHelper chatModelBuildHelper;
 
     @Autowired
-    IApplicationService applicationService;
-
-    @Autowired
     ApplicationHelper applicationHelper;
 
     /**

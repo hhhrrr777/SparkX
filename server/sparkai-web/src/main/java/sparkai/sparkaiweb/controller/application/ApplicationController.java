@@ -18,6 +18,7 @@ import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
+import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.application.*;
 
@@ -69,7 +70,7 @@ public class ApplicationController {
      * 应用聊天
      */
     @PostMapping(value = "/sseChat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter sseChat(@RequestBody ApplicationSaveValidate validate) {
+    public SseEmitter sseChat(@RequestBody ApplicationChatValidate validate) {
 
         return iApplicationService.sseChat(validate);
     }
@@ -105,7 +106,7 @@ public class ApplicationController {
 
     @GetMapping("/test")
     public AjaxResult<Object> testChat(@RequestParam("question") String question, @RequestParam("appId") String appId) {
-        ApplicationSaveValidate validate = new ApplicationSaveValidate();
+        ApplicationChatValidate validate = new ApplicationChatValidate();
         validate.setAppId(appId);
         validate.setContent(question);
         iApplicationService.sseChat(validate);

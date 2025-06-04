@@ -258,7 +258,7 @@ export default {
 				signal: that.ctrl.signal,
 				headers: {
 					'Content-Type': 'application/json',
-					//'Authorization': tool.cookie.get("TOKEN")
+					'Authorization': tool.cookie.get("TOKEN")
 				},
 				body: JSON.stringify({
 					sessionId: data.sessionId,
