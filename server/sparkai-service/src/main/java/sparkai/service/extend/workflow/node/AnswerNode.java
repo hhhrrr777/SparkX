@@ -18,14 +18,12 @@ import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
-import sparkai.service.helper.AssistantBuildHelper;
-import sparkai.service.helper.ChatModelBuildHelper;
-import sparkai.service.helper.SseEmitterHelper;
-import sparkai.service.helper.StreamChatModelBuildHelper;
+import sparkai.service.helper.*;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.dataset.IHitTestService;
+import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
@@ -34,6 +32,7 @@ import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,6 +68,9 @@ public class AnswerNode implements IWorkflowNode {
 
     @Autowired
     ChatModelBuildHelper chatModelBuildHelper;
+
+    @Autowired
+    ApplicationHelper applicationHelper;
 
     @Override
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
@@ -189,7 +191,7 @@ public class AnswerNode implements IWorkflowNode {
             // step 2 构建模型普通对象，用于问题优化下使用
             ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelResInfo, applicationInfo);
 
-            ApplicationSaveValidate validate = new ApplicationSaveValidate();
+            ApplicationChatValidate validate = new ApplicationChatValidate();
             // 写入引用的知识库
             List<DatasetSimpleVo> dataListVo = new ArrayList<>();
             if (inputObject.containsKey("sys.result") && !inputObject.getStr("sys.result").isBlank()) {
@@ -204,27 +206,27 @@ public class AnswerNode implements IWorkflowNode {
             }
             validate.setDatasetList(dataListVo);
 
-            validate.setMemoryNum(modelObject.getInt("memory"));
-            validate.setCompressingQuery(1);
-            validate.setSearchMode("embedding");
-            validate.setTopRank(3);
-            validate.setPrompt(modelObject.getStr("systemMsg"));
-            validate.setSimilarity(modelDataInfo.getDouble("temperature"));
-
             JSONArray inputArr = modelObject.getJSONArray("inputData");
             String inputNodeData = inputArr.get(1).toString();
             String question = inputObject.get(inputNodeData).toString();
 
             validate.setContent(modelObject.getStr("userMsg") + question);
 
+            applicationInfo.setMemoryNum(modelObject.getInt("memory"));
+            applicationInfo.setCompressingQuery(1);
+            applicationInfo.setSearchMode("embedding");
+            applicationInfo.setTopRank(3);
+            applicationInfo.setPrompt(modelObject.getStr("systemMsg"));
+            applicationInfo.setSimilarity(BigDecimal.valueOf(modelDataInfo.getDouble("temperature")));
+
             // step 3 构建 IAiService
-            IAiService assistant = assistantBuildHelper.build(validate, streamingChatModel, chatLanguageModel);
+            IAiService assistant = assistantBuildHelper.build(applicationInfo, validate, streamingChatModel, chatLanguageModel);
 
             TokenStream tokenStream;
-            if (validate.getPrompt().isBlank()) {
+            if (applicationInfo.getPrompt().isBlank()) {
                 tokenStream = assistant.chatInTokenStream(validate.getContent());
             } else {
-                tokenStream = assistant.chatWithSystem(validate.getPrompt(), validate.getContent());
+                tokenStream = assistant.chatWithSystem(applicationInfo.getPrompt(), validate.getContent());
             }
 
             AtomicReference<String> answer = new AtomicReference<>("");
