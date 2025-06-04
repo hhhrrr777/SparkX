@@ -173,6 +173,27 @@ export default {
 			}
 		}
 	},
+	// 智能体节点
+	// 回复节点
+	agentNode: (x, y, no) => {
+		return {
+			x: x,
+			y: y,
+			shape: 'agent-node',
+			width: 230,
+			height: 40,
+			data: {
+				no: no,
+				pages: 'agent',
+				checked: false,
+				portsVisible: false,
+				...initConfig.agentData,
+			},
+			ports: {
+				...initConfig.ports
+			}
+		}
+	},
 	// 条件分支
 	switchNode: (x, y, no) => {
 		return {

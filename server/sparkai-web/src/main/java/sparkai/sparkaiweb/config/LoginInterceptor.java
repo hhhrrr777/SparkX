@@ -49,9 +49,17 @@ public class LoginInterceptor implements HandlerInterceptor {
             response.setStatus(401);
             // 设置响应字符集和响应内容
             response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html; charset=UTF-8");
-            String errorMessage = "未登录";
-            response.getWriter().write("{\"error\": \"" + errorMessage + "\"}");
+            String errorMessage = "登录过期";
+
+            if (request.getHeader("Accept").equals("text/event-stream")) {
+                response.setContentType("text/event-stream; charset=UTF-8");
+                response.getWriter().write("event: [LOGIN_OUT]\n");
+                response.getWriter().write("data: " + errorMessage + "\n\n");
+            } else {
+                response.setContentType("application/json; charset=UTF-8");
+                response.getWriter().write("{\"code\": 401, \"data\": \"\", \"msg\": \"" + errorMessage + "\"}");
+            }
+
             // 不放行
             return false;
         }

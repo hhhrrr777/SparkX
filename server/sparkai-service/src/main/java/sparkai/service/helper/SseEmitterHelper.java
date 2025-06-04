@@ -15,15 +15,16 @@ import cn.hutool.json.JSONUtil;
 import dev.langchain4j.service.TokenStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.constant.SparkAIConstant;
 import sparkai.service.extend.workflow.SendEndCallback;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -170,7 +171,7 @@ public class SseEmitterHelper {
 
             sseEmitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.START));
         } catch (IOException e) {
-            log.error("startSse error", e);
+            //log.error("startSse error", e);
             sseEmitter.completeWithError(e);
         }
     }
@@ -187,7 +188,7 @@ public class SseEmitterHelper {
             sseEmitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.DONE)
                     .data(resVo));
         } catch (IOException e) {
-            log.error("startSse error", e);
+            //log.error("startSse error", e);
             sseEmitter.completeWithError(e);
         }
     }
@@ -204,7 +205,7 @@ public class SseEmitterHelper {
             sseEmitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.META)
                     .data(metaData));
         } catch (IOException e) {
-            log.error("startSse error", e);
+            //log.error("startSse error", e);
             sseEmitter.completeWithError(e);
         }
     }
@@ -220,7 +221,7 @@ public class SseEmitterHelper {
 
             sseEmitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.ERROR).data(msg));
         } catch (IOException e) {
-            log.error("startSse error", e);
+            //log.error("startSse error", e);
             sseEmitter.completeWithError(e);
         }
     }

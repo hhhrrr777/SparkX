@@ -46,7 +46,7 @@
 							<div class="menu-list" v-if="item.source === 'ai' && item.answerIng === 3">
 								<div class="menu-left-side">
 									<el-tag bordered style="margin-left: 10px;cursor: pointer;" v-if="setting.showRelation === 1" @click="showResource(item)">
-										{{ item.retrievedList.length }} 条引用
+										{{ item.retrievedList?.length }} 条引用
 									</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">{{ item.meta.time }} s</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">{{ item.meta.tokens }} tokens</el-tag>
@@ -147,6 +147,7 @@ import { config, MdPreview } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import configInfo from "@/config"
+import tool from "@/utils/tool.js";
 
 export default {
 	components: {Refresh, Loading, CopyDocument, Promotion, MdPreview},
@@ -257,10 +258,11 @@ export default {
 				signal: that.ctrl.signal,
 				headers: {
 					'Content-Type': 'application/json',
+					//'Authorization': tool.cookie.get("TOKEN")
 				},
 				body: JSON.stringify(data),
 				onmessage(ev) {
-
+					
 					let event = ev.event
 					if (event === '[START]') { // 回答开始
 						that.nowIndex = that.chatLogList.length - 1
@@ -307,6 +309,11 @@ export default {
 						that.stopAnswer()
 					} else if (event === '[META]') { // 通知召回数据
 						that.chatLogList[that.nowIndex].retrievedList = JSON.parse(ev.data)
+					} else if (event === '[LOGIN_OUT]') {
+						that.nowIndex = that.chatLogList.length - 1
+						that.chatLogList[that.nowIndex].source = 'ai'
+						that.chatLogList[that.nowIndex].content = '登录过期，请重新登录'
+						that.stopAnswer()
 					} else {
 						that.chatLogList[that.nowIndex].content += ev.data.replace("-_-_wrap_-_-", "\r\n")
 						that.sliderBottom()
@@ -316,7 +323,9 @@ export default {
 					console.log('Connection closed by server')
 				},
 				onerror(err) {
-					console.error('Error received:', err)
+					console.log('错误原因', err)
+					that.$message.error(err)
+					throw new Error("终止连接")
 				},
 			});
 		},
