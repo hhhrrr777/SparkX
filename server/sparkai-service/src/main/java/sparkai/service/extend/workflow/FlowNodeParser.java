@@ -1,5 +1,6 @@
 package sparkai.service.extend.workflow;
 
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sparkai.common.exception.BusinessException;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.vo.workflow.EdgeVo;
@@ -54,37 +56,46 @@ public class FlowNodeParser {
         // 构建执行流
         this.buildData(flowData);
 
-        log.info("连线 ： {}" , JSONUtil.toJsonStr(this.edges));
-        log.info("节点 ： {}" , JSONUtil.toJsonStr(this.nodes));
-
         // 开始节点指向的对象
         List<EdgeVo> edgeVoList = this.edges.get(this.startId);
-        execute(edgeVoList, this.startId);
+        if (CollectionUtils.isEmpty(edgeVoList)) {
+            throw new BusinessException("流程异常");
+        }
+
+        execute(edgeVoList.get(0), this.startId);
     }
 
     /**
      * 节点逻辑执行
-     * @param edgeVoList List<EdgeVo>
+     * @param edgeVo EdgeVo
      * @param sourceId String
      */
-    private void execute(List<EdgeVo> edgeVoList, String sourceId) {
+    private void execute(EdgeVo edgeVo, String sourceId) {
 
-        if (CollectionUtils.isEmpty(edgeVoList)) {
-            return;
-        }
+        Map<String, EdgeVo> nextNeedVoMap = new HashMap<>();
+        List<String> targetIds = edgeVo.getTarget();
+        // 并联流程
+        for (String targetId : targetIds) {
 
-        log.info("本次进入的节点数量 ： {}" , edgeVoList.size());
-
-        for (EdgeVo edgeVo : edgeVoList) {
-
-            NodeVo nodeInfo = this.nodes.get(edgeVo.getTarget());
+            NodeVo nodeInfo = this.nodes.get(targetId);
             log.info("本次解析的节点是 ： {}", nodeInfo);
 
             // 获取node处理方法 所有的节点对应的指定方法在 sparkai.service.extend.workflow.node 下
             IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
             flowNode.setEmitter(this.emitter);
             List<EdgeVo> nextEdgeVoList = flowNode.handle(nodeInfo, this.runtimeId, sourceId, this.edges);
-            execute(nextEdgeVoList, nodeInfo.getId());
+
+            if (!CollectionUtils.isEmpty(nextEdgeVoList)) {
+                nextNeedVoMap.put(nodeInfo.getId(), nextEdgeVoList.get(0));
+            }
+        }
+
+        // 进入下一个节点
+        if (!MapUtil.isEmpty(nextNeedVoMap)) {
+
+            nextNeedVoMap.forEach((nodeId, nodeData) -> {
+                execute(nodeData, nodeId);
+            });
         }
     }
 
