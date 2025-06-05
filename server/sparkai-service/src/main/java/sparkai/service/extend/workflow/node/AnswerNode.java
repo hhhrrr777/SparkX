@@ -24,7 +24,6 @@ import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.dataset.IHitTestService;
 import sparkai.service.validate.application.ApplicationChatValidate;
-import sparkai.service.validate.application.ApplicationSaveValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
 import sparkai.service.vo.dataset.SearchVo;
@@ -68,9 +67,6 @@ public class AnswerNode implements IWorkflowNode {
 
     @Autowired
     ChatModelBuildHelper chatModelBuildHelper;
-
-    @Autowired
-    ApplicationHelper applicationHelper;
 
     @Override
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
