@@ -90,7 +90,7 @@ public class FlowNodeParser {
             }
         }
 
-        // 进入下一个节点
+        // 进入下一个节点, 判断是否有进入同一个节点的，去重，防止重复进入
         if (!MapUtil.isEmpty(nextNeedVoMap)) {
 
             nextNeedVoMap.forEach((nodeId, nodeData) -> {
