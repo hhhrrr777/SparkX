@@ -3,9 +3,8 @@ package sparkai.service.extend.workflow;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -15,12 +14,10 @@ import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMappe
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
+@Slf4j
 public class FlowNodeParser {
 
     @Autowired
@@ -30,10 +27,10 @@ public class FlowNodeParser {
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
 
     // 所有的连线
-    private final Map<String, List<EdgeVo>> edges = new HashMap<>();
+    private Map<String, List<EdgeVo>> edges = new HashMap<>();
 
     // 所有的节点
-    private final Map<String, NodeVo> nodes = new HashMap<>();
+    private Map<String, NodeVo> nodes = new HashMap<>();
 
     // 开始节点
     private String startId = "";
@@ -50,8 +47,15 @@ public class FlowNodeParser {
      * @param flowData String
      */
     public void run(String flowData) {
+        // 重新初始化
+        this.edges = new HashMap<>();
+        this.nodes = new HashMap<>();
+
         // 构建执行流
         this.buildData(flowData);
+
+        log.info("连线 ： {}" , JSONUtil.toJsonStr(this.edges));
+        log.info("节点 ： {}" , JSONUtil.toJsonStr(this.nodes));
 
         // 开始节点指向的对象
         List<EdgeVo> edgeVoList = this.edges.get(this.startId);
@@ -69,9 +73,12 @@ public class FlowNodeParser {
             return;
         }
 
+        log.info("本次进入的节点数量 ： {}" , edgeVoList.size());
+
         for (EdgeVo edgeVo : edgeVoList) {
 
             NodeVo nodeInfo = this.nodes.get(edgeVo.getTarget());
+            log.info("本次解析的节点是 ： {}", nodeInfo);
 
             // 获取node处理方法 所有的节点对应的指定方法在 sparkai.service.extend.workflow.node 下
             IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
@@ -107,20 +114,39 @@ public class FlowNodeParser {
 
                 String key = item.getJSONObject("source").get("cell").toString();
                 List<EdgeVo> hasEdges = this.edges.get(key);
-                if (CollectionUtils.isEmpty(hasEdges)) {
 
+                EdgeVo edgeVo = new EdgeVo();
+                edgeVo.setId(item.get("id").toString());
+                edgeVo.setSource(item.getJSONObject("source").get("cell").toString());
+                edgeVo.setSourcePort(item.getJSONObject("source").get("port").toString());
+                edgeVo.setTarget(new ArrayList<>());
+
+                if (CollectionUtils.isEmpty(hasEdges)) {
                     List<EdgeVo> edge = new LinkedList<>();
-                    EdgeVo edgeVo = new EdgeVo();
-                    edgeVo.setId(item.get("id").toString());
-                    edgeVo.setTarget(item.getJSONObject("target").get("cell").toString());
                     edge.add(edgeVo);
+
+                    List<String> targetCells = new LinkedList<>();
+                    targetCells.add(item.getJSONObject("target").get("cell").toString());
+                    edgeVo.setTarget(targetCells);
+
                     this.edges.put(key, edge);
                 } else {
 
-                    EdgeVo edgeVo = new EdgeVo();
-                    edgeVo.setId(item.get("id").toString());
-                    edgeVo.setTarget(item.getJSONObject("target").get("cell").toString());
-                    hasEdges.add(edgeVo);
+                    // 并联节点
+                    boolean hasMultiple = false;
+                    for (EdgeVo hasEdge : hasEdges) {
+                        if (hasEdge.getSourcePort().equals(edgeVo.getSourcePort())) {
+                            hasMultiple = true;
+
+                            List<String> targetCells = hasEdge.getTarget();
+                            targetCells.add(item.getJSONObject("target").get("cell").toString());
+                            hasEdge.setTarget(targetCells);
+                        }
+                    }
+
+                    if (!hasMultiple) {
+                        hasEdges.add(edgeVo);
+                    }
 
                     this.edges.put(key, hasEdges);
                 }

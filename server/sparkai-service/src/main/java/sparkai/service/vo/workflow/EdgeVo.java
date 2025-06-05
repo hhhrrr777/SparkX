@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class EdgeVo implements Serializable {
@@ -17,7 +18,17 @@ public class EdgeVo implements Serializable {
     private String id;
 
     /**
+     * 起始节点
+     */
+    private String source;
+
+    /**
+     * 起始桩点
+     */
+    private String sourcePort;
+
+    /**
      * 目标节点
      */
-    private String target;
+    private List<String> target;
 }

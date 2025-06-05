@@ -3,7 +3,7 @@
 		<el-checkbox-group v-model="selectedAppIds" class="too-radio-list">
 			<el-checkbox :label="item.appId" border class="radio-item" v-for="item in appList" :key="item.appId">
 				<div style="display: flex;align-items: center;">
-					<img :src="item.icon" style="width: 45px;height: 40px;" />
+					<img :src="item.icon" style="width: 45px;height: 45px;" />
 					<div class="line1 name">{{ item.name }}</div>
 				</div>
 			</el-checkbox>

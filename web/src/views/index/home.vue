@@ -36,7 +36,7 @@
 						<div class="title-box" @click="goDetail(item.appId)">
 							<div class="title-left">
 								<div class="title-label">
-									<img :src="domain + item.icon" style="width: 45px;height: 40px"/>
+									<img :src="domain + item.icon" style="width: 45px;height: 45px"/>
 								</div>
 								<div class="title-info">
 									<div class="line1 knowledge-title">{{ item.name }}</div>
