@@ -15,6 +15,10 @@
 			class="add-menu-box">
 		</menu-box>
 
+		<debug-chat
+			v-if="chatVisible">
+		</debug-chat>
+
 		<bottom-menu
 			:key="randomKey"
 			:out-open="outOpen"
@@ -62,12 +66,14 @@ import topMenu from './menu/topMenu.vue'
 import menuBox from './menu/menuBox.vue'
 import {defineAsyncComponent} from "vue";
 import inputDataUtil from './inputData.js'
+import debugChat from './menu/debug.vue'
 
 export default {
 	components: {
 		bottomMenu,
 		topMenu,
-		menuBox
+		menuBox,
+		debugChat
 	},
 	data() {
 		return {
@@ -77,6 +83,7 @@ export default {
 			outOpen: false,
 			randomKey: Math.random(),
 			drawer: false,
+			chatVisible: false,
 			// 当前页面
 			page: '',
 			// 设置页面
@@ -338,7 +345,7 @@ export default {
 		},
 		// 调试链接
 		debugHandle() {
-
+			this.chatVisible = true
 		},
 		// 获取流程信息
 		async getWorkflowInfo() {
@@ -360,7 +367,6 @@ export default {
 		// 获取节点前数据
 		getNodeInputData() {
 			this.inputOptions = inputDataUtil.getNodeInputData(this.nowNode, this.graph)
-			console.log(22, this.inputOptions)
 		},
 		// 添加节点
 		addNodeHandle(type) {

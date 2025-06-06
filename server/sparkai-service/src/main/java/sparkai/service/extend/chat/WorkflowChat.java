@@ -4,12 +4,9 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import dev.langchain4j.service.TokenStream;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
@@ -24,6 +21,9 @@ import sparkai.service.mapper.application.ApplicationWorkflowRuntimeMapper;
 import sparkai.service.mapper.workflow.ApplicationWorkflowMapper;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.system.LocalUserVo;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 @Component
 public class WorkflowChat implements IChat {
@@ -80,8 +80,14 @@ public class WorkflowChat implements IChat {
         JSONObject inputData = JSONUtil.createObj();
         inputData.set("sys.question", validate.getContent());
         inputData.set("sys.time", Tool.nowDateTime());
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        inputData.set("sys.ip", request.getRemoteAddr());
+        try {
+
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            inputData.set("sys.ip", inetAddress.getHostAddress());
+        } catch (UnknownHostException e) {
+            inputData.set("sys.ip", "0.0.0.0");
+        }
+
         inputData.set("sys.appId", info.getAppId());
         contextEntity.setOutputData(inputData.toString());
 
