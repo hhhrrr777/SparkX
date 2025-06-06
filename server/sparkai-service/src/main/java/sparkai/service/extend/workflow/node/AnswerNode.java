@@ -77,9 +77,11 @@ public class AnswerNode implements IWorkflowNode {
 
             JSONObject nodeObject = nodeInfo.getData();
             Integer answerType = nodeObject.getInt("answerType");
+            // 本节点输入的参数
+            JSONArray inputArr = nodeObject.getJSONArray("inputData");
 
             // 上个节点的信息
-            ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId);
+            ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
 
             // 记录运行时数据
             ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
@@ -91,7 +93,6 @@ public class AnswerNode implements IWorkflowNode {
             if (answerType.equals(1)) {
 
                 // 找出回复内容
-                JSONArray inputArr = nodeObject.getJSONArray("inputData");
                 String returnAnswerType = inputArr.get(1).toString();
                 String answer = "";
                 // 如果上个节点是dataset节点，且输出为检索结果

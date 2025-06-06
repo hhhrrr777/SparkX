@@ -40,9 +40,11 @@ public class SwitchNode implements IWorkflowNode {
         JSONObject nodeObject = nodeInfo.getData();
         // 分支配置
         JSONArray ifBranch = nodeObject.getJSONArray("ifBranch");
+        // 本节点输入的参数
+        JSONArray inputArr = nodeObject.getJSONArray("data");
 
         // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId);
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
 
         boolean match = false;
@@ -53,7 +55,6 @@ public class SwitchNode implements IWorkflowNode {
             String type = nowNodeObject.getStr("type");
             if ((type.equals("if") || type.equals("elseif")) && !match) {
 
-                JSONArray inputArr = nowNodeObject.getJSONArray("data");
                 Integer judging = nowNodeObject.getInt("switch");
 
                 List<Boolean> matchArr = new ArrayList<>();

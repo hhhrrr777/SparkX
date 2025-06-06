@@ -36,11 +36,12 @@ public class DatasetNode implements IWorkflowNode {
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
 
         JSONObject nodeObject = nodeInfo.getData();
+        // 本节点输入的参数
+        JSONArray inputArr = nodeObject.getJSONArray("inputData");
 
         // 上个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId);
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
 
-        JSONArray inputArr = nodeObject.getJSONArray("inputData");
         String inputData = inputArr.get(1).toString();
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
         String question = preOutput.get(inputData).toString();

@@ -73,11 +73,12 @@ public class PurposeNode implements IWorkflowNode {
             cateListStr.append((i + 1)).append(":").append(cateList.getJSONObject(i).get("name").toString()).append("\n");
         }
 
-        // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId);
-
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
+
+        // 获取上一个节点的信息
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
+
         String inputData = inputArr.get(1).toString();
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
 

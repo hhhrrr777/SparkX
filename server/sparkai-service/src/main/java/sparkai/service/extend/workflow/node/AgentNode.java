@@ -54,12 +54,15 @@ public class AgentNode implements IWorkflowNode {
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
 
         JSONObject nodeObject = nodeInfo.getData();
-
-        // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId);
-
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
+
+        // 获取上一个节点的信息
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
+        if (context == null) {
+            return null;
+        }
+
         String inputData = inputArr.get(1).toString();
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
 

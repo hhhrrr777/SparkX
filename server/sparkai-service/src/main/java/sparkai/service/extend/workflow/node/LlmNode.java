@@ -1,5 +1,6 @@
 package sparkai.service.extend.workflow.node;
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.Setter;
@@ -34,9 +35,11 @@ public class LlmNode implements IWorkflowNode {
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
 
         JSONObject nodeObject = nodeInfo.getData();
+        // 本节点输入的参数
+        JSONArray inputArr = nodeObject.getJSONArray("inputData");
 
         // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId);
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
 
         // 记录运行时数据
         ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
