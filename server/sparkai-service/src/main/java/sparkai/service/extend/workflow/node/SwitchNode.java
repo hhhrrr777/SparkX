@@ -42,7 +42,7 @@ public class SwitchNode implements IWorkflowNode {
         JSONArray ifBranch = nodeObject.getJSONArray("ifBranch");
 
         // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, nodeInfo.getId());
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId);
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
 
         boolean match = false;

@@ -60,22 +60,11 @@ public class ApplicationHelper {
      * 获取运行时上下文节点
      * @param runtimeId long
      * @param sourceId String
-     * @param nodeId String
      * @return ApplicationWorkflowRuntimeContextEntity
      */
-    public ApplicationWorkflowRuntimeContextEntity getRuntimeContext(long runtimeId, String sourceId, String nodeId) {
+    public ApplicationWorkflowRuntimeContextEntity getRuntimeContext(long runtimeId, String sourceId) {
 
-        ApplicationWorkflowRuntimeContextEntity returnContext = new ApplicationWorkflowRuntimeContextEntity();
-
-        List<ApplicationWorkflowRuntimeContextEntity> context = applicationWorkflowRuntimeContextMapper.selectList(
+        return applicationWorkflowRuntimeContextMapper.selectOne(
                 new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", runtimeId).eq("cell", sourceId));
-
-        for (ApplicationWorkflowRuntimeContextEntity contextItem : context) {
-            if (contextItem.getCell().equals(nodeId)) {
-                returnContext = contextItem;
-            }
-        }
-
-        return returnContext;
     }
 }

@@ -38,7 +38,7 @@ public class DatasetNode implements IWorkflowNode {
         JSONObject nodeObject = nodeInfo.getData();
 
         // 上个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, nodeInfo.getId());
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId);
 
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
         String inputData = inputArr.get(1).toString();

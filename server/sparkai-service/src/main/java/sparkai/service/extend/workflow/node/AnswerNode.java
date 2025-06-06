@@ -79,7 +79,7 @@ public class AnswerNode implements IWorkflowNode {
             Integer answerType = nodeObject.getInt("answerType");
 
             // 上个节点的信息
-            ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, nodeInfo.getId());
+            ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId);
 
             // 记录运行时数据
             ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
