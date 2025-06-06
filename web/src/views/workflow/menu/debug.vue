@@ -37,7 +37,7 @@ import {Close} from "@element-plus/icons-vue";
 	z-index: 1999;
 	border-radius: 8px;
 	border: 1px solid #ffffff;
-	background: #f5f5f5;
+	background:  linear-gradient(188deg, rgba(235, 241, 255, .2) 39.6%, rgba(231, 249, 255, .2) 94.3%), #eff0f1;
 	box-shadow: 0 4px 8px #1f23291a;
 	position: fixed;
 	bottom: 16px;
