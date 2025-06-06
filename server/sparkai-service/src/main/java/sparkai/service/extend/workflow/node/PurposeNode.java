@@ -3,7 +3,6 @@ package sparkai.service.extend.workflow.node;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import dev.langchain4j.data.message.TextContent;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatLanguageModel;
@@ -19,6 +18,7 @@ import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
+import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.system.ModelsMapper;
@@ -43,6 +43,9 @@ public class PurposeNode implements IWorkflowNode {
 
     @Setter
     public SseEmitter emitter;
+
+    @Autowired
+    ApplicationHelper applicationHelper;
 
     @Override
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
@@ -71,8 +74,7 @@ public class PurposeNode implements IWorkflowNode {
         }
 
         // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationWorkflowRuntimeContextMapper.selectOne(
-                new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", runtimeId).eq("cell", sourceId));
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, nodeInfo.getId());
 
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");

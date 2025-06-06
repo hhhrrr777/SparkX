@@ -3,7 +3,6 @@ package sparkai.service.extend.workflow.node;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.service.TokenStream;
@@ -68,6 +67,9 @@ public class AnswerNode implements IWorkflowNode {
     @Autowired
     ChatModelBuildHelper chatModelBuildHelper;
 
+    @Autowired
+    ApplicationHelper applicationHelper;
+
     @Override
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
 
@@ -77,8 +79,7 @@ public class AnswerNode implements IWorkflowNode {
             Integer answerType = nodeObject.getInt("answerType");
 
             // 上个节点的信息
-            ApplicationWorkflowRuntimeContextEntity context = applicationWorkflowRuntimeContextMapper.selectOne(
-                    new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", runtimeId).eq("cell", sourceId));
+            ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, nodeInfo.getId());
 
             // 记录运行时数据
             ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();

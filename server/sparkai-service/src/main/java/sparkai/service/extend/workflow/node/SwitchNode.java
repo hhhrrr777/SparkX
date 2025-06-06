@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +12,7 @@ import sparkai.common.enums.NodeTypeEnum;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
+import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
@@ -31,6 +31,9 @@ public class SwitchNode implements IWorkflowNode {
     @Autowired
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
 
+    @Autowired
+    ApplicationHelper applicationHelper;
+
     @Override
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
 
@@ -39,8 +42,7 @@ public class SwitchNode implements IWorkflowNode {
         JSONArray ifBranch = nodeObject.getJSONArray("ifBranch");
 
         // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationWorkflowRuntimeContextMapper.selectOne(
-                new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", runtimeId).eq("cell", sourceId));
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, nodeInfo.getId());
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
 
         boolean match = false;

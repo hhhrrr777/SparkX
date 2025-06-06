@@ -3,7 +3,6 @@ package sparkai.service.extend.workflow.node;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import dev.langchain4j.service.TokenStream;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -57,8 +56,7 @@ public class AgentNode implements IWorkflowNode {
         JSONObject nodeObject = nodeInfo.getData();
 
         // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationWorkflowRuntimeContextMapper.selectOne(
-                new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", runtimeId).eq("cell", sourceId));
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, nodeInfo.getId());
 
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
