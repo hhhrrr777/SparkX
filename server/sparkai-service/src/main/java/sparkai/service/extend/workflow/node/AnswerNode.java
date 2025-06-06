@@ -79,9 +79,11 @@ public class AnswerNode implements IWorkflowNode {
             Integer answerType = nodeObject.getInt("answerType");
             // 本节点输入的参数
             JSONArray inputArr = nodeObject.getJSONArray("inputData");
-
             // 上个节点的信息
             ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
+            if (context == null) {
+                return null;
+            }
 
             // 记录运行时数据
             ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();

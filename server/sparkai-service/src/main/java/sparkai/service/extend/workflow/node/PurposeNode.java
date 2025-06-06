@@ -75,7 +75,6 @@ public class PurposeNode implements IWorkflowNode {
 
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
-
         // 获取上一个节点的信息
         ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
 

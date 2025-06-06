@@ -45,6 +45,10 @@ public class SwitchNode implements IWorkflowNode {
 
         // 获取上一个节点的信息
         ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
+        if (context == null) {
+            return null;
+        }
+
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
 
         boolean match = false;

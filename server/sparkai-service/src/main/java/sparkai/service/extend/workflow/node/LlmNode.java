@@ -40,6 +40,9 @@ public class LlmNode implements IWorkflowNode {
 
         // 获取上一个节点的信息
         ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
+        if (context == null) {
+            return null;
+        }
 
         // 记录运行时数据
         ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
