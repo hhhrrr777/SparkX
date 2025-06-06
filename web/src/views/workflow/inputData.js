@@ -1,22 +1,45 @@
 export default {
 	// 遍历节点
 	getPreviousNodes(currentNode, graph) {
+
 		// 获取画布中所有边
-		const edges = graph.getEdges();
+		const edges = graph.getEdges()
+
 		let nodesArr = []
-		let findNodeData = findNode(currentNode)
+		let findNodeData = findNode([currentNode])
 		while (findNodeData.length > 0) {
-			nodesArr.push(findNodeData[0])
-			findNodeData = findNode(findNodeData[0])
+			for (let node of findNodeData) {
+				nodesArr.push(node)
+			}
+			findNodeData = findNode(findNodeData)
 		}
 
-		function findNode(currentNode) {
-			return edges
-				.filter(edge => edge.getTargetNode().id === currentNode.id)
-				.map(edge => edge.getSourceNode())
+		function findNode(currentNodes) {
+
+			let arr = []
+			for (let currentNode of currentNodes) {
+
+				for (let edge of edges) {
+					if (edge.getTargetNode().id === currentNode.id) {
+						arr.push(edge.getSourceNode())
+					}
+				}
+			}
+
+			return arr
 		}
 
-		return nodesArr
+		// 过滤重复的节点
+		let finalArr = []
+		let alreadyIn = []
+		for (let node of nodesArr) {
+			if (alreadyIn.indexOf(node.id) === -1) {
+				finalArr.push(node)
+				alreadyIn.push(node.id)
+			}
+		}
+
+		return finalArr
 	},
 	// 获取节点的输入数据
 	getNodeInputData(nowNode, graph) {
@@ -38,7 +61,7 @@ export default {
 			if (data.pages === 'start') {
 
 				nodeInputData.push({
-					value: nowNode.id,
+					value: param.id,
 					label: '开始',
 					icon: 'iconfont icon-ai23',
 					color: 'var(--el-color-theme)',
@@ -52,7 +75,7 @@ export default {
 				}
 
 				nodeInputData.push({
-					value: nowNode.id,
+					value: param.id,
 					label: label,
 					icon: 'iconfont icon-fenlei',
 					color: '#f79009',
@@ -66,7 +89,7 @@ export default {
 				}
 
 				nodeInputData.push({
-					value: nowNode.id,
+					value: param.id,
 					label: label,
 					icon: 'iconfont icon-a-zhuliudeLLM',
 					color: '#6172f3',
@@ -80,7 +103,7 @@ export default {
 				}
 
 				nodeInputData.push({
-					value: nowNode.id,
+					value: param.id,
 					label: label,
 					icon: 'iconfont icon-zhishiku',
 					color: '#6172f3',
@@ -94,7 +117,7 @@ export default {
 				}
 
 				nodeInputData.push({
-					value: nowNode.id,
+					value: param.id,
 					label: label,
 					icon: 'iconfont icon-pinglun3-copy',
 					color: '#06ae4d',
@@ -108,7 +131,7 @@ export default {
 				}
 
 				nodeInputData.push({
-					value: nowNode.id,
+					value: param.id,
 					label: label,
 					icon: 'iconfont icon-a-agent1',
 					color: '#17b26a',

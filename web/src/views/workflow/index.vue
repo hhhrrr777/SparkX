@@ -360,6 +360,7 @@ export default {
 		// 获取节点前数据
 		getNodeInputData() {
 			this.inputOptions = inputDataUtil.getNodeInputData(this.nowNode, this.graph)
+			console.log(22, this.inputOptions)
 		},
 		// 添加节点
 		addNodeHandle(type) {
