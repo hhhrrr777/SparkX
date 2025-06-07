@@ -2,34 +2,77 @@
 	<div class="customer-chat-box">
 		<div class="header">
 			<div class="title-box">
-				<div class="title-label">测</div>
+				<div class="title-label">{{ title.substring(0, 1) }}</div>
 				<div class="title">
-					测试编排小任务
+					{{ title }}
 				</div>
 			</div>
 			<el-icon style="cursor: pointer" size="18">
 				<Close />
 			</el-icon>
 		</div>
+		<div class="content">
+			<flow-chat
+				:logo="logo"
+				:setting="setting"
+				:welcome-word="welcomeWord"
+				:key="randomKey"
+				:debug="true"
+				api-url="/application/sseChat"
+			>
+			</flow-chat>
+		</div>
 	</div>
 </template>
 
 <script>
-import {Close} from "@element-plus/icons-vue";
+import {Close} from "@element-plus/icons-vue"
+import flowChat from "@/components/chatContent/flow.vue"
+import chatBox from "@/components/chatContent/index.vue"
+import config from "@/config"
 
-	export default {
-		components: {Close},
-		data() {
-			return {
-
+export default {
+	components: {chatBox, Close, flowChat},
+	props: {
+		appId: {
+			type: String,
+			default: "",
+		}
+	},
+	data() {
+		return {
+			setting: {},
+			welcomeWord: {
+				title: '',
+				question: []
+			},
+			logo: "",
+			randomKey: Math.random(),
+			title: "",
+			domain: config.API_URL.replace("/api", ""),
+		}
+	},
+	mounted() {
+		this.getChatInfo()
+	},
+	methods: {
+		// 获取应用聊天详情
+		async getChatInfo() {
+			let res = await this.$API.chat.getInfo.get({appId: this.appId})
+			if (res.code === 0) {
+				let appInfo = res.data
+				if (appInfo.prologue !== '') {
+					this.welcomeWord = JSON.parse(appInfo.prologue)
+					appInfo.prologue = JSON.parse(appInfo.prologue)
+				}
+				this.setting = appInfo
+				this.randomKey = Math.random()
+				this.title = appInfo.name
+				this.logo = this.domain + appInfo.icon
 			}
 		},
-		mounted() {
-		},
-		methods: {
-
-		}
 	}
+}
 </script>
 
 <style scoped>
@@ -37,7 +80,7 @@ import {Close} from "@element-plus/icons-vue";
 	z-index: 1999;
 	border-radius: 8px;
 	border: 1px solid #ffffff;
-	background:  linear-gradient(188deg, rgba(235, 241, 255, .2) 39.6%, rgba(231, 249, 255, .2) 94.3%), #eff0f1;
+	background: rgb(244, 244, 244);
 	box-shadow: 0 4px 8px #1f23291a;
 	position: fixed;
 	bottom: 16px;
@@ -72,5 +115,10 @@ import {Close} from "@element-plus/icons-vue";
 	line-height: 35px;
 	text-align: center;
 	font-weight: bold;
+}
+.customer-chat-box .content {
+	padding: 10px;
+	width: 100%;
+	height: calc(100% - 56px);
 }
 </style>

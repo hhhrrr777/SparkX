@@ -70,10 +70,25 @@ public class ApplicationHelper {
         List<ApplicationWorkflowRuntimeContextEntity> context = applicationWorkflowRuntimeContextMapper.selectList(
                 new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", runtimeId).eq("cell", sourceId));
 
+        if (context == null || context.isEmpty()) {
+            return null;
+        }
+
+        // 如果上级节点只有一个，不存在并行节点，则直接返回
+        if (context.size() == 1) {
+            return context.get(0);
+        }
+
+        // 如果存在并行节点，则判断当前节点的输入是否是上个节点的输出，如果你是，则返回选定的上个节点，
         for (ApplicationWorkflowRuntimeContextEntity contextItem : context) {
             if (contextItem.getCell().equals(inputSourceId)) {
                 returnContext = contextItem;
             }
+        }
+
+        // 如果不是，则直接返回任意一个上游节点，这里选第一个，因为上下文输入中保存了全部上游节点的输出
+        if (returnContext == null) {
+            return context.get(0);
         }
 
         return returnContext;

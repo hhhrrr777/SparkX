@@ -16,6 +16,8 @@
 		</menu-box>
 
 		<debug-chat
+			:app-id="appId"
+			:key="debugKey"
 			v-if="chatVisible">
 		</debug-chat>
 
@@ -82,6 +84,7 @@ export default {
 			graph: null,
 			outOpen: false,
 			randomKey: Math.random(),
+			debugKey: Math.random(),
 			drawer: false,
 			chatVisible: false,
 			// 当前页面
@@ -110,8 +113,10 @@ export default {
 			flowData: null
 		}
 	},
-	mounted() {
+	created() {
 		this.appId = this.$route.query.appId
+	},
+	mounted() {
 		this.initGraph()
 		this.getWorkflowInfo()
 	},

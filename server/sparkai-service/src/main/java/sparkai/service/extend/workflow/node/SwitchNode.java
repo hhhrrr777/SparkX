@@ -40,31 +40,34 @@ public class SwitchNode implements IWorkflowNode {
         JSONObject nodeObject = nodeInfo.getData();
         // 分支配置
         JSONArray ifBranch = nodeObject.getJSONArray("ifBranch");
-        // 本节点输入的参数
-        JSONArray inputArr = nodeObject.getJSONArray("data");
-
-        // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
-        if (context == null) {
-            return null;
-        }
-
-        JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
 
         boolean match = false;
+        JSONObject preOutput = null;
+        ApplicationWorkflowRuntimeContextEntity context = null;
         int index = -1;
+
         for (int i = 0; i < ifBranch.size(); i++) {
 
             JSONObject nowNodeObject = ifBranch.getJSONObject(i);
             String type = nowNodeObject.getStr("type");
-            if ((type.equals("if") || type.equals("elseif")) && !match) {
+            if ((type.equals("if") || type.equals("elseif"))) {
 
                 Integer judging = nowNodeObject.getInt("switch");
-
+                // 本节点输入的参数
+                JSONArray inputArr = nowNodeObject.getJSONArray("data");
                 List<Boolean> matchArr = new ArrayList<>();
                 for (int j = 0; j < inputArr.size(); j++) {
 
-                    String inputIndex = inputArr.getJSONObject(j).getJSONArray("input").get(1).toString();
+                    JSONArray inputJsonArr = inputArr.getJSONObject(j).getJSONArray("input");
+                    String inputIndex = inputJsonArr.get(1).toString();
+                    String inputSourceId = inputJsonArr.get(0).toString();
+                    // 获取上一个节点的信息
+                    context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputSourceId);
+                    if (context == null) {
+                        return null;
+                    }
+
+                    preOutput = JSONUtil.parseObj(context.getOutputData());
                     String inputData = preOutput.get(inputIndex).toString();
                     int tips = inputArr.getJSONObject(j).getInt("tips");
                     String value = inputArr.getJSONObject(j).getStr("value");
@@ -92,6 +95,10 @@ public class SwitchNode implements IWorkflowNode {
                     }
                 }
             }
+
+            if (match) {
+                break;
+            }
         }
 
         // 最终的else分支
@@ -100,15 +107,17 @@ public class SwitchNode implements IWorkflowNode {
         }
 
         // 记录运行时数据
-        ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
-        contextEntity.setStep(context.getStep() + 1);
-        contextEntity.setNodeType(NodeTypeEnum.SWITCH.getCode());
-        contextEntity.setRuntimeId(runtimeId);
-        // 记录问题分类节点的输入
-        contextEntity.setOutputData(preOutput.toString());
-        contextEntity.setCell(nodeInfo.getId());
-        contextEntity.setCreateTime(Tool.nowDateTime());
-        applicationWorkflowRuntimeContextMapper.insert(contextEntity);
+        if (context != null) {
+            ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
+            contextEntity.setStep(context.getStep() + 1);
+            contextEntity.setNodeType(NodeTypeEnum.SWITCH.getCode());
+            contextEntity.setRuntimeId(runtimeId);
+            // 记录问题分类节点的输入
+            contextEntity.setOutputData(preOutput.toString());
+            contextEntity.setCell(nodeInfo.getId());
+            contextEntity.setCreateTime(Tool.nowDateTime());
+            applicationWorkflowRuntimeContextMapper.insert(contextEntity);
+        }
 
         // 获取下一个节点
         List<EdgeVo> nextEdgeVoList = edges.get(nodeInfo.getId());
