@@ -28,6 +28,7 @@ import sparkai.service.vo.workflow.NodeVo;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 @Component
 public class PurposeNode implements IWorkflowNode {
@@ -43,6 +44,9 @@ public class PurposeNode implements IWorkflowNode {
 
     @Setter
     public SseEmitter emitter;
+
+    @Setter
+    public CountDownLatch latch;
 
     @Autowired
     ApplicationHelper applicationHelper;
@@ -113,6 +117,8 @@ public class PurposeNode implements IWorkflowNode {
         List<EdgeVo> nextEdgeVoList = edges.get(nodeInfo.getId());
         List<EdgeVo> newEdgeVoList = new LinkedList<>();
         newEdgeVoList.add(nextEdgeVoList.get(index));
+
+        latch.countDown();
 
         return newEdgeVoList;
     }

@@ -7,16 +7,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.exception.BusinessException;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
+import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 @Component
 @Slf4j
@@ -40,6 +43,9 @@ public class FlowNodeParser {
     @Setter
     public SseEmitter emitter;
 
+    @Autowired
+    SseEmitterHelper sseEmitterHelper;
+
     // 运行时id
     @Setter
     public Long runtimeId;
@@ -48,6 +54,7 @@ public class FlowNodeParser {
      * 执行编排流程
      * @param flowData String
      */
+    @Async
     public void run(String flowData) {
         // 重新初始化
         this.edges = new HashMap<>();
@@ -74,15 +81,18 @@ public class FlowNodeParser {
 
         Map<String, EdgeVo> nextNeedVoMap = new HashMap<>();
         List<String> targetIds = edgeVo.getTarget();
+
+        CountDownLatch latch = new CountDownLatch(targetIds.size());
+
         // 并联流程
         for (String targetId : targetIds) {
 
             NodeVo nodeInfo = this.nodes.get(targetId);
-            log.info("本次解析的节点是 ： {}", nodeInfo);
-
+            // log.info("本次解析的节点是 ： {}", nodeInfo);
             // 获取node处理方法 所有的节点对应的指定方法在 sparkai.service.extend.workflow.node 下
             IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
             flowNode.setEmitter(this.emitter);
+            flowNode.setLatch(latch);
             List<EdgeVo> nextEdgeVoList = flowNode.handle(nodeInfo, this.runtimeId, sourceId, this.edges);
 
             if (!CollectionUtils.isEmpty(nextEdgeVoList)) {
@@ -90,12 +100,24 @@ public class FlowNodeParser {
             }
         }
 
-        // 进入下一个节点, 判断是否有进入同一个节点的，去重，防止重复进入
-        if (!MapUtil.isEmpty(nextNeedVoMap)) {
+        try {
 
-            nextNeedVoMap.forEach((nodeId, nodeData) -> {
-                execute(nodeData, nodeId);
-            });
+            // 阻塞等到节点中的异步发送完成后，再继续
+            latch.await();
+
+            // 进入下一个节点
+            if (!MapUtil.isEmpty(nextNeedVoMap)) {
+
+                nextNeedVoMap.forEach((nodeId, nodeData) -> {
+                    execute(nodeData, nodeId);
+                });
+            } else { // 流程结束
+                sseEmitterHelper.sendEndSse(emitter, "END");
+            }
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // 处理中断异常
+            log.error("线程阻塞错误, {}", e.getMessage());
         }
     }
 

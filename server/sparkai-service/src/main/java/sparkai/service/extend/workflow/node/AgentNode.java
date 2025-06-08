@@ -35,6 +35,9 @@ public class AgentNode implements IWorkflowNode {
     @Setter
     public SseEmitter emitter;
 
+    @Setter
+    public CountDownLatch latch;
+
     @Autowired
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
 
@@ -84,7 +87,6 @@ public class AgentNode implements IWorkflowNode {
 
             TokenStream tokenStream = agentChat.streamChat(applicationInfo, validate);
 
-            CountDownLatch latch = new CountDownLatch(1);
             sseEmitterHelper.asyncSend2Client(tokenStream, emitter, (response) -> {
 
                 // 记录运行时数据
@@ -113,7 +115,6 @@ public class AgentNode implements IWorkflowNode {
                 latch.countDown();
             });
 
-            latch.await();
         } catch (Exception e) {
             log.error("回复节点构建llm错误：", e);
             return null;

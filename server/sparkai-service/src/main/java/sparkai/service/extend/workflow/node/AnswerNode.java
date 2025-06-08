@@ -46,6 +46,9 @@ public class AnswerNode implements IWorkflowNode {
     @Autowired
     SseEmitterHelper sseEmitterHelper;
 
+    @Setter
+    public CountDownLatch latch;
+
     @Autowired
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
 
@@ -142,6 +145,8 @@ public class AnswerNode implements IWorkflowNode {
             sseEmitterHelper.sendErrorSse(emitter, e.getMessage());
         }
 
+        latch.countDown();
+
         // 获取下一个节点
         return edges.get(nodeInfo.getId());
     }
@@ -230,14 +235,7 @@ public class AnswerNode implements IWorkflowNode {
             }
 
             AtomicReference<String> answer = new AtomicReference<>("");
-            CountDownLatch latch = new CountDownLatch(1);
-            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, (response) -> {
-
-                answer.set(response);
-                latch.countDown();
-            });
-
-            latch.await();
+            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, answer::set);
 
             return answer.get();
         } catch (Exception e) {

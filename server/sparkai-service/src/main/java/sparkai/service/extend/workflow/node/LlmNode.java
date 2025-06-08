@@ -18,12 +18,16 @@ import sparkai.service.vo.workflow.NodeVo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 @Component
 public class LlmNode implements IWorkflowNode {
 
     @Setter
     public SseEmitter emitter;
+
+    @Setter
+    public CountDownLatch latch;
 
     @Autowired
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
@@ -55,6 +59,8 @@ public class LlmNode implements IWorkflowNode {
         contextEntity.setCell(nodeInfo.getId());
         contextEntity.setCreateTime(Tool.nowDateTime());
         applicationWorkflowRuntimeContextMapper.insert(contextEntity);
+
+        latch.countDown();
 
         // 获取下一个节点
         return edges.get(nodeInfo.getId());
