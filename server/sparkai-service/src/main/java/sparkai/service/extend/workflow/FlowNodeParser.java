@@ -112,7 +112,7 @@ public class FlowNodeParser {
                     execute(nodeData, nodeId);
                 });
             } else { // 流程结束
-                sseEmitterHelper.sendEndSse(emitter, "END");
+                sseEmitterHelper.sendEndSse(emitter, "");
             }
 
         } catch (InterruptedException e) {

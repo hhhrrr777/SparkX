@@ -275,7 +275,9 @@ export default {
 						that.chatLogList[that.nowIndex].content = '' // 清理默认思考中... 提示
 					} else if (event === '[DONE]') { // 回答结束
 						that.answerIng = that.chatLogList[that.nowIndex].answerIng = 3
-						that.chatLogList[that.nowIndex].meta = JSON.parse(ev.data)
+						if (ev.data != '') {
+							that.chatLogList[that.nowIndex].meta = JSON.parse(ev.data)
+						}
 
 						if (that.sessionId === '') {
 							that.$emit("sessionCreate", {sessionId: data.sessionId, title: data.content})

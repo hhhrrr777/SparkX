@@ -107,7 +107,7 @@ public class SwitchNode implements IWorkflowNode {
 
         // 最终的else分支
         if (!match) {
-            index = ifBranch.size() - 1;
+            index = ifBranch.size();
         }
 
         // 记录运行时数据
