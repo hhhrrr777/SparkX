@@ -44,7 +44,7 @@
 							</div>
 
 							<div class="menu-list" v-if="item.source === 'ai' && item.answerIng === 3">
-								<div class="menu-left-side">
+								<div class="menu-left-side" v-if="!debug">
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">{{ item.meta.time }} s</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">{{ item.meta.tokens }} tokens</el-tag>
 								</div>
