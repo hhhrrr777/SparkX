@@ -7,7 +7,7 @@
 					{{ title }}
 				</div>
 			</div>
-			<el-icon style="cursor: pointer" size="18">
+			<el-icon style="cursor: pointer" size="18" @click="$emit('closeDebug')">
 				<Close />
 			</el-icon>
 		</div>

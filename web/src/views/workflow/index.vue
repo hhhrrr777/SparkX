@@ -18,6 +18,7 @@
 		<debug-chat
 			:app-id="appId"
 			:key="debugKey"
+			@close-debug="chatVisible=false"
 			v-if="chatVisible">
 		</debug-chat>
 
@@ -47,6 +48,7 @@
 							@port-add="portAddHandle"
 							@port-update="portUpdate"
 							@data-change="dataChangeHandle"
+							@del-node="nodeDelHandle"
 							:input-options="inputOptions"
 							:is="page"
 						/>
@@ -388,6 +390,11 @@ export default {
 					this.nodeNoData[type]
 				)
 			)))
+		},
+		// 删除节点
+		nodeDelHandle() {
+			this.graph.removeNode(this.nowNode.id)
+			this.drawer = false
 		},
 		// 返回列表
 		backHandle() {
