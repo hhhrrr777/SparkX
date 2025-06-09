@@ -1,5 +1,6 @@
 <template>
 	<div style="width:100%;height:100%;position: relative">
+		<!-- 顶部菜单栏 -->
 		<top-menu
 			class="top-menu"
 			@debug="debugHandle"
@@ -8,20 +9,31 @@
 		>
 		</top-menu>
 		<div ref="containerRef" class="container"/>
-
+		<!-- 组件菜单 -->
 		<menu-box
 			v-if="visible"
 			@add-node="addNodeHandle"
 			class="add-menu-box">
 		</menu-box>
-
+		<!-- 执行详情 -->
+		<el-dialog
+			width="1000px"
+			ref="saveDialog"
+			title="执行详情"
+			:close-on-click-modal="false"
+			v-model="runtimeVisible">
+			<runtime-box
+				:runtime-id="runtimeId">
+			</runtime-box>
+		</el-dialog>
+		<!-- 调试聊天窗口 -->
 		<debug-chat
 			:app-id="appId"
 			:key="debugKey"
 			@close-debug="chatVisible=false"
 			v-if="chatVisible">
 		</debug-chat>
-
+		<!-- 底部菜单栏 -->
 		<bottom-menu
 			:key="randomKey"
 			:out-open="outOpen"
@@ -31,7 +43,6 @@
 			@zoom-in="zoomInHandle"
 			@zoom-out="zoomOutHandle">
 		</bottom-menu>
-
 		<!-- 菜单设置 -->
 		<el-drawer
 			:size="600"
@@ -71,13 +82,16 @@ import menuBox from './menu/menuBox.vue'
 import {defineAsyncComponent} from "vue";
 import inputDataUtil from './inputData.js'
 import debugChat from './menu/debug.vue'
+import nodeCheck from './nodeCheck.js'
+import runtimeBox from './menu/runtime.vue'
 
 export default {
 	components: {
 		bottomMenu,
 		topMenu,
 		menuBox,
-		debugChat
+		debugChat,
+		runtimeBox
 	},
 	data() {
 		return {
@@ -89,10 +103,9 @@ export default {
 			debugKey: Math.random(),
 			drawer: false,
 			chatVisible: false,
-			// 当前页面
-			page: '',
-			// 设置页面
-			pages: {
+			runtimeVisible: false,
+			page: '', // 当前页面
+			pages: { // 设置页面
 				start: defineAsyncComponent(() => import('./dialog/startDialog.vue')),
 				purpose: defineAsyncComponent(() => import('./dialog/purposeDialog.vue')),
 				llm: defineAsyncComponent(() => import('./dialog/llmDialog.vue')),
@@ -112,7 +125,8 @@ export default {
 				switch: 0
 			},
 			appId: '',
-			flowData: null
+			flowData: null,
+			runtimeId: ''
 		}
 	},
 	created() {
@@ -352,7 +366,15 @@ export default {
 		},
 		// 调试链接
 		debugHandle() {
-			this.chatVisible = true
+			this.runtimeVisible = true
+			// 节点参数检测
+			/*let res = nodeCheck.check(this.graph.toJSON())
+			if (res.code !== 0) {
+				this.$message.error(res.msg)
+				return
+			}
+
+			this.chatVisible = true*/
 		},
 		// 获取流程信息
 		async getWorkflowInfo() {

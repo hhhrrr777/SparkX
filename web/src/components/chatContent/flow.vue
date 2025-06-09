@@ -89,7 +89,7 @@
 									</el-tooltip>
 								</div>
 								<div class="menu-right-side" v-else>
-									<el-button type="text">执行详情</el-button>
+									<el-button type="text" style="font-size: 13px">执行详情</el-button>
 								</div>
 							</div>
 						</div>

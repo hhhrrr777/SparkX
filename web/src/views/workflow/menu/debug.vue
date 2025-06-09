@@ -117,7 +117,7 @@ export default {
 	font-weight: bold;
 }
 .customer-chat-box .content {
-	padding: 10px;
+	padding: 10px 20px;
 	width: 100%;
 	height: calc(100% - 56px);
 }
