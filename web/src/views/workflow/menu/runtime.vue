@@ -1,12 +1,12 @@
 <template>
 	<el-scrollbar class="runtime-list">
-		<el-card shadow="never" class="runtime-item">
-			<div class="runtime-title">
+		<el-card shadow="never" class="runtime-item" v-for="index in 3" :key="index">
+			<div class="runtime-title" @click="showDetail(index)">
 				<div class="runtime-icon">
 					<el-icon>
 						<CaretRight />
 					</el-icon>
-					<component :is="iconComponent(`agent-node-icon`)"/>
+					<component :is="iconComponent(`start-node-icon`)"/>
 				</div>
 				<div class="runtime-status">
 					<div class="run-time">0.01 s</div>
@@ -15,9 +15,11 @@
 					</el-icon>
 				</div>
 			</div>
-			<div class="runtime-content-body">
-
-			</div>
+			<el-collapse-transition>
+				<div class="runtime-content-body" v-show="currentIndex === index">
+					<component :is="runtimeComponent(`start-node-detail`)"/>
+				</div>
+			</el-collapse-transition>
 		</el-card>
 	</el-scrollbar>
 </template>
@@ -25,6 +27,7 @@
 <script>
 import {CaretRight, CircleCheck} from '@element-plus/icons-vue'
 import {iconComponent} from "@/views/workflow/icons/index.js"
+import {runtimeComponent} from "@/views/workflow/runtime/index.js"
 
 export default {
 	components: {
@@ -33,14 +36,23 @@ export default {
 	},
 	data() {
 		return {
-
+			currentIndex: 0
 		}
 	},
 	mounted() {
 
 	},
 	methods: {
-		iconComponent
+		iconComponent,
+		runtimeComponent,
+		// 展示详情
+		showDetail(index) {
+			if (this.currentIndex === index) {
+				this.currentIndex = -1
+			} else {
+				this.currentIndex = index
+			}
+		}
 	}
 }
 </script>
@@ -52,7 +64,6 @@ export default {
 <style scoped>
 .runtime-list {
 	display: flex;
-	height: 300px;
 	flex-direction: column;
 	width: 100%;
 }
@@ -79,5 +90,11 @@ export default {
 }
 .success {
 	color: #17b26a;
+}
+.runtime-content-body {
+	background: #f5f6f7;
+	border-radius: 4px;
+	font-size: 14px;
+	margin-top: 10px;
 }
 </style>

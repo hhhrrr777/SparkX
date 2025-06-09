@@ -18,7 +18,6 @@
 		<!-- 执行详情 -->
 		<el-dialog
 			width="800px"
-			ref="saveDialog"
 			title="执行详情"
 			:close-on-click-modal="false"
 			v-model="runtimeVisible">
