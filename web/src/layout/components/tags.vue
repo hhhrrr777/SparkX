@@ -53,7 +53,6 @@
 </template>
 
 <script setup>
-import Sortable from 'sortablejs'
 import {useViewTagsStore} from "@/stores/viewTags.js";
 import {useKeepAliveStore} from "@/stores/keepAlive.js";
 import {useIframeStore} from "@/stores/iframe.js";
@@ -154,10 +153,10 @@ watch(contextMenuVisible, (val) => {
 // 标签拖拽排序
 const tagDrop = () => {
 	const target = tags.value
-	Sortable.create(target, {
+	/*Sortable.create(target, {
 		draggable: 'li',
 		animation: 300
-	})
+	})*/
 }
 //高亮tag
 const isActive = (route_) => {
