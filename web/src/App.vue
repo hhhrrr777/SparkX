@@ -98,5 +98,11 @@ body {
 	background: #fff;
 	margin-top: 10px;
 }
+.menu-icon {
+	color: #fff;
+	padding: 3px;
+	border-radius: 5px;
+	margin-left: 10px;
+}
 @import '@/style/style.scss';
 </style>

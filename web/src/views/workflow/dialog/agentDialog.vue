@@ -2,10 +2,7 @@
 	<div class="opt-form">
 		<div class="flex-center title" style="justify-content: space-between">
 			<div class="flex-center">
-				<div class="menu-icon" style="background: #17b26a;color: #fff;padding: 3px;border-radius: 5px;">
-					<span class="iconfont icon-a-agent1" style="font-size: 18px !important;"></span>
-				</div>
-				<span class="node-name">Agent</span>
+				<component :is="iconComponent(`agent-node-icon`)"/>
 			</div>
 			<el-dropdown @command="handleCommand">
 				<el-icon size="18"><MoreFilled /></el-icon>
@@ -89,6 +86,7 @@
 import {MoreFilled, Plus} from "@element-plus/icons-vue"
 import agentDialog from "@/components/application/index.vue"
 import config from "@/config"
+import {iconComponent} from "@/views/workflow/icons/index.js"
 
 export default {
 	components: {agentDialog, Plus, MoreFilled},
@@ -142,6 +140,7 @@ export default {
 					break;
 			}
 		},
+		iconComponent
 	}
 }
 </script>

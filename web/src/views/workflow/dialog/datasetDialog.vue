@@ -2,10 +2,7 @@
 	<div class="opt-form">
 		<div class="flex-center title" style="justify-content: space-between">
 			<div class="flex-center">
-				<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 3px;border-radius: 5px;">
-					<span class="iconfont icon-zhishiku" style="font-size: 18px !important;"></span>
-				</div>
-				<span class="node-name">知识检索</span>
+				<component :is="iconComponent(`dataset-node-icon`)"/>
 			</div>
 			<el-dropdown @command="handleCommand">
 				<el-icon size="18"><MoreFilled /></el-icon>
@@ -91,8 +88,9 @@
 
 <script>
 
-import {Delete, MoreFilled, Plus} from "@element-plus/icons-vue";
-import datasetDialog from "@/components/dataset/multiple.vue";
+import {Delete, MoreFilled, Plus} from "@element-plus/icons-vue"
+import datasetDialog from "@/components/dataset/multiple.vue"
+import {iconComponent} from "@/views/workflow/icons/index.js"
 
 export default {
 	components: {MoreFilled, datasetDialog, Plus, Delete},
@@ -151,6 +149,7 @@ export default {
 					break;
 			}
 		},
+		iconComponent
 	}
 }
 </script>

@@ -2,10 +2,7 @@
 	<div class="opt-form">
 		<div class="flex-center title" style="justify-content: space-between">
 			<div class="flex-center">
-				<div class="menu-icon" style="background: #06ae4d;color: #fff;padding: 3px;border-radius: 5px;">
-					<span class="iconfont icon-pinglun3-copy" style="font-size: 18px !important;"></span>
-				</div>
-				<span class="node-name">回复</span>
+				<component :is="iconComponent(`answer-node-icon`)"/>
 			</div>
 			<el-dropdown @command="handleCommand">
 				<el-icon size="18"><MoreFilled /></el-icon>
@@ -75,6 +72,7 @@
 <script>
 
 import {MoreFilled} from "@element-plus/icons-vue";
+import {iconComponent} from "@/views/workflow/icons/index.js"
 
 export default {
 	components: {MoreFilled},
@@ -120,6 +118,7 @@ export default {
 					break;
 			}
 		},
+		iconComponent
 	}
 }
 </script>

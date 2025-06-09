@@ -2,10 +2,7 @@
 	<div class="opt-form">
 		<div class="flex-center title" style="justify-content: space-between">
 			<div class="flex-center">
-				<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 2px;border-radius: 5px;">
-					<span class="iconfont icon-a-zhuliudeLLM"></span>
-				</div>
-				<span class="node-name">LLM</span>
+				<component :is="iconComponent(`llm-node-icon`)"/>
 			</div>
 			<el-dropdown @command="handleCommand">
 				<el-icon size="18"><MoreFilled /></el-icon>
@@ -103,6 +100,7 @@
 <script>
 
 import {MoreFilled} from "@element-plus/icons-vue";
+import {iconComponent} from "@/views/workflow/icons/index.js";
 
 export default {
 	components: {MoreFilled},
@@ -147,6 +145,7 @@ export default {
 		this.getModelsList()
 	},
 	methods: {
+		iconComponent,
 		// 获取模型信息
 		async getModelInfo(modelId) {
 			let res = await this.$API.models.info.get({modelId: modelId})

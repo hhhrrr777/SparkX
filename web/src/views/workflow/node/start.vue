@@ -2,18 +2,17 @@
 <template>
 	<div class="node-base" :class="{'node-active': active}">
 		<div class="flex-center">
-			<div class="menu-icon" style="background: var(--el-color-theme);color: #fff;padding: 3px;border-radius: 5px;">
-				<span class="iconfont icon-ai23" style="font-size: 18px !important;"></span>
-			</div>
-			<span class="node-name">{{ name }}</span>
+			<component :is="iconComponent(`start-node-icon`)"/>
 		</div>
 	</div>
 </template>
 
 <script>
 import {HomeFilled} from "@element-plus/icons-vue";
+import {iconComponent} from "@/views/workflow/icons/index.js";
 
 export default {
+	methods: {iconComponent},
 	components: {HomeFilled},
 	inject: ["getNode"],
 	data() {

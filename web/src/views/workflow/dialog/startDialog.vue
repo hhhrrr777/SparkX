@@ -1,10 +1,7 @@
 <template>
 	<div class="opt-form">
 		<div class="flex-center title">
-			<div class="menu-icon" style="background: var(--el-color-theme);color: #fff;padding: 3px;border-radius: 5px;">
-				<span class="iconfont icon-ai23" style="font-size: 18px !important;"></span>
-			</div>
-			<span class="node-name">开始</span>
+			<component :is="iconComponent(`start-node-icon`)"/>
 		</div>
 
 		<div class="set-content-box">
@@ -71,6 +68,7 @@
 
 <script>
 import {HomeFilled, Plus} from "@element-plus/icons-vue"
+import {iconComponent} from "@/views/workflow/icons/index.js";
 
 export default {
 	components: {Plus, HomeFilled},
@@ -99,6 +97,7 @@ export default {
 	},
 	mounted() {},
 	methods: {
+		iconComponent,
 		// 创建变量
 		optSubmit(formName) {
 			this.$refs[formName].validate(async (valid) => {

@@ -2,9 +2,7 @@
 <template>
 	<div class="node-base" :class="{'node-active': active}">
 		<div class="flex-center">
-			<div class="menu-icon" style="background: #6172f3;color: #fff;padding: 2px;border-radius: 5px;">
-				<span class="iconfont icon-a-zhuliudeLLM"></span>
-			</div>
+			<component :is="iconComponent(`llm-node-icon`)" :show-name="false"/>
 			<span class="node-name" v-if="no === 1">{{ name }}</span>
 			<span class="node-name" v-else>{{ name }}{{ no - 1 }}</span>
 		</div>
@@ -20,7 +18,10 @@
 </template>
 
 <script>
+import {iconComponent} from "@/views/workflow/icons/index.js";
+
 export default {
+	methods: {iconComponent},
 	inject: ["getNode"],
 	data() {
 		return {

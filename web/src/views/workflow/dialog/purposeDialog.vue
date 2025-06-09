@@ -2,10 +2,7 @@
 	<div class="opt-form">
 		<div class="flex-center title" style="justify-content: space-between">
 			<div class="flex-center">
-				<div class="menu-icon" style="background: #f79009;color: #fff;padding: 3px;border-radius: 5px;">
-					<span class="iconfont icon-fenlei" style="font-size: 18px !important;"></span>
-				</div>
-				<span class="node-name">意图分类</span>
+				<component :is="iconComponent(`purpose-node-icon`)"/>
 			</div>
 			<el-dropdown @command="handleCommand">
 				<el-icon size="18"><MoreFilled /></el-icon>
@@ -99,6 +96,7 @@
 
 <script>
 import {Delete, MoreFilled, Plus} from "@element-plus/icons-vue";
+import {iconComponent} from "@/views/workflow/icons/index.js";
 
 export default {
 	components: {MoreFilled, Delete, Plus},
@@ -131,6 +129,7 @@ export default {
 		this.getModelsList()
 	},
 	methods: {
+		iconComponent,
 		// 添加分类
 		addCate() {
 			this.form.cateList.push({
