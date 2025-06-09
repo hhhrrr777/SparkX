@@ -53,49 +53,46 @@ public class SwitchNode implements IWorkflowNode {
         for (int i = 0; i < ifBranch.size(); i++) {
 
             JSONObject nowNodeObject = ifBranch.getJSONObject(i);
-            String type = nowNodeObject.getStr("type");
-            if ((type.equals("if") || type.equals("elseif"))) {
+            Integer judging = nowNodeObject.getInt("switch");
+            // 本节点输入的参数
+            JSONArray inputArr = nowNodeObject.getJSONArray("data");
+            List<Boolean> matchArr = new ArrayList<>();
 
-                Integer judging = nowNodeObject.getInt("switch");
-                // 本节点输入的参数
-                JSONArray inputArr = nowNodeObject.getJSONArray("data");
-                List<Boolean> matchArr = new ArrayList<>();
-                for (int j = 0; j < inputArr.size(); j++) {
+            for (int j = 0; j < inputArr.size(); j++) {
 
-                    JSONArray inputJsonArr = inputArr.getJSONObject(j).getJSONArray("input");
-                    String inputIndex = inputJsonArr.get(1).toString();
-                    String inputSourceId = inputJsonArr.get(0).toString();
-                    // 获取上一个节点的信息
-                    context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputSourceId);
-                    if (context == null) {
-                        return null;
-                    }
-
-                    preOutput = JSONUtil.parseObj(context.getOutputData());
-                    String inputData = preOutput.get(inputIndex).toString();
-                    int tips = inputArr.getJSONObject(j).getInt("tips");
-                    String value = inputArr.getJSONObject(j).getStr("value");
-
-                    Boolean matchRes = switchTest(tips, inputData, value);
-                    matchArr.add(matchRes);
+                JSONArray inputJsonArr = inputArr.getJSONObject(j).getJSONArray("input");
+                String inputIndex = inputJsonArr.get(1).toString();
+                String inputSourceId = inputJsonArr.get(0).toString();
+                // 获取上一个节点的信息
+                context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputSourceId);
+                if (context == null) {
+                    return null;
                 }
 
-                // AND 条件
-                if (judging.equals(1)) {
+                preOutput = JSONUtil.parseObj(context.getOutputData());
+                String inputData = preOutput.get(inputIndex).toString();
+                int tips = inputArr.getJSONObject(j).getInt("tips");
+                String value = inputArr.getJSONObject(j).getStr("value");
 
-                    boolean hasMatch = matchArr.stream().allMatch(item -> item);
-                    if (hasMatch) {
+                Boolean matchRes = switchTest(tips, inputData, value);
+                matchArr.add(matchRes);
+            }
+
+            // AND 条件
+            if (judging.equals(1)) {
+
+                boolean hasMatch = matchArr.stream().allMatch(item -> item);
+                if (hasMatch) {
+                    match = true;
+                    index = i;
+                }
+            } else { // OR 条件
+
+                for (Boolean item : matchArr) {
+                    if (item) {
                         match = true;
                         index = i;
-                    }
-                } else { // OR 条件
-
-                    for (Boolean item : matchArr) {
-                        if (item) {
-                            match = true;
-                            index = i;
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -103,11 +100,6 @@ public class SwitchNode implements IWorkflowNode {
             if (match) {
                 break;
             }
-        }
-
-        // 最终的else分支
-        if (!match) {
-            index = ifBranch.size();
         }
 
         // 记录运行时数据
@@ -125,6 +117,15 @@ public class SwitchNode implements IWorkflowNode {
 
         // 获取下一个节点
         List<EdgeVo> nextEdgeVoList = edges.get(nodeInfo.getId());
+        // 如果if分支未命中，则选取else分支
+        if (!match) {
+            index = nextEdgeVoList.size() - 1;
+            System.out.println("---------------------------------------");
+            System.out.println("nextEdgeVoList.size(): " + nextEdgeVoList.size());
+            System.out.println("index: " + index);
+            System.out.println("---------------------------------------");
+        }
+
         List<EdgeVo> newEdgeVoList = new LinkedList<>();
         newEdgeVoList.add(nextEdgeVoList.get(index));
 

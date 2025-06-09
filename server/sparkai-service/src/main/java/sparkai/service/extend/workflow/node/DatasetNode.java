@@ -42,9 +42,15 @@ public class DatasetNode implements IWorkflowNode {
         JSONObject nodeObject = nodeInfo.getData();
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
+        String inputSourceId;
+        if (inputArr.size() > 0) {
+            inputSourceId = inputArr.get(0).toString();
+        } else {
+            inputSourceId = "";
+        }
 
         // 上个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputArr.get(0).toString());
+        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputSourceId);
         if (context == null) {
             return null;
         }

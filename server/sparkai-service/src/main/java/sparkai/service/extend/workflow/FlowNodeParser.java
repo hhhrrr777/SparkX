@@ -63,6 +63,9 @@ public class FlowNodeParser {
         // 构建执行流
         this.buildData(flowData);
 
+        log.info("解析出的节点 ： {}", JSONUtil.toJsonStr(this.nodes));
+        log.info("解析出的连线 ： {}", JSONUtil.toJsonStr(this.edges));
+
         // 开始节点指向的对象
         List<EdgeVo> edgeVoList = this.edges.get(this.startId);
         if (CollectionUtils.isEmpty(edgeVoList)) {
@@ -152,7 +155,6 @@ public class FlowNodeParser {
                 edgeVo.setId(item.get("id").toString());
                 edgeVo.setSource(item.getJSONObject("source").get("cell").toString());
                 edgeVo.setSourcePort(item.getJSONObject("source").get("port").toString());
-                edgeVo.setTarget(new ArrayList<>());
 
                 if (CollectionUtils.isEmpty(hasEdges)) {
                     List<EdgeVo> edge = new LinkedList<>();
@@ -178,6 +180,9 @@ public class FlowNodeParser {
                     }
 
                     if (!hasMultiple) {
+                        List<String> targetCell = new LinkedList<>();
+                        targetCell.add(item.getJSONObject("target").get("cell").toString());
+                        edgeVo.setTarget(targetCell);
                         hasEdges.add(edgeVo);
                     }
 
