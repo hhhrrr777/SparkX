@@ -111,6 +111,7 @@ public class AgentNode implements IWorkflowNode {
 
                 // 记录问题分类节点的输出
                 String answer = llmResData.getStr("content");
+                preOutput.set("agent.input", question);
                 preOutput.set("sys.agentContent", answer);
 
                 contextEntity.setOutputData(preOutput.toString());
