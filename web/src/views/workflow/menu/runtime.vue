@@ -6,7 +6,7 @@
 					<el-icon>
 						<CaretRight />
 					</el-icon>
-					<component :is="iconComponent(`start-node-icon`)"/>
+					<component :is="iconComponent(`agent-node-icon`)"/>
 				</div>
 				<div class="runtime-status">
 					<div class="run-time">0.01 s</div>
@@ -17,7 +17,7 @@
 			</div>
 			<el-collapse-transition>
 				<div class="runtime-content-body" v-show="currentIndex === index">
-					<component :is="runtimeComponent(`start-node-detail`)"/>
+					<component :is="runtimeComponent(`agent-node-runtime`)"/>
 				</div>
 			</el-collapse-transition>
 		</el-card>
@@ -92,8 +92,6 @@ export default {
 	color: #17b26a;
 }
 .runtime-content-body {
-	background: #f5f6f7;
-	border-radius: 4px;
 	font-size: 14px;
 	margin-top: 10px;
 }

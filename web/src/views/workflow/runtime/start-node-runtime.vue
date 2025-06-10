@@ -34,6 +34,8 @@ export default {
 
 <style scoped>
 .detail-box {
+	background: #f5f6f7;
+	border-radius: 4px;
 	height: 100%;
 	width: 100%;
 }
