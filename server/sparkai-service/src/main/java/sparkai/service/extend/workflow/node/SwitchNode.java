@@ -75,6 +75,9 @@ public class SwitchNode implements IWorkflowNode {
                 String value = inputArr.getJSONObject(j).getStr("value");
 
                 Boolean matchRes = switchTest(tips, inputData, value);
+                if (matchRes) {
+                    preOutput.set("switch.result", nowNodeObject.getStr("type"));
+                }
                 matchArr.add(matchRes);
             }
 
@@ -102,6 +105,16 @@ public class SwitchNode implements IWorkflowNode {
             }
         }
 
+        // 获取下一个节点
+        List<EdgeVo> nextEdgeVoList = edges.get(nodeInfo.getId());
+        // 如果if分支未命中，则选取else分支
+        if (!match) {
+            if (preOutput != null) {
+                preOutput.set("switch.result", "else");
+            }
+            index = nextEdgeVoList.size() - 1;
+        }
+
         // 记录运行时数据
         if (context != null) {
             ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
@@ -113,17 +126,6 @@ public class SwitchNode implements IWorkflowNode {
             contextEntity.setCell(nodeInfo.getId());
             contextEntity.setCreateTime(Tool.nowDateTime());
             applicationWorkflowRuntimeContextMapper.insert(contextEntity);
-        }
-
-        // 获取下一个节点
-        List<EdgeVo> nextEdgeVoList = edges.get(nodeInfo.getId());
-        // 如果if分支未命中，则选取else分支
-        if (!match) {
-            index = nextEdgeVoList.size() - 1;
-            System.out.println("---------------------------------------");
-            System.out.println("nextEdgeVoList.size(): " + nextEdgeVoList.size());
-            System.out.println("index: " + index);
-            System.out.println("---------------------------------------");
         }
 
         List<EdgeVo> newEdgeVoList = new LinkedList<>();

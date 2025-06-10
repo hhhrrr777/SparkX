@@ -365,15 +365,15 @@ export default {
 		},
 		// 调试链接
 		debugHandle() {
-			this.runtimeVisible = true
+			//this.runtimeVisible = true
 			// 节点参数检测
-			/*let res = nodeCheck.check(this.graph.toJSON())
+			let res = nodeCheck.check(this.graph.toJSON())
 			if (res.code !== 0) {
 				this.$message.error(res.msg)
 				return
 			}
 
-			this.chatVisible = true*/
+			this.chatVisible = true
 		},
 		// 获取流程信息
 		async getWorkflowInfo() {
