@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.helper;
 
+import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
@@ -30,6 +31,7 @@ import sparkai.service.service.interfaces.dataset.IHitTestService;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
+import sparkai.service.vo.system.LocalUserVo;
 
 @Component
 public class AssistantBuildHelper {
@@ -43,6 +45,9 @@ public class AssistantBuildHelper {
     @Autowired
     KnowledgeDatasetMapper knowledgeDatasetMapper;
 
+    @Autowired
+    MemoryBuildHelper memoryBuildHelper;
+
     /**
      * 构建 assistant
      * @param validate ApplicationSaveValidate
@@ -53,12 +58,22 @@ public class AssistantBuildHelper {
     public IAiService build(ApplicationEntity applicationInfo, ApplicationChatValidate validate,
                             StreamingChatLanguageModel streamingChatLanguageModel, ChatLanguageModel chatLanguageModel) {
 
+        // 自定义构建上下文记忆
+        LocalUserVo userData = UserContextHelper.getUser();
+        String memoryIdFlag = validate.getSessionId() + "_+_" + userData.getUserId();
+
+        ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
+                .id(memoryIdFlag)
+                .maxMessages(10)
+                .chatMemoryStore(memoryBuildHelper)
+                .build();
+
         // 未关联知识库
         if (validate.getDatasetList().isEmpty()) {
 
             return AiServices.builder(IAiService.class)
                     .streamingChatLanguageModel(streamingChatLanguageModel)
-                    .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(applicationInfo.getMemoryNum())) // 聊天上下文
+                    .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
                     .build();
         }
 
@@ -106,7 +121,7 @@ public class AssistantBuildHelper {
 
         return AiServices.builder(IAiService.class)
                 .streamingChatLanguageModel(streamingChatLanguageModel)
-                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(applicationInfo.getMemoryNum())) // 聊天上下文
+                .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
                 .retrievalAugmentor(retrievalAugmentor)
                 .build();
     }

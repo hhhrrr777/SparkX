@@ -32,6 +32,7 @@
 						:setting="setting"
 						:chat-log-msg="chatLogMsg"
 						:welcome-word="welcomeWord"
+						:chat-session-id="nowSessionId"
 						:key="randomKey"
 						:write-log="true"
 						api-url="/application/sseChat"
@@ -126,6 +127,7 @@ export default {
 		// 选择会话
 		async checkSession(sessionId) {
 			this.nowSessionId = sessionId
+			this.randomKey = Math.random()
 			let res = await this.$API.chat.getChatLog.get({sessionId: sessionId})
 			if (res.code === 0) {
 
@@ -149,7 +151,7 @@ export default {
 							time: item.time,
 							tokens: item.tokens,
 						},
-						retrievedList: JSON.parse(item.retrievedList),
+						retrievedList: item.retrievedList !== '' ? JSON.parse(item.retrievedList) : '',
 						answerIng: 3
 					})
 				})

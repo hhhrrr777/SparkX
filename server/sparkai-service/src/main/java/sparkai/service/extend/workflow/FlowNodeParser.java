@@ -63,9 +63,6 @@ public class FlowNodeParser {
         // 构建执行流
         this.buildData(flowData);
 
-        log.info("解析出的节点 ： {}", JSONUtil.toJsonStr(this.nodes));
-        log.info("解析出的连线 ： {}", JSONUtil.toJsonStr(this.edges));
-
         // 开始节点指向的对象
         List<EdgeVo> edgeVoList = this.edges.get(this.startId);
         if (CollectionUtils.isEmpty(edgeVoList)) {

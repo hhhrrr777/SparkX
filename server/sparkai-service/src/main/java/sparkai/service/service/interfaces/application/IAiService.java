@@ -9,10 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.application;
 
-import dev.langchain4j.service.SystemMessage;
-import dev.langchain4j.service.TokenStream;
-import dev.langchain4j.service.UserMessage;
-import dev.langchain4j.service.V;
+import dev.langchain4j.service.*;
 
 public interface IAiService {
 

@@ -13,7 +13,6 @@ import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.helper.StreamChatModelBuildHelper;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.application.IAiService;
-import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationChatValidate;
 
 @Component

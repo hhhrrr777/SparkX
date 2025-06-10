@@ -41,7 +41,7 @@
 					<el-form-item label="应用描述" prop="description">
 						<el-input type="textarea" v-model="form.description" rows="3" maxlength="255" show-word-limit></el-input>
 					</el-form-item>
-					<el-form-item :for="'test'">
+					<el-form-item>
 						<template #label>
 							<div class="flex-center">
 								<div><span style="color: var(--el-color-danger);">*</span> AI模型</div>
@@ -78,7 +78,7 @@
 					</el-form-item>
 					<el-form-item>
 						<template #label>
-							<div class="flex-center">
+							<div class="flex-center" style="width: 100%">
 								<div>关联知识库</div>
 								<div class="flex-center setting-btn">
 									<div class="flex-center setting-btn">
@@ -442,6 +442,11 @@ export default {
 	}
 }
 </script>
+<style>
+.setting-div .el-form-item__label {
+	width: 100%;
+}
+</style>
 <style scoped>
 .flex-center {
 	display: flex;align-items: center;justify-content: space-between
