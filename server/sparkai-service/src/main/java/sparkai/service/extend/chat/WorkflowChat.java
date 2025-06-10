@@ -77,19 +77,20 @@ public class WorkflowChat implements IChat {
         contextEntity.setNodeType("start-node");
         contextEntity.setRuntimeId(runtimeEntity.getId());
 
-        JSONObject inputData = JSONUtil.createObj();
-        inputData.set("sys.question", validate.getContent());
-        inputData.set("sys.time", Tool.nowDateTime());
+        JSONObject outputData = JSONUtil.createObj();
+        outputData.set("sys.question", validate.getContent());
+        outputData.set("sys.time", Tool.nowDateTime());
         try {
 
             InetAddress inetAddress = InetAddress.getLocalHost();
-            inputData.set("sys.ip", inetAddress.getHostAddress());
+            outputData.set("sys.ip", inetAddress.getHostAddress());
         } catch (UnknownHostException e) {
-            inputData.set("sys.ip", "0.0.0.0");
+            outputData.set("sys.ip", "0.0.0.0");
         }
 
-        inputData.set("sys.appId", info.getAppId());
-        contextEntity.setOutputData(inputData.toString());
+        outputData.set("sys.appId", info.getAppId());
+        outputData.set("sys.sessionId", validate.getSessionId());
+        contextEntity.setOutputData(outputData.toString());
 
         contextEntity.setCreateTime(Tool.nowDateTime());
         applicationWorkflowRuntimeContextMapper.insert(contextEntity);

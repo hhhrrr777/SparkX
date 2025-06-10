@@ -3,6 +3,7 @@ package sparkai.service.extend.workflow.node;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.service.TokenStream;
@@ -13,11 +14,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.enums.NodeTypeEnum;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.*;
+import sparkai.service.mapper.application.ApplicationChatLogMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.application.IAiService;
@@ -26,6 +29,7 @@ import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
 import sparkai.service.vo.dataset.SearchVo;
+import sparkai.service.vo.system.LocalUserVo;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
@@ -73,6 +77,9 @@ public class AnswerNode implements IWorkflowNode {
     @Autowired
     ApplicationHelper applicationHelper;
 
+    @Autowired
+    ApplicationChatLogMapper applicationChatLogMapper;
+
     @Override
     public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
 
@@ -83,7 +90,7 @@ public class AnswerNode implements IWorkflowNode {
             // 本节点输入的参数
             JSONArray inputArr = nodeObject.getJSONArray("inputData");
             String inputSourceId;
-            if (inputArr.size() > 0) {
+            if (!inputArr.isEmpty()) {
                 inputSourceId = inputArr.get(0).toString();
             } else {
                 inputSourceId = "";
@@ -106,7 +113,7 @@ public class AnswerNode implements IWorkflowNode {
 
                 // 找出回复内容
                 String returnAnswerType = inputArr.get(1).toString();
-                String answer = "";
+                String answer;
                 // 如果上个节点是dataset节点，且输出为检索结果
                 if (context.getNodeType().equals(NodeTypeEnum.DATASET.getCode())
                         && returnAnswerType.equals("sys.result")) {
@@ -129,6 +136,17 @@ public class AnswerNode implements IWorkflowNode {
                     modelData.set("outputTokenCount", llmResData.getStr("outputTokenCount"));
                     modelData.set("totalTokenCount", llmResData.getStr("totalTokenCount"));
                     contextEntity.setModelData(modelData.toString());
+
+                    // 更新上下文的信息
+                    JSONObject outputData = JSONUtil.parseObj(context.getOutputData());
+                    LocalUserVo userData = UserContextHelper.getUser();
+                    int limit = JSONUtil.parseObj(context.getModelData()).getInt("memory");
+                    List<ApplicationChatLogEntity> logList = applicationChatLogMapper.selectList(
+                            new QueryWrapper<ApplicationChatLogEntity>().select("log_id")
+                                    .eq("user_id", userData.getUserId()).eq("session_id", outputData.getStr("sys.sessionId"))
+                                    .orderByDesc("log_id").last("limit " + limit));
+                    outputData.set("llm.memoryIds", logList.stream().map(ApplicationChatLogEntity::getLogId).toList());
+                    applicationWorkflowRuntimeContextMapper.updateById(context);
                 } else {
 
                     answer = preOutput.get(returnAnswerType).toString();
