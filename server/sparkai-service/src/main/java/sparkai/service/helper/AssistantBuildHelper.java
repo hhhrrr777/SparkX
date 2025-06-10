@@ -31,7 +31,6 @@ import sparkai.service.service.interfaces.dataset.IHitTestService;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
-import sparkai.service.vo.system.LocalUserVo;
 
 @Component
 public class AssistantBuildHelper {
@@ -59,11 +58,8 @@ public class AssistantBuildHelper {
                             StreamingChatLanguageModel streamingChatLanguageModel, ChatLanguageModel chatLanguageModel) {
 
         // 自定义构建上下文记忆
-        LocalUserVo userData = UserContextHelper.getUser();
-        String memoryIdFlag = validate.getSessionId() + "_+_" + userData.getUserId();
-
         ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
-                .id(memoryIdFlag)
+                .id(validate.getSessionId() + "_+_" + UserContextHelper.getUser().getUserId())
                 .maxMessages(applicationInfo.getMemoryNum())
                 .chatMemoryStore(memoryBuildHelper)
                 .build();
