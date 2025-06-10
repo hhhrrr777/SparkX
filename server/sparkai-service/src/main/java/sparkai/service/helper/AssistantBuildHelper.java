@@ -64,7 +64,7 @@ public class AssistantBuildHelper {
 
         ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
                 .id(memoryIdFlag)
-                .maxMessages(10)
+                .maxMessages(applicationInfo.getMemoryNum())
                 .chatMemoryStore(memoryBuildHelper)
                 .build();
 
