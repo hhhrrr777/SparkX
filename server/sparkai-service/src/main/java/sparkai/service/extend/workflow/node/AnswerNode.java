@@ -1,9 +1,17 @@
+// +----------------------------------------------------------------------
+// | SparkAI 基于大语言模型和 RAG 的知识库问答系统
+// +----------------------------------------------------------------------
+// | Copyright (c) 2022~2099 http://sparkai.sparkshop.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed SparkAI 并不是自由软件，未经许可不能去掉 SparkAI 相关版权
+// +----------------------------------------------------------------------
+// | Author: NickBai  <1902822973@qq.com>
+// +----------------------------------------------------------------------
 package sparkai.service.extend.workflow.node;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.service.TokenStream;
@@ -14,7 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.enums.NodeTypeEnum;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.entity.system.ModelsEntity;
@@ -29,16 +36,14 @@ import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
 import sparkai.service.vo.dataset.SearchVo;
-import sparkai.service.vo.system.LocalUserVo;
 import sparkai.service.vo.workflow.EdgeVo;
-import sparkai.service.vo.workflow.NodeVo;
+import sparkai.service.vo.workflow.NodeRuntimeVo;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -81,11 +86,11 @@ public class AnswerNode implements IWorkflowNode {
     ApplicationChatLogMapper applicationChatLogMapper;
 
     @Override
-    public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
+    public List<EdgeVo> handle(NodeRuntimeVo runtimeVo) {
 
         try {
 
-            JSONObject nodeObject = nodeInfo.getData();
+            JSONObject nodeObject = runtimeVo.getNodeInfo().getData();
             Integer answerType = nodeObject.getInt("answerType");
             // 本节点输入的参数
             JSONArray inputArr = nodeObject.getJSONArray("inputData");
@@ -97,7 +102,8 @@ public class AnswerNode implements IWorkflowNode {
             }
 
             // 上个节点的信息
-            ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputSourceId);
+            ApplicationWorkflowRuntimeContextEntity context =
+                    applicationHelper.getRuntimeContext(runtimeVo.getRuntimeId(), runtimeVo.getSourceId(), inputSourceId);
             if (context == null) {
                 return null;
             }
@@ -106,7 +112,7 @@ public class AnswerNode implements IWorkflowNode {
             ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
             contextEntity.setStep(context.getStep() + 1);
             contextEntity.setNodeType(NodeTypeEnum.ANSWER.getCode());
-            contextEntity.setRuntimeId(runtimeId);
+            contextEntity.setRuntimeId(runtimeVo.getRuntimeId());
 
             JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
             if (answerType.equals(1)) {
@@ -126,7 +132,7 @@ public class AnswerNode implements IWorkflowNode {
                 } else if (context.getNodeType().equals(NodeTypeEnum.LLM.getCode())
                         && returnAnswerType.equals("sys.content")) {
 
-                    String llmRes = llmAnswer(context.getOutputData(), context.getModelData());
+                    String llmRes = llmAnswer(context.getOutputData(), context.getModelData(), context.getId(), runtimeVo.getUserId());
                     JSONObject llmResData = JSONUtil.parseObj(llmRes);
                     answer = llmResData.getStr("content");
 
@@ -136,17 +142,6 @@ public class AnswerNode implements IWorkflowNode {
                     modelData.set("outputTokenCount", llmResData.getStr("outputTokenCount"));
                     modelData.set("totalTokenCount", llmResData.getStr("totalTokenCount"));
                     contextEntity.setModelData(modelData.toString());
-
-                    // 更新上下文的信息
-                    JSONObject outputData = JSONUtil.parseObj(context.getOutputData());
-                    LocalUserVo userData = UserContextHelper.getUser();
-                    int limit = JSONUtil.parseObj(context.getModelData()).getInt("memory");
-                    List<ApplicationChatLogEntity> logList = applicationChatLogMapper.selectList(
-                            new QueryWrapper<ApplicationChatLogEntity>().select("log_id")
-                                    .eq("user_id", userData.getUserId()).eq("session_id", outputData.getStr("sys.sessionId"))
-                                    .orderByDesc("log_id").last("limit " + limit));
-                    outputData.set("llm.memoryIds", logList.stream().map(ApplicationChatLogEntity::getLogId).toList());
-                    applicationWorkflowRuntimeContextMapper.updateById(context);
                 } else {
 
                     answer = preOutput.get(returnAnswerType).toString();
@@ -162,7 +157,7 @@ public class AnswerNode implements IWorkflowNode {
             }
 
             contextEntity.setOutputData(preOutput.toString());
-            contextEntity.setCell(nodeInfo.getId());
+            contextEntity.setCell(runtimeVo.getNodeInfo().getId());
             contextEntity.setCreateTime(Tool.nowDateTime());
             applicationWorkflowRuntimeContextMapper.insert(contextEntity);
 
@@ -173,7 +168,7 @@ public class AnswerNode implements IWorkflowNode {
         latch.countDown();
 
         // 获取下一个节点
-        return edges.get(nodeInfo.getId());
+        return runtimeVo.getEdges().get(runtimeVo.getNodeInfo().getId());
     }
 
     /**
@@ -199,9 +194,11 @@ public class AnswerNode implements IWorkflowNode {
      * 大模型回答
      * @param inputData String
      * @param modelInfo String
+     * @param contextId long
+     * @param userId String
      * @return String
      */
-    private String llmAnswer(String inputData, String modelInfo) {
+    private String llmAnswer(String inputData, String modelInfo, long contextId, String userId) {
 
         try {
 
@@ -241,6 +238,7 @@ public class AnswerNode implements IWorkflowNode {
             String question = inputObject.get(inputNodeData).toString();
 
             validate.setContent(modelObject.getStr("userMsg") + question);
+            validate.setContextId(contextId);
 
             applicationInfo.setMemoryNum(modelObject.getInt("memory"));
             applicationInfo.setCompressingQuery(1);
@@ -248,6 +246,7 @@ public class AnswerNode implements IWorkflowNode {
             applicationInfo.setTopRank(3);
             applicationInfo.setPrompt(modelObject.getStr("systemMsg"));
             applicationInfo.setSimilarity(BigDecimal.valueOf(modelDataInfo.getDouble("temperature")));
+            applicationInfo.setUserId(userId);
 
             // step 3 构建 IAiService
             IAiService assistant = assistantBuildHelper.build(applicationInfo, validate, streamingChatModel, chatLanguageModel);

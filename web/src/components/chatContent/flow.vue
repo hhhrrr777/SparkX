@@ -209,6 +209,10 @@ export default {
 			}
 		})
 
+		if (this.debug) {
+			this.sessionId = "debug_" + Math.floor(Math.random() * 10) + 1
+		}
+
 		this.chatLogList = this.chatLogMsg
 		this.$nextTick(() => {
 			this.sliderBottom()

@@ -7,9 +7,43 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.extend.workflow;
+package sparkai.service.vo.workflow;
 
-public interface SendEndCallback {
+import lombok.Data;
 
-    void accept(String result);
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+@Data
+public class NodeRuntimeVo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 运行时ID
+     */
+    private long runtimeId;
+
+    /**
+     * 来源id
+     */
+    private String sourceId;
+
+    /**
+     * 用户id
+     */
+    private String userId;
+
+    /**
+     * 边信息
+     */
+    private Map<String, List<EdgeVo>> edges;
+
+    /**
+     * 节点信息
+     */
+    private NodeVo nodeInfo;
 }

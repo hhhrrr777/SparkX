@@ -1,3 +1,12 @@
+// +----------------------------------------------------------------------
+// | SparkAI 基于大语言模型和 RAG 的知识库问答系统
+// +----------------------------------------------------------------------
+// | Copyright (c) 2022~2099 http://sparkai.sparkshop.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed SparkAI 并不是自由软件，未经许可不能去掉 SparkAI 相关版权
+// +----------------------------------------------------------------------
+// | Author: NickBai  <1902822973@qq.com>
+// +----------------------------------------------------------------------
 package sparkai.service.extend.workflow.node;
 
 import cn.hutool.core.util.StrUtil;
@@ -15,12 +24,11 @@ import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.vo.workflow.EdgeVo;
-import sparkai.service.vo.workflow.NodeVo;
+import sparkai.service.vo.workflow.NodeRuntimeVo;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 @Component
@@ -39,9 +47,9 @@ public class SwitchNode implements IWorkflowNode {
     ApplicationHelper applicationHelper;
 
     @Override
-    public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
+    public List<EdgeVo> handle(NodeRuntimeVo runtimeVo) {
 
-        JSONObject nodeObject = nodeInfo.getData();
+        JSONObject nodeObject = runtimeVo.getNodeInfo().getData();
         // 分支配置
         JSONArray ifBranch = nodeObject.getJSONArray("ifBranch");
 
@@ -64,7 +72,7 @@ public class SwitchNode implements IWorkflowNode {
                 String inputIndex = inputJsonArr.get(1).toString();
                 String inputSourceId = inputJsonArr.get(0).toString();
                 // 获取上一个节点的信息
-                context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputSourceId);
+                context = applicationHelper.getRuntimeContext(runtimeVo.getRuntimeId(), runtimeVo.getSourceId(), inputSourceId);
                 if (context == null) {
                     return null;
                 }
@@ -106,7 +114,7 @@ public class SwitchNode implements IWorkflowNode {
         }
 
         // 获取下一个节点
-        List<EdgeVo> nextEdgeVoList = edges.get(nodeInfo.getId());
+        List<EdgeVo> nextEdgeVoList = runtimeVo.getEdges().get(runtimeVo.getNodeInfo().getId());
         // 如果if分支未命中，则选取else分支
         if (!match) {
             if (preOutput != null) {
@@ -120,10 +128,10 @@ public class SwitchNode implements IWorkflowNode {
             ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
             contextEntity.setStep(context.getStep() + 1);
             contextEntity.setNodeType(NodeTypeEnum.SWITCH.getCode());
-            contextEntity.setRuntimeId(runtimeId);
+            contextEntity.setRuntimeId(runtimeVo.getRuntimeId());
             // 记录问题分类节点的输入
             contextEntity.setOutputData(preOutput.toString());
-            contextEntity.setCell(nodeInfo.getId());
+            contextEntity.setCell(runtimeVo.getNodeInfo().getId());
             contextEntity.setCreateTime(Tool.nowDateTime());
             applicationWorkflowRuntimeContextMapper.insert(contextEntity);
         }

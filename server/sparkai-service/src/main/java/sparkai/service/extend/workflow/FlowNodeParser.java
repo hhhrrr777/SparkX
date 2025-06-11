@@ -16,9 +16,13 @@ import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntit
 import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.vo.workflow.EdgeVo;
+import sparkai.service.vo.workflow.NodeRuntimeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 @Component
@@ -55,7 +59,7 @@ public class FlowNodeParser {
      * @param flowData String
      */
     @Async
-    public void run(String flowData) {
+    public void run(String flowData, String userId) {
         // 重新初始化
         this.edges = new HashMap<>();
         this.nodes = new HashMap<>();
@@ -69,15 +73,16 @@ public class FlowNodeParser {
             throw new BusinessException("流程异常");
         }
 
-        execute(edgeVoList.get(0), this.startId);
+        execute(edgeVoList.get(0), this.startId, userId);
     }
 
     /**
      * 节点逻辑执行
      * @param edgeVo EdgeVo
+     * @param userId String
      * @param sourceId String
      */
-    private void execute(EdgeVo edgeVo, String sourceId) {
+    private void execute(EdgeVo edgeVo, String sourceId, String userId) {
 
         Map<String, EdgeVo> nextNeedVoMap = new HashMap<>();
         List<String> targetIds = edgeVo.getTarget();
@@ -93,7 +98,15 @@ public class FlowNodeParser {
             IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
             flowNode.setEmitter(this.emitter);
             flowNode.setLatch(latch);
-            List<EdgeVo> nextEdgeVoList = flowNode.handle(nodeInfo, this.runtimeId, sourceId, this.edges);
+
+            NodeRuntimeVo runtimeVo = new NodeRuntimeVo();
+            runtimeVo.setNodeInfo(nodeInfo);
+            runtimeVo.setEdges(this.edges);
+            runtimeVo.setRuntimeId(this.runtimeId); // 运行id
+            runtimeVo.setSourceId(sourceId); // 开始节点
+            runtimeVo.setUserId(userId); // 当前用户
+
+            List<EdgeVo> nextEdgeVoList = flowNode.handle(runtimeVo);
 
             if (!CollectionUtils.isEmpty(nextEdgeVoList)) {
                 nextNeedVoMap.put(nodeInfo.getId(), nextEdgeVoList.get(0));
@@ -109,7 +122,7 @@ public class FlowNodeParser {
             if (!MapUtil.isEmpty(nextNeedVoMap)) {
 
                 nextNeedVoMap.forEach((nodeId, nodeData) -> {
-                    execute(nodeData, nodeId);
+                    execute(nodeData, nodeId, userId);
                 });
             } else { // 流程结束
                 sseEmitterHelper.sendEndSse(emitter, "");

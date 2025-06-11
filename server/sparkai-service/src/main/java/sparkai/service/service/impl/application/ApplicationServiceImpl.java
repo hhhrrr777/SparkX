@@ -259,6 +259,10 @@ public class ApplicationServiceImpl implements IApplicationService {
             // 根据应用模式分流处理
             if (applicationInfo.getType().equals(AppType.AGENT.getCode())) {
 
+                LocalUserVo userData = UserContextHelper.getUser();
+                applicationInfo.setUserId(userData.getUserId()); // 设置为运行用户
+                validate.setContextId(0); // 不在构建模型的时候记录上下文记录
+
                 TokenStream tokenStream = agentChat.streamChat(applicationInfo, validate);
                 // 异步发送消息
                 sseEmitterHelper.asyncSend2Client(tokenStream, emitter);

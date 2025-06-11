@@ -43,4 +43,9 @@ public class ApplicationChatValidate implements Serializable {
      * 知识库列表
      */
     private List<DatasetSimpleVo> datasetList;
+
+    /**
+     * 运行时上下文id
+     */
+    private long contextId;
 }

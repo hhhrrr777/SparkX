@@ -98,7 +98,7 @@ public class WorkflowChat implements IChat {
         // 启动节点执行
         flowNodeParser.setEmitter(this.emitter);
         flowNodeParser.setRuntimeId(runtimeEntity.getId());
-        flowNodeParser.run(info.getFlowData());
+        flowNodeParser.run(info.getFlowData(), userData.getUserId());
 
         return null;
     }

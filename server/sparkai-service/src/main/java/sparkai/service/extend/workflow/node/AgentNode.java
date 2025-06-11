@@ -1,3 +1,12 @@
+// +----------------------------------------------------------------------
+// | SparkAI 基于大语言模型和 RAG 的知识库问答系统
+// +----------------------------------------------------------------------
+// | Copyright (c) 2022~2099 http://sparkai.sparkshop.cn All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed SparkAI 并不是自由软件，未经许可不能去掉 SparkAI 相关版权
+// +----------------------------------------------------------------------
+// | Author: NickBai  <1902822973@qq.com>
+// +----------------------------------------------------------------------
 package sparkai.service.extend.workflow.node;
 
 import cn.hutool.json.JSONArray;
@@ -22,10 +31,9 @@ import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.workflow.EdgeVo;
-import sparkai.service.vo.workflow.NodeVo;
+import sparkai.service.vo.workflow.NodeRuntimeVo;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 @Component
@@ -54,9 +62,9 @@ public class AgentNode implements IWorkflowNode {
     ApplicationHelper applicationHelper;
 
     @Override
-    public List<EdgeVo> handle(NodeVo nodeInfo, long runtimeId, String sourceId, Map<String, List<EdgeVo>> edges) {
+    public List<EdgeVo> handle(NodeRuntimeVo runtimeVo) {
 
-        JSONObject nodeObject = nodeInfo.getData();
+        JSONObject nodeObject = runtimeVo.getNodeInfo().getData();
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
         String inputSourceId;
@@ -67,7 +75,8 @@ public class AgentNode implements IWorkflowNode {
         }
 
         // 获取上一个节点的信息
-        ApplicationWorkflowRuntimeContextEntity context = applicationHelper.getRuntimeContext(runtimeId, sourceId, inputSourceId);
+        ApplicationWorkflowRuntimeContextEntity context =
+                applicationHelper.getRuntimeContext(runtimeVo.getRuntimeId(), runtimeVo.getSourceId(), inputSourceId);
         if (context == null) {
             return null;
         }
@@ -88,6 +97,9 @@ public class AgentNode implements IWorkflowNode {
         validate.setContent(question);
         validate.setAppId(agentId);
         validate.setDatasetList(applicationHelper.getRelationDatasetList(agentId));
+        validate.setContextId(context.getId());
+
+        applicationInfo.setUserId(runtimeVo.getUserId()); // 设置为运行用户
 
         try {
 
@@ -99,7 +111,7 @@ public class AgentNode implements IWorkflowNode {
                 ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
                 contextEntity.setStep(context.getStep() + 1);
                 contextEntity.setNodeType(NodeTypeEnum.AGENT.getCode());
-                contextEntity.setRuntimeId(runtimeId);
+                contextEntity.setRuntimeId(runtimeVo.getRuntimeId());
 
                 // 模型使用情况
                 JSONObject modelData = JSONUtil.createObj();
@@ -115,7 +127,7 @@ public class AgentNode implements IWorkflowNode {
                 preOutput.set("sys.agentContent", answer);
 
                 contextEntity.setOutputData(preOutput.toString());
-                contextEntity.setCell(nodeInfo.getId());
+                contextEntity.setCell(runtimeVo.getNodeInfo().getId());
                 contextEntity.setCreateTime(Tool.nowDateTime());
                 applicationWorkflowRuntimeContextMapper.insert(contextEntity);
 
@@ -128,6 +140,6 @@ public class AgentNode implements IWorkflowNode {
         }
 
         // 获取下一个节点
-        return edges.get(nodeInfo.getId());
+        return runtimeVo.getEdges().get(runtimeVo.getNodeInfo().getId());
     }
 }
