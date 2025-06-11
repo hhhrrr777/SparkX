@@ -58,8 +58,9 @@ public class AssistantBuildHelper {
                             StreamingChatLanguageModel streamingChatLanguageModel, ChatLanguageModel chatLanguageModel) {
 
         // 自定义构建上下文记忆
+        String split = "-_-_wrap_-_-";
         ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
-                .id(validate.getSessionId() + "_+_" + applicationInfo.getUserId() + "_+_" + validate.getContextId())
+                .id(validate.getSessionId() + split + applicationInfo.getUserId() + split + validate.getContextId())
                 .maxMessages(applicationInfo.getMemoryNum())
                 .chatMemoryStore(memoryBuildHelper)
                 .build();

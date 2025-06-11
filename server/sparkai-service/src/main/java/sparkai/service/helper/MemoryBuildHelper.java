@@ -33,13 +33,13 @@ public class MemoryBuildHelper implements ChatMemoryStore {
         String json = map.get(String.valueOf(memoryId));
 
         // 记录运行时
-        List<String> importantData = Arrays.stream(String.valueOf(memoryId).split("_+_")).toList();
+        List<String> importantData = Arrays.stream(String.valueOf(memoryId).split("-_-_wrap_-_-")).toList();
         int contextId = Integer.parseInt(importantData.get(importantData.size() - 1));
         if (contextId != 0) {
             ApplicationWorkflowRuntimeContextEntity runtimeContextEntity
                     = applicationWorkflowRuntimeContextMapper.selectById(contextId);
             JSONObject outputData = JSONUtil.parseObj(runtimeContextEntity.getOutputData());
-            outputData.set("log.context", messagesFromJson(json));
+            outputData.set("log.context", json);
             runtimeContextEntity.setOutputData(outputData.toString());
             applicationWorkflowRuntimeContextMapper.updateById(runtimeContextEntity);
         }
