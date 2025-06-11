@@ -49,24 +49,17 @@
 			append-to-body
 			destroy-on-close>
 			<div class="pages">
-				<Suspense>
-					<template #default>
-						<component
-							:key="randomKey"
-							:form-data="formData"
-							@port-del="portDelHandle"
-							@port-add="portAddHandle"
-							@port-update="portUpdate"
-							@data-change="dataChangeHandle"
-							@del-node="nodeDelHandle"
-							:input-options="inputOptions"
-							:is="page"
-						/>
-					</template>
-					<template #fallback>
-						<el-skeleton :rows="3" />
-					</template>
-				</Suspense>
+				<el-button type="text" @click="delNodeHandle" style="font-size: 12px;float: right;margin-right: 30px;margin-top: 20px;">删除节点</el-button>
+				<component
+					:key="componentsKey"
+					:form-data="formData"
+					@port-del="portDelHandle"
+					@port-add="portAddHandle"
+					@port-update="portUpdate"
+					@data-change="dataChangeHandle"
+					:input-options="inputOptions"
+					:is="page"
+				/>
 			</div>
 		</el-drawer>
 	</div>
@@ -83,9 +76,11 @@ import inputDataUtil from './inputData.js'
 import debugChat from './menu/debug.vue'
 import nodeCheck from './nodeCheck.js'
 import runtimeBox from './menu/runtime.vue'
+import {MoreFilled} from "@element-plus/icons-vue";
 
 export default {
 	components: {
+		MoreFilled,
 		bottomMenu,
 		topMenu,
 		menuBox,
@@ -98,6 +93,7 @@ export default {
 			visible: false,
 			graph: null,
 			outOpen: false,
+			componentsKey: Math.random(),
 			randomKey: Math.random(),
 			debugKey: Math.random(),
 			drawer: false,
@@ -233,7 +229,7 @@ export default {
 					this.getNodeInputData()
 				}
 
-				this.randomKey = Math.random()
+				this.componentsKey = Math.random()
 				this.drawer = true
 			})
 
@@ -412,15 +408,24 @@ export default {
 				)
 			)))
 		},
-		// 删除节点
-		nodeDelHandle() {
-			this.graph.removeNode(this.nowNode.id)
-			this.drawer = false
-		},
 		// 返回列表
 		backHandle() {
 			this.$router.push('/index/home')
-		}
+		},
+		// 删除节点
+		delNodeHandle() {
+			this.graph.removeNode(this.nowNode.id)
+			this.drawer = false
+		},
+		// 删除节点
+		handleCommand(event) {
+			switch (event) {
+				case 'delNode':
+					//this.graph.removeNode(this.nowNode.id)
+					this.drawer = false
+					break;
+			}
+		},
 	}
 }
 </script>

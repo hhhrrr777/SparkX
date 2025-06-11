@@ -4,14 +4,6 @@
 			<div class="flex-center">
 				<component :is="iconComponent(`llm-node-icon`)"/>
 			</div>
-			<el-dropdown @command="handleCommand">
-				<el-icon size="18"><MoreFilled /></el-icon>
-				<template #dropdown>
-					<el-dropdown-menu>
-						<el-dropdown-item style="font-size: 12px" command="delNode">删除节点</el-dropdown-item>
-					</el-dropdown-menu>
-				</template>
-			</el-dropdown>
 		</div>
 
 		<div class="set-content-box">
@@ -193,14 +185,6 @@ export default {
 		inputChange(val) {
 			this.form.inputData = val
 			this.$emit("dataChange", this.form)
-		},
-		// 删除
-		handleCommand(event) {
-			switch (event) {
-				case 'delNode':
-					this.$emit("delNode")
-					break;
-			}
 		},
 	}
 }
