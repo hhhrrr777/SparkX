@@ -132,7 +132,7 @@ public class AnswerNode implements IWorkflowNode {
                 } else if (context.getNodeType().equals(NodeTypeEnum.LLM.getCode())
                         && returnAnswerType.equals("sys.content")) {
 
-                    String llmRes = llmAnswer(context.getOutputData(), context.getModelData(), context.getId(), runtimeVo.getUserId());
+                    String llmRes = llmAnswer(context, runtimeVo.getUserId(), runtimeVo.getSessionId());
                     JSONObject llmResData = JSONUtil.parseObj(llmRes);
                     answer = llmResData.getStr("content");
 
@@ -192,18 +192,17 @@ public class AnswerNode implements IWorkflowNode {
 
     /**
      * 大模型回答
-     * @param inputData String
-     * @param modelInfo String
-     * @param contextId long
+     * @param context ApplicationWorkflowRuntimeContextEntity
      * @param userId String
+     * @param sessionId String
      * @return String
      */
-    private String llmAnswer(String inputData, String modelInfo, long contextId, String userId) {
+    private String llmAnswer(ApplicationWorkflowRuntimeContextEntity context, String userId, String sessionId) {
 
         try {
 
-            JSONObject inputObject = JSONUtil.parseObj(inputData);
-            JSONObject modelObject = JSONUtil.parseObj(modelInfo);
+            JSONObject inputObject = JSONUtil.parseObj(context.getOutputData());
+            JSONObject modelObject = JSONUtil.parseObj(context.getModelData());
 
             JSONObject modelDataInfo = modelObject.getJSONObject("modelInfo");
             // 获取模型信息
@@ -238,7 +237,8 @@ public class AnswerNode implements IWorkflowNode {
             String question = inputObject.get(inputNodeData).toString();
 
             validate.setContent(modelObject.getStr("userMsg") + question);
-            validate.setContextId(contextId);
+            validate.setContextId(context.getId());
+            validate.setSessionId(sessionId);
 
             applicationInfo.setMemoryNum(modelObject.getInt("memory"));
             applicationInfo.setCompressingQuery(1);

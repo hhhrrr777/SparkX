@@ -57,9 +57,11 @@ public class FlowNodeParser {
     /**
      * 执行编排流程
      * @param flowData String
+     * @param userId String
+     * @param sessionId String
      */
     @Async
-    public void run(String flowData, String userId) {
+    public void run(String flowData, String userId, String sessionId) {
         // 重新初始化
         this.edges = new HashMap<>();
         this.nodes = new HashMap<>();
@@ -73,7 +75,7 @@ public class FlowNodeParser {
             throw new BusinessException("流程异常");
         }
 
-        execute(edgeVoList.get(0), this.startId, userId);
+        execute(edgeVoList.get(0), this.startId, userId, sessionId);
     }
 
     /**
@@ -81,8 +83,9 @@ public class FlowNodeParser {
      * @param edgeVo EdgeVo
      * @param userId String
      * @param sourceId String
+     * @param sessionId String
      */
-    private void execute(EdgeVo edgeVo, String sourceId, String userId) {
+    private void execute(EdgeVo edgeVo, String sourceId, String userId, String sessionId) {
 
         Map<String, EdgeVo> nextNeedVoMap = new HashMap<>();
         List<String> targetIds = edgeVo.getTarget();
@@ -105,6 +108,7 @@ public class FlowNodeParser {
             runtimeVo.setRuntimeId(this.runtimeId); // 运行id
             runtimeVo.setSourceId(sourceId); // 开始节点
             runtimeVo.setUserId(userId); // 当前用户
+            runtimeVo.setSessionId(sessionId);
 
             List<EdgeVo> nextEdgeVoList = flowNode.handle(runtimeVo);
 
@@ -122,7 +126,7 @@ public class FlowNodeParser {
             if (!MapUtil.isEmpty(nextNeedVoMap)) {
 
                 nextNeedVoMap.forEach((nodeId, nodeData) -> {
-                    execute(nodeData, nodeId, userId);
+                    execute(nodeData, nodeId, userId, sessionId);
                 });
             } else { // 流程结束
                 sseEmitterHelper.sendEndSse(emitter, "");

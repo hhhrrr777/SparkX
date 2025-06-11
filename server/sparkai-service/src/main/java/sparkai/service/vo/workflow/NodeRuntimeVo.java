@@ -46,4 +46,9 @@ public class NodeRuntimeVo implements Serializable {
      * 节点信息
      */
     private NodeVo nodeInfo;
+
+    /**
+     * 会话id
+     */
+    private String sessionId;
 }
