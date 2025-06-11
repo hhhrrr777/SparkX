@@ -27,7 +27,6 @@ import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntit
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.*;
-import sparkai.service.mapper.application.ApplicationChatLogMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.application.IAiService;
@@ -45,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -81,9 +81,6 @@ public class AnswerNode implements IWorkflowNode {
 
     @Autowired
     ApplicationHelper applicationHelper;
-
-    @Autowired
-    ApplicationChatLogMapper applicationChatLogMapper;
 
     @Override
     public List<EdgeVo> handle(NodeRuntimeVo runtimeVo) {
@@ -259,7 +256,14 @@ public class AnswerNode implements IWorkflowNode {
             }
 
             AtomicReference<String> answer = new AtomicReference<>("");
-            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, answer::set);
+            AtomicBoolean runComplete = new AtomicBoolean(false);
+            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, (content) -> {
+
+                answer.set(content);
+                runComplete.set(true);
+            });
+
+            while (!runComplete.get()) {}
 
             return answer.get();
         } catch (Exception e) {

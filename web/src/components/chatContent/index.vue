@@ -260,6 +260,7 @@ export default {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer ' + tool.cookie.get("TOKEN")
 				},
+				openWhenHidden: true, // 解决浏览器tab切换重复请求问题 https://blog.csdn.net/weixin_42029374/article/details/131935713
 				body: JSON.stringify({
 					sessionId: data.sessionId,
 					content: data.content,

@@ -222,7 +222,6 @@ export default {
 	methods: {
 		// 发送消息
 		async send() {
-
 			let that = this
 			let data = this.setting
 			data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
@@ -256,13 +255,13 @@ export default {
 					'Content-Type': 'application/json',
 					'Authorization': 'Bearer ' + tool.cookie.get("TOKEN")
 				},
+				openWhenHidden: true, // 解决浏览器tab切换重复请求问题 https://blog.csdn.net/weixin_42029374/article/details/131935713
 				body: JSON.stringify({
 					sessionId: data.sessionId,
 					content: data.content,
 					appId: data.appId
 				}),
 				onmessage(ev) {
-
 					let event = ev.event
 					if (event === '[START]') { // 回答开始
 						that.nowIndex = that.chatLogList.length - 1
@@ -271,7 +270,7 @@ export default {
 						that.chatLogList[that.nowIndex].content = '' // 清理默认思考中... 提示
 					} else if (event === '[DONE]') { // 回答结束
 						that.answerIng = that.chatLogList[that.nowIndex].answerIng = 3
-						if (ev.data != '') {
+						if (ev.data !== '') {
 							that.chatLogList[that.nowIndex].meta = JSON.parse(ev.data)
 						}
 
