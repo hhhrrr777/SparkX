@@ -43,6 +43,12 @@
 
 <script>
 export default {
+	props: {
+		runtimeData: {
+			type: Object,
+			default: () => ({})
+		}
+	},
 	data() {
 		return {
 			show: false

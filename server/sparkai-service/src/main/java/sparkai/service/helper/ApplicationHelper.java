@@ -6,7 +6,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
-import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;

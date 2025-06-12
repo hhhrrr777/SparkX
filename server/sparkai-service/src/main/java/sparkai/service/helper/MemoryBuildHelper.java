@@ -10,7 +10,7 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 
 import java.util.List;

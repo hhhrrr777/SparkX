@@ -17,5 +17,13 @@ export default {
 
 			return await http.post(this.url, data);
 		}
+	},
+	runDetail: {
+		url: `${config.API_URL}/workflow/runDetail`,
+		name: "获取执行详情",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
 	}
 }

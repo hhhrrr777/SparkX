@@ -19,6 +19,7 @@
 				:key="randomKey"
 				:debug="true"
 				api-url="/application/sseChat"
+				@show-detail="showDetailHandle"
 			>
 			</flow-chat>
 		</div>
@@ -71,6 +72,9 @@ export default {
 				this.logo = this.domain + appInfo.icon
 			}
 		},
+		showDetailHandle(runtimeId) {
+			this.$emit("showDetail", runtimeId)
+		}
 	}
 }
 </script>

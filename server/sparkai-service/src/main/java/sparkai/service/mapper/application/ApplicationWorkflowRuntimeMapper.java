@@ -2,7 +2,7 @@ package sparkai.service.mapper.application;
 
 import org.apache.ibatis.annotations.Mapper;
 import sparkai.common.core.IBaseMapper;
-import sparkai.service.entity.application.ApplicationWorkflowRuntimeEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeEntity;
 
 /**
  * 流程运行时 Mapper

@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.enums.NodeTypeEnum;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationEntity;
-import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.*;

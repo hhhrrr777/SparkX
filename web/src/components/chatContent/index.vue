@@ -23,7 +23,10 @@
 			</div>
 
 			<!-- 循环对话开始 -->
-			<div class="panel" :style="{background: (item.source === 'user') ? '#f4f4f4' : '#fff' }" v-for="(item, index) in chatLogList" :key="index">
+			<div class="panel"
+				 :style="{background: (item.source === 'user') ? '#f4f4f4' : '#fff' }"
+				 v-for="(item, index) in chatLogList"
+				 :key="index">
 				<div class="flex-x-between">
 					<div class="chat-msg-content">
 						<div class="chat-user">

@@ -4,19 +4,19 @@
 		<div class="detail-content">
 			<div class="content-item">
 				<div class="item-left">用户问题：</div>
-				<div class="item-right">你的名字</div>
+				<div class="item-right">{{ runtimeData.outputData['sys.question'] }}</div>
 			</div>
 			<div class="content-item">
-				<div class="item-left">当前时间：</div>
-				<div class="item-right">你的名字</div>
+				<div class="item-left">提问时间：</div>
+				<div class="item-right">{{ runtimeData.outputData['sys.time'] }}</div>
 			</div>
 			<div class="content-item">
 				<div class="item-left">用户IP：</div>
-				<div class="item-right">你的名字</div>
+				<div class="item-right">{{ runtimeData.outputData['sys.ip'] }}</div>
 			</div>
 			<div class="content-item">
 				<div class="item-left">应用ID：</div>
-				<div class="item-right">你的名字</div>
+				<div class="item-right">{{ runtimeData.outputData['sys.appId'] }}</div>
 			</div>
 		</div>
 	</div>
@@ -24,6 +24,12 @@
 
 <script>
 export default {
+	props: {
+		runtimeData: {
+			type: Object,
+			default: () => ({})
+		}
+	},
 	data() {
 		return {
 			show: false

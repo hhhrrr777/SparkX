@@ -22,7 +22,7 @@ import sparkai.common.enums.NodeTypeEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationEntity;
-import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.extend.chat.AgentChat;
 import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.ApplicationHelper;

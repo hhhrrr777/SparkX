@@ -1,4 +1,4 @@
-package sparkai.service.entity.application;
+package sparkai.service.entity.workflow;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -11,8 +11,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("public.application_workflow_runtime_context")
-public class ApplicationWorkflowRuntimeContextEntity implements Serializable {
+@TableName("public.application_workflow_runtime")
+public class ApplicationWorkflowRuntimeEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -25,40 +25,22 @@ public class ApplicationWorkflowRuntimeContextEntity implements Serializable {
     private Long id;
 
     /**
-    * 运行时id
+    * 用户id
     */
-    @TableField(value = "runtime_id")
-    private Long runtimeId;
+    @TableField(value = "user_id")
+    private String userId;
 
     /**
-    * 节点类型
+    * 关联的流程id
     */
-    @TableField(value = "node_type")
-    private String nodeType;
+    @TableField(value = "flow_id")
+    private long flowId;
 
     /**
-    * 步骤号
+    * 首个问题
     */
-    @TableField(value = "step")
-    private Integer step;
-
-    /**
-    * 出参数据
-    */
-    @TableField(value = "output_data")
-    private String outputData;
-
-    /**
-    * 模型数据
-    */
-    @TableField(value = "model_data")
-    private String modelData;
-
-    /**
-     * 节点id
-     */
-    @TableField(value = "cell")
-    private String cell;
+    @TableField(value = "title")
+    private String title;
 
     /**
     * 创建时间

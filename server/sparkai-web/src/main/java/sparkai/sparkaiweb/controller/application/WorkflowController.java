@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.service.service.interfaces.workflow.IWorkflowService;
 import sparkai.service.validate.workflow.SaveWorkflowValidate;
+import sparkai.service.vo.workflow.RuntimeContextVo;
 import sparkai.service.vo.workflow.SaveWorkflowVo;
+
+import java.util.List;
 
 @RequestMapping("/api/workflow")
 @RestController
@@ -42,5 +45,14 @@ public class WorkflowController {
 
         iWorkflowService.saveWorkflow(validate);
         return AjaxResult.success();
+    }
+
+    /**
+     * 查看执行详情
+     */
+    @GetMapping("/runDetail")
+    public AjaxResult<List<RuntimeContextVo>> runDetail(@RequestParam("runtimeId") long runtimeId) {
+
+        return AjaxResult.success(iWorkflowService.getRuntimeDetail(runtimeId));
     }
 }

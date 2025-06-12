@@ -22,6 +22,7 @@
 			:close-on-click-modal="false"
 			v-model="runtimeVisible">
 			<runtime-box
+				:key="runtimeKey"
 				:runtime-id="runtimeId">
 			</runtime-box>
 		</el-dialog>
@@ -30,6 +31,7 @@
 			:app-id="appId"
 			:key="debugKey"
 			@close-debug="chatVisible=false"
+			@show-detail="showDetailHandle"
 			v-if="chatVisible">
 		</debug-chat>
 		<!-- 底部菜单栏 -->
@@ -74,9 +76,9 @@ import menuBox from './menu/menuBox.vue'
 import {defineAsyncComponent} from "vue";
 import inputDataUtil from './inputData.js'
 import debugChat from './menu/debug.vue'
-import nodeCheck from './nodeCheck.js'
 import runtimeBox from './menu/runtime.vue'
-import {MoreFilled} from "@element-plus/icons-vue";
+import {MoreFilled} from "@element-plus/icons-vue"
+import nodeCheck from './nodeCheck.js'
 
 export default {
 	components: {
@@ -121,7 +123,8 @@ export default {
 			},
 			appId: '',
 			flowData: null,
-			runtimeId: ''
+			runtimeId: 168,
+			runtimeKey: Math.random(),
 		}
 	},
 	created() {
@@ -361,15 +364,21 @@ export default {
 		},
 		// 调试链接
 		debugHandle() {
-			//this.runtimeVisible = true
+			this.runtimeVisible = true
 			// 节点参数检测
-			let res = nodeCheck.check(this.graph.toJSON())
+			/*let res = nodeCheck.check(this.graph.toJSON())
 			if (res.code !== 0) {
 				this.$message.error(res.msg)
 				return
 			}
 
-			this.chatVisible = true
+			this.chatVisible = true*/
+		},
+		// 展示执行详情
+		showDetailHandle(runtimeId) {
+			this.runtimeKey = Math.random()
+			this.runtimeId = runtimeId
+			this.runtimeVisible = true
 		},
 		// 获取流程信息
 		async getWorkflowInfo() {
@@ -416,15 +425,6 @@ export default {
 		delNodeHandle() {
 			this.graph.removeNode(this.nowNode.id)
 			this.drawer = false
-		},
-		// 删除节点
-		handleCommand(event) {
-			switch (event) {
-				case 'delNode':
-					//this.graph.removeNode(this.nowNode.id)
-					this.drawer = false
-					break;
-			}
 		},
 	}
 }

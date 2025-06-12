@@ -103,13 +103,4 @@ public class ApplicationController {
         iApplicationService.deleteApp(appId);
         return AjaxResult.success();
     }
-
-    @GetMapping("/test")
-    public AjaxResult<Object> testChat(@RequestParam("question") String question, @RequestParam("appId") String appId) {
-        ApplicationChatValidate validate = new ApplicationChatValidate();
-        validate.setAppId(appId);
-        validate.setContent(question);
-        iApplicationService.sseChat(validate);
-        return AjaxResult.success();
-    }
 }

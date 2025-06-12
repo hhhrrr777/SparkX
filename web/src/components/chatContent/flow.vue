@@ -23,7 +23,10 @@
 			</div>
 
 			<!-- 循环对话开始 -->
-			<div class="panel" :style="{background: (item.source === 'user') ? '#f4f4f4' : '#fff' }" v-for="(item, index) in chatLogList" :key="index">
+			<div class="panel"
+				 :style="{background: (item.source === 'user') ? '#f4f4f4' : '#fff' }"
+				 v-for="(item, index) in chatLogList"
+				 :key="index">
 				<div class="flex-x-between">
 					<div class="chat-msg-content">
 						<div class="chat-user">
@@ -91,7 +94,7 @@
 									</el-tooltip>
 								</div>
 								<div class="menu-right-side" v-else>
-									<el-button type="text" style="font-size: 13px">执行详情</el-button>
+									<el-button type="text" style="font-size: 13px" @click="showDetail(item.runtimeId)">执行详情</el-button>
 								</div>
 							</div>
 						</div>
@@ -332,6 +335,7 @@ export default {
 						})
 
 						if (!has) {
+							that.chatLogList[that.nowIndex].runtimeId = resData.runtimeId
 							that.chatLogList[that.nowIndex].content.push({
 								nodeId: resData.nodeId,
 								content: resData.content.replace("-_-_wrap_-_-", "\r\n")
@@ -390,6 +394,10 @@ export default {
 		reChat(row) {
 			this.chatMsg = row.question + '\n'
 			this.send()
+		},
+		// 显示详情
+		showDetail(runtimeId) {
+			this.$emit('showDetail', runtimeId)
 		}
 	}
 }

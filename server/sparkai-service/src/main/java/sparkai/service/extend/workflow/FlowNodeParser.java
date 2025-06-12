@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.exception.BusinessException;
-import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.vo.workflow.EdgeVo;

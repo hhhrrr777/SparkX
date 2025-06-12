@@ -3,7 +3,7 @@
 		<div class="detail-title">本次对话</div>
 		<div class="detail-content">
 			<div class="content-item">
-				欢迎还用
+				{{ runtimeData.outputData['agent.input'] }}
 			</div>
 		</div>
 	</div>
@@ -11,7 +11,15 @@
 		<div class="detail-title">Agent回复</div>
 		<div class="detail-content">
 			<div class="content-item">
-				欢迎还用
+				{{ runtimeData.outputData['sys.agentContent'] }}
+			</div>
+		</div>
+	</div>
+	<div class="detail-box" style="margin-top: 10px">
+		<div class="detail-title">本次对话</div>
+		<div class="detail-content">
+			<div class="content-item">
+				{{ runtimeData.outputData['agent.input'] }}
 			</div>
 		</div>
 	</div>
@@ -19,9 +27,20 @@
 
 <script>
 export default {
+	props: {
+		runtimeData: {
+			type: Object,
+			default: () => ({})
+		}
+	},
 	data() {
 		return {
 			show: false
+		}
+	},
+	mounted() {
+		if (this.runtimeData.outputData['log.context'] !== '') {
+			this.runtimeData.outputData['agent.context'] = JSON.parse(this.runtimeData.outputData['log.context'])
 		}
 	}
 }
