@@ -39,7 +39,9 @@
 									<p v-if="item.source === 'user'">{{ item.content }}</p>
 									<p v-else-if="item.source === 'system'" style="display: flex;align-items: center">{{ item.content }}
 										<el-icon style="margin-left: 5px"><Loading class="rotate-loading"/></el-icon></p>
-									<MdPreview v-else noIconfont noPrettier :codeFoldable="false" v-model="item.content"/>
+									<div v-for="(item2, index2) in item.content" :key="index2" v-else>
+										<MdPreview noIconfont noPrettier :codeFoldable="false" v-model="item.content[index2].content" />
+									</div>
 								</div>
 							</div>
 
@@ -322,7 +324,26 @@ export default {
 						that.chatLogList[that.nowIndex].content = '登录过期，请重新登录'
 						that.stopAnswer()
 					} else {
-						that.chatLogList[that.nowIndex].content += ev.data.replace("-_-_wrap_-_-", "\r\n")
+						let resData = JSON.parse(ev.data)
+						let has = false
+						that.chatLogList[that.nowIndex].content.forEach((item, index) => {
+
+							if (item.nodeId === resData.nodeId) {
+								has = true
+								that.chatLogList[that.nowIndex].content[index] = {
+									nodeId: resData.nodeId,
+									content: item.content + resData.content.replace("-_-_wrap_-_-", "\r\n")
+								}
+							}
+						})
+
+						if (!has) {
+							that.chatLogList[that.nowIndex].content.push({
+								nodeId: resData.nodeId,
+								content: resData.content.replace("-_-_wrap_-_-", "\r\n")
+							})
+						}
+
 						that.sliderBottom()
 					}
 				},

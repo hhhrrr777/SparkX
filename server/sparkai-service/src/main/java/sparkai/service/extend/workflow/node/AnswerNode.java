@@ -257,7 +257,7 @@ public class AnswerNode implements IWorkflowNode {
 
             AtomicReference<String> answer = new AtomicReference<>("");
             AtomicBoolean runComplete = new AtomicBoolean(false);
-            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, (content) -> {
+            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, context.getRuntimeId(), context.getCell(), (content) -> {
 
                 answer.set(content);
                 runComplete.set(true);

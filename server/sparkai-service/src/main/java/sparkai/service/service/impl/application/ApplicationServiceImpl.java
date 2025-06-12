@@ -265,7 +265,7 @@ public class ApplicationServiceImpl implements IApplicationService {
 
                 TokenStream tokenStream = agentChat.streamChat(applicationInfo, validate);
                 // 异步发送消息
-                sseEmitterHelper.asyncSend2Client(tokenStream, emitter);
+                sseEmitterHelper.asyncSend2Client(tokenStream, emitter, 0, "");
             } else {
 
                 sseEmitterHelper.sendStartSse(emitter);

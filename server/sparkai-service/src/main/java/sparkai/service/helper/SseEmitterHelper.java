@@ -21,10 +21,7 @@ import sparkai.common.constant.SparkAIConstant;
 import sparkai.service.extend.workflow.SendEndCallback;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -34,9 +31,11 @@ public class SseEmitterHelper {
      * 异步发送给客户端
      * @param tokenStream TokenStream
      * @param emitter SseEmitter
+     * @param runtimeId long
+     * @param nodeId String
      */
     @Async
-    public void asyncSend2Client(TokenStream tokenStream, SseEmitter emitter) {
+    public void asyncSend2Client(TokenStream tokenStream, SseEmitter emitter, long runtimeId, String nodeId) {
 
         // 消息开始
         sendStartSse(emitter);
@@ -66,18 +65,21 @@ public class SseEmitterHelper {
 
                         String[] lines = content.split("[\\r\\n]", -1);
                         if (lines.length > 1) {
-                            emitter.send(" " + lines[0]);
+
+                            emitter.send(buildSendData(runtimeId, nodeId, " " + lines[0]));
+
                             for (int i = 1; i < lines.length; i++) {
                                 /**
                                  * 当响应结果的content中包含有多行文本时，
                                  * 前端的fetch-event-source框架的BUG会将包含有换行符的那一行内容替换为空字符串，
                                  * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
                                  */
-                                emitter.send("-_-_wrap_-_-");
-                                emitter.send(" " + lines[i]);
+                                emitter.send(buildSendData(runtimeId, nodeId, "-_-_wrap_-_-"));
+                                emitter.send(buildSendData(runtimeId, nodeId, " " + lines[i]));
                             }
                         } else {
-                            emitter.send(" " + content);
+
+                            emitter.send(buildSendData(runtimeId, nodeId, " " + content));
                         }
 
                     } catch (IOException e) {
@@ -108,12 +110,29 @@ public class SseEmitterHelper {
     }
 
     /**
+     * 构建发送方法
+     * @param runtimeId long
+     * @param nodeId String
+     * @param content String
+     * @return String
+     */
+    private String buildSendData(long runtimeId, String nodeId, String content) {
+
+        Map<String, String> returnData = new HashMap<>();
+        returnData.put("runtimeId", String.valueOf(runtimeId));
+        returnData.put("content", " " + content);
+        returnData.put("nodeId", nodeId);
+
+        return JSONUtil.toJsonStr(returnData);
+    }
+
+    /**
      * 发送给客户端
      * @param tokenStream TokenStream
      * @param emitter SseEmitter
      */
     @Async
-    public void asyncSend2Client(TokenStream tokenStream, SseEmitter emitter, SendEndCallback sendEndCallback) {
+    public void asyncSend2Client(TokenStream tokenStream, SseEmitter emitter, long runtimeId, String nodeId, SendEndCallback sendEndCallback) {
 
         tokenStream
                 .onPartialResponse((content) -> {
@@ -123,18 +142,19 @@ public class SseEmitterHelper {
 
                         String[] lines = content.split("[\\r\\n]", -1);
                         if (lines.length > 1) {
-                            emitter.send(" " + lines[0]);
+
+                            emitter.send(buildSendData(runtimeId, nodeId, " " + lines[0]));
                             for (int i = 1; i < lines.length; i++) {
                                 /**
                                  * 当响应结果的content中包含有多行文本时，
                                  * 前端的fetch-event-source框架的BUG会将包含有换行符的那一行内容替换为空字符串，
                                  * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
                                  */
-                                emitter.send("-_-_wrap_-_-");
-                                emitter.send(" " + lines[i]);
+                                emitter.send(buildSendData(runtimeId, nodeId, "-_-_wrap_-_-"));
+                                emitter.send(buildSendData(runtimeId, nodeId, " " + lines[i]));
                             }
                         } else {
-                            emitter.send(" " + content);
+                            emitter.send(buildSendData(runtimeId, nodeId, " " + content));
                         }
 
                     } catch (IOException e) {
