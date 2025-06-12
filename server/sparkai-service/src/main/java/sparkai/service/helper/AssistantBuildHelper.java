@@ -20,6 +20,7 @@ import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.query.transformer.CompressingQueryTransformer;
 import dev.langchain4j.rag.query.transformer.QueryTransformer;
 import dev.langchain4j.service.AiServices;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationEntity;
@@ -33,6 +34,7 @@ import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
 
 @Component
+@Slf4j
 public class AssistantBuildHelper {
 
     @Autowired
@@ -57,10 +59,11 @@ public class AssistantBuildHelper {
     public IAiService build(ApplicationEntity applicationInfo, ApplicationChatValidate validate,
                             StreamingChatLanguageModel streamingChatLanguageModel, ChatLanguageModel chatLanguageModel) {
 
+        memoryBuildHelper.setContextId(validate.getContextId());
+
         // 自定义构建上下文记忆
-        String split = "-_-_wrap_-_-";
         ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
-                .id(validate.getSessionId() + split + applicationInfo.getUserId() + split + validate.getContextId())
+                .id(validate.getSessionId() + applicationInfo.getUserId())
                 .maxMessages(applicationInfo.getMemoryNum())
                 .chatMemoryStore(memoryBuildHelper)
                 .build();

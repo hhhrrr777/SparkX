@@ -4,6 +4,8 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +13,19 @@ import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import static dev.langchain4j.data.message.ChatMessageDeserializer.messagesFromJson;
 import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 import static org.mapdb.Serializer.STRING;
 
 @Component
+@Slf4j
 public class MemoryBuildHelper implements ChatMemoryStore {
+
+    @Setter
+    private long contextId;
 
     @Autowired
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
@@ -33,8 +39,6 @@ public class MemoryBuildHelper implements ChatMemoryStore {
         String json = map.get(String.valueOf(memoryId));
 
         // 记录运行时
-        List<String> importantData = Arrays.stream(String.valueOf(memoryId).split("-_-_wrap_-_-")).toList();
-        int contextId = Integer.parseInt(importantData.get(importantData.size() - 1));
         if (contextId != 0) {
             ApplicationWorkflowRuntimeContextEntity runtimeContextEntity
                     = applicationWorkflowRuntimeContextMapper.selectById(contextId);

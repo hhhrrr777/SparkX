@@ -55,9 +55,11 @@
 			<div class="flex-center no-param" style="margin-top: 10px;background: #fff">
 				<span style="width: 80px;color: #1a1a1a">温度</span>
 				<el-slider
+					:step="0.01"
 					v-model="form.modelInfo.temperature"
 					:min="temperatureConfig.range[0]"
 					:max="temperatureConfig.range[1]"
+					@change="$emit('dataChange', form)"
 					show-input>
 				</el-slider>
 			</div>
@@ -67,6 +69,7 @@
 					v-model="form.memory"
 					:min="0"
 					:max="10"
+					@change="$emit('dataChange', form)"
 					show-input>
 				</el-slider>
 			</div>
