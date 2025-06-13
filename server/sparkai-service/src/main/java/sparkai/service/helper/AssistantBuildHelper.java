@@ -63,7 +63,7 @@ public class AssistantBuildHelper {
 
         // 自定义构建上下文记忆
         ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
-                .id(validate.getSessionId() + applicationInfo.getUserId())
+                .id(validate.getSessionId() + applicationInfo.getUserId() + validate.getCell())
                 .maxMessages(applicationInfo.getMemoryNum())
                 .chatMemoryStore(memoryBuildHelper)
                 .build();

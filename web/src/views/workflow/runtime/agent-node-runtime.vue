@@ -16,7 +16,7 @@
 		</div>
 	</div>
 	<div class="detail-box" style="margin-top: 10px">
-		<div class="detail-title">本次对话</div>
+		<div class="detail-title">历史聊天记录</div>
 		<div class="detail-content">
 			<div class="content-item">
 				{{ runtimeData.outputData['agent.input'] }}
@@ -40,7 +40,12 @@ export default {
 	},
 	mounted() {
 		if (this.runtimeData.outputData['log.context'] !== '') {
-			this.runtimeData.outputData['agent.context'] = JSON.parse(this.runtimeData.outputData['log.context'])
+			let context = decodeURIComponent(this.runtimeData.outputData['log.context'])
+			if (context !== 'undefined') {
+				this.runtimeData.outputData['agent.context'] = JSON.parse(context || '{}');
+			}
+
+			console.log(222, this.runtimeData.outputData['agent.context'])
 		}
 	}
 }

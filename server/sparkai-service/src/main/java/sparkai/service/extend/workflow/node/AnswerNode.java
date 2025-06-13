@@ -236,6 +236,7 @@ public class AnswerNode implements IWorkflowNode {
             validate.setContent(modelObject.getStr("userMsg") + question);
             validate.setContextId(context.getId());
             validate.setSessionId(sessionId);
+            validate.setCell(context.getCell()); // 以次区分不同节点的上下文记录
 
             applicationInfo.setMemoryNum(modelObject.getInt("memory"));
             applicationInfo.setCompressingQuery(1);

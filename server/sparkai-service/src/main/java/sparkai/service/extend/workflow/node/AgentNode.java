@@ -98,6 +98,7 @@ public class AgentNode implements IWorkflowNode {
         validate.setAppId(agentId);
         validate.setDatasetList(applicationHelper.getRelationDatasetList(agentId));
         validate.setContextId(context.getId());
+        validate.setCell(agentId); // 以次区分不同的节点的上下文聊天记录
 
         applicationInfo.setUserId(runtimeVo.getUserId()); // 设置为运行用户
 

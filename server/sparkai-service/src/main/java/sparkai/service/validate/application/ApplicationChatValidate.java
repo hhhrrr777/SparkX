@@ -48,4 +48,9 @@ public class ApplicationChatValidate implements Serializable {
      * 运行时上下文id
      */
     private long contextId;
+
+    /**
+     * 运行节点id
+     */
+    private String cell;
 }
