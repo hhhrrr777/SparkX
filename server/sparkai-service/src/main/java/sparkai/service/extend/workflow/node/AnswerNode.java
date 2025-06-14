@@ -264,6 +264,7 @@ public class AnswerNode implements IWorkflowNode {
                 runComplete.set(true);
             });
 
+            // 阻塞等待异步发送完成
             while (!runComplete.get()) {}
 
             return answer.get();
