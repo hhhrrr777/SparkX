@@ -3,7 +3,7 @@
 		<div class="detail-title">内容回复</div>
 		<div class="detail-content">
 			<div class="content-item">
-				欢迎还用
+				{{ runtimeData.outputData['sys.answer'] }}
 			</div>
 		</div>
 	</div>

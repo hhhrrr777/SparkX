@@ -14,7 +14,7 @@ import sparkai.service.vo.dataset.SearchVo;
 
 import java.util.List;
 
-public interface IHitTestService {
+public interface IDatasetSearchService {
 
     List<SearchVo> search(HitTestVo hitTestVo);
 }

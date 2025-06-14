@@ -30,7 +30,7 @@ import sparkai.service.helper.*;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.application.IAiService;
-import sparkai.service.service.interfaces.dataset.IHitTestService;
+import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
@@ -65,7 +65,7 @@ public class AnswerNode implements IWorkflowNode {
     public SseEmitter emitter;
 
     @Autowired
-    IHitTestService searchService;
+    IDatasetSearchService searchService;
 
     @Autowired
     ModelsMapper modelsMapper;
@@ -125,7 +125,7 @@ public class AnswerNode implements IWorkflowNode {
                     String question = preOutput.getStr("node_question");
                     String datasetIds = preOutput.getStr("sys.result");
                     answer = datasetAnswer(question, datasetIds);
-                    emitter.send(answer);
+                    emitter.send(Tool.buildSendData(context.getRuntimeId(), context.getCell(), answer));
                 } else if (context.getNodeType().equals(NodeTypeEnum.LLM.getCode())
                         && returnAnswerType.equals("sys.content")) {
 
@@ -142,12 +142,12 @@ public class AnswerNode implements IWorkflowNode {
                 } else {
 
                     answer = preOutput.get(returnAnswerType).toString();
-                    emitter.send(answer);
+                    emitter.send(Tool.buildSendData(context.getRuntimeId(), context.getCell(), answer));
                 }
                 // 记录问题分类节点的输出
                 preOutput.set("sys.answer", answer);
             } else {
-                emitter.send(nodeObject.getStr("answer"));
+                emitter.send(Tool.buildSendData(context.getRuntimeId(), context.getCell(), nodeObject.getStr("answer")));
 
                 // 记录问题分类节点的输出
                 preOutput.set("sys.answer", nodeObject.getStr("answer"));

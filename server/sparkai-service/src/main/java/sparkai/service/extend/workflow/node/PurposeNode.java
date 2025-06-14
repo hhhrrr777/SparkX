@@ -88,7 +88,7 @@ public class PurposeNode implements IWorkflowNode {
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
         String inputSourceId;
-        if (inputArr.size() > 0) {
+        if (!inputArr.isEmpty()) {
             inputSourceId = inputArr.get(0).toString();
         } else {
             inputSourceId = "";
@@ -102,7 +102,7 @@ public class PurposeNode implements IWorkflowNode {
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
 
         String question = "已知问题分类：\n" + cateListStr + "\n请根据问题：" + preOutput.get(inputData).toString()
-                + "。\n判断出所属的分类并仅给出问题前的编号";
+                + "。\n判断出所属的分类并仅给出问题前的编号,例如：1";
         UserMessage userMessage = UserMessage.from(TextContent.from(question));
         ChatResponse chatResponse = chatLanguageModel.chat(userMessage);
         String answer = chatResponse.aiMessage().text();

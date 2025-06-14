@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
-import sparkai.service.service.interfaces.dataset.IHitTestService;
+import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
 import sparkai.service.validate.dataset.DatasetValidate;
 import sparkai.service.vo.dataset.*;
@@ -29,7 +29,7 @@ public class DatasetController {
     IKnowledgeDatasetService iKnowledgeDatasetService;
 
     @Autowired
-    IHitTestService iHitTestService;
+    IDatasetSearchService iDatasetSearchService;
 
     /**
      * 知识库列表
@@ -66,7 +66,7 @@ public class DatasetController {
     @PostMapping("/hitTest")
     public AjaxResult<List<SearchVo>> hitTest(@RequestBody HitTestVo hitTestVo) {
 
-        return AjaxResult.success(iHitTestService.search(hitTestVo));
+        return AjaxResult.success(iDatasetSearchService.search(hitTestVo));
     }
 
     /**

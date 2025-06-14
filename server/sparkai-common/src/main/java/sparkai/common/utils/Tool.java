@@ -14,12 +14,11 @@ import cn.hutool.core.date.DateRange;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.json.JSONUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Tool {
@@ -106,5 +105,22 @@ public class Tool {
         });
 
         return dayRange;
+    }
+
+    /**
+     * 构建发送方法
+     * @param runtimeId long
+     * @param nodeId String
+     * @param content String
+     * @return String
+     */
+    public static String buildSendData(long runtimeId, String nodeId, String content) {
+
+        Map<String, String> returnData = new HashMap<>();
+        returnData.put("runtimeId", String.valueOf(runtimeId));
+        returnData.put("content", " " + content);
+        returnData.put("nodeId", nodeId);
+
+        return JSONUtil.toJsonStr(returnData);
     }
 }

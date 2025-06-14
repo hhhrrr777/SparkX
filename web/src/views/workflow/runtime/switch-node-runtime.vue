@@ -3,7 +3,7 @@
 		<div class="detail-title">判断结果</div>
 		<div class="detail-content">
 			<div class="content-item">
-				ELSE
+				{{ convertToUpperCase(runtimeData.outputData['switch.result']) }}
 			</div>
 		</div>
 	</div>
@@ -20,6 +20,18 @@ export default {
 	data() {
 		return {
 			show: false
+		}
+	},
+	mounted() {
+		console.log(66, this.runtimeData.outputData)
+	},
+	methods: {
+		 convertToUpperCase(str) {
+			let result = '';
+			for (let i = 0; i < str.length; i++) {
+				result += str[i].toUpperCase();
+			}
+			return result;
 		}
 	}
 }

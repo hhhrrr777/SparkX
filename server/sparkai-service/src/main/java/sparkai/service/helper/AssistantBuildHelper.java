@@ -32,7 +32,7 @@ import sparkai.service.extend.SparkEmbeddingStoreContentRetriever;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.service.interfaces.application.IAiService;
-import sparkai.service.service.interfaces.dataset.IHitTestService;
+import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
@@ -43,7 +43,7 @@ import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 public class AssistantBuildHelper {
 
     @Autowired
-    IHitTestService iHitTestService;
+    IDatasetSearchService iDatasetSearchService;
 
     @Autowired
     EmbeddingModelBuildHelper embeddingModelBuildHelper;
@@ -68,7 +68,6 @@ public class AssistantBuildHelper {
                             StreamingChatLanguageModel streamingChatLanguageModel, ChatLanguageModel chatLanguageModel) {
 
         // 自定义构建上下文记忆
-        log.error("记忆数量, {}", applicationInfo.getMemoryNum());
         String memoryKey = validate.getSessionId() + applicationInfo.getUserId() + validate.getCell();
         ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
                 .id(memoryKey)
@@ -118,7 +117,7 @@ public class AssistantBuildHelper {
         // 内容检索
         ContentRetriever contentRetriever = SparkEmbeddingStoreContentRetriever.builder()
                 .embeddingModel(embeddingModel)
-                .searchService(iHitTestService)
+                .searchService(iDatasetSearchService)
                 .searchDataVo(searchDataVo)
                 .maxResults(applicationInfo.getTopRank()) // 召回条数
                 .minScore(applicationInfo.getSimilarity().doubleValue()) // 相似度

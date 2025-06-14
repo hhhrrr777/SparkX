@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.constant.SparkAIConstant;
+import sparkai.common.utils.Tool;
 import sparkai.service.extend.workflow.SendEndCallback;
 
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class SseEmitterHelper {
                         String[] lines = content.split("[\\r\\n]", -1);
                         if (lines.length > 1) {
 
-                            emitter.send(buildSendData(runtimeId, nodeId, " " + lines[0]));
+                            emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + lines[0]));
 
                             for (int i = 1; i < lines.length; i++) {
                                 /**
@@ -74,12 +75,12 @@ public class SseEmitterHelper {
                                  * 前端的fetch-event-source框架的BUG会将包含有换行符的那一行内容替换为空字符串，
                                  * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
                                  */
-                                emitter.send(buildSendData(runtimeId, nodeId, "-_-_wrap_-_-"));
-                                emitter.send(buildSendData(runtimeId, nodeId, " " + lines[i]));
+                                emitter.send(Tool.buildSendData(runtimeId, nodeId, "-_-_wrap_-_-"));
+                                emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + lines[i]));
                             }
                         } else {
 
-                            emitter.send(buildSendData(runtimeId, nodeId, " " + content));
+                            emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + content));
                         }
 
                     } catch (IOException e) {
@@ -110,23 +111,6 @@ public class SseEmitterHelper {
     }
 
     /**
-     * 构建发送方法
-     * @param runtimeId long
-     * @param nodeId String
-     * @param content String
-     * @return String
-     */
-    private String buildSendData(long runtimeId, String nodeId, String content) {
-
-        Map<String, String> returnData = new HashMap<>();
-        returnData.put("runtimeId", String.valueOf(runtimeId));
-        returnData.put("content", " " + content);
-        returnData.put("nodeId", nodeId);
-
-        return JSONUtil.toJsonStr(returnData);
-    }
-
-    /**
      * 发送给客户端
      * @param tokenStream TokenStream
      * @param emitter SseEmitter
@@ -143,18 +127,18 @@ public class SseEmitterHelper {
                         String[] lines = content.split("[\\r\\n]", -1);
                         if (lines.length > 1) {
 
-                            emitter.send(buildSendData(runtimeId, nodeId, " " + lines[0]));
+                            emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + lines[0]));
                             for (int i = 1; i < lines.length; i++) {
                                 /**
                                  * 当响应结果的content中包含有多行文本时，
                                  * 前端的fetch-event-source框架的BUG会将包含有换行符的那一行内容替换为空字符串，
                                  * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
                                  */
-                                emitter.send(buildSendData(runtimeId, nodeId, "-_-_wrap_-_-"));
-                                emitter.send(buildSendData(runtimeId, nodeId, " " + lines[i]));
+                                emitter.send(Tool.buildSendData(runtimeId, nodeId, "-_-_wrap_-_-"));
+                                emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + lines[i]));
                             }
                         } else {
-                            emitter.send(buildSendData(runtimeId, nodeId, " " + content));
+                            emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + content));
                         }
 
                     } catch (IOException e) {

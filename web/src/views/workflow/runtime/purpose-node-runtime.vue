@@ -1,9 +1,9 @@
 <template>
 	<div class="detail-box">
-		<div class="detail-title">本次对话</div>
+		<div class="detail-title">输入内容</div>
 		<div class="detail-content">
 			<div class="content-item">
-				欢迎还用
+				{{ runtimeData.outputData['sys.question'] }}
 			</div>
 		</div>
 	</div>
@@ -11,7 +11,7 @@
 		<div class="detail-title">判断分类</div>
 		<div class="detail-content">
 			<div class="content-item">
-				欢迎还用
+				{{ runtimeData.outputData['sys.purposeName'] }}
 			</div>
 		</div>
 	</div>

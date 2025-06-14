@@ -11,7 +11,6 @@ package sparkai.service.service.impl.dataset;
 
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -25,14 +24,14 @@ import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
 import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
-import sparkai.service.service.interfaces.dataset.IHitTestService;
+import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.vo.dataset.HitTestVo;
 import sparkai.service.vo.dataset.SearchVo;
 
 import java.util.*;
 
 @Service
-public class HitTestServiceImpl implements IHitTestService {
+public class DatasetSearchImpl implements IDatasetSearchService {
 
     @Autowired
     KnowledgeEmbeddingMapper knowledgeEmbeddingMapper;
