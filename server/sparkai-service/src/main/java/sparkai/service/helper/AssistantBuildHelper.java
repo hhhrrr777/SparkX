@@ -9,6 +9,8 @@
 // +----------------------------------------------------------------------
 package sparkai.service.helper;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
@@ -25,13 +27,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.extend.SparkEmbeddingStoreContentRetriever;
+import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.dataset.IHitTestService;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.HitTestVo;
+import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
 @Component
 @Slf4j
@@ -47,6 +52,9 @@ public class AssistantBuildHelper {
     KnowledgeDatasetMapper knowledgeDatasetMapper;
 
     @Autowired
+    ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
+
+    @Autowired
     MemoryBuildHelper memoryBuildHelper;
 
     /**
@@ -59,14 +67,24 @@ public class AssistantBuildHelper {
     public IAiService build(ApplicationEntity applicationInfo, ApplicationChatValidate validate,
                             StreamingChatLanguageModel streamingChatLanguageModel, ChatLanguageModel chatLanguageModel) {
 
-        memoryBuildHelper.setContextId(validate.getContextId());
-
         // 自定义构建上下文记忆
+        log.error("记忆数量, {}", applicationInfo.getMemoryNum());
+        String memoryKey = validate.getSessionId() + applicationInfo.getUserId() + validate.getCell();
         ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
-                .id(validate.getSessionId() + applicationInfo.getUserId() + validate.getCell())
+                .id(memoryKey)
                 .maxMessages(applicationInfo.getMemoryNum())
                 .chatMemoryStore(memoryBuildHelper)
                 .build();
+
+        // 更新上下文记忆
+        if (validate.getContextId() != 0) {
+            ApplicationWorkflowRuntimeContextEntity runtimeContextEntity
+                    = applicationWorkflowRuntimeContextMapper.selectById(validate.getContextId());
+            JSONObject outputData = JSONUtil.parseObj(runtimeContextEntity.getOutputData());
+            outputData.set("log.context", messagesToJson(memoryBuildHelper.getMessages(memoryKey)));
+            runtimeContextEntity.setOutputData(outputData.toString());
+            applicationWorkflowRuntimeContextMapper.updateById(runtimeContextEntity);
+        }
 
         // 未关联知识库
         if (validate.getDatasetList().isEmpty()) {

@@ -123,7 +123,7 @@ export default {
 			},
 			appId: '',
 			flowData: null,
-			runtimeId: 168,
+			runtimeId: 173,
 			runtimeKey: Math.random(),
 		}
 	},
@@ -364,15 +364,15 @@ export default {
 		},
 		// 调试链接
 		debugHandle() {
-			this.runtimeVisible = true
+			//this.runtimeVisible = true
 			// 节点参数检测
-			/*let res = nodeCheck.check(this.graph.toJSON())
+			let res = nodeCheck.check(this.graph.toJSON())
 			if (res.code !== 0) {
 				this.$message.error(res.msg)
 				return
 			}
 
-			this.chatVisible = true*/
+			this.chatVisible = true
 		},
 		// 展示执行详情
 		showDetailHandle(runtimeId) {

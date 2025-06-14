@@ -9,7 +9,7 @@
 					<component :is="iconComponent(`${item.nodeType}-icon`)"/>
 				</div>
 				<div class="runtime-status">
-					<div class="run-step">{{ item.step }}</div>
+					第<div class="run-step">{{ item.step }}</div>步
 				</div>
 			</div>
 			<el-collapse-transition>
@@ -103,7 +103,8 @@ export default {
 	width: 20px;
 	height: 20px;
 	border-radius: 50%;
-	margin-right: 10px;
+	margin-right: 5px;
+	margin-left: 5px;
 	line-height: 20px;
 	text-align: center;
 	color: #fff;

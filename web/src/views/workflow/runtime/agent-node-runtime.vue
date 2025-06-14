@@ -16,11 +16,19 @@
 		</div>
 	</div>
 	<div class="detail-box" style="margin-top: 10px">
-		<div class="detail-title">历史聊天记录</div>
+		<div class="detail-title">上下文记忆</div>
 		<div class="detail-content">
-			<div class="content-item">
-				{{ runtimeData.outputData['agent.input'] }}
+
+			<div class="content-item" v-for="(item, index) in runtimeData.outputData['agent.context']" :key="index">
+				<div class="item-left" v-if="item.type === 'SYSTEM'">系统角色：</div>
+				<div class="item-left" v-if="item.type === 'AI'">Agent：</div>
+				<div class="item-left" v-if="item.type === 'USER'">用户：</div>
+				<div class="item-right" v-if="item.type !== 'USER'">{{ item.text }}</div>
+				<div class="item-right" v-else>
+					<p v-for="(item2, index2) in item.contents" :key="index2">{{ item2.text }}</p>
+				</div>
 			</div>
+
 		</div>
 	</div>
 </template>
@@ -45,7 +53,7 @@ export default {
 				this.runtimeData.outputData['agent.context'] = JSON.parse(context || '{}');
 			}
 
-			console.log(222, this.runtimeData.outputData['agent.context'])
+			console.log(222, this.runtimeData.outputData)
 		}
 	}
 }

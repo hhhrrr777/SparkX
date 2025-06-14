@@ -68,7 +68,7 @@ public class AgentNode implements IWorkflowNode {
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
         String inputSourceId;
-        if (inputArr.size() > 0) {
+        if (!inputArr.isEmpty()) {
             inputSourceId = inputArr.get(0).toString();
         } else {
             inputSourceId = "";
@@ -93,12 +93,23 @@ public class AgentNode implements IWorkflowNode {
             throw new BusinessException("应用配置错误");
         }
 
+        // 记录运行时数据
+        ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
+        contextEntity.setStep(context.getStep() + 1);
+        contextEntity.setNodeType(NodeTypeEnum.AGENT.getCode());
+        contextEntity.setRuntimeId(runtimeVo.getRuntimeId());
+        contextEntity.setOutputData(preOutput.toString());
+        contextEntity.setCell(runtimeVo.getNodeInfo().getId());
+        contextEntity.setCreateTime(Tool.nowDateTime());
+        applicationWorkflowRuntimeContextMapper.insert(contextEntity);
+
         ApplicationChatValidate validate = new ApplicationChatValidate();
         validate.setContent(question);
         validate.setAppId(agentId);
         validate.setDatasetList(applicationHelper.getRelationDatasetList(agentId));
-        validate.setContextId(context.getId());
-        validate.setCell(agentId); // 以次区分不同的节点的上下文聊天记录
+        validate.setContextId(contextEntity.getId());
+        validate.setCell(contextEntity.getCell()); // 以次区分不同的节点的上下文聊天记录
+        validate.setSessionId(runtimeVo.getSessionId());
 
         applicationInfo.setUserId(runtimeVo.getUserId()); // 设置为运行用户
 
@@ -108,11 +119,9 @@ public class AgentNode implements IWorkflowNode {
 
             sseEmitterHelper.asyncSend2Client(tokenStream, emitter, runtimeVo.getRuntimeId(), runtimeVo.getNodeInfo().getId(), (response) -> {
 
-                // 记录运行时数据
-                ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
-                contextEntity.setStep(context.getStep() + 1);
-                contextEntity.setNodeType(NodeTypeEnum.AGENT.getCode());
-                contextEntity.setRuntimeId(runtimeVo.getRuntimeId());
+                // 更新运行时数据
+                ApplicationWorkflowRuntimeContextEntity contextEntityUpdate =
+                        applicationWorkflowRuntimeContextMapper.selectById(contextEntity.getId());
 
                 // 模型使用情况
                 JSONObject modelData = JSONUtil.createObj();
@@ -120,17 +129,16 @@ public class AgentNode implements IWorkflowNode {
                 modelData.set("inputTokenCount", llmResData.getStr("inputTokenCount"));
                 modelData.set("outputTokenCount", llmResData.getStr("outputTokenCount"));
                 modelData.set("totalTokenCount", llmResData.getStr("totalTokenCount"));
-                contextEntity.setModelData(modelData.toString());
+                contextEntityUpdate.setModelData(modelData.toString());
 
                 // 记录问题分类节点的输出
                 String answer = llmResData.getStr("content");
-                preOutput.set("agent.input", question);
-                preOutput.set("sys.agentContent", answer);
+                JSONObject outputData = JSONUtil.parseObj(contextEntityUpdate.getOutputData());
+                outputData.set("agent.input", question);
+                outputData.set("sys.agentContent", answer);
 
-                contextEntity.setOutputData(preOutput.toString());
-                contextEntity.setCell(runtimeVo.getNodeInfo().getId());
-                contextEntity.setCreateTime(Tool.nowDateTime());
-                applicationWorkflowRuntimeContextMapper.insert(contextEntity);
+                contextEntityUpdate.setOutputData(outputData.toString());
+                applicationWorkflowRuntimeContextMapper.updateById(contextEntityUpdate);
 
                 latch.countDown();
             });
