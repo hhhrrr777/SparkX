@@ -46,6 +46,8 @@ export default {
 		type: 'dataset',
 		inputData: [],
 		datasets: [],
+		topRank: 3,
+		similarity: 0.90,
 		outData: [
 			{field: 'sys.result', name: '检索结果'},
 		]

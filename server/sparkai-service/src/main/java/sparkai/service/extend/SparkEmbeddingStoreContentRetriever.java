@@ -21,7 +21,7 @@ import dev.langchain4j.store.embedding.filter.Filter;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
-import sparkai.service.vo.dataset.HitTestVo;
+import sparkai.service.vo.dataset.DatasetSearchVo;
 import sparkai.service.vo.dataset.SearchVo;
 
 import java.util.*;
@@ -54,12 +54,12 @@ public class SparkEmbeddingStoreContentRetriever implements ContentRetriever {
 
     private final IDatasetSearchService searchService;
 
-    private final HitTestVo searchDataVo;
+    private final DatasetSearchVo searchDataVo;
 
     public SparkEmbeddingStoreContentRetriever(EmbeddingStore<TextSegment> embeddingStore,
                                                EmbeddingModel embeddingModel,
                                                IDatasetSearchService searchService,
-                                               HitTestVo searchDataVo) {
+                                               DatasetSearchVo searchDataVo) {
         this(
                 DEFAULT_DISPLAY_NAME,
                 embeddingStore,
@@ -76,7 +76,7 @@ public class SparkEmbeddingStoreContentRetriever implements ContentRetriever {
                                                EmbeddingModel embeddingModel,
                                                int maxResults,
                                                IDatasetSearchService searchService,
-                                               HitTestVo searchDataVo) {
+                                               DatasetSearchVo searchDataVo) {
         this(
                 DEFAULT_DISPLAY_NAME,
                 embeddingStore,
@@ -94,7 +94,7 @@ public class SparkEmbeddingStoreContentRetriever implements ContentRetriever {
                                                Integer maxResults,
                                                Double minScore,
                                                IDatasetSearchService searchService,
-                                               HitTestVo searchDataVo) {
+                                               DatasetSearchVo searchDataVo) {
         this(
                 DEFAULT_DISPLAY_NAME,
                 embeddingStore,
@@ -115,7 +115,7 @@ public class SparkEmbeddingStoreContentRetriever implements ContentRetriever {
                                                 Function<Query, Double> dynamicMinScore,
                                                 Function<Query, Filter> dynamicFilter,
                                                 IDatasetSearchService searchService,
-                                                HitTestVo searchDataVo) {
+                                                DatasetSearchVo searchDataVo) {
         this.displayName = getOrDefault(displayName, DEFAULT_DISPLAY_NAME);
         /*this.embeddingStore = ensureNotNull(embeddingStore, "embeddingStore");
         this.embeddingModel = ensureNotNull(

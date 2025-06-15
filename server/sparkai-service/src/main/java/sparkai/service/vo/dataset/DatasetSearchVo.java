@@ -15,7 +15,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
-public class HitTestVo implements Serializable {
+public class DatasetSearchVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

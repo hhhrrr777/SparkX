@@ -51,7 +51,7 @@ public class DatasetNode implements IWorkflowNode {
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
         String inputSourceId;
-        if (inputArr.size() > 0) {
+        if (!inputArr.isEmpty()) {
             inputSourceId = inputArr.get(0).toString();
         } else {
             inputSourceId = "";
@@ -64,9 +64,14 @@ public class DatasetNode implements IWorkflowNode {
             return null;
         }
 
-        String inputData = inputArr.get(1).toString();
+        String question;
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
-        String question = preOutput.get(inputData).toString();
+        if (!inputArr.isEmpty()) {
+            String inputData = inputArr.get(1).toString();
+            question = preOutput.get(inputData).toString();
+        } else {
+            question = "";
+        }
 
         JSONArray datasetsArr = nodeObject.getJSONArray("datasets");
         List<String> datasetIds = new ArrayList<>();
@@ -82,7 +87,7 @@ public class DatasetNode implements IWorkflowNode {
 
         // 记录问题分类节点的输出
         preOutput.set("node_question", question);
-        preOutput.set("sys.result", datasetIds);
+        preOutput.set("sys.result", String.join(",", datasetIds));
         contextEntity.setOutputData(preOutput.toString());
 
         contextEntity.setCell(runtimeVo.getNodeInfo().getId());

@@ -64,9 +64,9 @@ public class DatasetController {
      * 命中测试
      */
     @PostMapping("/hitTest")
-    public AjaxResult<List<SearchVo>> hitTest(@RequestBody HitTestVo hitTestVo) {
+    public AjaxResult<List<SearchVo>> hitTest(@RequestBody DatasetSearchVo datasetSearchVo) {
 
-        return AjaxResult.success(iDatasetSearchService.search(hitTestVo));
+        return AjaxResult.success(iDatasetSearchService.search(datasetSearchVo));
     }
 
     /**

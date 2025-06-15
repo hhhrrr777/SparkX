@@ -63,6 +63,28 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="flex-center no-param" style="margin-top: 10px;background: #fff">
+				<span style="width: 80px;color: #1a1a1a">相似度</span>
+				<el-slider
+					:step="0.01"
+					v-model="form.similarity"
+					:min="0"
+					:max="1"
+					@change="$emit('dataChange', form)"
+					show-input>
+				</el-slider>
+			</div>
+			<div class="flex-center no-param" style="margin-top: 10px;background: #fff">
+				<span style="width: 80px;color: #1a1a1a">召回数量</span>
+				<el-slider
+					v-model="form.topRank"
+					:min="1"
+					:max="10"
+					@change="$emit('dataChange', form)"
+					show-input>
+				</el-slider>
+			</div>
 		</div>
 
 		<el-dialog

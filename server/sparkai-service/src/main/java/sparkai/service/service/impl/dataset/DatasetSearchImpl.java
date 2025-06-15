@@ -25,7 +25,7 @@ import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
 import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
 import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
-import sparkai.service.vo.dataset.HitTestVo;
+import sparkai.service.vo.dataset.DatasetSearchVo;
 import sparkai.service.vo.dataset.SearchVo;
 
 import java.util.*;
@@ -50,40 +50,40 @@ public class DatasetSearchImpl implements IDatasetSearchService {
 
     /**
      * 命中测试
-     * @param hitTestVo HitTestVo
+     * @param datasetSearchVo DatasetSearchVo
      */
     @Override
-    public List<SearchVo> search(HitTestVo hitTestVo) {
+    public List<SearchVo> search(DatasetSearchVo datasetSearchVo) {
 
-        if (hitTestVo.getKeyword().isBlank()) {
+        if (datasetSearchVo.getKeyword().isBlank()) {
             throw new BusinessException("输入的问题不能为空");
         }
 
-        if (hitTestVo.getSimilarity() < 0) {
+        if (datasetSearchVo.getSimilarity() < 0) {
             throw new BusinessException("设信度应该大于0");
         }
 
-        if (hitTestVo.getTopRank() < 1) {
+        if (datasetSearchVo.getTopRank() < 1) {
             throw new BusinessException("召回数应该大于1");
         }
 
         List<SearchVo> searchRes = new LinkedList<>();
 
         // 取对应的embedding模型
-        String datasetId = hitTestVo.getDatasetIds().split(",")[0];
+        String datasetId = datasetSearchVo.getDatasetIds().split(",")[0];
         KnowledgeDatasetEntity datasetInfo = knowledgeDatasetMapper.selectById(datasetId);
         EmbeddingModel embeddingModel = embeddingModelBuildHelper.build(datasetInfo.getEmbeddingModeId());
-        if (hitTestVo.getType().equals("embedding")) {
+        if (datasetSearchVo.getType().equals("embedding")) {
 
-            List<Float> vector = embeddingModel.embed(hitTestVo.getKeyword()).content().vectorAsList();
-            searchRes = embeddingSearch(hitTestVo, vector);
-        } else if (hitTestVo.getType().equals("text")) {
+            List<Float> vector = embeddingModel.embed(datasetSearchVo.getKeyword()).content().vectorAsList();
+            searchRes = embeddingSearch(datasetSearchVo, vector);
+        } else if (datasetSearchVo.getType().equals("text")) {
 
-            searchRes = textSearch(hitTestVo);
-        } else if (hitTestVo.getType().equals("mix")) {
+            searchRes = textSearch(datasetSearchVo);
+        } else if (datasetSearchVo.getType().equals("mix")) {
 
-            List<Float> vector = embeddingModel.embed(hitTestVo.getKeyword()).content().vectorAsList();
-            searchRes = mixSearch(hitTestVo, vector);
+            List<Float> vector = embeddingModel.embed(datasetSearchVo.getKeyword()).content().vectorAsList();
+            searchRes = mixSearch(datasetSearchVo, vector);
         }
 
         return searchRes;
@@ -91,15 +91,15 @@ public class DatasetSearchImpl implements IDatasetSearchService {
 
     /**
      * 向量检索
-     * @param hitTestVo HitTestVo
+     * @param datasetSearchVo DatasetSearchVo
      * @param vector List<Float>
      * @return List<SearchVo>
      */
-    private List<SearchVo> embeddingSearch(HitTestVo hitTestVo, List<Float> vector) {
+    private List<SearchVo> embeddingSearch(DatasetSearchVo datasetSearchVo, List<Float> vector) {
 
-        List<String> datasetIds = Arrays.stream(hitTestVo.getDatasetIds().split(",")).toList();
+        List<String> datasetIds = Arrays.stream(datasetSearchVo.getDatasetIds().split(",")).toList();
         List<SearchVo> searchRes = knowledgeEmbeddingMapper.embeddingSearch(JSONUtil.toJsonStr(vector), datasetIds,
-                hitTestVo.getSimilarity(), hitTestVo.getTopRank());
+                datasetSearchVo.getSimilarity(), datasetSearchVo.getTopRank());
 
         if (!CollectionUtils.isEmpty(searchRes)) {
             return buildFinalRes(searchRes);
@@ -110,15 +110,15 @@ public class DatasetSearchImpl implements IDatasetSearchService {
 
     /**
      * 全文检索
-     * @param hitTestVo HitTestVo
+     * @param datasetSearchVo DatasetSearchVo
      * @return List<SearchVo>
      */
-    private List<SearchVo> textSearch(HitTestVo hitTestVo) {
+    private List<SearchVo> textSearch(DatasetSearchVo datasetSearchVo) {
 
-        String searchKeywords = TsVectorGenerator.toTsQuery(hitTestVo.getKeyword());
-        List<String> datasetIds = Arrays.stream(hitTestVo.getDatasetIds().split(",")).toList();
-        List<SearchVo> searchRes = knowledgeEmbeddingMapper.textSearch(searchKeywords, datasetIds, hitTestVo.getSimilarity(),
-                hitTestVo.getTopRank());
+        String searchKeywords = TsVectorGenerator.toTsQuery(datasetSearchVo.getKeyword());
+        List<String> datasetIds = Arrays.stream(datasetSearchVo.getDatasetIds().split(",")).toList();
+        List<SearchVo> searchRes = knowledgeEmbeddingMapper.textSearch(searchKeywords, datasetIds, datasetSearchVo.getSimilarity(),
+                datasetSearchVo.getTopRank());
 
         if (!CollectionUtils.isEmpty(searchRes)) {
             return buildFinalRes(searchRes);
@@ -129,16 +129,16 @@ public class DatasetSearchImpl implements IDatasetSearchService {
 
     /**
      * 混合检索
-     * @param hitTestVo HitTestVo
+     * @param datasetSearchVo DatasetSearchVo
      * @param vector List<Float>
      * @return List<SearchVo>
      */
-    private List<SearchVo> mixSearch(HitTestVo hitTestVo, List<Float> vector) {
+    private List<SearchVo> mixSearch(DatasetSearchVo datasetSearchVo, List<Float> vector) {
 
-        List<String> datasetIds = Arrays.stream(hitTestVo.getDatasetIds().split(",")).toList();
-        String searchKeywords = TsVectorGenerator.toTsQuery(hitTestVo.getKeyword());
+        List<String> datasetIds = Arrays.stream(datasetSearchVo.getDatasetIds().split(",")).toList();
+        String searchKeywords = TsVectorGenerator.toTsQuery(datasetSearchVo.getKeyword());
         List<SearchVo> searchRes = knowledgeEmbeddingMapper.mixSearch(JSONUtil.toJsonStr(vector), searchKeywords, datasetIds,
-                hitTestVo.getSimilarity(), hitTestVo.getTopRank());
+                datasetSearchVo.getSimilarity(), datasetSearchVo.getTopRank());
 
         if (!CollectionUtils.isEmpty(searchRes)) {
             return buildFinalRes(searchRes);

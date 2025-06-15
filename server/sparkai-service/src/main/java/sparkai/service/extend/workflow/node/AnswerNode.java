@@ -33,7 +33,7 @@ import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
-import sparkai.service.vo.dataset.HitTestVo;
+import sparkai.service.vo.dataset.DatasetSearchVo;
 import sparkai.service.vo.dataset.SearchVo;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeRuntimeVo;
@@ -176,7 +176,7 @@ public class AnswerNode implements IWorkflowNode {
      */
     private String datasetAnswer(String question, String datasetIds) {
 
-        HitTestVo searchDataVo = new HitTestVo();
+        DatasetSearchVo searchDataVo = new DatasetSearchVo();
         searchDataVo.setKeyword(question);
         searchDataVo.setDatasetIds(datasetIds);
         searchDataVo.setSimilarity(0.9);

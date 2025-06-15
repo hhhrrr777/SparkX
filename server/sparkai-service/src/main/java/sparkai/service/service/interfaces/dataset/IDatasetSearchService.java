@@ -9,12 +9,12 @@
 // +----------------------------------------------------------------------
 package sparkai.service.service.interfaces.dataset;
 
-import sparkai.service.vo.dataset.HitTestVo;
+import sparkai.service.vo.dataset.DatasetSearchVo;
 import sparkai.service.vo.dataset.SearchVo;
 
 import java.util.List;
 
 public interface IDatasetSearchService {
 
-    List<SearchVo> search(HitTestVo hitTestVo);
+    List<SearchVo> search(DatasetSearchVo datasetSearchVo);
 }

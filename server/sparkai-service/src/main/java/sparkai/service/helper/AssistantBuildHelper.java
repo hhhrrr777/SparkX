@@ -35,7 +35,7 @@ import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
-import sparkai.service.vo.dataset.HitTestVo;
+import sparkai.service.vo.dataset.DatasetSearchVo;
 import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
 @Component
@@ -104,7 +104,7 @@ public class AssistantBuildHelper {
         }
 
         // 构建交互数据
-        HitTestVo searchDataVo = new HitTestVo();
+        DatasetSearchVo searchDataVo = new DatasetSearchVo();
         searchDataVo.setType(applicationInfo.getSearchMode());
         String[] datasetIds = validate.getDatasetList().stream().map(DatasetSimpleVo::getDatasetId).toArray(String[]::new);
         searchDataVo.setDatasetIds(String.join(",", datasetIds));
