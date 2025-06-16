@@ -119,11 +119,11 @@ public class AnswerNode implements IWorkflowNode {
                 String answer;
                 // 如果上个节点是dataset节点，且输出为检索结果
                 if (context.getNodeType().equals(NodeTypeEnum.DATASET.getCode())
-                        && returnAnswerType.equals("sys.result")) {
+                        && returnAnswerType.equals("node.datasets")) {
 
                     // 执行知识库检索并输出
                     String question = preOutput.getStr("node.question");
-                    String datasetIds = preOutput.getStr("sys.result");
+                    String datasetIds = preOutput.getStr("node.datasets");
                     answer = datasetAnswer(question, datasetIds, context);
                     emitter.send(Tool.buildSendData(context.getRuntimeId(), context.getCell(), answer));
                 } else if (context.getNodeType().equals(NodeTypeEnum.LLM.getCode())
@@ -145,7 +145,7 @@ public class AnswerNode implements IWorkflowNode {
                     modelData.set("outputTokenCount", llmResData.getStr("outputTokenCount"));
                     modelData.set("totalTokenCount", llmResData.getStr("totalTokenCount"));
                     contextEntity.setModelData(modelData.toString());
-                } else {
+                } else { // 直接回复
 
                     answer = preOutput.get(returnAnswerType).toString();
                     emitter.send(Tool.buildSendData(context.getRuntimeId(), context.getCell(), answer));
@@ -232,8 +232,8 @@ public class AnswerNode implements IWorkflowNode {
             ApplicationChatValidate validate = new ApplicationChatValidate();
             // 写入引用的知识库
             List<DatasetSimpleVo> dataListVo = new ArrayList<>();
-            if (inputObject.containsKey("sys.result") && !inputObject.getStr("sys.result").isBlank()) {
-                List<String> datasetIdsArr = Arrays.stream(inputObject.getStr("sys.result").split(",")).toList();
+            if (inputObject.containsKey("node.datasets") && !inputObject.getStr("node.datasets").isBlank()) {
+                List<String> datasetIdsArr = Arrays.stream(inputObject.getStr("node.datasets").split(",")).toList();
 
                 for (String datasetId : datasetIdsArr) {
                     DatasetSimpleVo datasetSimpleVo = new DatasetSimpleVo();

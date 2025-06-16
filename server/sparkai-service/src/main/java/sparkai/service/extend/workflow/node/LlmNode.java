@@ -50,7 +50,7 @@ public class LlmNode implements IWorkflowNode {
         // 本节点输入的参数
         JSONArray inputArr = nodeObject.getJSONArray("inputData");
         String inputSourceId;
-        if (inputArr.size() > 0) {
+        if (!inputArr.isEmpty()) {
             inputSourceId = inputArr.get(0).toString();
         } else {
             inputSourceId = "";

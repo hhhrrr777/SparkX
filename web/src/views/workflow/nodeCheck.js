@@ -18,7 +18,7 @@ export default {
 					}
 				}
 			} else if (node.shape === "dataset-node") { // 知识库检索节点
-				let name = ''; 
+				let name = '';
 				if (node.data.no > 1) {
 					name = node.data.no
 				}
