@@ -139,7 +139,6 @@ export default {
 .paragraph-doc {
 	width: 100%;
 	height: calc(100% - 81px);
-	overflow: hidden;
 	color: #606266;
 	margin-top: 10px;
 }

@@ -21,9 +21,9 @@
 						<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 						<div class="title-left line1" v-else>--</div>
 					</div>
-					<div class="paragraph-doc">
+					<el-scrollbar class="paragraph-doc">
 						{{ item.content }}
-					</div>
+					</el-scrollbar>
 					<div class="paragraph-bottom">
 						<span>相似度：{{ item.comprehensiveScore.toFixed(3) }}</span>
 						<span>来源文档：{{ item.documentName }}</span>
@@ -181,7 +181,6 @@ export default {
 .paragraph-doc {
 	width: 100%;
 	height: calc(100% - 83px);
-	overflow: hidden;
 	color: #606266;
 	margin-top: 10px;
 }

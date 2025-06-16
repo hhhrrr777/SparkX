@@ -86,7 +86,7 @@ public class DatasetNode implements IWorkflowNode {
         contextEntity.setRuntimeId(runtimeVo.getRuntimeId());
 
         // 记录问题分类节点的输出
-        preOutput.set("node_question", question);
+        preOutput.set("node.question", question);
         preOutput.set("sys.result", String.join(",", datasetIds));
         contextEntity.setOutputData(preOutput.toString());
 

@@ -9,9 +9,9 @@
 					<span class="iconfont icon-link-unlink" style="font-size: 20px;margin-right: 5px;color: var(--el-color-theme)" @click="unLink(item)"></span>
 				</el-tooltip>
 			</div>
-			<div class="paragraph-doc">
+			<el-scrollbar class="paragraph-doc">
 				{{ item.content }}
-			</div>
+			</el-scrollbar>
 		</div>
 		<el-empty description="暂无关联数据" style="margin: 0 auto" v-else></el-empty>
 	</div>
@@ -106,7 +106,6 @@ export default {
 	width: 100%;
 	height: calc(100% - 40px);
 	padding: 5px 0;
-	overflow: hidden;
 	color: #606266;
 	margin-top: 10px;
 }

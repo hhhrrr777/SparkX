@@ -28,9 +28,9 @@
 					<div class="title-left line1" v-if="item.title.length > 0">{{ item.title }}</div>
 					<div class="title-left line1" v-else>--</div>
 				</div>
-				<div class="paragraph-doc">
+				<el-scrollbar class="paragraph-doc">
 					{{ item.content }}
-				</div>
+				</el-scrollbar>
 			</div>
 		</div>
 	</div>
@@ -242,12 +242,8 @@ export default {
 	width: 100%;
 	height: calc(100% - 20px);
 	padding: 5px 0;
-	overflow-y: auto;
 	color: #606266;
 	margin-top: 10px;
-}
-.paragraph-doc::-webkit-scrollbar { /* WebKit */
-	width: 0 !important;
 }
 .active {
 	border: 1px solid var(--el-color-theme);

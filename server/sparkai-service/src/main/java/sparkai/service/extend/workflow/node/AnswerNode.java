@@ -122,7 +122,7 @@ public class AnswerNode implements IWorkflowNode {
                         && returnAnswerType.equals("sys.result")) {
 
                     // 执行知识库检索并输出
-                    String question = preOutput.getStr("node_question");
+                    String question = preOutput.getStr("node.question");
                     String datasetIds = preOutput.getStr("sys.result");
                     answer = datasetAnswer(question, datasetIds, context);
                     emitter.send(Tool.buildSendData(context.getRuntimeId(), context.getCell(), answer));
@@ -186,6 +186,12 @@ public class AnswerNode implements IWorkflowNode {
         searchDataVo.setTopRank(nodeObject.getInt("topRank"));
         searchDataVo.setType("embedding");
         List<SearchVo> searchRes = searchService.search(searchDataVo);
+
+        // 写入上下文，记录召回信息
+        JSONObject outputData = JSONUtil.parseObj(context.getOutputData());
+        outputData.set("datasets.search", JSONUtil.toJsonStr(searchRes));
+        context.setOutputData(outputData.toString());
+        applicationWorkflowRuntimeContextMapper.updateById(context);
 
         return searchRes.stream().map(SearchVo::getContent).collect(Collectors.joining());
     }

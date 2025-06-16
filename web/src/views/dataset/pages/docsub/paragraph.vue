@@ -7,9 +7,9 @@
 				<div class="title-left line1" v-else>--</div>
 				<el-switch v-model="item.active" :active-value="1" :inactive-value="2" @change="activeParagraph(item)"/>
 			</div>
-			<div class="paragraph-doc" @click="showEditor(item)">
+			<el-scrollbar class="paragraph-doc" @click="showEditor(item)">
 				{{ item.content }}
-			</div>
+			</el-scrollbar>
 			<div class="paragraph-bottom">
 				<span>{{ (item.content).length }} 字符</span>
 				<el-dropdown trigger="click" @command="handleCommand($event, item)">
@@ -255,7 +255,6 @@ export default {
 	width: 100%;
 	height: calc(100% - 71px);
 	padding: 5px 0;
-	overflow: hidden;
 	color: #606266;
 	margin-top: 10px;
 }

@@ -12,39 +12,23 @@
 		<div class="detail-title">检索结果</div>
 		<div class="detail-content">
 
-			<div class="content-item">
+			<div class="content-item" v-for="item in datasetsList" :key="item.paragraphId">
 				<div class="paragraph-item">
-					<div class="paragraph-id">段落ID: 2222</div>
+					<div class="paragraph-id">段落ID: {{ item.paragraphId }}</div>
 					<div class="paragraph-title">
-						<div class="title-left line1">这个小垃圾</div>
-						<!--<div class="title-left line1" v-else>--</div>-->
+						<div class="title-left line1" v-if="item.title !== ''">{{ item.title }}</div>
+						<div class="title-left line1" v-else>--</div>
 					</div>
-					<div class="paragraph-doc">
-						这是内容
-					</div>
+					<el-scrollbar class="paragraph-doc">
+						{{ item.content }}
+					</el-scrollbar>
 					<div class="paragraph-bottom">
-						<span>相似度：0.05</span>
-						<span>来源文档：haha</span>
+						<span>相似度：{{ item.similarity.toFixed(2) }}</span>
+						<span>来源文档：{{ item.documentName }}</span>
 					</div>
 				</div>
 			</div>
 
-			<div class="content-item">
-				<div class="paragraph-item">
-					<div class="paragraph-id">段落ID: 2222</div>
-					<div class="paragraph-title">
-						<div class="title-left line1">这个小垃圾</div>
-						<!--<div class="title-left line1" v-else>--</div>-->
-					</div>
-					<div class="paragraph-doc">
-						这是内容
-					</div>
-					<div class="paragraph-bottom">
-						<span>相似度：0.05</span>
-						<span>来源文档：haha</span>
-					</div>
-				</div>
-			</div>
 		</div>
 	</div>
 </template>
@@ -59,7 +43,13 @@ export default {
 	},
 	data() {
 		return {
-			show: false
+			show: false,
+			datasetsList: []
+		}
+	},
+	mounted() {
+		if (this.runtimeData.outputData['datasets.search'] !== '') {
+			this.datasetsList = JSON.parse(this.runtimeData.outputData['datasets.search'])
 		}
 	}
 }
@@ -111,7 +101,6 @@ export default {
 .paragraph-doc {
 	width: 100%;
 	height: calc(100% - 83px);
-	overflow: hidden;
 	color: #606266;
 	margin-top: 10px;
 }
