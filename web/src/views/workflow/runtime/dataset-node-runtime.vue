@@ -3,7 +3,7 @@
 		<div class="detail-title">检索内容</div>
 		<div class="detail-content">
 			<div class="content-item">
-				欢迎还用
+				{{ runtimeData.outputData['sys.question'] }}
 			</div>
 		</div>
 	</div>
