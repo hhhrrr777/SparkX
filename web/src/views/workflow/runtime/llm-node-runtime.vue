@@ -1,33 +1,28 @@
 <template>
-	<div class="detail-box">
-		<div class="detail-title">系统角色</div>
-		<div class="detail-content">
-			<div class="content-item">
-				欢迎还用
-			</div>
-		</div>
-	</div>
-
-	<div class="detail-box" style="margin-top: 10px">
-		<div class="detail-title">历史记录</div>
-		<div class="detail-content">
-			<div class="content-item">
-				<div class="item-left">human：</div>
-				<div class="item-right">你的名字</div>
-			</div>
-			<div class="content-item">
-				<div class="item-left">AI：</div>
-				<div class="item-right">你的名字</div>
-			</div>
-		</div>
-	</div>
 
 	<div class="detail-box" style="margin-top: 10px">
 		<div class="detail-title">本次对话</div>
 		<div class="detail-content">
 			<div class="content-item">
-				欢迎还用
+				{{ runtimeData.outputData['sys.question'] }}
 			</div>
+		</div>
+	</div>
+
+	<div class="detail-box" style="margin-top: 10px">
+		<div class="detail-title">上下文记忆</div>
+		<div class="detail-content">
+
+			<div class="content-item" v-for="(item, index) in runtimeData.outputData['agent.context']" :key="index">
+				<div class="item-left" v-if="item.type === 'SYSTEM'">系统角色：</div>
+				<div class="item-left" v-if="item.type === 'AI'">Agent：</div>
+				<div class="item-left" v-if="item.type === 'USER'">用户：</div>
+				<div class="item-right" v-if="item.type !== 'USER'">{{ item.text }}</div>
+				<div class="item-right" v-else>
+					<p v-for="(item2, index2) in item.contents" :key="index2">{{ item2.text }}</p>
+				</div>
+			</div>
+
 		</div>
 	</div>
 
@@ -35,7 +30,7 @@
 		<div class="detail-title">AI回答</div>
 		<div class="detail-content">
 			<div class="content-item">
-				欢迎还用
+				{{ runtimeData.outputData['llm.answer'] }}
 			</div>
 		</div>
 	</div>

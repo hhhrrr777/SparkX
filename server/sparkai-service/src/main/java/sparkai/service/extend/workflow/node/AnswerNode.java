@@ -133,6 +133,12 @@ public class AnswerNode implements IWorkflowNode {
                     JSONObject llmResData = JSONUtil.parseObj(llmRes);
                     answer = llmResData.getStr("content");
 
+                    // 记录llm输出
+                    JSONObject preContextOutput = JSONUtil.parseObj(context.getOutputData());
+                    preContextOutput.set("llm.answer", answer);
+                    context.setOutputData(preContextOutput.toString());
+                    applicationWorkflowRuntimeContextMapper.updateById(context);
+
                     // 模型使用情况
                     JSONObject modelData = JSONUtil.createObj();
                     modelData.set("inputTokenCount", llmResData.getStr("inputTokenCount"));

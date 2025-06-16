@@ -3,7 +3,7 @@
 		<el-card shadow="never" class="runtime-item" v-for="(item, index) in runtimeData" :key="index">
 			<div class="runtime-title" @click="showDetail(index)">
 				<div class="runtime-icon">
-					<el-icon>
+					<el-icon :style="{transform: currentIndex === index ? 'rotate(90deg)' : ''}">
 						<CaretRight />
 					</el-icon>
 					<component :is="iconComponent(`${item.nodeType}-icon`)"/>
