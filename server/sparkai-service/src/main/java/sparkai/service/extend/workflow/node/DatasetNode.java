@@ -90,6 +90,7 @@ public class DatasetNode implements IWorkflowNode {
         preOutput.set("sys.result", String.join(",", datasetIds));
         contextEntity.setOutputData(preOutput.toString());
 
+        contextEntity.setModelData(nodeObject.toString()); // 记录节点配置信息
         contextEntity.setCell(runtimeVo.getNodeInfo().getId());
         contextEntity.setCreateTime(Tool.nowDateTime());
         applicationWorkflowRuntimeContextMapper.insert(contextEntity);

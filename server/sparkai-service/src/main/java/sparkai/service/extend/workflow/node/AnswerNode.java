@@ -124,7 +124,7 @@ public class AnswerNode implements IWorkflowNode {
                     // 执行知识库检索并输出
                     String question = preOutput.getStr("node_question");
                     String datasetIds = preOutput.getStr("sys.result");
-                    answer = datasetAnswer(question, datasetIds);
+                    answer = datasetAnswer(question, datasetIds, context);
                     emitter.send(Tool.buildSendData(context.getRuntimeId(), context.getCell(), answer));
                 } else if (context.getNodeType().equals(NodeTypeEnum.LLM.getCode())
                         && returnAnswerType.equals("sys.content")) {
@@ -172,15 +172,18 @@ public class AnswerNode implements IWorkflowNode {
      * 知识库检索
      * @param question String
      * @param datasetIds String
+     * @param context ApplicationWorkflowRuntimeContextEntity
      * @return String
      */
-    private String datasetAnswer(String question, String datasetIds) {
+    private String datasetAnswer(String question, String datasetIds, ApplicationWorkflowRuntimeContextEntity context) {
+
+        JSONObject nodeObject = JSONUtil.parseObj(context.getModelData());
 
         DatasetSearchVo searchDataVo = new DatasetSearchVo();
         searchDataVo.setKeyword(question);
         searchDataVo.setDatasetIds(datasetIds);
-        searchDataVo.setSimilarity(0.9);
-        searchDataVo.setTopRank(3);
+        searchDataVo.setSimilarity(nodeObject.getDouble("similarity"));
+        searchDataVo.setTopRank(nodeObject.getInt("topRank"));
         searchDataVo.setType("embedding");
         List<SearchVo> searchRes = searchService.search(searchDataVo);
 
