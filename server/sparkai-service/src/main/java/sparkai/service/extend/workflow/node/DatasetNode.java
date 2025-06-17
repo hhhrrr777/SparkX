@@ -98,7 +98,6 @@ public class DatasetNode implements IWorkflowNode {
 
         // 记录问题分类节点的输出
         preOutput.set("node.question", question);
-        preOutput.set("node.datasets", String.join(",", datasetIds));
         contextEntity.setOutputData(preOutput.toString());
 
         contextEntity.setModelData(nodeObject.toString()); // 记录节点配置信息
@@ -145,10 +144,15 @@ public class DatasetNode implements IWorkflowNode {
         searchDataVo.setTopRank(nodeObject.getInt("topRank"));
         searchDataVo.setType("embedding");
         List<SearchVo> searchRes = searchService.search(searchDataVo);
+        StringBuilder content = new StringBuilder();
+        for (SearchVo searchVo : searchRes) {
+            content.append(searchVo.getContent());
+        }
 
         // 写入上下文，记录召回信息
         JSONObject outputData = JSONUtil.parseObj(context.getOutputData());
         outputData.set("datasets.search", JSONUtil.toJsonStr(searchRes));
+        outputData.set("sys.result", content);
         context.setOutputData(outputData.toString());
         applicationWorkflowRuntimeContextMapper.updateById(context);
 

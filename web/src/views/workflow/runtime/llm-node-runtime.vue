@@ -30,7 +30,7 @@
 		<div class="detail-title">AI回答</div>
 		<div class="detail-content">
 			<div class="content-item">
-				{{ runtimeData.outputData['llm.answer'] }}
+				{{ runtimeData.outputData['sys.content'] }}
 			</div>
 		</div>
 	</div>

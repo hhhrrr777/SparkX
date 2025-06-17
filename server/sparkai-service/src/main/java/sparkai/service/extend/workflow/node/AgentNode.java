@@ -117,7 +117,8 @@ public class AgentNode implements IWorkflowNode {
 
             TokenStream tokenStream = agentChat.streamChat(applicationInfo, validate);
 
-            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, runtimeVo.getRuntimeId(), runtimeVo.getNodeInfo().getId(), (response) -> {
+            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, runtimeVo.getRuntimeId(),
+                    runtimeVo.getNodeInfo().getId(), true, (response) -> {
 
                 // 更新运行时数据
                 ApplicationWorkflowRuntimeContextEntity contextEntityUpdate =

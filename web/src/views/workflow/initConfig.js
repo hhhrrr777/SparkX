@@ -33,7 +33,7 @@ export default {
 			modelName: "",
 			temperature: 0
 		},
-		inputData: [],
+		insertParam: [], // 插入变量
 		memory: 2,
 		systemMsg: "",
 		userMsg: "",

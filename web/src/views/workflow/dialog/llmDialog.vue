@@ -7,25 +7,6 @@
 		</div>
 
 		<div class="set-content-box">
-			<div>输入参数</div>
-			<div class="flex-center" style="margin-top: 10px;">
-				<div>查询内容</div>
-				<el-cascader
-					v-model="inputData"
-					:options="inputOptions"
-					@change="inputChange"
-					style="margin-left: 20px;width: calc(100% - 80px)" clearable>
-					<template #default="{ node, data }">
-						<div class="flex-center">
-							<span :class="data.icon" style="font-size: 18px !important;" :style="{color: data.color}"></span>
-							<span style="margin-left: 5px">{{ data.label }}</span>
-						</div>
-					</template>
-				</el-cascader>
-			</div>
-		</div>
-
-		<div class="set-content-box">
 			<div>输出参数</div>
 			<div class="param-data">
 				<div class="flex-center data-item" v-for="(item, index) in form.outData" :key="index">
@@ -83,10 +64,22 @@
 		</div>
 
 		<div class="set-content-box">
-			<div style="justify-content: space-between" class="flex-center">
-				<span>提示词</span>
+			<div>插入变量</div>
+			<div class="flex-center" style="margin-top: 10px;">
+				<div>变量内容</div>
+				<el-cascader
+					v-model="insertParam"
+					:options="inputOptions"
+					@change="inputChange"
+					style="margin-left: 20px;width: calc(100% - 80px)" clearable>
+					<template #default="{ node, data }">
+						<div class="flex-center">
+							<span :class="data.icon" style="font-size: 18px !important;" :style="{color: data.color}"></span>
+							<span style="margin-left: 5px">{{ data.label }}</span>
+						</div>
+					</template>
+				</el-cascader>
 			</div>
-			<el-input v-model="form.userMsg" type="textarea" placeholder="用户提示词,默认为设置的输入参数" :rows="4" style="margin-top: 10px"/>
 		</div>
 	</div>
 
@@ -136,7 +129,7 @@ export default {
 	created() {
 		this.form = this.formData
 		this.modelId = [this.formData.modelInfo.modelId, this.formData.modelInfo.modelName]
-		this.inputData = this.formData.inputData
+		this.insertParam = this.formData.inputData
 		this.getModelsList()
 	},
 	methods: {
@@ -186,7 +179,7 @@ export default {
 		},
 		// 输入选择
 		inputChange(val) {
-			this.form.inputData = val
+			this.form.insertParam = val
 			this.$emit("dataChange", this.form)
 		},
 	}

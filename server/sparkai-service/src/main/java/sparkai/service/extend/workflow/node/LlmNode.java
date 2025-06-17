@@ -70,9 +70,6 @@ public class LlmNode implements IWorkflowNode {
     AssistantBuildHelper assistantBuildHelper;
 
     @Autowired
-    AssistantStringBuildHelper assistantStringBuildHelper;
-
-    @Autowired
     StreamChatModelBuildHelper streamChatModelBuildHelper;
 
     @Autowired
@@ -81,18 +78,14 @@ public class LlmNode implements IWorkflowNode {
     @Autowired
     SseEmitterHelper sseEmitterHelper;
 
+    private String question;
+
     @Override
     public List<EdgeVo> handle(NodeRuntimeVo runtimeVo) {
 
         JSONObject nodeObject = runtimeVo.getNodeInfo().getData();
         // 本节点输入的参数
-        JSONArray inputArr = nodeObject.getJSONArray("inputData");
-        String inputSourceId;
-        if (!inputArr.isEmpty()) {
-            inputSourceId = inputArr.get(0).toString();
-        } else {
-            inputSourceId = "";
-        }
+        String inputSourceId = "";
 
         // 获取上一个节点的信息
         ApplicationWorkflowRuntimeContextEntity context =
@@ -101,13 +94,15 @@ public class LlmNode implements IWorkflowNode {
             return null;
         }
 
+        JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
+        question = preOutput.getStr("sys.question");
+
         // 记录运行时数据
         ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
         contextEntity.setStep(context.getStep() + 1);
         contextEntity.setNodeType(NodeTypeEnum.LLM.getCode());
         contextEntity.setRuntimeId(runtimeVo.getRuntimeId());
         contextEntity.setModelData(nodeObject.toString());
-        JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
         contextEntity.setOutputData(preOutput.toString());
         contextEntity.setCell(runtimeVo.getNodeInfo().getId());
         contextEntity.setCreateTime(Tool.nowDateTime());
@@ -115,102 +110,52 @@ public class LlmNode implements IWorkflowNode {
 
         // 查看下一个节点是否是回复节点，且回复的内容是本节点的输出
         NextAnswerNodeVo nextAnswerNodeInfo = applicationHelper.checkNextIsAnswerNode(runtimeVo);
-        if (nextAnswerNodeInfo.isNodeIsAnswer() && nextAnswerNodeInfo.getAnswerType() == 1) {
-            try {
+        boolean needSend = (nextAnswerNodeInfo.isNodeIsAnswer() && nextAnswerNodeInfo.getAnswerType() == 1);
 
-                // 本节点的输出信息
-                TokenStream tokenStream = llmAnswer(contextEntity, runtimeVo.getUserId(), runtimeVo.getSessionId());
-                if (tokenStream == null) {
-                    throw new BusinessException("LLM节点出现系统异常");
-                }
+        try {
 
-                AtomicBoolean runComplete = new AtomicBoolean(false);
-                sseEmitterHelper.asyncSend2Client(tokenStream, emitter, contextEntity.getRuntimeId(),
-                        contextEntity.getCell(), (llmRes) -> {
-
-                            JSONObject llmResData = JSONUtil.parseObj(llmRes);
-                            String answer = llmResData.getStr("content");
-
-                            // 记录llm输出
-                            JSONObject preContextOutput = JSONUtil.parseObj(contextEntity.getOutputData());
-                            preContextOutput.set("llm.answer", answer);
-                            contextEntity.setOutputData(preContextOutput.toString());
-
-                            // token使用情况
-                            JSONObject modelData = JSONUtil.createObj();
-                            modelData.set("inputTokenCount", llmResData.getStr("inputTokenCount"));
-                            modelData.set("outputTokenCount", llmResData.getStr("outputTokenCount"));
-                            modelData.set("totalTokenCount", llmResData.getStr("totalTokenCount"));
-                            contextEntity.setModelData(modelData.toString());
-
-                            applicationWorkflowRuntimeContextMapper.updateById(contextEntity);
-
-                            runComplete.set(true);
-                });
-
-                // 阻塞等待异步发送完成
-                while (!runComplete.get()) {}
-
-            } catch (Exception e) {
-                log.error("知识库检索节点错误, {}", e.getMessage());
-                throw new BusinessException("知识库检索节点错误");
+            // 本节点的输出信息
+            TokenStream tokenStream = llmAnswer(contextEntity, runtimeVo.getUserId(), runtimeVo.getSessionId());
+            if (tokenStream == null) {
+                throw new BusinessException("LLM节点出现系统异常");
             }
-        } else {
 
-            // 只执行，并且记录在节点输出中，不输出
-            Result<List<String>> result = llmStringAnswer(contextEntity, runtimeVo.getUserId(), runtimeVo.getSessionId());
-            if (result != null) {
-                List<String> outline = result.content();
-                TokenUsage tokenUsage = result.tokenUsage();
+            AtomicBoolean runComplete = new AtomicBoolean(false);
+            sseEmitterHelper.asyncSend2Client(tokenStream, emitter, contextEntity.getRuntimeId(),
+                    contextEntity.getCell(), needSend, (llmRes) -> {
 
-                // 回复信息
-                JSONObject preContextOutput = JSONUtil.parseObj(contextEntity.getOutputData());
-                preContextOutput.set("llm.answer", String.join("", outline));
-                contextEntity.setOutputData(preContextOutput.toString());
+                        JSONObject llmResData = JSONUtil.parseObj(llmRes);
+                        String answer = llmResData.getStr("content");
 
-                // token使用情况
-                JSONObject modelData = JSONUtil.createObj();
-                modelData.set("inputTokenCount", tokenUsage.inputTokenCount());
-                modelData.set("outputTokenCount", tokenUsage.outputTokenCount());
-                modelData.set("totalTokenCount", tokenUsage.totalTokenCount());
-                contextEntity.setModelData(modelData.toString());
+                        // 记录llm输出
+                        JSONObject preContextOutput = JSONUtil.parseObj(contextEntity.getOutputData());
+                        preContextOutput.set("sys.content", answer);
+                        contextEntity.setOutputData(preContextOutput.toString());
 
-                applicationWorkflowRuntimeContextMapper.updateById(contextEntity);
-            }
+                        // token使用情况
+                        JSONObject modelData = JSONUtil.createObj();
+                        modelData.set("inputTokenCount", llmResData.getStr("inputTokenCount"));
+                        modelData.set("outputTokenCount", llmResData.getStr("outputTokenCount"));
+                        modelData.set("totalTokenCount", llmResData.getStr("totalTokenCount"));
+                        contextEntity.setModelData(modelData.toString());
+
+                        applicationWorkflowRuntimeContextMapper.updateById(contextEntity);
+
+                        runComplete.set(true);
+                    });
+
+            // 阻塞等待异步发送完成
+            while (!runComplete.get()) {}
+
+        } catch (Exception e) {
+            log.error("知识库检索节点错误, {}", e.getMessage());
+            throw new BusinessException("知识库检索节点错误");
         }
 
         latch.countDown();
 
         // 获取下一个节点
         return runtimeVo.getEdges().get(runtimeVo.getNodeInfo().getId());
-    }
-
-    /**
-     * 大模型阻塞回答
-     * @param context ApplicationWorkflowRuntimeContextEntity
-     * @param userId String
-     * @param sessionId String
-     * @return Result<List<String>>
-     */
-    private Result<List<String>> llmStringAnswer(ApplicationWorkflowRuntimeContextEntity context, String userId, String sessionId) {
-
-        try {
-
-            LlmAnswerVo llmAnswerData = buildBaseData(context, userId, sessionId, "string");
-
-            Result<List<String>> answer;
-            if (llmAnswerData.getApplication().getPrompt().isBlank()) {
-                answer = llmAnswerData.getAssistant().chatInTokenString(llmAnswerData.getValidate().getContent());
-            } else {
-                answer = llmAnswerData.getAssistant().chatWithSystemString(llmAnswerData.getApplication().getPrompt(),
-                        llmAnswerData.getValidate().getContent());
-            }
-
-            return answer;
-        } catch (Exception e) {
-            log.error("回复节点构建llm错误：", e);
-            return null;
-        }
     }
 
     /**
@@ -224,14 +169,13 @@ public class LlmNode implements IWorkflowNode {
 
         try {
 
-            LlmAnswerVo llmAnswerData = buildBaseData(context, userId, sessionId, "stream");
+            LlmAnswerVo llmAnswerData = buildBaseData(context, userId, sessionId);
 
             TokenStream tokenStream;
             if (llmAnswerData.getApplication().getPrompt().isBlank()) {
-                tokenStream = llmAnswerData.getAssistant().chatInTokenStream(llmAnswerData.getValidate().getContent());
+                tokenStream = llmAnswerData.getAssistant().chatInTokenStream(question);
             } else {
-                tokenStream = llmAnswerData.getAssistant().chatWithSystem(llmAnswerData.getApplication().getPrompt(),
-                        llmAnswerData.getValidate().getContent());
+                tokenStream = llmAnswerData.getAssistant().chatWithSystem(llmAnswerData.getApplication().getPrompt(), question);
             }
 
             return tokenStream;
@@ -246,10 +190,9 @@ public class LlmNode implements IWorkflowNode {
      * @param context ApplicationWorkflowRuntimeContextEntity
      * @param userId String
      * @param sessionId String
-     * @param type string
      * @return LlmAnswerVo
      */
-    private LlmAnswerVo buildBaseData(ApplicationWorkflowRuntimeContextEntity context, String userId, String sessionId, String type) {
+    private LlmAnswerVo buildBaseData(ApplicationWorkflowRuntimeContextEntity context, String userId, String sessionId) {
 
         LlmAnswerVo llmAnswerVo = new LlmAnswerVo();
 
@@ -302,12 +245,7 @@ public class LlmNode implements IWorkflowNode {
         applicationInfo.setUserId(userId);
 
         // step 3 构建 IAiService
-        IAiService assistant;
-        if (type.equals("stream")) {
-            assistant = assistantBuildHelper.build(applicationInfo, validate, streamingChatModel, chatLanguageModel);
-        } else {
-            assistant = assistantStringBuildHelper.build(applicationInfo, validate, chatLanguageModel);
-        }
+        IAiService assistant = assistantBuildHelper.build(applicationInfo, validate, streamingChatModel, chatLanguageModel);;
 
         llmAnswerVo.setApplication(applicationInfo);
         llmAnswerVo.setValidate(validate);

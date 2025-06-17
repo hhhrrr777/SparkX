@@ -23,13 +23,6 @@ public interface IAiService {
     TokenStream chatInTokenStream(String userMessage);
 
     /**
-     * 不带角色设定的阻塞输出
-     * @param userMessage String
-     * @return TokenStream
-     */
-    Result<List<String>> chatInTokenString(String userMessage);
-
-    /**
      * 带角色设定的流式输出
      * @param systemMessage String
      * @param userMessage String
@@ -37,13 +30,4 @@ public interface IAiService {
      */
     @SystemMessage("{{message}}")
     TokenStream chatWithSystem(@V("message") String systemMessage, @UserMessage String userMessage);
-
-    /**
-     * 带角色设定的阻塞输出
-     * @param systemMessage String
-     * @param userMessage String
-     * @return TokenStream
-     */
-    @SystemMessage("{{message}}")
-    Result<List<String>> chatWithSystemString(@V("message") String systemMessage, @UserMessage String userMessage);
 }
