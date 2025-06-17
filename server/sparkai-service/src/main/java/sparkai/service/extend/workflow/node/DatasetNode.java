@@ -13,22 +13,30 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.enums.NodeTypeEnum;
+import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
+import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
+import sparkai.service.vo.dataset.DatasetSearchVo;
+import sparkai.service.vo.dataset.SearchVo;
 import sparkai.service.vo.workflow.EdgeVo;
+import sparkai.service.vo.workflow.NextAnswerNodeVo;
 import sparkai.service.vo.workflow.NodeRuntimeVo;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class DatasetNode implements IWorkflowNode {
 
@@ -43,6 +51,9 @@ public class DatasetNode implements IWorkflowNode {
 
     @Autowired
     ApplicationHelper applicationHelper;
+
+    @Autowired
+    IDatasetSearchService searchService;
 
     @Override
     public List<EdgeVo> handle(NodeRuntimeVo runtimeVo) {
@@ -95,9 +106,52 @@ public class DatasetNode implements IWorkflowNode {
         contextEntity.setCreateTime(Tool.nowDateTime());
         applicationWorkflowRuntimeContextMapper.insert(contextEntity);
 
+        // 本节点输出内容
+        String answer = datasetAnswer(question, String.join(",", datasetIds), contextEntity);
+
+        // 查看下一个节点是否是回复节点，且回复的内容是本节点的输出
+        NextAnswerNodeVo nextAnswerNodeInfo = applicationHelper.checkNextIsAnswerNode(runtimeVo);
+        if (nextAnswerNodeInfo.isNodeIsAnswer() && nextAnswerNodeInfo.getAnswerType() == 1) {
+            try {
+
+                emitter.send(Tool.buildSendData(contextEntity.getRuntimeId(), contextEntity.getCell(), answer));
+            } catch (Exception e) {
+                log.error("知识库检索节点错误, {}", e.getMessage());
+                throw new BusinessException("知识库检索节点错误");
+            }
+        }
+
         latch.countDown();
 
         // 获取下一个节点
         return runtimeVo.getEdges().get(runtimeVo.getNodeInfo().getId());
+    }
+
+    /**
+     * 知识库检索
+     * @param question String
+     * @param datasetIds String
+     * @param context ApplicationWorkflowRuntimeContextEntity
+     * @return String
+     */
+    private String datasetAnswer(String question, String datasetIds, ApplicationWorkflowRuntimeContextEntity context) {
+
+        JSONObject nodeObject = JSONUtil.parseObj(context.getModelData());
+
+        DatasetSearchVo searchDataVo = new DatasetSearchVo();
+        searchDataVo.setKeyword(question);
+        searchDataVo.setDatasetIds(datasetIds);
+        searchDataVo.setSimilarity(nodeObject.getDouble("similarity"));
+        searchDataVo.setTopRank(nodeObject.getInt("topRank"));
+        searchDataVo.setType("embedding");
+        List<SearchVo> searchRes = searchService.search(searchDataVo);
+
+        // 写入上下文，记录召回信息
+        JSONObject outputData = JSONUtil.parseObj(context.getOutputData());
+        outputData.set("datasets.search", JSONUtil.toJsonStr(searchRes));
+        context.setOutputData(outputData.toString());
+        applicationWorkflowRuntimeContextMapper.updateById(context);
+
+        return searchRes.stream().map(SearchVo::getContent).collect(Collectors.joining());
     }
 }

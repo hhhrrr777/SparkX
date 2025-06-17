@@ -9,21 +9,29 @@
 // +----------------------------------------------------------------------
 package sparkai.service.helper;
 
+import cn.hutool.json.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
-import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
+import sparkai.service.vo.workflow.EdgeVo;
+import sparkai.service.vo.workflow.NextAnswerNodeVo;
+import sparkai.service.vo.workflow.NodeRuntimeVo;
+import sparkai.service.vo.workflow.NodeVo;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class ApplicationHelper {
@@ -101,5 +109,45 @@ public class ApplicationHelper {
         }
 
         return returnContext;
+    }
+
+    /**
+     * 检测下个节点是否为回复节点以及回复节点的回复类型
+     * @param runtimeVo NodeRuntimeVo
+     * @return NextAnswerNodeVo
+     */
+    public NextAnswerNodeVo checkNextIsAnswerNode(NodeRuntimeVo runtimeVo) {
+
+        List<EdgeVo> nextEdgeVoList = runtimeVo.getEdges().get(runtimeVo.getNodeInfo().getId());
+        Map<String, NodeVo> nodes = runtimeVo.getNodes();
+        AtomicBoolean hasAnswerNode = new AtomicBoolean(false);
+        AtomicInteger answerType = new AtomicInteger(2);
+        NodeVo nowNodeInfo = runtimeVo.getNodeInfo();
+
+        nextEdgeVoList.forEach(edgeItem -> {
+
+            List<String> targetIds = edgeItem.getTarget();
+            for (String targetId : targetIds) {
+                NodeVo nodeInfo = nodes.get(targetId);
+
+                if (nodeInfo.getShape().equals("answer")) {
+
+                    // 检测下个节点的输入是否是当前节点
+                    JSONArray inputArr = nodeInfo.getData().getJSONArray("inputData");
+                    String inputNodeId = inputArr.get(0).toString();
+                    if (nowNodeInfo.getId().equals(inputNodeId)) {
+                        answerType.set(1);
+                    }
+
+                    hasAnswerNode.set(true);
+                }
+            }
+        });
+
+        NextAnswerNodeVo nextAnswerNodeVo = new NextAnswerNodeVo();
+        nextAnswerNodeVo.setNodeIsAnswer(hasAnswerNode.get());
+        nextAnswerNodeVo.setAnswerType(answerType.get());
+
+        return nextAnswerNodeVo;
     }
 }

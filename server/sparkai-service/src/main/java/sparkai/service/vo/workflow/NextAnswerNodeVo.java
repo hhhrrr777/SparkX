@@ -13,47 +13,20 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 @Data
-public class NodeRuntimeVo implements Serializable {
+public class NextAnswerNodeVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 运行时ID
+     * 是否是回复节点
      */
-    private long runtimeId;
+    private boolean nodeIsAnswer;
 
     /**
-     * 来源id
+     * 回复类型 1:本节点输出内容 2:其他回复内容
      */
-    private String sourceId;
-
-    /**
-     * 用户id
-     */
-    private String userId;
-
-    /**
-     * 边信息
-     */
-    private Map<String, List<EdgeVo>> edges;
-
-    /**
-     * 全部的节点信息
-     */
-    private Map<String, NodeVo> nodes;
-
-    /**
-     * 当前节点信息
-     */
-    private NodeVo nodeInfo;
-
-    /**
-     * 会话id
-     */
-    private String sessionId;
+    private int answerType;
 }

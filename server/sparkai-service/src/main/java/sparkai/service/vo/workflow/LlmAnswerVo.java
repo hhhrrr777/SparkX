@@ -9,51 +9,44 @@
 // +----------------------------------------------------------------------
 package sparkai.service.vo.workflow;
 
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import lombok.Data;
+import sparkai.service.entity.application.ApplicationEntity;
+import sparkai.service.service.interfaces.application.IAiService;
+import sparkai.service.validate.application.ApplicationChatValidate;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 @Data
-public class NodeRuntimeVo implements Serializable {
+public class LlmAnswerVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 运行时ID
+     * 应用信息
      */
-    private long runtimeId;
+    private ApplicationEntity application;
 
     /**
-     * 来源id
+     * 应用验证信息
      */
-    private String sourceId;
+    private ApplicationChatValidate validate;
 
     /**
-     * 用户id
+     * 流式输出模型
      */
-    private String userId;
+    private StreamingChatLanguageModel streamingChatModel;
 
     /**
-     * 边信息
+     * 阻塞输出模型
      */
-    private Map<String, List<EdgeVo>> edges;
+    private ChatLanguageModel chatLanguageModel;
 
     /**
-     * 全部的节点信息
+     * AI服务对象
      */
-    private Map<String, NodeVo> nodes;
-
-    /**
-     * 当前节点信息
-     */
-    private NodeVo nodeInfo;
-
-    /**
-     * 会话id
-     */
-    private String sessionId;
+    private IAiService assistant;
 }

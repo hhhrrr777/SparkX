@@ -114,6 +114,7 @@ public class FlowNodeParser {
             NodeRuntimeVo runtimeVo = new NodeRuntimeVo();
             runtimeVo.setNodeInfo(nodeInfo);
             runtimeVo.setEdges(this.edges);
+            runtimeVo.setNodes(this.nodes);
             runtimeVo.setRuntimeId(this.runtimeId); // 运行id
             runtimeVo.setSourceId(sourceId); // 开始节点
             runtimeVo.setUserId(userId); // 当前用户
