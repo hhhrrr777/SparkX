@@ -24,8 +24,8 @@ import sparkai.common.enums.NodeTypeEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationEntity;
-import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.entity.system.ModelsEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.helper.ChatModelBuildHelper;
@@ -131,8 +131,19 @@ public class PurposeNode implements IWorkflowNode {
 
         // 获取下一个节点
         List<EdgeVo> nextEdgeVoList = runtimeVo.getEdges().get(runtimeVo.getNodeInfo().getId());
+        // 根据目标节点的顺序，去获取正确的下一个节点
+        JSONArray targetList = nodeObject.getJSONArray("targetList");
+        String targetId = String.valueOf(targetList.get(index));
+
+        EdgeVo nextEdgeVo = new EdgeVo();
+        for (EdgeVo edgeVo : nextEdgeVoList) {
+            if (edgeVo.getSourcePort().equals(targetId)) {
+                nextEdgeVo = edgeVo;
+            }
+        }
+
         List<EdgeVo> newEdgeVoList = new LinkedList<>();
-        newEdgeVoList.add(nextEdgeVoList.get(index));
+        newEdgeVoList.add(nextEdgeVo);
 
         latch.countDown();
 

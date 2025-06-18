@@ -124,13 +124,13 @@ public class ApplicationHelper {
         AtomicInteger answerType = new AtomicInteger(2);
         NodeVo nowNodeInfo = runtimeVo.getNodeInfo();
 
-        nextEdgeVoList.forEach(edgeItem -> {
+        for (EdgeVo edgeItem : nextEdgeVoList) {
 
             List<String> targetIds = edgeItem.getTarget();
             for (String targetId : targetIds) {
                 NodeVo nodeInfo = nodes.get(targetId);
 
-                if (nodeInfo.getShape().equals("answer")) {
+                if (nodeInfo.getShape().equals("answer-node")) {
 
                     // 检测下个节点的输入是否是当前节点
                     JSONArray inputArr = nodeInfo.getData().getJSONArray("inputData");
@@ -142,7 +142,7 @@ public class ApplicationHelper {
                     hasAnswerNode.set(true);
                 }
             }
-        });
+        }
 
         NextAnswerNodeVo nextAnswerNodeVo = new NextAnswerNodeVo();
         nextAnswerNodeVo.setNodeIsAnswer(hasAnswerNode.get());

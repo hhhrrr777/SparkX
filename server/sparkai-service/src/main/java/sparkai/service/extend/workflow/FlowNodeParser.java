@@ -10,6 +10,7 @@
 package sparkai.service.extend.workflow;
 
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -28,10 +29,7 @@ import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NodeRuntimeVo;
 import sparkai.service.vo.workflow.NodeVo;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 @Component
@@ -214,10 +212,27 @@ public class FlowNodeParser {
                 }
 
             } else {
+                String shapeNode = shape.toString();
+                JSONObject nodeData = item.getJSONObject("data");
+                // 意图判断节点，根据右侧桩点的Y轴距离，确保顺序是从上到下，方便后面的选择
+                if (shapeNode.equals("purpose-node")) {
+
+                    JSONArray json = item.getJSONObject("ports").getJSONArray("items");
+                    List<String> sortIds = json.stream()
+                            .map(obj -> (JSONObject) obj)
+                            .filter(obj -> "rightPorts".equals(obj.getStr("group"))) // 过滤 rightPorts 组
+                            .sorted(Comparator.comparingInt(
+                                    obj -> obj.getJSONObject("args").getInt("y") // 按 args.y 升序排序
+                            ))
+                            .map(obj -> obj.getStr("id")) // 提取 ID
+                            .toList();
+                    nodeData.set("targetList", sortIds);
+                }
+
                 NodeVo nodeVo = new NodeVo();
                 nodeVo.setId(item.get("id").toString());
-                nodeVo.setShape(shape.toString());
-                nodeVo.setData(item.getJSONObject("data"));
+                nodeVo.setShape(shapeNode);
+                nodeVo.setData(nodeData);
 
                 this.nodes.put(item.get("id").toString(), nodeVo);
             }
