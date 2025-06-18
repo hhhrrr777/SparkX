@@ -85,7 +85,7 @@
 					</el-cascader-panel>
 				</div>
 			</div>
-			<div class="edit-box" contenteditable="true"></div>
+			<div class="edit-box" contenteditable="true" @keydown="handleKeyDown"></div>
 		</div>
 	</div>
 </template>
@@ -117,7 +117,7 @@ export default {
 			},
 			modelId: [],
 			options: [],
-			inputData: [], // 入参
+			userPrompt: "", // 入参
 		}
 	},
 	watch: {
@@ -135,7 +135,7 @@ export default {
 	created() {
 		this.form = this.formData
 		this.modelId = [this.formData.modelInfo.modelId, this.formData.modelInfo.modelName]
-		this.inputData = this.formData.inputData
+		this.userPrompt = this.formData.userPrompt
 		this.getModelsList()
 	},
 	methods: {
@@ -189,6 +189,13 @@ export default {
 		},
 		closeDiv() {
 			this.paramVisible = false
+		},
+		// 监听键盘"/" 输入
+		handleKeyDown(e) {
+			if (e.key === '/') {
+				e.preventDefault();
+				console.log(222)
+			}
 		}
 	}
 }
