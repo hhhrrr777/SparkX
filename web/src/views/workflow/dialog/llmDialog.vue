@@ -64,25 +64,30 @@
 		</div>
 
 		<div class="set-content-box">
-			<div>插入变量</div>
-			<div class="flex-center" style="margin-top: 10px;">
-				<div>变量内容</div>
-				<el-cascader
-					v-model="insertParam"
-					:options="inputOptions"
-					@change="inputChange"
-					style="margin-left: 20px;width: calc(100% - 80px)" clearable>
-					<template #default="{ node, data }">
-						<div class="flex-center">
-							<span :class="data.icon" style="font-size: 18px !important;" :style="{color: data.color}"></span>
-							<span style="margin-left: 5px">{{ data.label }}</span>
-						</div>
-					</template>
-				</el-cascader>
+			<div style="justify-content: space-between;position: relative;" class="flex-center">
+				<span>用户提示词</span>
+				<el-tooltip content="按 '/' 键快速插入" placement="top" effect="light">
+					<span class="iconfont icon-bianliang param-style" @click="paramVisible=true"></span>
+				</el-tooltip>
+
+				<div class="input-param-box" v-if="paramVisible" v-click-outside="closeDiv">
+					<el-cascader-panel
+						v-model="inputData"
+						:options="inputOptions"
+						@change="inputChange"
+						clearable>
+						<template #default="{ node, data }">
+							<div class="flex-center">
+								<span :class="data.icon" style="font-size: 18px !important;" :style="{color: data.color}"></span>
+								<span style="margin-left: 5px">{{ data.label }}</span>
+							</div>
+						</template>
+					</el-cascader-panel>
+				</div>
 			</div>
+			<div class="edit-box" contenteditable="true"></div>
 		</div>
 	</div>
-
 </template>
 
 <script>
@@ -105,6 +110,7 @@ export default {
 	data() {
 		return {
 			dialogVisible: false,
+			paramVisible: false,
 			form: {},
 			temperatureConfig: {
 				range: [0, 1]
@@ -129,7 +135,7 @@ export default {
 	created() {
 		this.form = this.formData
 		this.modelId = [this.formData.modelInfo.modelId, this.formData.modelInfo.modelName]
-		this.insertParam = this.formData.inputData
+		this.inputData = this.formData.inputData
 		this.getModelsList()
 	},
 	methods: {
@@ -179,9 +185,11 @@ export default {
 		},
 		// 输入选择
 		inputChange(val) {
-			this.form.insertParam = val
-			this.$emit("dataChange", this.form)
+			console.log(222, val)
 		},
+		closeDiv() {
+			this.paramVisible = false
+		}
 	}
 }
 </script>
@@ -222,5 +230,23 @@ export default {
 	border-radius: 5px;
 	color: #98A2B2;
 	cursor: pointer;
+}
+.edit-box {
+	border: 2px solid #dcdfe6;
+	border-radius: 5px;
+	margin-top: 10px;
+	min-height: 100px;
+	padding: 10px;
+}
+.param-style {
+	font-size: 20px !important;
+	cursor: pointer;
+	color: var(--el-color-primary);
+}
+.input-param-box {
+	background: #fff;
+	position: absolute;
+	z-index: 999;
+	top: 0;
 }
 </style>

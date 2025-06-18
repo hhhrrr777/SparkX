@@ -93,7 +93,7 @@ body {
 	font-weight: bold;
 }
 .set-content-box {
-	padding: 10px;
+	padding: 15px;
 	border-radius: 5px;
 	background: #fff;
 	margin-top: 10px;

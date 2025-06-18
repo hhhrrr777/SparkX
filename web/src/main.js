@@ -17,6 +17,7 @@ import Cropper from 'cropperjs' // 截图
 import 'cropperjs/dist/cropper.css'
 
 import {createPinia} from "pinia";
+import directives from './directives/directives.js';
 
 config({
 	editorExtensions: {
@@ -41,7 +42,7 @@ app.use(router);
 app.use(ElementPlus);
 app.use(i18n);
 app.use(scui);
-
+app.directive('click-outside', directives);
 
 //挂载app
 app.mount('#app');
