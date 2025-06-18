@@ -199,9 +199,21 @@ export default {
 		handleKeyDown(e) {
 			if (e.key === '/') {
 				e.preventDefault();
-				this.userPrompt += '/'
-				const selection = window.getSelection()
-				console.log(666, selection)
+				this.insertTextAtCursor('/');
+			}
+		},
+		// 插入信息
+		insertTextAtCursor(text) {
+			const selection = window.getSelection();
+			if (selection.rangeCount > 0) {
+				const range = selection.getRangeAt(0);
+				range.deleteContents();
+				const textNode = document.createTextNode(text);
+				range.insertNode(textNode);
+				range.setStartAfter(textNode);
+				range.setEndAfter(textNode);
+				selection.removeAllRanges();
+				selection.addRange(range);
 			}
 		}
 	}
