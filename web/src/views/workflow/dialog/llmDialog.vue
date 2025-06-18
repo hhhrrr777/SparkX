@@ -85,7 +85,7 @@
 					</el-cascader-panel>
 				</div>
 			</div>
-			<div class="edit-box" contenteditable="true" @keydown="handleKeyDown"></div>
+			<div class="edit-box" contenteditable="true" @keydown="handleKeyDown" @input="handleInput"></div>
 		</div>
 	</div>
 </template>
@@ -117,6 +117,7 @@ export default {
 			},
 			modelId: [],
 			options: [],
+			inputData: [],
 			userPrompt: "", // 入参
 		}
 	},
@@ -190,11 +191,17 @@ export default {
 		closeDiv() {
 			this.paramVisible = false
 		},
+		// 输入信息
+		handleInput(val) {
+
+		},
 		// 监听键盘"/" 输入
 		handleKeyDown(e) {
 			if (e.key === '/') {
 				e.preventDefault();
-				console.log(222)
+				this.userPrompt += '/'
+				const selection = window.getSelection()
+				console.log(666, selection)
 			}
 		}
 	}
