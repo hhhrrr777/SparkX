@@ -135,12 +135,10 @@ public class PurposeNode implements IWorkflowNode {
         JSONArray targetList = nodeObject.getJSONArray("targetList");
         String targetId = String.valueOf(targetList.get(index));
 
-        EdgeVo nextEdgeVo = new EdgeVo();
-        for (EdgeVo edgeVo : nextEdgeVoList) {
-            if (edgeVo.getSourcePort().equals(targetId)) {
-                nextEdgeVo = edgeVo;
-            }
-        }
+        EdgeVo nextEdgeVo = nextEdgeVoList.stream()
+                .filter(edgeVo -> edgeVo.getSourcePort().equals(targetId))
+                .findFirst()
+                .orElse(new EdgeVo());
 
         List<EdgeVo> newEdgeVoList = new LinkedList<>();
         newEdgeVoList.add(nextEdgeVo);
