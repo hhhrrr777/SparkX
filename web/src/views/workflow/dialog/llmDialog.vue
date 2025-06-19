@@ -67,7 +67,7 @@
 			<div style="justify-content: space-between;position: relative;" class="flex-center">
 				<span>用户提示词</span>
 				<el-tooltip content="按 '/' 键快速插入" placement="top" effect="light">
-					<span class="iconfont icon-bianliang param-style" @click="paramVisible=true"></span>
+					<span class="iconfont icon-bianliang param-style" @click="showPromptDiv"></span>
 				</el-tooltip>
 
 				<div class="input-param-box" v-if="paramVisible" v-click-outside="closeDiv">
@@ -85,7 +85,7 @@
 					</el-cascader-panel>
 				</div>
 			</div>
-			<div class="edit-box" contenteditable="true" @keydown="handleKeyDown" @input="handleInput"></div>
+			<div class="edit-box" ref="editBox" contenteditable="true" @input="handleInput" @keydown="handleKeyDown" @blur="saveSelection"></div>
 		</div>
 	</div>
 </template>
@@ -119,6 +119,7 @@ export default {
 			options: [],
 			inputData: [],
 			userPrompt: "", // 入参
+			lastSelection: Range | undefined
 		}
 	},
 	watch: {
@@ -131,13 +132,17 @@ export default {
 			handler(val) {
 				this.$emit("dataChange", this.form)
 			}
-		},
+		}
 	},
 	created() {
 		this.form = this.formData
 		this.modelId = [this.formData.modelInfo.modelId, this.formData.modelInfo.modelName]
 		this.userPrompt = this.formData.userPrompt
+		this.userPrompt = "这是一个变量${varName}是的"
 		this.getModelsList()
+	},
+	mounted() {
+		this.$refs.editBox.innerHTML = this.initHtml(this.userPrompt)
 	},
 	methods: {
 		iconComponent,
@@ -186,39 +191,107 @@ export default {
 		},
 		// 输入选择
 		inputChange(val) {
-			console.log(222, val)
+			this.insertVariable(val[1])
+			this.paramVisible = false
 		},
 		closeDiv() {
 			this.paramVisible = false
 		},
-		// 输入信息
-		handleInput(val) {
-
+		showPromptDiv() {
+			this.paramVisible = true
 		},
 		// 监听键盘"/" 输入
 		handleKeyDown(e) {
 			if (e.key === '/') {
 				e.preventDefault();
-				this.insertTextAtCursor('/');
+				this.paramVisible = true
 			}
 		},
-		// 插入信息
-		insertTextAtCursor(text) {
+		// 创建变量标签
+		createVarElement(varName) {
+			const span = document.createElement("span");
+			span.className = "variable";
+			span.contentEditable = "false";
+			span.dataset.var = varName;
+			span.textContent = `\${${varName}}`;
+			return span;
+		},
+		// 创建html标签
+		initHtml(value) {
+			return value.replace(/\$\{(\w+)\}/g, (_, varName) => {
+				return this.createVarElement(varName).outerHTML
+			})
+		},
+		// 插入变量
+		insertVariable(varName) {
+			if (!varName) return;
+
+			const editorRef = this.$refs.editBox;
+			// 恢复选区前先确保编辑器聚焦
+			editorRef?.focus();
 			const selection = window.getSelection();
-			if (selection.rangeCount > 0) {
-				const range = selection.getRangeAt(0);
-				range.deleteContents();
-				const textNode = document.createTextNode(text);
-				range.insertNode(textNode);
-				range.setStartAfter(textNode);
-				range.setEndAfter(textNode);
+
+			// 恢复选区逻辑优化
+			if (this.lastSelection && editorRef?.contains(this.lastSelection.startContainer)) {
 				selection.removeAllRanges();
-				selection.addRange(range);
+				selection.addRange(this.lastSelection);
+			}
+
+			// 插入变量元素
+			const varElement = this.createVarElement(varName);
+			const range = selection.getRangeAt(0)
+			range.insertNode(varElement);
+
+			// // 定位到变量后方
+			requestAnimationFrame(() => {
+				const newRange = document.createRange();
+				newRange.setStartAfter(varElement);
+				newRange.collapse(true);
+				selection.removeAllRanges();
+				selection.addRange(newRange);
+				this.saveSelection(); // 保存新的光标位置
+			})
+
+			this.handleInput()
+		},
+		// 处理输入
+		handleInput() {
+			this.userPrompt = this.$refs.editBox?.textContent?.replace(/\n/g, '') || ''
+		},
+		// 保存光标位置
+		saveCaretPosition() {
+			const selection = window.getSelection();
+			if (!selection?.rangeCount) return;
+
+			// 保存有效选区
+			this.lastSelection = selection.getRangeAt(0).cloneRange();
+			this.$refs.editBox?.focus();
+		},
+		// 常规光标位置保存（用于blur事件）
+		saveSelection() {
+			const selection = window.getSelection();
+			if (selection?.rangeCount) {
+				const range = selection.getRangeAt(0);
+				if (this.$refs.editBox?.contains(range.commonAncestorContainer)) {
+					this.lastSelection = range.cloneRange();
+				}
 			}
 		}
 	}
 }
 </script>
+
+<style>
+.variable {
+	background-color: #f0f2f5;
+	border-radius: 3px;
+	padding: 4px 4px;
+	color: var(--el-color-primary);
+	display: inline-block;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+</style>
 
 <style scoped>
 .opt-form {
@@ -263,6 +336,10 @@ export default {
 	margin-top: 10px;
 	min-height: 100px;
 	padding: 10px;
+	position: relative;
+	/* 确保文本节点可正确聚焦 */
+	white-space: pre-wrap;
+	word-wrap: break-word;
 }
 .param-style {
 	font-size: 20px !important;
@@ -273,6 +350,6 @@ export default {
 	background: #fff;
 	position: absolute;
 	z-index: 999;
-	top: 0;
+	top: 130px;
 }
 </style>
