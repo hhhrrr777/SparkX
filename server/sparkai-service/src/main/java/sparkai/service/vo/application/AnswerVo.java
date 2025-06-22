@@ -13,51 +13,20 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 
 @Data
-public class ApplicationLogVo implements Serializable {
+public class AnswerVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 应用id
+     * 消息内容
      */
-    private String appId;
+    private String content;
 
     /**
-     * 用户问题
+     * 节点信息
      */
-    private String question;
-
-    /**
-     * ai回答
-     */
-    private List<AnswerVo> answer;
-
-    /**
-     * 会话id
-     */
-    private String sessionId;
-
-    /**
-     * 耗时
-     */
-    private Integer time;
-
-    /**
-     * 消耗token数
-     */
-    private Integer tokens;
-
-    /**
-     * 召回的
-     */
-    private String retrievedList;
-
-    /**
-     * 评价信息
-     */
-    private Integer appraise;
+    private String nodeId;
 }

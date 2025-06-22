@@ -138,7 +138,6 @@ export default {
 		this.form = this.formData
 		this.modelId = [this.formData.modelInfo.modelId, this.formData.modelInfo.modelName]
 		this.userPrompt = this.formData.userPrompt
-		this.userPrompt = "这是一个变量${varName}是的"
 		this.getModelsList()
 	},
 	mounted() {
@@ -203,7 +202,7 @@ export default {
 		// 监听键盘"/" 输入
 		handleKeyDown(e) {
 			if (e.key === '/') {
-				e.preventDefault();
+				e.preventDefault()
 				this.paramVisible = true
 			}
 		},
@@ -213,12 +212,16 @@ export default {
 			span.className = "variable";
 			span.contentEditable = "false";
 			span.dataset.var = varName;
-			span.textContent = `\${${varName}}`;
+			span.textContent = `\{{${varName}}}`;
 			return span;
 		},
 		// 创建html标签
 		initHtml(value) {
-			return value.replace(/\$\{(\w+)\}/g, (_, varName) => {
+			if (value === '') {
+				return ''
+			}
+
+			return value.replace(/\{\{(\w+)\}\}/g, (_, varName) => {
 				return this.createVarElement(varName).outerHTML
 			})
 		},
@@ -226,7 +229,7 @@ export default {
 		insertVariable(varName) {
 			if (!varName) return;
 
-			const editorRef = this.$refs.editBox;
+			const editorRef = this.$refs.editBox
 			// 恢复选区前先确保编辑器聚焦
 			editorRef?.focus();
 			const selection = window.getSelection();

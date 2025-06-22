@@ -10,6 +10,8 @@
 package sparkai.service.service.impl.application;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,7 +160,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         entity.setUserId(userData.getUserId());
         entity.setSessionId(logVo.getSessionId());
         entity.setQuestion(logVo.getQuestion());
-        entity.setContent(logVo.getAnswer());
+        entity.setContent(JSONUtil.toJsonStr(logVo.getAnswer()));
         entity.setTime(logVo.getTime());
         entity.setTokens(logVo.getTokens());
         entity.setRetrievedList(logVo.getRetrievedList());
@@ -222,7 +224,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
 
             ApplicationLogVo vo = new ApplicationLogVo();
             BeanUtils.copyProperties(entity, vo);
-            vo.setAnswer(entity.getContent());
+            vo.setAnswer(JSONUtil.toList(entity.getContent(), AnswerVo.class));
 
             voList.add(vo);
         }

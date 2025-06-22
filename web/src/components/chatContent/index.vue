@@ -278,7 +278,7 @@ export default {
 						that.nowIndex = that.chatLogList.length - 1
 						that.chatLogList[that.nowIndex].source = 'ai'
 						that.answerIng = that.chatLogList[that.nowIndex].answerIng = 2
-						that.chatLogList[that.nowIndex].content = '' // 清理默认思考中... 提示
+						that.chatLogList[that.nowIndex].content = [] // 清理默认思考中... 提示
 					} else if (event === '[DONE]') { // 回答结束
 						that.answerIng = that.chatLogList[that.nowIndex].answerIng = 3
 						if (ev.data !== '') {
@@ -294,6 +294,7 @@ export default {
 						// 插件外决定是否保存
 						if (that.writeLog) {
 							let meta = JSON.parse(ev.data)
+
 							let row = {
 								sessionId: data.sessionId,
 								question: data.content,

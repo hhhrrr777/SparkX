@@ -36,7 +36,6 @@ export default {
 		userPrompt: "", // 插入变量
 		memory: 2,
 		systemMsg: "",
-		userMsg: "",
 		outData: [
 			{field: 'sys.content', name: '生成内容'},
 		]

@@ -231,7 +231,7 @@ public class LlmNode implements IWorkflowNode {
         String inputNodeData = inputArr.get(1).toString();
         String question = inputObject.get(inputNodeData).toString();
 
-        validate.setContent(modelObject.getStr("userMsg") + question);
+        validate.setContent(modelObject.getStr("userPrompt") + question);
         validate.setContextId(context.getId());
         validate.setSessionId(sessionId);
         validate.setCell(context.getCell()); // 以次区分不同节点的上下文记录

@@ -11,8 +11,6 @@ package sparkai.service.service.interfaces.application;
 
 import dev.langchain4j.service.*;
 
-import java.util.List;
-
 public interface IAiService {
 
     /**
