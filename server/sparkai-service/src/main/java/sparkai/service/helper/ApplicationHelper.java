@@ -118,7 +118,15 @@ public class ApplicationHelper {
      */
     public NextAnswerNodeVo checkNextIsAnswerNode(NodeRuntimeVo runtimeVo) {
 
+        NextAnswerNodeVo nextAnswerNodeVo = new NextAnswerNodeVo();
         List<EdgeVo> nextEdgeVoList = runtimeVo.getEdges().get(runtimeVo.getNodeInfo().getId());
+        if (CollectionUtils.isEmpty(nextEdgeVoList)) {
+            nextAnswerNodeVo.setNodeIsAnswer(false);
+            nextAnswerNodeVo.setAnswerType(2);
+
+            return nextAnswerNodeVo;
+        }
+
         Map<String, NodeVo> nodes = runtimeVo.getNodes();
         AtomicBoolean hasAnswerNode = new AtomicBoolean(false);
         AtomicInteger answerType = new AtomicInteger(2);
@@ -144,7 +152,6 @@ public class ApplicationHelper {
             }
         }
 
-        NextAnswerNodeVo nextAnswerNodeVo = new NextAnswerNodeVo();
         nextAnswerNodeVo.setNodeIsAnswer(hasAnswerNode.get());
         nextAnswerNodeVo.setAnswerType(answerType.get());
 

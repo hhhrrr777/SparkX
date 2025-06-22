@@ -94,7 +94,7 @@
 									</el-tooltip>
 								</div>
 								<div class="menu-right-side" v-else>
-									<el-button type="text" style="font-size: 13px" @click="showDetail(item.runtimeId)">执行详情</el-button>
+									<el-button type="text" style="font-size: 13px" @click="showDetail(item.runtimeId)" v-if="item.runtimeId">执行详情</el-button>
 								</div>
 							</div>
 						</div>

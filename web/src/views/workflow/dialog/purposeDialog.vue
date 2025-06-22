@@ -58,6 +58,7 @@
 					v-model="form.modelInfo.temperature"
 					:min="temperatureConfig.range[0]"
 					:max="temperatureConfig.range[1]"
+					step="0.01"
 					show-input>
 				</el-slider>
 			</div>
@@ -116,7 +117,7 @@ export default {
 	},
 	created() {
 		this.form = this.formData
-		this.modelId = [this.formData.modelInfo.modeId, this.formData.modelInfo.modeName]
+		this.modelId = [this.formData.modelInfo.modelId, this.formData.modelInfo.modelName]
 		this.inputData = this.formData.inputData
 		this.getModelsList()
 	},
@@ -178,6 +179,7 @@ export default {
 			this.form.modelInfo.modelName = val[1]
 
 			this.getModelInfo(val[0])
+			this.$emit("dataChange", this.form)
 		},
 		// 输入选择
 		inputChange(val) {

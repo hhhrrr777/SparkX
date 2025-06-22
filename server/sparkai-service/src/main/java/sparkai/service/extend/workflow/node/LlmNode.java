@@ -227,10 +227,8 @@ public class LlmNode implements IWorkflowNode {
         }
         validate.setDatasetList(dataListVo);
 
-        JSONArray inputArr = modelObject.getJSONArray("inputData");
-        String inputNodeData = inputArr.get(1).toString();
-        String question = inputObject.get(inputNodeData).toString();
-
+        // TODO 此处马上重构
+        String question = inputObject.getStr("node.question");
         validate.setContent(modelObject.getStr("userPrompt") + question);
         validate.setContextId(context.getId());
         validate.setSessionId(sessionId);
@@ -239,7 +237,7 @@ public class LlmNode implements IWorkflowNode {
         applicationInfo.setMemoryNum(modelObject.getInt("memory"));
         applicationInfo.setCompressingQuery(1);
         applicationInfo.setSearchMode("embedding");
-        applicationInfo.setTopRank(3);
+        applicationInfo.setTopRank(modelObject.getInt("topRank"));
         applicationInfo.setPrompt(modelObject.getStr("systemMsg"));
         applicationInfo.setSimilarity(BigDecimal.valueOf(modelDataInfo.getDouble("temperature")));
         applicationInfo.setUserId(userId);

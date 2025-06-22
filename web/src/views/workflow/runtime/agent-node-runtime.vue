@@ -52,8 +52,6 @@ export default {
 			if (context !== 'undefined') {
 				this.runtimeData.outputData['agent.context'] = JSON.parse(context || '{}');
 			}
-
-			console.log(222, this.runtimeData.outputData)
 		}
 	}
 }
