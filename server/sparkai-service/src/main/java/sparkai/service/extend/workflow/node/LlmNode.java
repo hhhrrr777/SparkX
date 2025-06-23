@@ -263,6 +263,22 @@ public class LlmNode implements IWorkflowNode {
 
         }
 
+        /*String input = "{{sys.result}}回答用户问题{{sys.question}}";
+
+        // 正则表达式解释：
+        // \\{\\{ 匹配左大括号（需要转义）
+        // (.*?)   非贪婪匹配任意字符（除换行符）
+        // \\}\\} 匹配右大括号
+        Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
+        Matcher matcher = pattern.matcher(input);
+
+        List<String> results = new ArrayList<>();
+
+        while (matcher.find()) {
+            // group(1)表示第一个捕获组（即括号内的内容）
+            results.add(matcher.group(1));
+        }*/
+
         // 开启问题优化
         QueryTransformer queryTransformer = new CompressingQueryTransformer(chatLanguageModel);
 
