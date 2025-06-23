@@ -178,7 +178,7 @@ public class SparkContentInjector implements ContentInjector {
         }
 
         public String toString() {
-            return "DefaultContentInjector.DefaultContentInjectorBuilder(promptTemplate=" + this.promptTemplate + ", metadataKeysToInclude=" + this.metadataKeysToInclude + ")";
+            return "SparkContentInjector.DefaultContentInjectorBuilder(promptTemplate=" + this.promptTemplate + ", metadataKeysToInclude=" + this.metadataKeysToInclude + ")";
         }
     }
 }

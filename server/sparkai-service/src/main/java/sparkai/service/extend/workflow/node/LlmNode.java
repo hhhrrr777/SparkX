@@ -11,8 +11,16 @@ package sparkai.service.extend.workflow.node;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import dev.langchain4j.memory.chat.ChatMemoryProvider;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.input.PromptTemplate;
+import dev.langchain4j.rag.DefaultRetrievalAugmentor;
+import dev.langchain4j.rag.RetrievalAugmentor;
+import dev.langchain4j.rag.query.transformer.CompressingQueryTransformer;
+import dev.langchain4j.rag.query.transformer.QueryTransformer;
+import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.TokenStream;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,24 +33,24 @@ import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
+import sparkai.service.extend.SparkContentInjector;
 import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.*;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.validate.application.ApplicationChatValidate;
-import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.LlmAnswerVo;
 import sparkai.service.vo.workflow.NextAnswerNodeVo;
 import sparkai.service.vo.workflow.NodeRuntimeVo;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
 @Slf4j
 @Component
@@ -76,6 +84,9 @@ public class LlmNode implements IWorkflowNode {
     SseEmitterHelper sseEmitterHelper;
 
     private String question;
+
+    @Autowired
+    MemoryBuildHelper memoryBuildHelper;
 
     @Override
     public List<EdgeVo> handle(NodeRuntimeVo runtimeVo) {
@@ -210,21 +221,7 @@ public class LlmNode implements IWorkflowNode {
         ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelResInfo, applicationInfo);
 
         ApplicationChatValidate validate = new ApplicationChatValidate();
-        // 写入引用的知识库
-        List<DatasetSimpleVo> dataListVo = new ArrayList<>();
-        if (inputObject.containsKey("node.datasets") && !inputObject.getStr("node.datasets").isBlank()) {
-            List<String> datasetIdsArr = Arrays.stream(inputObject.getStr("node.datasets").split(",")).toList();
 
-            for (String datasetId : datasetIdsArr) {
-                DatasetSimpleVo datasetSimpleVo = new DatasetSimpleVo();
-                datasetSimpleVo.setDatasetId(datasetId);
-
-                dataListVo.add(datasetSimpleVo);
-            }
-        }
-        validate.setDatasetList(dataListVo);
-
-        // TODO 此处马上重构
         String question = inputObject.getStr("node.question");
         validate.setContent(question);
         validate.setContextId(context.getId());
@@ -240,7 +237,48 @@ public class LlmNode implements IWorkflowNode {
         applicationInfo.setUserId(userId);
 
         // step 3 构建 IAiService
-        IAiService assistant = assistantBuildHelper.build(applicationInfo, validate, streamingChatModel, chatLanguageModel);;
+        // 自定义构建上下文记忆
+        String memoryKey = validate.getSessionId() + applicationInfo.getUserId() + validate.getCell();
+        ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
+                .id(memoryKey)
+                .maxMessages(applicationInfo.getMemoryNum())
+                .chatMemoryStore(memoryBuildHelper)
+                .build();
+
+        // 更新上下文记忆
+        if (validate.getContextId() != 0) {
+            ApplicationWorkflowRuntimeContextEntity runtimeContextEntity
+                    = applicationWorkflowRuntimeContextMapper.selectById(validate.getContextId());
+            JSONObject outputData = JSONUtil.parseObj(runtimeContextEntity.getOutputData());
+            outputData.set("log.context", messagesToJson(memoryBuildHelper.getMessages(memoryKey)));
+            runtimeContextEntity.setOutputData(outputData.toString());
+            applicationWorkflowRuntimeContextMapper.updateById(runtimeContextEntity);
+        }
+
+        // 关联知识库
+        if (inputObject.containsKey("node.datasets")
+                && !inputObject.getStr("node.datasets").isBlank()) {
+
+        } else { // 未关联知识库
+
+        }
+
+        // 开启问题优化
+        QueryTransformer queryTransformer = new CompressingQueryTransformer(chatLanguageModel);
+
+        // 检索增强
+        RetrievalAugmentor retrievalAugmentor = DefaultRetrievalAugmentor.builder()
+                .queryTransformer(queryTransformer) // 问题压缩
+                .contentInjector(SparkContentInjector.builder()
+                        .promptTemplate(PromptTemplate.from("{{userMessage}}\n{{contents}}"))
+                        .build()) // 内容注入
+                .build();
+
+        IAiService assistant = AiServices.builder(IAiService.class)
+                .streamingChatLanguageModel(streamingChatModel)
+                .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
+                .retrievalAugmentor(retrievalAugmentor)
+                .build();
 
         llmAnswerVo.setApplication(applicationInfo);
         llmAnswerVo.setValidate(validate);

@@ -118,7 +118,6 @@ export default {
 			modelId: [],
 			options: [],
 			inputData: [],
-			userPrompt: "", // 入参
 			lastSelection: Range | undefined
 		}
 	},
@@ -128,7 +127,7 @@ export default {
 				this.$emit("dataChange", this.form)
 			}
 		},
-		'form.userMsg': {
+		'form.userPrompt': {
 			handler(val) {
 				this.$emit("dataChange", this.form)
 			}
@@ -137,11 +136,10 @@ export default {
 	created() {
 		this.form = this.formData
 		this.modelId = [this.formData.modelInfo.modelId, this.formData.modelInfo.modelName]
-		this.userPrompt = this.formData.userPrompt
 		this.getModelsList()
 	},
 	mounted() {
-		this.$refs.editBox.innerHTML = this.initHtml(this.userPrompt)
+		this.$refs.editBox.innerHTML = this.initHtml(this.form.userPrompt)
 	},
 	methods: {
 		iconComponent,
@@ -212,12 +210,12 @@ export default {
 			span.className = "variable";
 			span.contentEditable = "false";
 			span.dataset.var = varName;
-			span.textContent = `\{{${varName}}}`;
+			span.textContent = `{{${varName}}}`;
 			return span;
 		},
 		// 创建html标签
 		initHtml(value) {
-			console.log(value)
+			console.log(55, value)
 			if (value === '') {
 				return ''
 			}
@@ -225,8 +223,8 @@ export default {
 			if (value === undefined) {
 				return ''
 			}
-
-			return value.replace(/\{\{(\w+)\}\}/g, (_, varName) => {
+			
+			return value.replace(/\{\{([^}]+)\}\}/g, (_, varName) => {
 				return this.createVarElement(varName).outerHTML
 			})
 		},
@@ -264,7 +262,7 @@ export default {
 		},
 		// 处理输入
 		handleInput() {
-			this.userPrompt = this.$refs.editBox?.textContent?.replace(/\n/g, '') || ''
+			this.form.userPrompt = this.$refs.editBox?.textContent?.replace(/\n/g, '') || ''
 		},
 		// 保存光标位置
 		saveCaretPosition() {
