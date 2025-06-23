@@ -49,4 +49,9 @@ public class LlmAnswerVo implements Serializable {
      * AI服务对象
      */
     private IAiService assistant;
+
+    /**
+     * 用户输入信息
+     */
+    private String userMessage;
 }

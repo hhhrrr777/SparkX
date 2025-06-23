@@ -16,10 +16,8 @@ import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
-import dev.langchain4j.rag.content.injector.DefaultContentInjector;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.query.transformer.CompressingQueryTransformer;
 import dev.langchain4j.rag.query.transformer.QueryTransformer;
@@ -132,16 +130,10 @@ public class AssistantBuildHelper {
             retrievalAugmentor = DefaultRetrievalAugmentor.builder()
                     .queryTransformer(queryTransformer) // 问题压缩
                     .contentRetriever(contentRetriever) // 内容检索
-                    .contentInjector(DefaultContentInjector.builder()
-                            .promptTemplate(PromptTemplate.from("{{userMessage}}\n{{contents}}"))
-                            .build()) // 内容注入
                     .build();
         } else {
             retrievalAugmentor = DefaultRetrievalAugmentor.builder()
                     .contentRetriever(contentRetriever) // 内容检索
-                    .contentInjector(DefaultContentInjector.builder()
-                            .promptTemplate(PromptTemplate.from("{{userMessage}}\n{{contents}}"))
-                            .build()) // 内容注入
                     .build();
         }
 

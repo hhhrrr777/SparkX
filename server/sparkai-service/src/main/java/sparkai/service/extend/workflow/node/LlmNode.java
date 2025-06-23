@@ -11,10 +11,12 @@ package sparkai.service.extend.workflow.node;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import dev.langchain4j.data.message.TextContent;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
@@ -46,9 +48,13 @@ import sparkai.service.vo.workflow.NextAnswerNodeVo;
 import sparkai.service.vo.workflow.NodeRuntimeVo;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
@@ -83,8 +89,6 @@ public class LlmNode implements IWorkflowNode {
     @Autowired
     SseEmitterHelper sseEmitterHelper;
 
-    private String question;
-
     @Autowired
     MemoryBuildHelper memoryBuildHelper;
 
@@ -103,7 +107,6 @@ public class LlmNode implements IWorkflowNode {
         }
 
         JSONObject preOutput = JSONUtil.parseObj(context.getOutputData());
-        question = preOutput.getStr("sys.question");
 
         // 记录运行时数据
         ApplicationWorkflowRuntimeContextEntity contextEntity = new ApplicationWorkflowRuntimeContextEntity();
@@ -123,7 +126,7 @@ public class LlmNode implements IWorkflowNode {
         try {
 
             // 本节点的输出信息
-            TokenStream tokenStream = llmAnswer(contextEntity, runtimeVo.getUserId(), runtimeVo.getSessionId());
+            TokenStream tokenStream = llmAnswer(contextEntity, runtimeVo);
             if (tokenStream == null) {
                 throw new BusinessException("LLM节点出现系统异常");
             }
@@ -169,21 +172,20 @@ public class LlmNode implements IWorkflowNode {
     /**
      * 大模型流式回答
      * @param context ApplicationWorkflowRuntimeContextEntity
-     * @param userId String
-     * @param sessionId String
+     * @param runtimeVo NodeRuntimeVo
      * @return String
      */
-    private TokenStream llmAnswer(ApplicationWorkflowRuntimeContextEntity context, String userId, String sessionId) {
+    private TokenStream llmAnswer(ApplicationWorkflowRuntimeContextEntity context, NodeRuntimeVo runtimeVo) {
 
         try {
 
-            LlmAnswerVo llmAnswerData = buildBaseData(context, userId, sessionId);
+            LlmAnswerVo llmAnswerData = buildBaseData(context, runtimeVo);
 
             TokenStream tokenStream;
             if (llmAnswerData.getApplication().getPrompt().isBlank()) {
-                tokenStream = llmAnswerData.getAssistant().chatInTokenStream(question);
+                tokenStream = llmAnswerData.getAssistant().chatInTokenStream(llmAnswerData.getUserMessage());
             } else {
-                tokenStream = llmAnswerData.getAssistant().chatWithSystem(llmAnswerData.getApplication().getPrompt(), question);
+                tokenStream = llmAnswerData.getAssistant().chatWithSystem(llmAnswerData.getApplication().getPrompt(), llmAnswerData.getUserMessage());
             }
 
             return tokenStream;
@@ -196,14 +198,15 @@ public class LlmNode implements IWorkflowNode {
     /**
      * 构建基础信息
      * @param context ApplicationWorkflowRuntimeContextEntity
-     * @param userId String
-     * @param sessionId String
+     * @param runtimeVo NodeRuntimeVo
      * @return LlmAnswerVo
      */
-    private LlmAnswerVo buildBaseData(ApplicationWorkflowRuntimeContextEntity context, String userId, String sessionId) {
+    private LlmAnswerVo buildBaseData(ApplicationWorkflowRuntimeContextEntity context, NodeRuntimeVo runtimeVo) {
 
         LlmAnswerVo llmAnswerVo = new LlmAnswerVo();
 
+        String userId = runtimeVo.getUserId();
+        String sessionId = runtimeVo.getSessionId();
         JSONObject inputObject = JSONUtil.parseObj(context.getOutputData());
         JSONObject modelObject = JSONUtil.parseObj(context.getModelData());
 
@@ -215,6 +218,8 @@ public class LlmNode implements IWorkflowNode {
         ApplicationEntity applicationInfo = new ApplicationEntity();
         applicationInfo.setTemperature(modelDataInfo.getDouble("temperature"));
         applicationInfo.setModelName(modelDataInfo.getStr("modelName"));
+        applicationInfo.setPrompt(modelObject.getStr("systemMsg"));
+        applicationInfo.setUserId(userId);
         StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelResInfo, applicationInfo);
 
         // step 2 构建模型普通对象，用于问题优化下使用
@@ -228,20 +233,12 @@ public class LlmNode implements IWorkflowNode {
         validate.setSessionId(sessionId);
         validate.setCell(context.getCell()); // 以次区分不同节点的上下文记录
 
-        applicationInfo.setMemoryNum(modelObject.getInt("memory"));
-        applicationInfo.setCompressingQuery(1);
-        applicationInfo.setSearchMode("embedding");
-        applicationInfo.setTopRank(modelObject.getInt("topRank"));
-        applicationInfo.setPrompt(modelObject.getStr("systemMsg"));
-        applicationInfo.setSimilarity(BigDecimal.valueOf(modelDataInfo.getDouble("temperature")));
-        applicationInfo.setUserId(userId);
-
         // step 3 构建 IAiService
         // 自定义构建上下文记忆
         String memoryKey = validate.getSessionId() + applicationInfo.getUserId() + validate.getCell();
         ChatMemoryProvider chatMemoryProvider = memoryId -> MessageWindowChatMemory.builder()
                 .id(memoryKey)
-                .maxMessages(applicationInfo.getMemoryNum())
+                .maxMessages(modelObject.getInt("memory"))
                 .chatMemoryStore(memoryBuildHelper)
                 .build();
 
@@ -255,45 +252,46 @@ public class LlmNode implements IWorkflowNode {
             applicationWorkflowRuntimeContextMapper.updateById(runtimeContextEntity);
         }
 
-        // 关联知识库
-        if (inputObject.containsKey("node.datasets")
-                && !inputObject.getStr("node.datasets").isBlank()) {
+        // 用户未定义用户提示词，则根据是否关联了知识库来构建用户提示词
+        // 用户定了提示词，则根据用户的定义去构建用户提示词
+        String userPrompt = modelObject.getStr("userPrompt");
+        if (userPrompt.isBlank()) {
 
-        } else { // 未关联知识库
+            // 关联知识库
+            if (inputObject.containsKey("node.datasets")
+                    && !inputObject.getStr("node.datasets").isBlank()) {
 
+                PromptTemplate questionPrompt = PromptTemplate.from("{{question}}\n\n Answer using the following information:\n\n {{sys.result}}");
+                Map<String, Object> variables = new HashMap<>();
+                variables.put("question", question);
+                variables.put("sys.result", inputObject.getStr("sys.result"));
+
+                Prompt prompt = questionPrompt.apply(variables);
+                llmAnswerVo.setUserMessage(((TextContent)prompt.toUserMessage().contents().get(0)).text());
+            } else { // 未关联知识库
+                llmAnswerVo.setUserMessage(question);
+            }
+        } else {
+
+            // 处理用户自定义提示词,替换提示词中的变量
+            PromptTemplate promptTemplate = PromptTemplate.from(userPrompt);
+
+            Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
+            Matcher matcher = pattern.matcher(userPrompt);
+
+            Map<String, Object> variables = new HashMap<>();
+            while (matcher.find()) {
+                variables.put(matcher.group(1), inputObject.getStr(matcher.group(1)));
+            }
+
+            Prompt prompt = promptTemplate.apply(variables);
+            llmAnswerVo.setUserMessage(((TextContent)prompt.toUserMessage().contents().get(0)).text());
         }
 
-        /*String input = "{{sys.result}}回答用户问题{{sys.question}}";
-
-        // 正则表达式解释：
-        // \\{\\{ 匹配左大括号（需要转义）
-        // (.*?)   非贪婪匹配任意字符（除换行符）
-        // \\}\\} 匹配右大括号
-        Pattern pattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
-        Matcher matcher = pattern.matcher(input);
-
-        List<String> results = new ArrayList<>();
-
-        while (matcher.find()) {
-            // group(1)表示第一个捕获组（即括号内的内容）
-            results.add(matcher.group(1));
-        }*/
-
-        // 开启问题优化
-        QueryTransformer queryTransformer = new CompressingQueryTransformer(chatLanguageModel);
-
-        // 检索增强
-        RetrievalAugmentor retrievalAugmentor = DefaultRetrievalAugmentor.builder()
-                .queryTransformer(queryTransformer) // 问题压缩
-                .contentInjector(SparkContentInjector.builder()
-                        .promptTemplate(PromptTemplate.from("{{userMessage}}\n{{contents}}"))
-                        .build()) // 内容注入
-                .build();
-
+        // 构建AIService
         IAiService assistant = AiServices.builder(IAiService.class)
                 .streamingChatLanguageModel(streamingChatModel)
                 .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
-                .retrievalAugmentor(retrievalAugmentor)
                 .build();
 
         llmAnswerVo.setApplication(applicationInfo);

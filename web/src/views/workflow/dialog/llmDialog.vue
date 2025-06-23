@@ -215,7 +215,6 @@ export default {
 		},
 		// 创建html标签
 		initHtml(value) {
-			console.log(55, value)
 			if (value === '') {
 				return ''
 			}
@@ -223,7 +222,7 @@ export default {
 			if (value === undefined) {
 				return ''
 			}
-			
+
 			return value.replace(/\{\{([^}]+)\}\}/g, (_, varName) => {
 				return this.createVarElement(varName).outerHTML
 			})
