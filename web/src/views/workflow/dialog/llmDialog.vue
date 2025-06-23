@@ -217,7 +217,12 @@ export default {
 		},
 		// 创建html标签
 		initHtml(value) {
+			console.log(value)
 			if (value === '') {
+				return ''
+			}
+
+			if (value === undefined) {
 				return ''
 			}
 

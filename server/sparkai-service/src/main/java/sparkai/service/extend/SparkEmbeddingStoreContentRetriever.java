@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.extend;
 
+import dev.langchain4j.data.message.TextContent;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.content.Content;
@@ -181,7 +182,7 @@ public class SparkEmbeddingStoreContentRetriever implements ContentRetriever {
     @Override
     public List<Content> retrieve(Query query) {
 
-        searchDataVo.setKeyword(query.text()); // 原输入语句
+        searchDataVo.setKeyword(((TextContent)query.metadata().userMessage().contents().get(0)).text()); // 原输入语句
         searchDataVo.setSimilarity(minScoreProvider.apply(query)); // 相似度
         searchDataVo.setTopRank(maxResultsProvider.apply(query)); // 召回数量
 

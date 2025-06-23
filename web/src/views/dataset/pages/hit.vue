@@ -57,7 +57,7 @@
 				<div class="score-list">
 					<div class="score-item">
 						<div class="item-title">置信度高于</div>
-						<div class="item-input"><el-input-number v-model="searchForm.similarity" :min="0" :precision="3"></el-input-number></div>
+						<div class="item-input"><el-input-number v-model="searchForm.similarity" :min="0" :max="1" step="0.01"></el-input-number></div>
 					</div>
 					<div class="score-item">
 						<div class="item-title">召回数量</div>

@@ -9,13 +9,10 @@
 // +----------------------------------------------------------------------
 package sparkai.service.extend.workflow.node;
 
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
-import dev.langchain4j.model.output.TokenUsage;
-import dev.langchain4j.service.Result;
 import dev.langchain4j.service.TokenStream;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -229,7 +226,7 @@ public class LlmNode implements IWorkflowNode {
 
         // TODO 此处马上重构
         String question = inputObject.getStr("node.question");
-        validate.setContent(modelObject.getStr("userPrompt") + question);
+        validate.setContent(question);
         validate.setContextId(context.getId());
         validate.setSessionId(sessionId);
         validate.setCell(context.getCell()); // 以次区分不同节点的上下文记录

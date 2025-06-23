@@ -30,15 +30,15 @@ import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
-import sparkai.service.extend.SparkContentInjector;
 import sparkai.service.extend.SparkEmbeddingStoreContentRetriever;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.service.interfaces.application.IAiService;
 import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.validate.application.ApplicationChatValidate;
-import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.dataset.DatasetSearchVo;
+import sparkai.service.vo.dataset.DatasetSimpleVo;
+
 import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
 @Component
@@ -132,14 +132,14 @@ public class AssistantBuildHelper {
             retrievalAugmentor = DefaultRetrievalAugmentor.builder()
                     .queryTransformer(queryTransformer) // 问题压缩
                     .contentRetriever(contentRetriever) // 内容检索
-                    .contentInjector(SparkContentInjector.builder()
+                    .contentInjector(DefaultContentInjector.builder()
                             .promptTemplate(PromptTemplate.from("{{userMessage}}\n{{contents}}"))
                             .build()) // 内容注入
                     .build();
         } else {
             retrievalAugmentor = DefaultRetrievalAugmentor.builder()
                     .contentRetriever(contentRetriever) // 内容检索
-                    .contentInjector(SparkContentInjector.builder()
+                    .contentInjector(DefaultContentInjector.builder()
                             .promptTemplate(PromptTemplate.from("{{userMessage}}\n{{contents}}"))
                             .build()) // 内容注入
                     .build();
