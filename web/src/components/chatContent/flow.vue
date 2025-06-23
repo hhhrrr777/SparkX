@@ -188,7 +188,8 @@ export default {
 			nowIndex: -1, // 当前交流的下表
 			dialogVisible: false,
 			retrievedList: [], // 召回文档列表
-			sessionId: ""
+			sessionId: "",
+			startReceive: false
 		}
 	},
 	mounted() {
@@ -272,8 +273,8 @@ export default {
 						that.nowIndex = that.chatLogList.length - 1
 						that.chatLogList[that.nowIndex].source = 'ai'
 						that.answerIng = that.chatLogList[that.nowIndex].answerIng = 2
-						that.chatLogList[that.nowIndex].content = [] // 清理默认思考中... 提示
 					} else if (event === '[DONE]') { // 回答结束
+						that.startReceive = false
 						that.answerIng = that.chatLogList[that.nowIndex].answerIng = 3
 						if (ev.data !== '') {
 							that.chatLogList[that.nowIndex].meta = JSON.parse(ev.data)
@@ -321,6 +322,11 @@ export default {
 						that.chatLogList[that.nowIndex].content = '登录过期，请重新登录'
 						that.stopAnswer()
 					} else {
+						if (!that.startReceive) {
+							that.chatLogList[that.nowIndex].content = [] // 清理默认思考中... 提示
+						}
+
+						that.startReceive = true
 						let resData = JSON.parse(ev.data)
 						let has = false
 						that.chatLogList[that.nowIndex].content.forEach((item, index) => {

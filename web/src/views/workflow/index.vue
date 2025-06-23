@@ -364,7 +364,6 @@ export default {
 		},
 		// 调试链接
 		debugHandle() {
-			//this.runtimeVisible = true
 			// 节点参数检测
 			let res = nodeCheck.check(this.graph.toJSON())
 			if (res.code !== 0) {
@@ -390,6 +389,13 @@ export default {
 		},
 		// 保存设计
 		async saveHandle() {
+			// 节点参数检测
+			let checkRes = nodeCheck.check(this.graph.toJSON())
+			if (checkRes.code !== 0) {
+				this.$message.error(checkRes.msg)
+				return
+			}
+
 			let res = await this.$API.workflow.save.post({appId: this.appId, flowData: JSON.stringify(this.graph.toJSON())})
 			if (res.code === 0) {
 				this.$message.success(res.msg)
