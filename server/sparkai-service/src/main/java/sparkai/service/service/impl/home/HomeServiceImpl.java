@@ -11,11 +11,18 @@ package sparkai.service.service.impl.home;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.exception.BusinessException;
+import sparkai.common.utils.Tool;
+import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.helper.UserContextHelper;
+import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.home.IHomeService;
+import sparkai.service.validate.system.PasswordValidate;
+import sparkai.service.vo.system.LocalUserVo;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +37,9 @@ public class HomeServiceImpl implements IHomeService {
 
     @Value("${upload.upload-path}/")
     private String uploadPath;
+
+    @Autowired
+    SystemUserMapper systemUserMapper;
 
     // 定义允许的文件后缀
     private static final Set<String> ALLOWED_EXTENSIONS = new HashSet<>(
@@ -77,5 +87,25 @@ public class HomeServiceImpl implements IHomeService {
         } catch (IOException ex) {
             throw new BusinessException("上传失败" + ex.getMessage());
         }
+    }
+
+    /**
+     * 更改密码
+     * @param validate PasswordValidate
+     */
+    @Override
+    public void changePassword(PasswordValidate validate) {
+
+        LocalUserVo userData = UserContextHelper.getUser();
+        SystemUsersEntity userInfo = systemUserMapper.selectById(userData.getUserId());
+
+        // 对比密码
+        if (!Tool.verifyPassword(userInfo.getPassword(), validate.getOldPwd(), userInfo.getSalt())) {
+            throw new BusinessException("旧密码错误");
+        }
+
+        userInfo.setPassword(Tool.makePassword(validate.getNewPwd(), userInfo.getSalt()));
+        userInfo.setUpdateTime(Tool.nowDateTime());
+        systemUserMapper.updateById(userInfo);
     }
 }

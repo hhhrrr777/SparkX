@@ -10,6 +10,7 @@
 package sparkai.service.service.interfaces.home;
 
 import org.springframework.web.multipart.MultipartFile;
+import sparkai.service.validate.system.PasswordValidate;
 
 public interface IHomeService {
 
@@ -19,4 +20,6 @@ public interface IHomeService {
      * @return String
      */
     String uploadImage(MultipartFile file);
+
+    void changePassword(PasswordValidate validate);
 }

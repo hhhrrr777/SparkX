@@ -350,7 +350,7 @@ const handleCommand = (event) => {
 const onSubmit = () => {
 	ruleForm.value.validate(async (valid) => {
 		if (valid) {
-			$emit("submit", passwordForm)
+
 		}
 	})
 }
