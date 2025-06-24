@@ -9,14 +9,13 @@
 // +----------------------------------------------------------------------
 package sparkai.sparkaiweb.controller.home;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sparkai.common.core.AjaxResult;
 import sparkai.service.service.interfaces.home.IHomeService;
+import sparkai.service.validate.system.PasswordValidate;
 
 @RestController
 @RequestMapping("/api/index")
@@ -32,5 +31,14 @@ public class IndexController {
     public AjaxResult<Object> image(@RequestParam("file") MultipartFile file) {
 
         return AjaxResult.success(iHomeService.uploadImage(file));
+    }
+
+    /**
+     * 修改密码
+     */
+    @PostMapping("/password")
+    public AjaxResult<Object> password(@RequestBody @Valid PasswordValidate validate) {
+
+        return AjaxResult.success();
     }
 }

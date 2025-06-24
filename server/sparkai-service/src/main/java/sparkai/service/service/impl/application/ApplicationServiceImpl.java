@@ -136,9 +136,11 @@ public class ApplicationServiceImpl implements IApplicationService {
             // 获取当前用户不是管理员的团队应用ID
             List<Integer> otherTeamIds = teamListData.stream().map(SystemTeamUserEntity::getTeamId)
                     .filter(item -> !item.equals(userData.getTeamId())).toList();
-            Map<String, List<String>> otherTeamMap = getTeamAppIds(otherTeamIds);
-            viewAppIds.addAll(otherTeamMap.get("viewIds"));
-            otherManageAppIds.addAll(otherTeamMap.get("manageIds"));
+            if (!CollectionUtils.isEmpty(otherTeamIds)) {
+                Map<String, List<String>> otherTeamMap = getTeamAppIds(otherTeamIds);
+                viewAppIds.addAll(otherTeamMap.get("viewIds"));
+                otherManageAppIds.addAll(otherTeamMap.get("manageIds"));
+            }
 
             // 获取当前用户是管理员的团队应用ID
             List<Integer> userTeamIds = new ArrayList<>();
