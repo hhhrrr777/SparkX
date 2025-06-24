@@ -22,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.core.PageResult;
@@ -44,6 +45,7 @@ import sparkai.service.mapper.application.ApplicationChatSessionMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
+import sparkai.service.mapper.system.SystemTeamMapper;
 import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.application.IApplicationService;
@@ -101,6 +103,8 @@ public class ApplicationServiceImpl implements IApplicationService {
     @Autowired
     SystemTeamUserMapper systemTeamUserMapper;
 
+    @Autowired
+    SystemTeamMapper systemTeamMapper;
     /**
      * 应用列表
      * @param queryVo ApplicationQueryVo
@@ -119,22 +123,41 @@ public class ApplicationServiceImpl implements IApplicationService {
         }
 
         LocalUserVo userData = UserContextHelper.getUser();
+        // 查出当前用户所在的团队
+        List<SystemTeamUserEntity> teamListData = systemTeamUserMapper.selectList(
+                new QueryWrapper<SystemTeamUserEntity>().select("team_id").eq("user_id", userData.getUserId()));
+        List<String> viewAppIds = new ArrayList<>();
+        List<String> otherManageAppIds = new ArrayList<>();
+        List<String> manageAppIds = new ArrayList<>();
 
         // 全部的数据
         if (queryVo.getType().equals(0) || queryVo.getType().equals(2)) {
-            List<SystemTeamUserEntity> teamUserData = systemTeamUserMapper.selectList(
-                    new QueryWrapper<SystemTeamUserEntity>().eq("team_id", userData.getTeamId()));
-            List<String> teamUserList;
 
-            // 团队其他人员的
-            if (queryVo.getType().equals(2)) {
-                teamUserList = teamUserData.stream().map(SystemTeamUserEntity::getUserId)
-                        .filter(item -> !item.equals(userData.getUserId())).toList();
-            } else {
-                teamUserList = teamUserData.stream().map(SystemTeamUserEntity::getUserId).toList();
+            // 获取当前用户不是管理员的团队应用ID
+            List<Integer> otherTeamIds = teamListData.stream().map(SystemTeamUserEntity::getTeamId)
+                    .filter(item -> !item.equals(userData.getTeamId())).toList();
+            Map<String, List<String>> otherTeamMap = getTeamAppIds(otherTeamIds);
+            viewAppIds.addAll(otherTeamMap.get("viewIds"));
+            otherManageAppIds.addAll(otherTeamMap.get("manageIds"));
+
+            // 获取当前用户是管理员的团队应用ID
+            List<Integer> userTeamIds = new ArrayList<>();
+            userTeamIds.add(userData.getTeamId());
+            Map<String, List<String>> userTeamMap = getTeamAppIds(userTeamIds);
+            viewAppIds.addAll(userTeamMap.get("viewIds"));
+            otherManageAppIds.addAll(userTeamMap.get("manageIds"));
+
+            if (queryVo.getType().equals(0)) {
+                // 获取管理员自己的应用ID
+                List<ApplicationEntity> mangeAppList = applicationMapper.selectList(
+                        new QueryWrapper<ApplicationEntity>().select("app_id").eq("user_id", userData.getUserId()));
+                List<String> manageAppIdList = mangeAppList.stream().map(ApplicationEntity::getAppId).toList();
+                viewAppIds.addAll(manageAppIdList);
+                manageAppIds.addAll(manageAppIdList);
             }
 
-            queryWrapper.in("user_id", teamUserList);
+            // 只查可见的数据
+            queryWrapper.in("app_id", viewAppIds);
         } else if (queryVo.getType().equals(1)) { // 自己的数据
             queryWrapper.eq("user_id", userData.getUserId());
         }
@@ -149,6 +172,15 @@ public class ApplicationServiceImpl implements IApplicationService {
 
             SystemUsersEntity userInfo = systemUserMapper.selectById(entity.getUserId());
             vo.setAuthor(userInfo.getNickname());
+
+            // 补充权限
+            if (manageAppIds.contains(vo.getAppId())) {
+                vo.setView(true);
+                vo.setManage(true);
+            } else {
+                vo.setView(viewAppIds.contains(vo.getAppId()));
+                vo.setManage(otherManageAppIds.contains(vo.getAppId()));
+            }
 
             applicationVoList.add(vo);
         }
@@ -571,5 +603,38 @@ public class ApplicationServiceImpl implements IApplicationService {
         days.add(endDate);
 
         return days;
+    }
+
+    /**
+     * 获取团队下的应用id
+     * @param teamIds teamIds
+     * @return Map<List<String>, List<String>>
+     */
+    private Map<String, List<String>> getTeamAppIds(List<Integer> teamIds) {
+
+        Map<String, List<String>> permissionList = new HashMap<>();
+
+        List<SystemTeamUserEntity> teamUserData = systemTeamUserMapper.selectList(
+                new QueryWrapper<SystemTeamUserEntity>().select("app_permission").in("team_id", teamIds));
+
+        List<String> viewIds = new ArrayList<>();
+        List<String> manageIds = new ArrayList<>();
+        for (SystemTeamUserEntity entity : teamUserData) {
+            if (entity.getAppPermission().isBlank()) {
+                continue;
+            }
+
+            PermissionVo permissionData = JSONUtil.toBean(entity.getAppPermission(), PermissionVo.class);
+
+            if (!CollectionUtils.isEmpty(permissionData.getView())) {
+                viewIds.addAll(permissionData.getView());
+                manageIds.addAll(permissionData.getManage());
+            }
+        }
+
+        permissionList.put("viewIds", viewIds);
+        permissionList.put("manageIds", manageIds);
+
+        return permissionList;
     }
 }

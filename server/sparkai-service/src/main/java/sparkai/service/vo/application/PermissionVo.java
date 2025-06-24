@@ -13,50 +13,21 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
-public class ApplicationListVo implements Serializable {
+public class PermissionVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 应用id
-     */
-    private String appId;
-
-    /**
-     * 应用名称
-     */
-    private String name;
-
-    /**
-     * 应用描述
-     */
-    private String description;
-
-    /**
-     * 应用类型 1:普通  2:编排
-     */
-    private Integer type;
-
-    /**
-     * 创建人
-     */
-    private String author;
-
-    /**
-     * 图标
-     */
-    private String icon;
-
-    /**
      * 查看权限
      */
-    private boolean view;
+    private List<String> view;
 
     /**
      * 管理权限
      */
-    private boolean manage;
+    private List<String> manage;
 }

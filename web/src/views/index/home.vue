@@ -48,7 +48,7 @@
 								<el-tag v-else>高级编排</el-tag>
 							</div>
 						</div>
-						<div class="desc-box" @click="goDetail(item.appId)">
+						<div class="desc-box" @click="goDetail(item.appId, item.manage)">
 							{{ item.description }}
 						</div>
 						<div class="tool-box">
@@ -70,8 +70,8 @@
 										<el-icon size="16" @click="goFlow(item.appId)"><Share /></el-icon>
 									</el-tooltip>
 								</div>
-								<el-divider direction="vertical"></el-divider>
-								<div class="box-item">
+								<el-divider direction="vertical" v-if="item.manage"></el-divider>
+								<div class="box-item" v-if="item.manage">
 									<el-tooltip
 										effect="dark"
 										content="设置"
@@ -79,8 +79,8 @@
 										<el-icon size="16" @click="goDetail(item.appId)"><Setting /></el-icon>
 									</el-tooltip>
 								</div>
-								<el-divider direction="vertical"></el-divider>
-								<div class="box-item">
+								<el-divider direction="vertical" v-if="item.manage"></el-divider>
+								<div class="box-item" v-if="item.manage">
 									<el-tooltip
 										effect="dark"
 										content="删除"
@@ -165,7 +165,11 @@ export default{
 			this.getList()
 		},
 		// 应用详情
-		goDetail(appId) {
+		goDetail(appId, isManage) {
+			if (!isManage) {
+				return
+			}
+			
 			this.$router.push('/index/detail?appId=' + appId)
 		},
 		// 前往聊天
