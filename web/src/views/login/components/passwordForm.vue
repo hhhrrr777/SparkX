@@ -78,12 +78,15 @@ export default {
 					expires: this.form.autologin ? 24 * 60 * 60 : 0
 				})
 
-				// 获取菜单
-				this.$TOOL.data.set("MENU", menu)
+				await this.$nextTick(() => {
+					// 获取菜单
+					this.$TOOL.data.set("MENU", menu)
+				})
 
 				this.$router.replace({
 					path: '/'
 				})
+
 				this.$message.success("登录成功")
 			} else {
 				this.$message.error(res.msg)

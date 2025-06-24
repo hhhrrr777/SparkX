@@ -10,4 +10,12 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
+	password: {
+		url: `${config.API_URL}/index/password`,
+		name: "修改密码",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
+	}
 }
