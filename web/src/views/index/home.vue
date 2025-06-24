@@ -169,7 +169,7 @@ export default{
 			if (!isManage) {
 				return
 			}
-			
+
 			this.$router.push('/index/detail?appId=' + appId)
 		},
 		// 前往聊天

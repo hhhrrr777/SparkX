@@ -19,7 +19,7 @@
 				<el-dropdown @command="handleCommand">
 					<div class="user-info" style="margin-bottom: 20px">
 						<el-avatar style="width: 35px;height: 35px;margin-left: 13px;cursor: pointer;" :src="userAvatar" />
-						<div style="font-size:12px;width: 50px;margin-left: 10px;text-align: center;" class="line1">{{ nickname }}</div>
+						<div style="font-size:12px;width: 65px;margin-top:5px;text-align: center;" class="line1">{{ nickname }}</div>
 					</div>
 					<template #dropdown>
 						<el-dropdown-menu>
@@ -213,6 +213,20 @@
 	</el-drawer>
 
 	<auto-exit></auto-exit>
+
+	<el-dialog title="设置密码" v-model="passwordDialogVisible" width="500px" :close-on-click-modal="false">
+		<el-form ref="ruleForm" :model="passwordForm" label-width="80px" :rules="rules">
+			<el-form-item label="原密码" prop="oldPwd">
+				<el-input v-model="passwordForm.oldPwd"></el-input>
+			</el-form-item>
+			<el-form-item label="新密码" prop="newPwd">
+				<el-input v-model="passwordForm.newPwd"></el-input>
+			</el-form-item>
+			<el-form-item>
+				<el-button type="primary" @click="onSubmit">确认提交</el-button>
+			</el-form-item>
+		</el-form>
+	</el-dialog>
 </template>
 
 <script setup>
@@ -238,12 +252,27 @@ const globalStore = useGlobalStore();
 const keepAliveStore = useKeepAliveStore();
 
 const settingDialog = ref(false)
+const passwordDialogVisible = ref(false)
 const menu = ref([])
 const nextMenu = ref([])
 const pmenu = ref({})
 const active = ref('')
 const userAvatar = "./img/avatar.png"
 const nickname = tool.cookie.get("nickname")
+const passwordForm = ref({
+	oldPwd: "",
+	newPwd: "",
+})
+const ruleForm = ref()
+
+const rules = ref({
+	oldPwd: [
+		{required: true, message: '旧密码不能为空', trigger: 'blur'}
+	],
+	newPwd: [
+		{required: true, message: '新密码不能为空', trigger: 'blur'}
+	]
+})
 
 onMounted(() => {
 	onLayoutResize();
@@ -311,11 +340,19 @@ watch(() => globalStore.layout, (newVal, oldVal) => {
 
 const handleCommand = (event) => {
 	if (event === 'password') {
-
+		passwordDialogVisible.value = true
 	} else if (event === 'loginOut') {
 		tool.cookie.remove('TOKEN')
 		router.push('/login')
 	}
+}
+
+const onSubmit = () => {
+	ruleForm.value.validate(async (valid) => {
+		if (valid) {
+			console.log(555)
+		}
+	})
 }
 </script>
 
