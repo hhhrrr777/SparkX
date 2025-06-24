@@ -181,10 +181,14 @@ export default {
 		},
 		// 选择了模型
 		handleChange(val) {
-			this.form.modelInfo.modelId = val[0]
-			this.form.modelInfo.modelName = val[1]
+			if (val) {
+				this.form.modelInfo.modelId = val[0]
+				this.form.modelInfo.modelName = val[1]
 
-			this.getModelInfo(val[0])
+				this.getModelInfo(val[0])
+			} else {
+				this.$emit("dataChange", this.form)
+			}
 		},
 		// 输入选择
 		inputChange(val) {
