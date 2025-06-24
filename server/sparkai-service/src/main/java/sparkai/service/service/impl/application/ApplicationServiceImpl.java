@@ -32,6 +32,7 @@ import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
+import sparkai.service.entity.system.SystemTeamUserEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.extend.chat.AgentChat;
 import sparkai.service.extend.chat.WorkflowChat;
@@ -43,6 +44,7 @@ import sparkai.service.mapper.application.ApplicationChatSessionMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
+import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.application.IApplicationService;
 import sparkai.service.validate.application.ApplicationAddValidate;
@@ -96,6 +98,9 @@ public class ApplicationServiceImpl implements IApplicationService {
     @Autowired
     ApplicationHelper applicationHelper;
 
+    @Autowired
+    SystemTeamUserMapper systemTeamUserMapper;
+
     /**
      * 应用列表
      * @param queryVo ApplicationQueryVo
@@ -113,12 +118,26 @@ public class ApplicationServiceImpl implements IApplicationService {
             queryWrapper.like("name", queryVo.getName());
         }
 
-        if (queryVo.getType() > 0) {
-            queryWrapper.eq("type", queryVo.getType());
-        }
-
         LocalUserVo userData = UserContextHelper.getUser();
-        queryWrapper.eq("user_id", userData.getUserId());
+
+        // 全部的数据
+        if (queryVo.getType().equals(0) || queryVo.getType().equals(2)) {
+            List<SystemTeamUserEntity> teamUserData = systemTeamUserMapper.selectList(
+                    new QueryWrapper<SystemTeamUserEntity>().eq("team_id", userData.getTeamId()));
+            List<String> teamUserList;
+
+            // 团队其他人员的
+            if (queryVo.getType().equals(2)) {
+                teamUserList = teamUserData.stream().map(SystemTeamUserEntity::getUserId)
+                        .filter(item -> !item.equals(userData.getUserId())).toList();
+            } else {
+                teamUserList = teamUserData.stream().map(SystemTeamUserEntity::getUserId).toList();
+            }
+
+            queryWrapper.in("user_id", teamUserList);
+        } else if (queryVo.getType().equals(1)) { // 自己的数据
+            queryWrapper.eq("user_id", userData.getUserId());
+        }
 
         queryWrapper.orderByDesc("create_time");
         IPage<ApplicationEntity> applicationListRes = applicationMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);

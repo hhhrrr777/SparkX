@@ -385,6 +385,18 @@ export default {
 			if (res.data.flowData) {
 				this.flowData = JSON.parse(res.data.flowData)
 				this.graph.fromJSON(this.flowData)
+				// 记录基础节点
+				this.nodeNoData = []
+				this.flowData.cells.forEach(node => {
+					if (node.shape !== 'edge') {
+						let type = node.shape.split("-")[0]
+						if (this.nodeNoData[type]) {
+							this.nodeNoData[type] += 1
+						} else {
+							this.nodeNoData[type] = 1
+						}
+					}
+				})
 			}
 		},
 		// 保存设计

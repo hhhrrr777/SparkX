@@ -30,7 +30,7 @@
 						type="primary"
 						icon="el-icon-Document"
 						@click="savePermission"
-						:disabled="isAdmin || (!isAdmin && permissionForm.permissionData.length === 0)"
+						:disabled="isAdmin"
 					>
 						保存权限
 					</el-button>
@@ -147,6 +147,7 @@ export default {
 		async getAppList() {
 			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: '', type: 0})
 			this.appTableData = res.data.data
+
 			this.appKey = Math.random()
 		},
 		// 获取团队成员
@@ -158,16 +159,12 @@ export default {
 				this.nowUserId = this.userList[0].userId
 				this.isAdmin = this.userList[0].isAdmin === 1
 			}
+
 			this.permissionForm.permissionData = []
 			this.datasetKey = Math.random()
 		},
 		// 保存权限
 		async savePermission() {
-			if (this.permissionForm.permissionData.length === 0) {
-				this.$message.error("请勾选权限")
-				return false
-			}
-
 			this.permissionForm.type = this.activeName
 			this.permissionForm.userId = this.nowUserId
 
@@ -178,7 +175,22 @@ export default {
 				this.$message.error(res.msg)
 			}
 
-			this.getTeamUserList()
+			let permissionData = {
+				manage: [],
+				view: []
+			}
+			let data = this.permissionForm.permissionData
+			for (let i = 0; i < data.length; i++) {
+				if (data[i].manage) {
+					permissionData.manage.push(data[i].id)
+				}
+
+				if (data[i].view) {
+					permissionData.view.push(data[i].id)
+				}
+			}
+
+			this.appPermission = this.userPermissionData = permissionData
 			if (this.activeName === "1") {
 				this.getDatabaseList()
 			} else {

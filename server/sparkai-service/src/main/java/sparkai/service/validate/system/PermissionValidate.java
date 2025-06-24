@@ -38,6 +38,5 @@ public class PermissionValidate implements Serializable {
     /**
      * 权限数据
      */
-    @NotEmpty(message = "请勾选权限")
     private List<PermissionDataItemVo> permissionData;
 }
