@@ -59,7 +59,7 @@ export default {
 	methods: {
 		// 获取应用聊天详情
 		async getChatInfo() {
-			let res = await this.$API.chat.getInfo.get({appId: this.appId})
+			let res = await this.$API.chat.getInfo.get({appId: this.appId, debug: true})
 			if (res.code === 0) {
 				let appInfo = res.data
 				if (appInfo.prologue !== '') {
