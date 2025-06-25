@@ -175,7 +175,7 @@
 							v-model="form.showAppraise">
 						</el-switch>
 					</div>
-					<div class="setting-box">
+					<!--<div class="setting-box">
 						<div class="setting-title">语音输入</div>
 						<el-switch
 							:active-value="1"
@@ -190,7 +190,7 @@
 							:inactive-value="2"
 							v-model="form.voiceOut">
 						</el-switch>
-					</div>
+					</div>-->
 				</div>
 			</el-col>
 			<el-col :span="14" style="background: #f4f4f4;padding: 20px;height: 100%">

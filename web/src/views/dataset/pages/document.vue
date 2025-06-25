@@ -9,8 +9,8 @@
 					<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>向量文档</el-button>
 				<el-button type="primary" icon="el-icon-QuestionFilled" @click="makeQuestion" style="margin-top: -10px;"
 						   :disabled="selectedDocumentIds.length === 0">生成问题</el-button>
-				<el-button type="primary" icon="el-icon-Setting" @click="setting" style="margin-top: -10px;"
-						   :disabled="selectedDocumentIds.length === 0">设置</el-button>
+				<!--<el-button type="primary" icon="el-icon-Setting" @click="setting" style="margin-top: -10px;"
+						   :disabled="selectedDocumentIds.length === 0">设置</el-button>-->
 				<el-button type="primary" icon="el-icon-Delete" @click="delDocument" style="margin-top: -10px;"
 						   :disabled="selectedDocumentIds.length === 0">删除</el-button>
 			</div>
@@ -124,13 +124,13 @@
 									<span class="iconfont icon-vuesax-linear-convert-3d-cube" style="font-size: 14px;margin-right: 5px"></span>
 								</el-tooltip>
 							</div>
-							<div style="margin-right: 8px;display: flex;align-items: center" @click="settingOne(scope.row)">
+							<!--<div style="margin-right: 8px;display: flex;align-items: center" @click="settingOne(scope.row)">
 								<el-tooltip class="item" content="设置">
 									<el-icon size="14">
 										<Setting />
 									</el-icon>
 								</el-tooltip>
-							</div>
+							</div>-->
 							<div style="display: flex;align-items: center;color: var(--el-color-theme)">
 								<el-dropdown trigger="click" @command="handleCommand($event, scope.row)">
 									<el-icon color="var(--el-color-theme)">

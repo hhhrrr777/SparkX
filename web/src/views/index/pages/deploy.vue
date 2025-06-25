@@ -27,14 +27,14 @@
 						<el-button>三方嵌入</el-button>
 					</div>
 				</div>
-				<div class="base-info-item">
+				<!--<div class="base-info-item">
 					<h3 style="margin-bottom: 10px">后端服务API</h3>
 					API访问凭据
 					<div class="base-style code-bg" style="width: 600px">http://localhost:8090/ui/chat/71c8380fe2196c3a <el-icon size="16px" style="margin-left: 5px"><CopyDocument /></el-icon></div>
 					<div class="base-style">
 						<el-button>API秘钥</el-button>
 					</div>
-				</div>
+				</div>-->
 			</div>
 		</div>
 		<div class="census-list">

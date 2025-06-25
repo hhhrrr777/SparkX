@@ -33,7 +33,7 @@
 
 				<el-col :span="6" class="store-item" v-for="item in applicationList" :key="item.code">
 					<el-card style="height: 170px;padding: 10px" shadow="never">
-						<div class="title-box" @click="goDetail(item.appId)">
+						<div class="title-box" @click="goDetail(item.appId, item.manage)">
 							<div class="title-left">
 								<div class="title-label">
 									<img :src="domain + item.icon" style="width: 45px;height: 45px"/>
@@ -53,7 +53,7 @@
 						</div>
 						<div class="tool-box">
 							<div class="tool-box-left">
-								<div class="box-item">
+								<div class="box-item" v-if="item.status === 2">
 									<el-tooltip
 										effect="dark"
 										content="演示"
@@ -61,7 +61,7 @@
 										<el-icon size="16" @click="goChat(item.appId)"><VideoPlay /></el-icon>
 									</el-tooltip>
 								</div>
-								<el-divider direction="vertical" v-if="item.type === 2"></el-divider>
+								<el-divider direction="vertical" v-if="item.type === 2 && item.status === 2"></el-divider>
 								<div class="box-item" v-if="item.type === 2">
 									<el-tooltip
 										effect="dark"
@@ -76,7 +76,7 @@
 										effect="dark"
 										content="设置"
 									>
-										<el-icon size="16" @click="goDetail(item.appId)"><Setting /></el-icon>
+										<el-icon size="16" @click="goDetail(item.appId, item.manage)"><Setting /></el-icon>
 									</el-tooltip>
 								</div>
 								<el-divider direction="vertical" v-if="item.manage"></el-divider>

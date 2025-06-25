@@ -93,6 +93,7 @@ export default {
 			},
 			searchForm: {
 				name: '',
+				type: 0,
 				page: 1,
 				limit: 15
 			},

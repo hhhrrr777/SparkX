@@ -59,4 +59,9 @@ public class ApplicationListVo implements Serializable {
      * 管理权限
      */
     private boolean manage;
+
+    /**
+     * 状态 1:未发布 2:已发布
+     */
+    private Integer status;
 }
