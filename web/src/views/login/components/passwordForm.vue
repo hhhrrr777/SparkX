@@ -80,11 +80,13 @@ export default {
 
 				await this.$nextTick(() => {
 					// 获取菜单
-					this.$TOOL.data.set("MENU", menu)
-				})
+					localStorage.setItem("MENU", menu)
 
-				this.$router.replace({
-					path: '/'
+					setTimeout(() => {
+						this.$router.replace({
+							path: '/'
+						})
+					}, 300)
 				})
 
 				this.$message.success("登录成功")
