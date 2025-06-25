@@ -242,6 +242,8 @@ import config from "@/config/index.js";
 import {useGlobalStore} from "@/stores/global.js";
 import {useKeepAliveStore} from "@/stores/keepAlive.js";
 import {ref, nextTick} from "vue";
+const cns = getCurrentInstance()
+import { ElMessage } from 'element-plus'
 
 import {useRoute, useRouter} from 'vue-router'
 import tool from "@/utils/tool.js";
@@ -348,9 +350,25 @@ const handleCommand = (event) => {
 }
 
 const onSubmit = () => {
+	let $api = cns.appContext.config.globalProperties.$API
 	ruleForm.value.validate(async (valid) => {
 		if (valid) {
-
+			let res = await $api.auth.password.post(passwordForm.value)
+			if (res === 0) {
+				ElMessage({
+					message: '设置成功',
+					type: 'success',
+				})
+				setTimeout(() => {
+					tool.cookie.remove('TOKEN')
+					router.push('/login')
+				}, 1000)
+			} else {
+				ElMessage({
+					message: res.msg,
+					type: 'error',
+				})
+			}
 		}
 	})
 }

@@ -39,6 +39,7 @@ public class IndexController {
     @PostMapping("/password")
     public AjaxResult<Object> password(@RequestBody @Valid PasswordValidate validate) {
 
+        iHomeService.changePassword(validate);
         return AjaxResult.success();
     }
 }

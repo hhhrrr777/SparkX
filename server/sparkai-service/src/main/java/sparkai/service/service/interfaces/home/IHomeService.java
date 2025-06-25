@@ -21,5 +21,9 @@ public interface IHomeService {
      */
     String uploadImage(MultipartFile file);
 
+    /**
+     * 修改密码
+     * @param validate PasswordValidate
+     */
     void changePassword(PasswordValidate validate);
 }
