@@ -98,6 +98,7 @@ export default {
 			page: '',
 			searchForm: {
 				title: '',
+				type: 0,
 				page: 1,
 				limit: 15
 			},

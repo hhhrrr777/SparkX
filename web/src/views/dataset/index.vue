@@ -33,7 +33,7 @@
 
 				<el-col :span="6" class="store-item" v-for="item in storeList" :key="item.code">
 					<el-card style="height: 170px;padding: 10px" shadow="never">
-						<div class="title-box" @click="goDetail(item.datasetId)">
+						<div class="title-box" @click="goDetail(item.datasetId, item.manage)">
 							<div class="title-left">
 								<div class="title-label">{{ item.title.substring(0, 1) }}</div>
 								<div class="title-info">
@@ -45,11 +45,11 @@
 								<el-tag>通用</el-tag>
 							</div>
 						</div>
-						<div class="desc-box" @click="goDetail(item.datasetId)">
+						<div class="desc-box" @click="goDetail(item.datasetId, item.manage)">
 							{{ item.description }}
 						</div>
 						<div class="tool-box">
-							<div class="tool-box-left" @click="goDetail(item.datasetId)">
+							<div class="tool-box-left" @click="goDetail(item.datasetId, item.manage)">
 								<div class="box-item">
 									<span class="num">{{ item.documentNum }}</span>
 									<span class="num-label">文档数</span>
@@ -65,7 +65,7 @@
 									<span class="num-label">关联应用</span>
 								</div>
 							</div>
-							<div class="tool-box-right">
+							<div class="tool-box-right" v-if="item.manage">
 								<el-dropdown trigger="click" @command="handleClick($event, item)">
 									<el-icon>
 										<MoreFilled />
@@ -157,7 +157,11 @@ export default{
 			this.getList()
 		},
 		// 知识库详情
-		goDetail(datasetId) {
+		goDetail(datasetId, isManage) {
+			if (!isManage) {
+				return
+			}
+
 			this.$router.push('/dataset/detail?datasetId=' + datasetId)
 		},
 		// 向量化

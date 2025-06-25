@@ -14,7 +14,6 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
 public class DatasetVo implements Serializable {
@@ -67,4 +66,14 @@ public class DatasetVo implements Serializable {
      * 关联的应用数
      */
     private long appNum;
+
+    /**
+     * 查看权限
+     */
+    private boolean view;
+
+    /**
+     * 管理权限
+     */
+    private boolean manage;
 }

@@ -26,6 +26,11 @@ public class DatasetQueryVo implements Serializable {
     private String title;
 
     /**
+     * 应用类型
+     */
+    private Integer type;
+
+    /**
      * 分页号
      */
     private long page;
@@ -34,4 +39,6 @@ public class DatasetQueryVo implements Serializable {
      * 每页大小
      */
     private long limit;
+
+
 }

@@ -10,6 +10,7 @@
 package sparkai.service.service.impl.dataset;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -25,24 +26,24 @@ import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.dataset.*;
+import sparkai.service.entity.system.SystemTeamUserEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.helper.UserContextHelper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.dataset.*;
+import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.dataset.IKnowledgeDatasetService;
 import sparkai.service.task.EmbeddingDocumentTask;
 import sparkai.service.validate.dataset.DatasetValidate;
+import sparkai.service.vo.application.PermissionVo;
 import sparkai.service.vo.dataset.DatasetQueryVo;
 import sparkai.service.vo.dataset.DatasetVo;
 import sparkai.service.vo.dataset.OtherDatasetVo;
 import sparkai.service.vo.dataset.TransferDatasetVo;
 import sparkai.service.vo.system.LocalUserVo;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
@@ -74,6 +75,9 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
     @Autowired
     EmbeddingDocumentTask task;
 
+    @Autowired
+    SystemTeamUserMapper systemTeamUserMapper;
+
     /**
      * 获取知识库列表
      * @param queryVo DatasetQueryVo
@@ -92,7 +96,46 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
         }
 
         LocalUserVo userData = UserContextHelper.getUser();
-        queryWrapper.eq("user_id", userData.getUserId());
+        // 查出当前用户所在的团队
+        List<SystemTeamUserEntity> teamListData = systemTeamUserMapper.selectList(
+                new QueryWrapper<SystemTeamUserEntity>().select("team_id").eq("user_id", userData.getUserId()));
+        List<String> viewDatasetsIds = new ArrayList<>();
+        List<String> otherManageDatasetsIds = new ArrayList<>();
+        List<String> manageDatasetsIds = new ArrayList<>();
+
+        // 全部的数据
+        if (queryVo.getType().equals(0) || queryVo.getType().equals(2)) {
+
+            // 获取当前用户不是管理员的团队应用ID
+            List<Integer> otherTeamIds = teamListData.stream().map(SystemTeamUserEntity::getTeamId)
+                    .filter(item -> !item.equals(userData.getTeamId())).toList();
+            if (!CollectionUtils.isEmpty(otherTeamIds)) {
+                Map<String, List<String>> otherTeamMap = getTeamDatasetsIds(otherTeamIds);
+                viewDatasetsIds.addAll(otherTeamMap.get("viewIds"));
+                otherManageDatasetsIds.addAll(otherTeamMap.get("manageIds"));
+            }
+
+            // 获取当前用户是管理员的团队应用ID
+            List<Integer> userTeamIds = new ArrayList<>();
+            userTeamIds.add(userData.getTeamId());
+            Map<String, List<String>> userTeamMap = getTeamDatasetsIds(userTeamIds);
+            viewDatasetsIds.addAll(userTeamMap.get("viewIds"));
+            otherManageDatasetsIds.addAll(userTeamMap.get("manageIds"));
+
+            if (queryVo.getType().equals(0)) {
+                // 获取管理员自己的应用ID
+                List<KnowledgeDatasetEntity> mangeDatasetsList = datasetMapper.selectList(
+                        new QueryWrapper<KnowledgeDatasetEntity>().select("dataset_id").eq("user_id", userData.getUserId()));
+                List<String> manageDatasetsIdList = mangeDatasetsList.stream().map(KnowledgeDatasetEntity::getDatasetId).toList();
+                viewDatasetsIds.addAll(manageDatasetsIdList);
+                manageDatasetsIds.addAll(manageDatasetsIdList);
+            }
+
+            // 只查可见的数据
+            queryWrapper.in("dataset_id", viewDatasetsIds);
+        } else if (queryVo.getType().equals(1)) { // 自己的数据
+            queryWrapper.eq("user_id", userData.getUserId());
+        }
 
         queryWrapper.orderByDesc("create_time");
         IPage<KnowledgeDatasetEntity> datasetListRes = datasetMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
@@ -124,6 +167,15 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
             long appNum = applicationDatasetRelationMapper.selectCount(new QueryWrapper<ApplicationDatasetRelationEntity>()
                     .eq("dataset_id", entity.getDatasetId()));
             vo.setAppNum(appNum);
+
+            // 补充权限
+            if (manageDatasetsIds.contains(vo.getDatasetId())) {
+                vo.setView(true);
+                vo.setManage(true);
+            } else {
+                vo.setView(viewDatasetsIds.contains(vo.getDatasetId()));
+                vo.setManage(otherManageDatasetsIds.contains(vo.getDatasetId()));
+            }
 
             datasetVoList.add(vo);
         }
@@ -279,5 +331,38 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
                         .in("document_id", documentIds));
         // 修改embedding的文本关联
         knowledgeEmbeddingMapper.updateDatasetByIds(documentIds, transferDatasetVo.getDatasetId());
+    }
+
+    /**
+     * 获取团队下的应用id
+     * @param teamIds teamIds
+     * @return Map<List<String>, List<String>>
+     */
+    private Map<String, List<String>> getTeamDatasetsIds(List<Integer> teamIds) {
+
+        Map<String, List<String>> permissionList = new HashMap<>();
+
+        List<SystemTeamUserEntity> teamUserData = systemTeamUserMapper.selectList(
+                new QueryWrapper<SystemTeamUserEntity>().select("dataset_permission").in("team_id", teamIds));
+
+        List<String> viewIds = new ArrayList<>();
+        List<String> manageIds = new ArrayList<>();
+        for (SystemTeamUserEntity entity : teamUserData) {
+            if (entity.getDatasetPermission().isBlank()) {
+                continue;
+            }
+
+            PermissionVo permissionData = JSONUtil.toBean(entity.getDatasetPermission(), PermissionVo.class);
+
+            if (!CollectionUtils.isEmpty(permissionData.getView())) {
+                viewIds.addAll(permissionData.getView());
+                manageIds.addAll(permissionData.getManage());
+            }
+        }
+
+        permissionList.put("viewIds", viewIds);
+        permissionList.put("manageIds", manageIds);
+
+        return permissionList;
     }
 }
