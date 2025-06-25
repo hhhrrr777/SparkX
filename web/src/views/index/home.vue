@@ -60,8 +60,8 @@
 									>
 										<el-icon size="16" @click="goChat(item.appId)"><VideoPlay /></el-icon>
 									</el-tooltip>
+									<el-divider direction="vertical"></el-divider>
 								</div>
-								<el-divider direction="vertical" v-if="item.type === 2 && item.status === 2"></el-divider>
 								<div class="box-item" v-if="item.type === 2">
 									<el-tooltip
 										effect="dark"
@@ -69,8 +69,9 @@
 									>
 										<el-icon size="16" @click="goFlow(item.appId)"><Share /></el-icon>
 									</el-tooltip>
+									<el-divider direction="vertical"></el-divider>
 								</div>
-								<el-divider direction="vertical" v-if="item.manage"></el-divider>
+
 								<div class="box-item" v-if="item.manage">
 									<el-tooltip
 										effect="dark"
@@ -78,8 +79,9 @@
 									>
 										<el-icon size="16" @click="goDetail(item.appId, item.manage)"><Setting /></el-icon>
 									</el-tooltip>
+									<el-divider direction="vertical"></el-divider>
 								</div>
-								<el-divider direction="vertical" v-if="item.manage"></el-divider>
+
 								<div class="box-item" v-if="item.manage">
 									<el-tooltip
 										effect="dark"
@@ -303,5 +305,9 @@ export default{
 }
 .title-info {
 	margin-left: 10px;
+}
+.box-item {
+	display: flex;
+	align-items: center;
 }
 </style>

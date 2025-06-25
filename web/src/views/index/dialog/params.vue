@@ -41,7 +41,7 @@
 			<el-form-item label="回复内容" v-if="form.emptyReply == 2" style="width: calc(100% - 40px);">
 				<el-input type="textarea" v-model="form.replyContent" rows="3" maxlength="255" show-word-limit></el-input>
 			</el-form-item>
-			<el-form-item>
+			<!--<el-form-item>
 				<template #label>
 					问题优化
 					<el-tooltip effect="dark" content="开启优化，系统将上下文提交给AI获得更精确的用户提问消息消除歧义" placement="top-start">
@@ -53,7 +53,7 @@
 					:inactive-value="2"
 					v-model="form.compressingQuery">
 				</el-switch>
-			</el-form-item>
+			</el-form-item>-->
 		</el-form>
 		<template #footer>
 			<div class="dialog-footer">

@@ -23,7 +23,7 @@
 						<el-icon size="16px" style="margin-left: 5px"><CopyDocument @click="copy"/></el-icon>
 					</div>
 					<div class="base-style">
-						<el-button type="danger" @click="goChat">本地演示</el-button>
+						<el-button type="danger" @click="goChat">本地调试</el-button>
 						<el-button>三方嵌入</el-button>
 					</div>
 				</div>
@@ -200,7 +200,7 @@ export default {
 		},
 		// 前往聊天
 		goChat() {
-			this.$router.push('/chat/' + this.appId)
+			this.$router.push('/chat/' + this.appId + '?debug=true')
 		},
 		// 复制
 		copy() {

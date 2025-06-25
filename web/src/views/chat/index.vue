@@ -19,7 +19,7 @@
 							 :class="{'item-active': nowSessionId === item.sessionId}" @mouseover="hoverIndex = index"
 							 @mouseleave="hoverIndex = -1"
 							 @click="checkSession(item.sessionId)">
-							<div class="log-item">{{ item.title }}</div>
+							<div class="log-item line1">{{ item.title }}</div>
 							<el-icon style="cursor: pointer" @click="delSession(item.sessionId)" v-if="hoverIndex === index">
 								<Delete />
 							</el-icon>
@@ -66,18 +66,20 @@ export default {
 			nowSessionId: "",
 			hoverIndex: -1,
 			domain: config.API_URL.replace("/api", ""),
-			logo: ""
+			logo: "",
+			debug: false
 		}
 	},
 	mounted() {
 		this.appId = this.$route.params.appId
+		this.debug = this.$route.query.debug
 		this.getChatInfo()
 		this.getSessionList()
 	},
 	methods: {
 		// 获取应用聊天详情
 		async getChatInfo() {
-			let res = await this.$API.chat.getInfo.get({appId: this.appId})
+			let res = await this.$API.chat.getInfo.get({appId: this.appId, debug: this.debug})
 			if (res.code === 0) {
 				let appInfo = res.data
 				if (appInfo.prologue !== '') {
@@ -88,6 +90,8 @@ export default {
 				this.randomKey = Math.random()
 				this.title = appInfo.name
 				this.logo = this.domain + appInfo.icon
+			} else {
+				this.$message.error(res.msg)
 			}
 		},
 		// 获取会话列表
@@ -225,7 +229,7 @@ export default {
 }
 .log-item {
 	height: 40px;
-	width: 100%;
+	width: 90%;
 	display: flex;
 	align-items: center;
 	cursor: pointer;

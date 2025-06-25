@@ -6,7 +6,7 @@
 					<div class="chat-msg-content" style="width: 50px">
 						<div class="chat-user">
 							<div class="user-icon">
-								<img :src="logo" style="width: 50px;height: 45px;"/>
+								<img :src="logo" style="width: 50px;height: 45px;" alt=""/>
 							</div>
 							<div class="chat-user-name"></div>
 						</div>
@@ -15,7 +15,13 @@
 						<div class="hello-word">
 							<p style="font-size: 14px;font-weight: 500">{{ welcomeWord.title }}</p>
 							<div class="hello-word-list">
-								<div class="hello-word-item" v-for="(item, index) in welcomeWord.question" :key="index">{{ item.content }}</div>
+								<div
+									class="hello-word-item"
+									v-for="(item, index) in welcomeWord.question"
+									@click="welcome(item.content)"
+									:key="index">
+									{{ item.content }}
+								</div>
 							</div>
 						</div>
 					</div>
@@ -51,7 +57,7 @@
 							<div class="menu-list" v-if="item.source === 'ai' && item.answerIng === 3">
 								<div class="menu-left-side">
 									<el-tag bordered style="margin-left: 10px;cursor: pointer;" v-if="setting.showRelation === 1" @click="showResource(item)">
-										{{ item.retrievedList?.length }} 条引用
+										{{ item.retrievedList ? item.retrievedList.length : 0 }} 条引用
 									</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">{{ item.meta.time }} s</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">{{ item.meta.tokens }} tokens</el-tag>
@@ -72,20 +78,27 @@
 										<el-icon size="16" style="margin-left: 10px;cursor: pointer" @click="copyText(item.content)"><CopyDocument /></el-icon>
 									</el-tooltip>
 									<el-tooltip
-										v-if="setting.showAppraise === 1"
+										v-if="setting.showAppraise === 1 && item.appraise !== 2"
 										effect="dark"
 										content="答的不错"
 										placement="bottom"
 									>
-										<span class="iconfont icon-zan icon-style" @click="appraise(item, 1)" :style="{'color': item.appraise === 1 ? 'var(--el-color-theme)' : ''}"></span>
+										<span
+											class="iconfont icon-zan icon-style"
+											@click="appraise(item, 1)"
+											:style="{'color': item.appraise === 1 ? 'var(--el-color-theme)' : ''}">
+										</span>
 									</el-tooltip>
 									<el-tooltip
-										v-if="setting.showAppraise === 1"
+										v-if="setting.showAppraise === 1 && item.appraise !== 1"
 										effect="dark"
 										content="还不够好"
 										placement="bottom"
 									>
-										<span class="iconfont icon-cai icon-style" @click="appraise(item, 2)" :style="{'color': item.appraise === 2 ? 'var(--el-color-theme)' : ''}"></span>
+										<span
+											class="iconfont icon-cai icon-style"
+											@click="appraise(item, 2)" :style="{'color': item.appraise === 2 ? 'var(--el-color-theme)' : ''}">
+										</span>
 									</el-tooltip>
 									<el-tooltip
 										v-if="setting.voiceOut === 1"
@@ -229,6 +242,11 @@ export default {
 		this.ctrl = new AbortController()
 	},
 	methods: {
+		// 欢迎语
+		welcome(word) {
+			this.chatMsg = word + "\n"
+			this.send()
+		},
 		// 发送消息
 		async send() {
 
@@ -376,7 +394,11 @@ export default {
 			this.dialogVisible = true
 		},
 		// 复制内容
-		copyText(text) {
+		copyText(content) {
+			let text = ''
+			content.forEach((item) => {
+				text += item.content
+			})
 			navigator.clipboard.writeText(text).then(() => {
 				this.$message.success('复制成功')
 			}).catch(error => {
@@ -386,6 +408,11 @@ export default {
 		},
 		// 评价
 		async appraise(row, type) {
+			if (!this.writeLog) {
+				this.$message.error('调试模式下不支持该功能')
+				return
+			}
+
 			if (row.appraise !== 0) {
 				type = 0
 			}

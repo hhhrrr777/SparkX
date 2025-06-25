@@ -17,10 +17,10 @@ public interface IApplicationChatService {
 
     /**
      * 获取应用信息
-     * @param appId String
+     * @param chatInfoVo ChatInfoVo
      * @return ApplicationChatVo
      */
-    ApplicationVo getChatInfo(String appId);
+    ApplicationVo getChatInfo(ChatInfoVo chatInfoVo);
 
     /**
      * 获取会话记录

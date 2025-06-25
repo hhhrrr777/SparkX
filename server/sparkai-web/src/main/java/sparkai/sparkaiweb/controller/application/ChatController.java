@@ -28,9 +28,9 @@ public class ChatController {
      * 应用聊天详情
      */
     @GetMapping("/info")
-    public AjaxResult<ApplicationVo> info(@RequestParam("appId") String appId) {
+    public AjaxResult<ApplicationVo> info(ChatInfoVo chatInfoVo) {
 
-        return AjaxResult.success(iApplicationChatService.getChatInfo(appId));
+        return AjaxResult.success(iApplicationChatService.getChatInfo(chatInfoVo));
     }
 
     /**
