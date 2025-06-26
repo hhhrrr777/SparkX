@@ -22,7 +22,7 @@ const routes = [
 		path: "/chat/:appId",
 		component: () => import(/* webpackChunkName: "login" */ '@/views/chat/index.vue'),
 		meta: {
-			title: "应用"
+			title: "SparkAI"
 		}
 	}
 ]

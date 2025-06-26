@@ -24,7 +24,7 @@
 					</div>
 					<div class="base-style">
 						<el-button type="danger" @click="goChat">本地调试</el-button>
-						<el-button>三方嵌入</el-button>
+						<el-button @click="showDeploy">三方嵌入</el-button>
 					</div>
 				</div>
 				<!--<div class="base-info-item">
@@ -124,17 +124,22 @@
 			</div>
 		</div>
 	</div>
+
+	<deploy-dialog v-if="deployVisible" ref="deployDialog" @closed="deployVisible=false" :close-on-click-modal="false"></deploy-dialog>
 </template>
 
 <script>
 import {Avatar, ChatLineRound, CopyDocument, Key, Star} from "@element-plus/icons-vue";
 import scEcharts from "@/components/scEcharts/index.vue";
+import deployDialog from '@/views/index/dialog/deploy.vue'
+import saveDialog from "@/views/dataset/save.vue";
 
 export default {
-	components: {Star, Key, ChatLineRound, Avatar, CopyDocument, scEcharts},
+	components: {saveDialog, Star, Key, ChatLineRound, Avatar, CopyDocument, scEcharts, deployDialog},
 	data() {
 		return {
 			open: 1,
+			deployVisible: false,
 			dayRange: [],
 			baseOption: {
 				title: {
@@ -253,6 +258,17 @@ export default {
 			res.data.likeSeries.name = '答的不错'
 			res.data.dislikeSeries.name = '还不够好'
 			this.appraiseOption.series = [res.data.likeSeries, res.data.dislikeSeries]
+		},
+		// 显示三方部署
+		showDeploy() {
+
+			this.deployVisible = true
+			this.$nextTick(() => {
+				this.$refs.deployDialog.open({
+					url1:  this.domain + '/chat/' + this.appId,
+					url2: ''
+				})
+			})
 		}
 	}
 }

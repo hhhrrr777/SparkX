@@ -158,6 +158,11 @@ public class ApplicationServiceImpl implements IApplicationService {
                 manageAppIds.addAll(manageAppIdList);
             }
 
+            if (CollectionUtils.isEmpty(viewAppIds)) {
+                List<ApplicationListVo> applicationVoList = new LinkedList<>();
+                return PageResult.iPageHandle(0L, pageNo, pageSize, applicationVoList);
+            }
+
             // 只查可见的数据
             queryWrapper.in("app_id", viewAppIds);
         } else if (queryVo.getType().equals(1)) { // 自己的数据
@@ -199,6 +204,7 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         ApplicationEntity entity = new ApplicationEntity();
         entity.setAppId(IdUtil.randomUUID());
+        entity.setAccessToken(Tool.makeToken());
         entity.setName(validate.getName());
         entity.setIcon("/icons/default_logo.png");
         LocalUserVo userData = UserContextHelper.getUser();
@@ -634,8 +640,17 @@ public class ApplicationServiceImpl implements IApplicationService {
             }
         }
 
-        permissionList.put("viewIds", viewIds);
-        permissionList.put("manageIds", manageIds);
+        List<String> finalViewIds = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(viewIds)) {
+
+            // 过滤掉状态不是已发布的应用ID
+            List<ApplicationEntity> appList = applicationMapper.selectList(
+                    new QueryWrapper<ApplicationEntity>().select("app_id").in("app_id", viewIds).eq("status", 2));
+            finalViewIds = appList.stream().map(ApplicationEntity::getAppId).toList();
+        }
+
+        permissionList.put("viewIds", finalViewIds);
+        permissionList.put("manageIds", manageIds.stream().filter(finalViewIds::contains).distinct().toList());
 
         return permissionList;
     }

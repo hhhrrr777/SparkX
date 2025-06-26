@@ -34,6 +34,12 @@ public class ApplicationEntity implements Serializable {
     private String appId;
 
     /**
+     * 访问token
+     */
+    @TableField(value = "access_token")
+    private String accessToken;
+
+    /**
     * 应用名称
     */
     @TableField(value = "name")

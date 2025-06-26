@@ -120,7 +120,7 @@ export default {
 		} else {
 			this.title = '应用名称'
 		}
-		console.log('最新的', this.permissionData)
+
 		this.dataTable = this.tableData
 		this.defaultSelect()
 	},

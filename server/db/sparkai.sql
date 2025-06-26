@@ -242,45 +242,43 @@ COMMENT ON TABLE "public"."system_users" IS '系统用户表';
 
 
 CREATE TABLE "public"."application" (
-    "app_id" varchar(64) COLLATE "pg_catalog"."default" NOT NULL,
-    "name" varchar(155) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "description" varchar(255) COLLATE "pg_catalog"."default",
-    "icon" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "model_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "model_name" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "prompt" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "relation_dataset" int2 DEFAULT 2,
-    "prologue" varchar(500) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "show_relation" int2 DEFAULT 1,
-    "show_time" int2 DEFAULT 1,
-    "show_tokens" int2 DEFAULT 1,
-    "show_appraise" int2 DEFAULT 1,
-    "user_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "show_think" int2 DEFAULT 2,
-    "voice_input" int2 DEFAULT 2,
-    "voice_out" int2 DEFAULT 2,
-    "empty_reply" int2 DEFAULT 1,
-    "reply_content" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "search_mode" varchar(55) COLLATE "pg_catalog"."default" DEFAULT 'embedding'::character varying,
-    "similarity" numeric(10,3) DEFAULT 0.600,
-    "top_rank" int2 DEFAULT 3,
-    "rerank_model_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "memory_num" int2 DEFAULT 2,
-    "max_reply_token" int8 DEFAULT 1024,
-    "temperature" numeric(10,2) DEFAULT 3,
-    "type" int2 DEFAULT 1,
-    "compressing_query" int2 DEFAULT 2,
-    "status" int2 DEFAULT 1,
-    "create_time" timestamp(6),
-    "update_time" timestamp(6),
+    "app_id" VARCHAR (64) COLLATE "pg_catalog"."default" NOT NULL,
+    "access_token" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "name" VARCHAR (155) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "description" VARCHAR (255) COLLATE "pg_catalog"."default",
+    "icon" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "model_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "model_name" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "prompt" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "relation_dataset" INT2 DEFAULT 2,
+    "prologue" VARCHAR (500) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "show_relation" INT2 DEFAULT 1,
+    "show_time" INT2 DEFAULT 1,
+    "show_tokens" INT2 DEFAULT 1,
+    "show_appraise" INT2 DEFAULT 1,
+    "user_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "show_think" INT2 DEFAULT 2,
+    "voice_input" INT2 DEFAULT 2,
+    "voice_out" INT2 DEFAULT 2,
+    "empty_reply" INT2 DEFAULT 1,
+    "reply_content" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "search_mode" VARCHAR (55) COLLATE "pg_catalog"."default" DEFAULT 'embedding' :: CHARACTER VARYING,
+    "similarity" NUMERIC (10, 3) DEFAULT 0.600,
+    "top_rank" INT2 DEFAULT 3,
+    "rerank_model_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "memory_num" INT2 DEFAULT 2,
+    "max_reply_token" INT8 DEFAULT 1024,
+    "temperature" NUMERIC (10, 2) DEFAULT 3,
+    "type" INT2 DEFAULT 1,
+    "compressing_query" INT2 DEFAULT 2,
+    "status" INT2 DEFAULT 1,
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6),
     CONSTRAINT "application_pkey" PRIMARY KEY ("app_id")
-)
-;
-
-ALTER TABLE "public"."application"
-    OWNER TO "postgres";
-
+);
+ALTER TABLE "public"."application" OWNER TO "postgres";
 COMMENT ON COLUMN "public"."application"."app_id" IS 'id';
+COMMENT ON COLUMN "public"."application"."access_token" IS '访问token';
 COMMENT ON COLUMN "public"."application"."name" IS '应用名称';
 COMMENT ON COLUMN "public"."application"."description" IS '应用描述';
 COMMENT ON COLUMN "public"."application"."icon" IS '应用的头像';

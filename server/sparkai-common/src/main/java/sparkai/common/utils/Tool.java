@@ -13,6 +13,7 @@ import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateRange;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONUtil;
 
@@ -122,5 +123,14 @@ public class Tool {
         returnData.put("nodeId", nodeId);
 
         return JSONUtil.toJsonStr(returnData);
+    }
+
+    /**
+     * 生成token
+     * @return String
+     */
+    public static String makeToken() {
+        long id = IdUtil.getSnowflake(1, 1).nextId();
+        return Long.toHexString(id).substring(0, 16).toUpperCase();
     }
 }
