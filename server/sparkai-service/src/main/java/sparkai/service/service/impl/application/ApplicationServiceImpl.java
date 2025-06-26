@@ -269,6 +269,11 @@ public class ApplicationServiceImpl implements IApplicationService {
             });
         }
 
+        if (validate.getSaveType().equals(2) &&
+                (validate.getModelId().isBlank() || validate.getModelName().isBlank())) {
+            throw new BusinessException("请设置AI模型");
+        }
+
         ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());
         if (applicationInfo == null) {
             throw new BusinessException("应用信息错误");
