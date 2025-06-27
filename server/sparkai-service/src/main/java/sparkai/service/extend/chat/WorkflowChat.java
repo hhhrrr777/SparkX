@@ -94,7 +94,7 @@ public class WorkflowChat implements IChat {
             InetAddress inetAddress = InetAddress.getLocalHost();
             outputData.set("sys.ip", inetAddress.getHostAddress());
         } catch (UnknownHostException e) {
-            outputData.set("sys.ip", "0.0.0.0");
+            outputData.set("sys.ip", "127.0.0.1");
         }
 
         outputData.set("sys.appId", info.getAppId());

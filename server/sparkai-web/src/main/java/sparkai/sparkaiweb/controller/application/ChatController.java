@@ -28,7 +28,7 @@ public class ChatController {
      * 应用聊天详情
      */
     @GetMapping("/info")
-    public AjaxResult<ApplicationVo> info(ChatInfoVo chatInfoVo) {
+    public AjaxResult<ApplicationSimpleVo> info(ChatInfoVo chatInfoVo) {
 
         return AjaxResult.success(iApplicationChatService.getChatInfo(chatInfoVo));
     }
@@ -37,9 +37,9 @@ public class ChatController {
      * 获取会话列表
      */
     @GetMapping("/sessionList")
-    public AjaxResult<List<ApplicationSimpleSessionVo>> sessionList(@RequestParam("appId") String appId) {
+    public AjaxResult<List<ApplicationSimpleSessionVo>> sessionList(ChatInfoVo chatInfoVo) {
 
-        return AjaxResult.success(iApplicationChatService.getChatSesstionList(appId));
+        return AjaxResult.success(iApplicationChatService.getChatSesstionList(chatInfoVo));
     }
 
     /**

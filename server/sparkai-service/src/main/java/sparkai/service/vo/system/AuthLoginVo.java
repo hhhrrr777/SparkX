@@ -7,26 +7,26 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.service.interfaces.system;
+package sparkai.service.vo.system;
 
-import sparkai.service.vo.system.AuthLoginVo;
-import sparkai.service.vo.system.LoginVo;
+import lombok.Data;
 
-import java.util.Map;
+import java.io.Serial;
+import java.io.Serializable;
 
-public interface ILoginService {
+@Data
+public class AuthLoginVo implements Serializable {
 
-    /**
-     * 登录操作
-     * @param loginVo LoginVo
-     * @return Map<String, String>
-     */
-    Map<String, String> doLogin(LoginVo loginVo);
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 部署模式下的鉴权登录
-     * @param loginVo AuthLoginVo
-     * @return Map<String, String>
+     * 客户端标识
      */
-    Map<String, String> doAuthLogin(AuthLoginVo loginVo);
+    private String customerId;
+
+    /**
+     * 应用的token
+     */
+    private String token;
 }

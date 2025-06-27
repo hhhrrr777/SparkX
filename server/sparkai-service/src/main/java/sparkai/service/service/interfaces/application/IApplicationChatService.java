@@ -20,14 +20,14 @@ public interface IApplicationChatService {
      * @param chatInfoVo ChatInfoVo
      * @return ApplicationChatVo
      */
-    ApplicationVo getChatInfo(ChatInfoVo chatInfoVo);
+    ApplicationSimpleVo getChatInfo(ChatInfoVo chatInfoVo);
 
     /**
      * 获取会话记录
-     * @param appId String
+     * @param chatInfoVo ChatInfoVo
      * @return List<ApplicationSimpleSessionVo>
      */
-    List<ApplicationSimpleSessionVo> getChatSesstionList(String appId);
+    List<ApplicationSimpleSessionVo> getChatSesstionList(ChatInfoVo chatInfoVo);
 
     /**
      * 创建会话

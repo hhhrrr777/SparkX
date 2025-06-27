@@ -10,11 +10,16 @@
 package sparkai.service.helper;
 
 import cn.hutool.json.JSONArray;
+import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import sparkai.common.constant.SparkAIConstant;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
@@ -22,6 +27,7 @@ import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
+import sparkai.service.vo.system.LocalUserVo;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NextAnswerNodeVo;
 import sparkai.service.vo.workflow.NodeRuntimeVo;
@@ -156,5 +162,34 @@ public class ApplicationHelper {
         nextAnswerNodeVo.setAnswerType(answerType.get());
 
         return nextAnswerNodeVo;
+    }
+
+    /**
+     * 获取token中的用户
+     * @return LocalUserVo
+     */
+    public LocalUserVo getUserData() {
+
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = servletRequestAttributes.getRequest();
+
+        // 令牌验证
+        String token = request.getHeader("Authorization");
+        LocalUserVo localUser = new LocalUserVo();
+        try {
+
+            token = token.replace("Bearer ", "");
+            boolean validate = JWT.of(token).setKey(SparkAIConstant.CommonData.passwordSalt.getBytes()).validate(0);
+            if (!validate) {
+                throw new Exception();
+            }
+
+            JWT jwt = JWT.of(token);
+            localUser.setUserId(String.valueOf(jwt.getPayload("userId")));
+        } catch (Exception e) {
+            return localUser;
+        }
+
+        return localUser;
     }
 }

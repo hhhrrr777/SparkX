@@ -73,7 +73,7 @@ export default {
 	},
 	mounted() {
 		this.accessToken = this.$route.params.token
-		this.debug = this.$route.query.debug
+		this.debug = this.$route.query.debug ?? false
 		this.getChatInfo()
 	},
 	methods: {
@@ -92,6 +92,29 @@ export default {
 				this.title = appInfo.name
 				this.logo = this.domain + appInfo.icon
 
+				// 非调试模式的部署模式
+				if (!this.debug) {
+					this.authLogin()
+				} else {
+					this.getSessionList()
+				}
+			} else {
+				if (res.msg === '登录过期') {
+					this.$router.push('/login')
+				}
+				this.$message.error(res.msg)
+			}
+		},
+		// 非调试模式下的鉴权
+		async authLogin() {
+			let customerId = localStorage.getItem("customerId")
+			let res = await this.$API.auth.authLogin.post({token: this.accessToken, customerId: customerId})
+			if (res.code === 0) {
+				this.$TOOL.cookie.set("TOKEN", res.data.token, {
+					expires: 24 * 60 * 60
+				})
+				localStorage.setItem("customerId", res.data.customerId)
+
 				this.getSessionList()
 			} else {
 				this.$message.error(res.msg)
@@ -99,7 +122,7 @@ export default {
 		},
 		// 获取会话列表
 		async getSessionList() {
-			let res = await this.$API.chat.getSessionList.get({appId: this.appId})
+			let res = await this.$API.chat.getSessionList.get({accessToken: this.accessToken, debug: this.debug})
 			if (res.code === 0) {
 				this.sessionLog = res.data
 			}

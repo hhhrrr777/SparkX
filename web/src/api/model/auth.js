@@ -17,5 +17,13 @@ export default {
 
 			return await http.post(this.url, data);
 		}
+	},
+	authLogin: {
+		url: `${config.API_URL}/login/authLogin`,
+		name: "部署鉴权登录",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
 	}
 }

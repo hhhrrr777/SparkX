@@ -197,6 +197,10 @@ export default {
 		logo: {
 			type: String,
 			default: "/src/assets/logo.png"
+		},
+		debug: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {

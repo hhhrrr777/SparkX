@@ -17,13 +17,18 @@ import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.enums.StatusEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.application.ApplicationCustomerEntity;
 import sparkai.service.entity.system.SystemTeamEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.mapper.application.ApplicationCustomerMapper;
 import sparkai.service.mapper.system.SystemTeamMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.system.ILoginService;
+import sparkai.service.vo.system.AuthLoginVo;
 import sparkai.service.vo.system.LoginVo;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +40,9 @@ public class LoginServiceImpl implements ILoginService {
 
     @Autowired
     SystemTeamMapper systemTeamMapper;
+
+    @Autowired
+    ApplicationCustomerMapper applicationCustomerMapper;
 
     /**
      * 登录操作
@@ -75,5 +83,62 @@ public class LoginServiceImpl implements ILoginService {
         returnData.put("name", userInfo.getNickname());
 
         return returnData;
+    }
+
+    /**
+     * 部署模式下的鉴权登录
+     * @param loginVo AuthLoginVo
+     * @return Map<String, String>
+     */
+    @Override
+    public Map<String, String> doAuthLogin(AuthLoginVo loginVo) {
+
+        ApplicationCustomerEntity customerInfo;
+        // 第一次进入，写入随机用户
+        if (loginVo.getCustomerId() == null) {
+
+            customerInfo = regCustomer(loginVo);
+        } else {
+
+            customerInfo = applicationCustomerMapper.selectOne(
+                    new QueryWrapper<ApplicationCustomerEntity>()
+                            .eq("customer_id", loginVo.getCustomerId()).eq("app_token", loginVo.getToken()));
+            if (customerInfo == null) {
+                customerInfo = regCustomer(loginVo);
+            }
+        }
+
+        Map<String, String> returnData = new HashMap<>();
+        returnData.put("token", JWT.create()
+                .setPayload("userId", customerInfo.getCustomerId())
+                .setKey(SparkAIConstant.CommonData.passwordSalt.getBytes())
+                .sign());
+        returnData.put("customerId", customerInfo.getCustomerId());
+
+        return returnData;
+    }
+
+    /**
+     * 注册访客
+     * @param loginVo AuthLoginVo
+     * @return ApplicationCustomerEntity
+     */
+    private ApplicationCustomerEntity regCustomer(AuthLoginVo loginVo) {
+
+        ApplicationCustomerEntity customerInfo = new ApplicationCustomerEntity();
+        customerInfo.setCustomerId(Tool.makeToken());
+        try {
+
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            customerInfo.setCustomerIp(inetAddress.getHostAddress());
+        } catch (UnknownHostException e) {
+            customerInfo.setCustomerIp("127.0.0.1");
+        }
+        customerInfo.setAppToken(loginVo.getToken());
+        customerInfo.setCreateTime(Tool.nowDateTime());
+
+        applicationCustomerMapper.insert(customerInfo);
+
+        return customerInfo;
     }
 }

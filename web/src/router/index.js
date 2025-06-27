@@ -64,7 +64,8 @@ router.beforeEach(async (to, from, next) => {
 		return false;
 	}
 
-	if (!token) {
+	let res = to.path.match("chat/*")
+	if (!res && !token) {
 		next({
 			path: '/login'
 		});

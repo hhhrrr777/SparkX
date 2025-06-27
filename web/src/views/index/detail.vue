@@ -106,7 +106,6 @@ export default {
 		}
 	},
 	mounted() {
-		this.page = this.components.setting
 		this.appId = this.$route.query.appId;
 		this.getInfo()
 		this.getApplicationList()
@@ -130,6 +129,8 @@ export default {
 			let res = await this.$API.application.info.get({appId: this.appId})
 			this.appInfo = res.data
 			this.accessToken = res.data.accessToken
+
+			this.page = this.components.setting
 		},
 		// 选择应用
 		selectApp(item) {

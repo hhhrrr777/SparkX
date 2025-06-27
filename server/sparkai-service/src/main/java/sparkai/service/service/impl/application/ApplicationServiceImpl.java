@@ -277,10 +277,6 @@ public class ApplicationServiceImpl implements IApplicationService {
                 throw new BusinessException("温度数值应该大于0");
             }
 
-            if (validate.getReplyContent().isBlank()) {
-                throw new BusinessException("回复内容不能为空");
-            }
-
             if (validate.getModelId().isBlank() || validate.getModelName().isBlank()) {
                 throw new BusinessException("请设置AI模型");
             }

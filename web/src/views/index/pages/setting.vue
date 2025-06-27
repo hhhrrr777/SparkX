@@ -393,13 +393,10 @@ export default {
 		async saveApp(type) {
 			// 如果是保存并发布的话，则需要校验参数
 			if (type === 2) {
-
 				if (this.modelId[0] === '' || this.modelId[1] === '') {
 					this.$message.error('请设置AI模型')
 					return
 				}
-
-				return false
 			}
 
 			// 保存类型

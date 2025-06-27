@@ -20,10 +20,9 @@ import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
-import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.system.SystemTeamUserEntity;
-import sparkai.service.helper.UserContextHelper;
+import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.mapper.application.ApplicationChatLogMapper;
 import sparkai.service.mapper.application.ApplicationChatSessionMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
@@ -31,10 +30,8 @@ import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.service.interfaces.application.IApplicationChatService;
 import sparkai.service.vo.application.*;
-import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.system.LocalUserVo;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,13 +53,16 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     @Autowired
     SystemTeamUserMapper systemTeamUserMapper;
 
+    @Autowired
+    ApplicationHelper applicationHelper;
+
     /**
      * 获取应用信息
      * @param chatInfoVo ChatInfoVo
-     * @return ApplicationChatVo
+     * @return ApplicationSimpleVo
      */
     @Override
-    public ApplicationVo getChatInfo(ChatInfoVo chatInfoVo) {
+    public ApplicationSimpleVo getChatInfo(ChatInfoVo chatInfoVo) {
 
         // 设置应用信息
         ApplicationEntity application = applicationMapper.selectOne(
@@ -72,10 +72,13 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         }
 
         // 如果开启debug，判断当前用户是否有权限
-        LocalUserVo userData = UserContextHelper.getUser();
-        if (!application.getUserId().equals(userData.getUserId())) {
+        LocalUserVo userData = applicationHelper.getUserData();
+        if (chatInfoVo.getDebug() && !application.getUserId().equals(userData.getUserId())) {
             SystemTeamUserEntity teamUser = systemTeamUserMapper.selectOne(
                     new QueryWrapper<SystemTeamUserEntity>().eq("user_id", userData.getUserId()));
+            if (teamUser == null) {
+                throw new BusinessException("登录过期");
+            }
 
             PermissionVo permissionVo = JSONUtil.toBean(teamUser.getAppPermission(), PermissionVo.class);
             if (!permissionVo.getView().contains(application.getAppId())) {
@@ -83,38 +86,34 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
             }
         }
 
-        ApplicationVo applicationVo = new ApplicationVo();
+        ApplicationSimpleVo applicationVo = new ApplicationSimpleVo();
         BeanUtils.copyProperties(application, applicationVo);
-
-        // 关联的知识库
-        List<DatasetSimpleVo> datasetVoList = new ArrayList<>();
-        List<ApplicationDatasetRelationEntity> relationEntityList = applicationDatasetRelationMapper.selectList(
-                new QueryWrapper<ApplicationDatasetRelationEntity>().eq("app_id", application.getAppId()));
-        for (ApplicationDatasetRelationEntity entity : relationEntityList) {
-            DatasetSimpleVo datasetSimpleVo = new DatasetSimpleVo();
-            BeanUtils.copyProperties(entity, datasetSimpleVo);
-
-            datasetVoList.add(datasetSimpleVo);
-        }
-        applicationVo.setDatasetList(datasetVoList);
 
         return applicationVo;
     }
 
     /**
      * 获取会话记录
-     * @param appId String
+     * @param chatInfoVo ChatInfoVo
      * @return List<ApplicationSimpleSessionVo>
      */
     @Override
-    public List<ApplicationSimpleSessionVo> getChatSesstionList(String appId) {
+    public List<ApplicationSimpleSessionVo> getChatSesstionList(ChatInfoVo chatInfoVo) {
 
-        LocalUserVo userData = UserContextHelper.getUser();
+        LocalUserVo userData = applicationHelper.getUserData();
+
+        // 设置应用信息
+        ApplicationEntity application = applicationMapper.selectOne(
+                new QueryWrapper<ApplicationEntity>().eq("access_token", chatInfoVo.getAccessToken()));
+        if (application.getStatus().equals(1) && !chatInfoVo.getDebug()) {
+            throw new BusinessException("该应用尚未发布");
+        }
+
         // 设置会话信息
         List<ApplicationChatSessionEntity> sessionList = applicationChatSessionMapper
                 .selectList(new QueryWrapper<ApplicationChatSessionEntity>()
                         .eq("user_id", userData.getUserId())
-                        .eq("app_id", appId).orderByDesc("create_time").last("LIMIT 20"));
+                        .eq("app_id", application.getAppId()).orderByDesc("create_time").last("LIMIT 20"));
         List<ApplicationSimpleSessionVo> sessionVoList = new LinkedList<>();
         for (ApplicationChatSessionEntity entity : sessionList) {
             ApplicationSimpleSessionVo vo = new ApplicationSimpleSessionVo();
@@ -134,7 +133,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     @Override
     public String createSession(SessionVo sessionVo) {
 
-        LocalUserVo userData = UserContextHelper.getUser();
+        LocalUserVo userData = applicationHelper.getUserData();
         ApplicationChatSessionEntity entity = new ApplicationChatSessionEntity();
         entity.setAppId(sessionVo.getAppId());
         entity.setSessionId(IdUtil.randomUUID());
@@ -172,7 +171,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     @Override
     public Integer writeLog(ApplicationLogVo logVo) {
 
-        LocalUserVo userData = UserContextHelper.getUser();
+        LocalUserVo userData = applicationHelper.getUserData();
 
         ApplicationChatLogEntity entity = new ApplicationChatLogEntity();
         entity.setAppId(logVo.getAppId());
@@ -214,7 +213,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     @Transactional
     public void delSession(String sessionId) {
 
-        LocalUserVo userData = UserContextHelper.getUser();
+        LocalUserVo userData = applicationHelper.getUserData();
         int num = applicationChatSessionMapper.delete(new QueryWrapper<ApplicationChatSessionEntity>()
                 .eq("session_id", sessionId).eq("user_id", userData.getUserId()));
 
@@ -231,7 +230,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     @Override
     public List<ApplicationLogVo> getChatLog(String sessionId) {
 
-        LocalUserVo userData = UserContextHelper.getUser();
+        LocalUserVo userData = applicationHelper.getUserData();
         ApplicationChatSessionEntity sessionInfo = applicationChatSessionMapper.selectOne(new QueryWrapper<ApplicationChatSessionEntity>()
                 .eq("session_id", sessionId).eq("user_id", userData.getUserId()));
         if (sessionInfo == null) {

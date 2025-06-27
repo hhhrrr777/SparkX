@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sparkai.common.core.AjaxResult;
 import sparkai.service.service.interfaces.system.ILoginService;
+import sparkai.service.vo.system.AuthLoginVo;
 import sparkai.service.vo.system.LoginVo;
 
 import java.util.Map;
@@ -34,5 +35,14 @@ public class LoginController {
     public AjaxResult<Map<String, String>> login(@RequestBody LoginVo loginVo) {
 
         return AjaxResult.success(iLoginService.doLogin(loginVo));
+    }
+
+    /**
+     * 部署模式下的鉴权登录
+     */
+    @PostMapping("/authLogin")
+    public AjaxResult<Map<String, String>> authLogin(@RequestBody AuthLoginVo loginVo) {
+
+        return AjaxResult.success(iLoginService.doAuthLogin(loginVo));
     }
 }
