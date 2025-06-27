@@ -60,26 +60,26 @@ export default {
 			},
 			chatLogMsg: [],
 			sessionLog: [],
-			appId: "",
+			accessToken: "",
 			title: '', // 应用标题
 			randomKey: Math.random(),
 			nowSessionId: "",
 			hoverIndex: -1,
 			domain: config.API_URL.replace("/api", ""),
 			logo: "",
-			debug: false
+			debug: false,
+			appId: ""
 		}
 	},
 	mounted() {
-		this.appId = this.$route.params.appId
+		this.accessToken = this.$route.params.token
 		this.debug = this.$route.query.debug
 		this.getChatInfo()
-		this.getSessionList()
 	},
 	methods: {
 		// 获取应用聊天详情
 		async getChatInfo() {
-			let res = await this.$API.chat.getInfo.get({appId: this.appId, debug: this.debug})
+			let res = await this.$API.chat.getInfo.get({accessToken: this.accessToken, debug: this.debug})
 			if (res.code === 0) {
 				let appInfo = res.data
 				if (appInfo.prologue !== '') {
@@ -87,9 +87,12 @@ export default {
 					appInfo.prologue = JSON.parse(appInfo.prologue)
 				}
 				this.setting = appInfo
+				this.appId = appInfo.appId
 				this.randomKey = Math.random()
 				this.title = appInfo.name
 				this.logo = this.domain + appInfo.icon
+
+				this.getSessionList()
 			} else {
 				this.$message.error(res.msg)
 			}

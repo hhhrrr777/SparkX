@@ -23,7 +23,7 @@ public class ChatInfoVo implements Serializable {
     /**
      * 应用id
      */
-    private String appId;
+    private String accessToken;
 
     /**
      * 是否开启调试

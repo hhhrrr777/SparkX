@@ -29,6 +29,11 @@ public class ApplicationVo implements Serializable {
     private String appId;
 
     /**
+     * 访问token
+     */
+    private String accessToken;
+
+    /**
     * 应用名称
     */
     private String name;

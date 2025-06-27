@@ -9,7 +9,6 @@
 // +----------------------------------------------------------------------
 package sparkai.service.validate.application;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -55,13 +54,11 @@ public class ApplicationSaveValidate implements Serializable {
     /**
     * 使用的模型
     */
-    @NotEmpty(message = "使用的模型不能为空")
     private String modelId;
 
     /**
      * 使用的模型名
      */
-    @NotEmpty(message = "使用的模型不能为空")
     private String modelName;
 
     /**
@@ -132,7 +129,6 @@ public class ApplicationSaveValidate implements Serializable {
     /**
     * 相似度
     */
-    @Min(value = 0)
     private double similarity;
 
     /**
@@ -153,7 +149,6 @@ public class ApplicationSaveValidate implements Serializable {
     /**
     * 回复上限
     */
-    @Min(value = 20)
     private Long maxReplyToken;
 
     /**

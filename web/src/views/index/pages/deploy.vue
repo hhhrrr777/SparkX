@@ -19,7 +19,7 @@
 						</el-switch>
 					</div>
 					<div class="base-style code-bg" style="width: 600px">
-						{{ domain }}/chat/{{ appId }}
+						{{ domain }}/chat/{{ accessToken }}
 						<el-icon size="16px" style="margin-left: 5px"><CopyDocument @click="copy"/></el-icon>
 					</div>
 					<div class="base-style">
@@ -184,7 +184,8 @@ export default {
 				days: 1,
 				startTime: "",
 				endTime: "",
-			}
+			},
+			accessToken: ""
 		}
 	},
 	watch: {
@@ -202,10 +203,11 @@ export default {
 		async getAppInfo() {
 			let res = await this.$API.application.info.get({appId: this.appId})
 			this.appInfo = res.data
+			this.accessToken = res.data.accessToken
 		},
 		// 前往聊天
 		goChat() {
-			this.$router.push('/chat/' + this.appId + '?debug=true')
+			this.$router.push('/chat/' + this.accessToken + '?debug=true')
 		},
 		// 复制
 		copy() {

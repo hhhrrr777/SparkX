@@ -242,18 +242,48 @@ public class ApplicationServiceImpl implements IApplicationService {
     }
 
     /**
+     * 获取应用信息
+     * @param accessToken String
+     * @return ApplicationVo
+     */
+    @Override
+    public ApplicationVo getApplicationInfoByToken(String accessToken) {
+
+        LocalUserVo userData = UserContextHelper.getUser();
+
+        ApplicationVo applicationVo = new ApplicationVo();
+        ApplicationEntity info = applicationMapper.selectOne(
+                new QueryWrapper<ApplicationEntity>()
+                        .eq("user_id", userData.getUserId())
+                        .eq("access_token", accessToken));
+        BeanUtils.copyProperties(info, applicationVo);
+
+        // 查询关联的知识库信息
+        applicationVo.setDatasetList(applicationHelper.getRelationDatasetList(info.getAppId()));
+
+        return applicationVo;
+    }
+
+    /**
      * 编辑应用
      * @param validate ApplicationSaveValidate
      */
     @Override
     public void saveApplication(ApplicationSaveValidate validate) {
 
-        if (validate.getTemperature() <= 0) {
-            throw new BusinessException("温度数值应该大于0");
-        }
+        if (validate.getSaveType().equals(2)) {
 
-        if (validate.getEmptyReply().equals(2) && validate.getReplyContent().isBlank()) {
-            throw new BusinessException("回复内容不能为空");
+            if (validate.getTemperature() <= 0) {
+                throw new BusinessException("温度数值应该大于0");
+            }
+
+            if (validate.getReplyContent().isBlank()) {
+                throw new BusinessException("回复内容不能为空");
+            }
+
+            if (validate.getModelId().isBlank() || validate.getModelName().isBlank()) {
+                throw new BusinessException("请设置AI模型");
+            }
         }
 
         if (!validate.getPrologue().getQuestion().isEmpty()
@@ -267,11 +297,6 @@ public class ApplicationServiceImpl implements IApplicationService {
                     throw new BusinessException("开场问题不能为空");
                 }
             });
-        }
-
-        if (validate.getSaveType().equals(2) &&
-                (validate.getModelId().isBlank() || validate.getModelName().isBlank())) {
-            throw new BusinessException("请设置AI模型");
         }
 
         ApplicationEntity applicationInfo = applicationMapper.selectById(validate.getAppId());

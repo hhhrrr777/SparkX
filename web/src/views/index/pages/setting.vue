@@ -265,6 +265,12 @@ import tool from "@/utils/tool"
 
 export default {
 	components: {saveDialog, datasetDialog, InfoFilled, Document, Plus, chatBox, Setting, Delete},
+	props: {
+		accessToken: {
+			type: String,
+			default: ""
+		}
+	},
 	data() {
 		return {
 			domain: config.API_URL.replace("/api", ""),
@@ -300,14 +306,13 @@ export default {
 		}
 	},
 	mounted() {
-		this.appId = this.$route.query.appId;
 		this.getInfo()
 		this.getModelsList()
 	},
 	methods: {
 		// 获取应用详情
 		async getInfo() {
-			let res = await this.$API.application.info.get({appId: this.appId})
+			let res = await this.$API.application.chatDetail.get({accessToken: this.accessToken})
 			this.form = res.data
 			if (res.data.prologue !== '') {
 				this.welcomeList = this.form.prologue = JSON.parse(res.data.prologue)

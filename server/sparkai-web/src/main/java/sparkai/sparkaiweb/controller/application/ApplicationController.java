@@ -57,6 +57,15 @@ public class ApplicationController {
     }
 
     /**
+     * 根据accessToken获取详情
+     */
+    @GetMapping("/chatDetail")
+    public AjaxResult<ApplicationVo> chatDetail(@RequestParam("accessToken") String accessToken) {
+
+        return AjaxResult.success(iApplicationService.getApplicationInfoByToken(accessToken));
+    }
+
+    /**
      * 保存应用设置
      */
     @PostMapping("/save")

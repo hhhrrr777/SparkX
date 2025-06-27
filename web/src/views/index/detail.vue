@@ -61,7 +61,7 @@
 					<div class="pages">
 						<Suspense>
 							<template #default>
-								<component :is="page"/>
+								<component :is="page" :access-token="accessToken"/>
 							</template>
 							<template #fallback>
 								<el-skeleton :rows="3" />
@@ -102,6 +102,7 @@ export default {
 			dialogVisible: false,
 			appInfo: {},
 			appList: [],
+			accessToken: ""
 		}
 	},
 	mounted() {
@@ -128,6 +129,7 @@ export default {
 		async getInfo() {
 			let res = await this.$API.application.info.get({appId: this.appId})
 			this.appInfo = res.data
+			this.accessToken = res.data.accessToken
 		},
 		// 选择应用
 		selectApp(item) {

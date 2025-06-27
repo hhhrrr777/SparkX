@@ -65,7 +65,8 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     public ApplicationVo getChatInfo(ChatInfoVo chatInfoVo) {
 
         // 设置应用信息
-        ApplicationEntity application = applicationMapper.selectById(chatInfoVo.getAppId());
+        ApplicationEntity application = applicationMapper.selectOne(
+                new QueryWrapper<ApplicationEntity>().eq("access_token", chatInfoVo.getAccessToken()));
         if (application.getStatus().equals(1) && !chatInfoVo.getDebug()) {
             throw new BusinessException("该应用尚未发布");
         }
@@ -77,7 +78,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
                     new QueryWrapper<SystemTeamUserEntity>().eq("user_id", userData.getUserId()));
 
             PermissionVo permissionVo = JSONUtil.toBean(teamUser.getAppPermission(), PermissionVo.class);
-            if (!permissionVo.getView().contains(chatInfoVo.getAppId())) {
+            if (!permissionVo.getView().contains(application.getAppId())) {
                 throw new BusinessException("您无权调试该应用");
             }
         }
@@ -88,7 +89,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         // 关联的知识库
         List<DatasetSimpleVo> datasetVoList = new ArrayList<>();
         List<ApplicationDatasetRelationEntity> relationEntityList = applicationDatasetRelationMapper.selectList(
-                new QueryWrapper<ApplicationDatasetRelationEntity>().eq("app_id", chatInfoVo.getAppId()));
+                new QueryWrapper<ApplicationDatasetRelationEntity>().eq("app_id", application.getAppId()));
         for (ApplicationDatasetRelationEntity entity : relationEntityList) {
             DatasetSimpleVo datasetSimpleVo = new DatasetSimpleVo();
             BeanUtils.copyProperties(entity, datasetSimpleVo);

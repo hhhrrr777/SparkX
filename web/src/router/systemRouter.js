@@ -19,7 +19,7 @@ const routes = [
 		}
 	},
 	{
-		path: "/chat/:appId",
+		path: "/chat/:token",
 		component: () => import(/* webpackChunkName: "login" */ '@/views/chat/index.vue'),
 		meta: {
 			title: "SparkAI"

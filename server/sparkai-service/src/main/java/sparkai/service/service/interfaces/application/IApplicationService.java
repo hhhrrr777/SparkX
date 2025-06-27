@@ -48,6 +48,13 @@ public interface IApplicationService {
     ApplicationVo getApplicationInfo(String appId);
 
     /**
+     * 获取应用信息
+     * @param accessToken String
+     * @return ApplicationVo
+     */
+    ApplicationVo getApplicationInfoByToken(String accessToken);
+
+    /**
      * 编辑应用
      * @param validate ApplicationSaveValidate
      */

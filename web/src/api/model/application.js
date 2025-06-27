@@ -26,6 +26,14 @@ export default {
 			return await http.get(this.url, data);
 		}
 	},
+	chatDetail: {
+		url: `${config.API_URL}/application/chatDetail`,
+		name: "获取应用列表",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
+	},
 	save: {
 		url: `${config.API_URL}/application/save`,
 		name: "设置应用",
