@@ -41,7 +41,7 @@ public class LoginController {
      * 部署模式下的鉴权登录
      */
     @PostMapping("/authLogin")
-    public AjaxResult<Map<String, String>> authLogin(@RequestBody AuthLoginVo loginVo) {
+    public AjaxResult<Map<String, Object>> authLogin(@RequestBody AuthLoginVo loginVo) {
 
         return AjaxResult.success(iLoginService.doAuthLogin(loginVo));
     }

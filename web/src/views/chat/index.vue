@@ -81,6 +81,8 @@ export default {
 		async getChatInfo() {
 			let res = await this.$API.chat.getInfo.get({accessToken: this.accessToken, debug: this.debug})
 			if (res.code === 0) {
+				document.title = res.data.name
+
 				let appInfo = res.data
 				if (appInfo.prologue !== '') {
 					this.welcomeWord = JSON.parse(appInfo.prologue)
@@ -110,10 +112,12 @@ export default {
 			let customerId = localStorage.getItem("customerId")
 			let res = await this.$API.auth.authLogin.post({token: this.accessToken, customerId: customerId})
 			if (res.code === 0) {
-				this.$TOOL.cookie.set("TOKEN", res.data.token, {
-					expires: 24 * 60 * 60
-				})
-				localStorage.setItem("customerId", res.data.customerId)
+				if (res.data.resetToken) {
+					this.$TOOL.cookie.set("TOKEN", res.data.token, {
+						expires: 24 * 60 * 60
+					})
+					localStorage.setItem("customerId", res.data.customerId)
+				}
 
 				this.getSessionList()
 			} else {

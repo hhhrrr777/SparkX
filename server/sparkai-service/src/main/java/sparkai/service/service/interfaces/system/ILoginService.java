@@ -28,5 +28,5 @@ public interface ILoginService {
      * @param loginVo AuthLoginVo
      * @return Map<String, String>
      */
-    Map<String, String> doAuthLogin(AuthLoginVo loginVo);
+    Map<String, Object> doAuthLogin(AuthLoginVo loginVo);
 }

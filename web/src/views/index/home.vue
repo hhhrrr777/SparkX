@@ -58,7 +58,7 @@
 										effect="dark"
 										content="演示"
 									>
-										<el-icon size="16" @click="goChat(item.appId)"><VideoPlay /></el-icon>
+										<el-icon size="16" @click="goChat(item.accessToken)"><VideoPlay /></el-icon>
 									</el-tooltip>
 									<el-divider direction="vertical"></el-divider>
 								</div>
@@ -175,8 +175,8 @@ export default{
 			this.$router.push('/index/detail?appId=' + appId)
 		},
 		// 前往聊天
-		goChat(appId) {
-			this.$router.push('/chat/' + appId)
+		goChat(accessToken) {
+			this.$router.push('/chat/' + accessToken)
 		},
 		// 工作流
 		goFlow(appId) {
@@ -189,7 +189,6 @@ export default{
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(async () => {
-				console.log('xxx')
 				let res = await this.$API.application.del.get({appId: appId})
 				if (res.code === 0) {
 					this.$message.success(res.msg)

@@ -77,6 +77,7 @@ export default {
 				this.$TOOL.cookie.set("nickname", res.data.name, {
 					expires: this.form.autologin ? 24 * 60 * 60 : 0
 				})
+				localStorage.setItem("customerId", res.data.customerId)
 
 				await this.$nextTick(() => {
 					// 获取菜单

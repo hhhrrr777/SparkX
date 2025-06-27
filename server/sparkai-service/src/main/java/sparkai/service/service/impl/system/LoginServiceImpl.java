@@ -81,6 +81,7 @@ public class LoginServiceImpl implements ILoginService {
                 .setKey(SparkAIConstant.CommonData.passwordSalt.getBytes())
                 .sign());
         returnData.put("name", userInfo.getNickname());
+        returnData.put("customerId", userInfo.getUserId());
 
         return returnData;
     }
@@ -91,29 +92,41 @@ public class LoginServiceImpl implements ILoginService {
      * @return Map<String, String>
      */
     @Override
-    public Map<String, String> doAuthLogin(AuthLoginVo loginVo) {
+    public Map<String, Object> doAuthLogin(AuthLoginVo loginVo) {
 
-        ApplicationCustomerEntity customerInfo;
+        ApplicationCustomerEntity customerInfo = new ApplicationCustomerEntity();
+        boolean resetToken = false;
         // 第一次进入，写入随机用户
         if (loginVo.getCustomerId() == null) {
 
             customerInfo = regCustomer(loginVo);
+            resetToken = true;
         } else {
 
-            customerInfo = applicationCustomerMapper.selectOne(
-                    new QueryWrapper<ApplicationCustomerEntity>()
-                            .eq("customer_id", loginVo.getCustomerId()).eq("app_token", loginVo.getToken()));
-            if (customerInfo == null) {
-                customerInfo = regCustomer(loginVo);
+            // 系统登录用户
+            if (loginVo.getCustomerId().contains("-")) {
+
+                SystemUsersEntity userInfo = systemUserMapper.selectOne(new QueryWrapper<SystemUsersEntity>()
+                        .eq("user_id", loginVo.getCustomerId()).eq("deleted", StatusEnum.YES.getCode()));
+                customerInfo.setCustomerId(userInfo.getUserId());
+            } else {
+                customerInfo = applicationCustomerMapper.selectOne(
+                        new QueryWrapper<ApplicationCustomerEntity>()
+                                .eq("customer_id", loginVo.getCustomerId()).eq("app_token", loginVo.getToken()));
+                if (customerInfo == null) {
+                    customerInfo = regCustomer(loginVo);
+                }
+                resetToken = true;
             }
         }
 
-        Map<String, String> returnData = new HashMap<>();
+        Map<String, Object> returnData = new HashMap<>();
         returnData.put("token", JWT.create()
                 .setPayload("userId", customerInfo.getCustomerId())
                 .setKey(SparkAIConstant.CommonData.passwordSalt.getBytes())
                 .sign());
         returnData.put("customerId", customerInfo.getCustomerId());
+        returnData.put("resetToken", resetToken);
 
         return returnData;
     }
