@@ -20,11 +20,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationEntity;
+import sparkai.service.entity.workflow.ApplicationWorkflowEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeEntity;
-import sparkai.service.entity.workflow.ApplicationWorkflowEntity;
 import sparkai.service.extend.workflow.FlowNodeParser;
-import sparkai.service.helper.UserContextHelper;
+import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeMapper;
 import sparkai.service.mapper.workflow.ApplicationWorkflowMapper;
@@ -52,6 +52,9 @@ public class WorkflowChat implements IChat {
     @Setter
     public SseEmitter emitter;
 
+    @Autowired
+    ApplicationHelper applicationHelper;
+
     /**
      * 编排模式聊天
      * @param applicationInfo ApplicationEntity
@@ -75,7 +78,7 @@ public class WorkflowChat implements IChat {
             title = title.substring(0, 25);
         }
         runtimeEntity.setTitle(title);
-        LocalUserVo userData = UserContextHelper.getUser();
+        LocalUserVo userData = applicationHelper.getUserData();
         runtimeEntity.setUserId(userData.getUserId());
         runtimeEntity.setFlowId(info.getId());
         runtimeEntity.setCreateTime(Tool.nowDateTime());
