@@ -18,6 +18,7 @@
 				:welcome-word="welcomeWord"
 				:key="randomKey"
 				:debug="false"
+				:write-log="true"
 				api-url="/application/sseChat"
 			>
 			</flow-chat>

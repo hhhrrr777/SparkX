@@ -69,7 +69,7 @@
 										<el-icon size="16" style="margin-left: 10px;cursor: pointer" @click="copyText(item.content)"><CopyDocument /></el-icon>
 									</el-tooltip>
 									<el-tooltip
-										v-if="setting.showAppraise === 1"
+										v-if="setting.showAppraise === 1 && item.appraise !== 2"
 										effect="dark"
 										content="答的不错"
 										placement="bottom"
@@ -77,7 +77,7 @@
 										<span class="iconfont icon-zan icon-style" @click="appraise(item, 1)" :style="{'color': item.appraise === 1 ? 'var(--el-color-theme)' : ''}"></span>
 									</el-tooltip>
 									<el-tooltip
-										v-if="setting.showAppraise === 1"
+										v-if="setting.showAppraise === 1 && item.appraise !== 1"
 										effect="dark"
 										content="还不够好"
 										placement="bottom"
