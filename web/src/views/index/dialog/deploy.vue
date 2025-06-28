@@ -109,7 +109,8 @@ export default {
 	background: #fff;
 	padding: 10px 20px;
 	border-radius: 5px;
-	height: 350px;
+	height: 190px;
+	word-wrap: break-word;
 }
 .bar {
 	display: flex;

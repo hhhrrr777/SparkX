@@ -5,7 +5,7 @@
 
 	const protocol = urlParams.get("protocol")
 	const host = urlParams.get("host")
-	const appId = urlParams.get("appId")
+	const token = urlParams.get("token")
 
 	// 整体样式
 	const styleCss = `
@@ -24,15 +24,15 @@
 		.sparkAI-chat-container .sparkAI-chat-box {
 			z-index: 1999;
 			border-radius: 8px;
-			border: 1px solid #ffffff;
 			background: rgb(244, 244, 244);
 			box-shadow: 0 4px 8px #1f23291a;
 			position: fixed;
-			bottom: 16px;
+			bottom: 40px;
 			right: 16px;
 			overflow: hidden;
 			width: 450px;
 			height: 600px;
+			display: none;
 		}
 	`
 
@@ -45,8 +45,8 @@
 
 	// 创建聊天窗口div
 	const chatContentHtml = [
-		'<div class="sparkAI-chat-box">',
-		'<iframe id="sparkAI-chat" allow="microphone" src="' + protocol + "://" + host + '/chat/' + appId + '" width="100%" height="100%" frameborder="0"></iframe>',
+		'<div class="sparkAI-chat-box" id="sparkAI-chat-box">',
+		'<iframe id="sparkAI-chat" allow="microphone" src="' + protocol + "://" + host + '/#/dialog/' + token + '" width="100%" height="100%" frameborder="0"></iframe>',
 		'</div>'
 	]
 
@@ -73,7 +73,7 @@
 		// 点击显示
 		document.getElementById('sparkAI-chat-button')
 			.addEventListener('click', function () {
-			console.log(1213)
+				document.getElementById('sparkAI-chat-box').style.display = 'block'
 		})
 	}
 
@@ -84,6 +84,10 @@
 		style.innerText = styleCss
 		root.appendChild(style)
 	}
+
+	window.addEventListener('message', function(event) {
+		document.getElementById('sparkAI-chat-box').style.display = 'none'
+	}, false);
 
 	window.addEventListener('load', initSparkAI)
 })();

@@ -19,7 +19,7 @@
 						</el-switch>
 					</div>
 					<div class="base-style code-bg" style="width: 600px">
-						{{ domain }}/chat/{{ accessToken }}
+						{{ domain }}/#/chat/{{ accessToken }}
 						<el-icon size="16px" style="margin-left: 5px"><CopyDocument @click="copy"/></el-icon>
 					</div>
 					<div class="base-style">
@@ -267,8 +267,8 @@ export default {
 			this.deployVisible = true
 			this.$nextTick(() => {
 				this.$refs.deployDialog.open({
-					url1:  this.domain + '/chat/' + this.appId,
-					url2: ''
+					url1: this.domain + '/#/chat/' + this.accessToken,
+					url2: this.domain + '/#/dialog/' + this.accessToken
 				})
 			})
 		}

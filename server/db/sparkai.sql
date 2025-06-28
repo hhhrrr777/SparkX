@@ -527,7 +527,7 @@ COMMENT ON TABLE "public"."system_team_user" IS '团队用户表';
 CREATE TABLE "public"."application_customer" (
     "customer_id" VARCHAR (64) COLLATE "pg_catalog"."default" NOT NULL DEFAULT '' :: CHARACTER VARYING,
     "customer_ip" VARCHAR (15) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
-    "app_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "app_token" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
     "create_time" TIMESTAMP (6),
     "update_time" TIMESTAMP (6),
     CONSTRAINT "application_customer_pkey" PRIMARY KEY ("customer_id")
@@ -535,7 +535,7 @@ CREATE TABLE "public"."application_customer" (
 ALTER TABLE "public"."application_customer" OWNER TO "postgres";
 COMMENT ON COLUMN "public"."application_customer"."customer_id" IS '访客标识';
 COMMENT ON COLUMN "public"."application_customer"."customer_ip" IS '访客的ip';
-COMMENT ON COLUMN "public"."application_customer"."app_id" IS '关联的应用id';
+COMMENT ON COLUMN "public"."application_customer"."app_token" IS '关联的应用token';
 COMMENT ON COLUMN "public"."application_customer"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."application_customer"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."application_customer" IS '应用访客';

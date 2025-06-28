@@ -24,6 +24,13 @@ const routes = [
 		meta: {
 			title: "SparkAI"
 		}
+	},
+	{
+		path: "/dialog/:token",
+		component: () => import(/* webpackChunkName: "login" */ '@/views/chat/dialog.vue'),
+		meta: {
+			title: "SparkAI"
+		}
 	}
 ]
 
