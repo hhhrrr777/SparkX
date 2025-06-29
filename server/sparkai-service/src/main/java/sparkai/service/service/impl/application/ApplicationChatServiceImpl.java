@@ -45,9 +45,6 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
     ApplicationChatSessionMapper applicationChatSessionMapper;
 
     @Autowired
-    ApplicationDatasetRelationMapper applicationDatasetRelationMapper;
-
-    @Autowired
     ApplicationChatLogMapper applicationChatLogMapper;
 
     @Autowired

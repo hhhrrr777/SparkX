@@ -511,7 +511,7 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         // 评价点赞的
         List<ApplicationChatLogEntity> appraiseLikeData = applicationChatLogMapper.selectList(new QueryWrapper<ApplicationChatLogEntity>()
-                .select("count(*) AS totalData")
+                .select("DATE(create_time) AS date,count(*) AS totalData")
                 .eq("appraise", 1)
                 .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59").groupBy("DATE(create_time)")
                 .orderByAsc("DATE(create_time)"));
@@ -532,7 +532,7 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         // 评价踩的
         List<ApplicationChatLogEntity> appraiseDislikeData = applicationChatLogMapper.selectList(new QueryWrapper<ApplicationChatLogEntity>()
-                .select("count(*) AS totalData")
+                .select("DATE(create_time) AS date,count(*) AS totalData")
                 .eq("appraise", 2)
                 .ge("create_time", startTime + " 00:00:00").le("create_time", endTime + " 23:59:59").groupBy("DATE(create_time)")
                 .orderByAsc("DATE(create_time)"));
