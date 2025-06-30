@@ -17,6 +17,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationEntity;
@@ -74,8 +75,8 @@ public class WorkflowChat implements IChat {
         // 记录开始节点数据
         ApplicationWorkflowRuntimeEntity runtimeEntity = new ApplicationWorkflowRuntimeEntity();
         String title = validate.getContent();
-        if (title.length() > 25) {
-            title = title.substring(0, 25);
+        if (title.length() > SparkAIConstant.CommonData.defaultLen) {
+            title = title.substring(0, SparkAIConstant.CommonData.defaultLen);
         }
         runtimeEntity.setTitle(title);
         LocalUserVo userData = applicationHelper.getUserData();
@@ -97,7 +98,7 @@ public class WorkflowChat implements IChat {
             InetAddress inetAddress = InetAddress.getLocalHost();
             outputData.set("sys.ip", inetAddress.getHostAddress());
         } catch (UnknownHostException e) {
-            outputData.set("sys.ip", "127.0.0.1");
+            outputData.set("sys.ip", SparkAIConstant.CommonData.defaultIp);
         }
 
         outputData.set("sys.appId", info.getAppId());

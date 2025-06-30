@@ -145,7 +145,7 @@ public class LoginServiceImpl implements ILoginService {
             InetAddress inetAddress = InetAddress.getLocalHost();
             customerInfo.setCustomerIp(inetAddress.getHostAddress());
         } catch (UnknownHostException e) {
-            customerInfo.setCustomerIp("127.0.0.1");
+            customerInfo.setCustomerIp(SparkAIConstant.CommonData.defaultIp);
         }
         customerInfo.setAppToken(loginVo.getToken());
         customerInfo.setCreateTime(Tool.nowDateTime());

@@ -12,5 +12,7 @@ public class SparkAIConstant {
     public static class CommonData {
 
         public static final String passwordSalt = "SparkAI!@#9102";
+        public static final String defaultIp = "127.0.0.1";
+        public static final Integer defaultLen = 25;
     }
 }

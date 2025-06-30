@@ -391,11 +391,25 @@ export default {
 		},
 		// 保存应用
 		async saveApp(type) {
+
 			// 如果是保存并发布的话，则需要校验参数
 			if (type === 2) {
+
 				if (this.modelId[0] === '' || this.modelId[1] === '') {
 					this.$message.error('请设置AI模型')
 					return
+				}
+
+				// 如果是流程编排模式，未编排流程，不允许发布
+				if (this.form.type === 2) {
+					let flowRes = await this.$API.workflow.info.get({appId: this.form.appId})
+					if (!flowRes.data.flowData) {
+						this.$message.error('请完成编排才能发布')
+						setTimeout(() => {
+							this.$router.push('/workflow/index?appId=' + this.form.appId)
+						}, 1000)
+						return
+					}
 				}
 			}
 

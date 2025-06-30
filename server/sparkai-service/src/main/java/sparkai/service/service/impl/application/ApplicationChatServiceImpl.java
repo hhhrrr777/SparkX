@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationChatLogEntity;
@@ -25,7 +26,6 @@ import sparkai.service.entity.system.SystemTeamUserEntity;
 import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.mapper.application.ApplicationChatLogMapper;
 import sparkai.service.mapper.application.ApplicationChatSessionMapper;
-import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.service.interfaces.application.IApplicationChatService;
@@ -152,8 +152,8 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         ApplicationChatSessionEntity entity = applicationChatSessionMapper.selectById(sessionVo.getSessionId());
 
         String title = sessionVo.getTitle();
-        if (title.length() > 25) {
-            title = title.substring(0, 25);
+        if (title.length() > SparkAIConstant.CommonData.defaultLen) {
+            title = title.substring(0, SparkAIConstant.CommonData.defaultLen);
         }
         entity.setTitle(title);
         entity.setUpdateTime(Tool.nowDateTime());

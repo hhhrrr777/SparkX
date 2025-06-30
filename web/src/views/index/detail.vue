@@ -41,19 +41,25 @@
 							<el-icon>
 								<Setting />
 							</el-icon>
-							<span>设置</span>
+							<span>应用设置</span>
 						</el-menu-item>
-						<el-menu-item index="2" @click="handleClick(2)">
+						<el-menu-item index="2" @click="handleClick(2)" v-if="appInfo.type === 2">
+							<el-icon>
+								<Setting />
+							</el-icon>
+							<span>流程编排</span>
+						</el-menu-item>
+						<el-menu-item index="3" @click="handleClick(3)">
 							<el-icon>
 								<Odometer />
 							</el-icon>
-							<span>监控</span>
+							<span>应用监控</span>
 						</el-menu-item>
-						<el-menu-item index="4" @click="handleClick(3)">
+						<el-menu-item index="4" @click="handleClick(4)">
 							<el-icon>
 								<Document />
 							</el-icon>
-							<span>对话记录</span>
+							<span>会话记录</span>
 						</el-menu-item>
 					</el-menu>
 				</el-col>
@@ -119,8 +125,10 @@ export default {
 			if (index === 1) {
 				this.page = this.components.setting
 			} else if (index === 2) {
-				this.page = this.components.deploy
+				this.$router.push("/workflow/index?appId=" + this.appId)
 			} else if (index === 3) {
+				this.page = this.components.deploy
+			} else if (index === 4) {
 				this.page = this.components.log
 			}
 		},

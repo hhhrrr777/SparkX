@@ -155,7 +155,7 @@ export default{
 		handleSuccess(row) {
 			this.dialogVisible = false
 			if (this.mode === 'add') {
-				this.goDetail(row)
+				this.goDetail(row, true)
 			}
 			this.getList()
 		},

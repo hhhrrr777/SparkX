@@ -45,7 +45,12 @@ public class WorkflowServiceImpl implements IWorkflowService {
 
         ApplicationWorkflowEntity info = applicationWorkflowMapper.selectOne(new QueryWrapper<ApplicationWorkflowEntity>()
                 .eq("app_id", appId));
+
         SaveWorkflowVo vo = new SaveWorkflowVo();
+        if (info == null) {
+            return vo;
+        }
+
         BeanUtils.copyProperties(info, vo);
 
         return vo;
