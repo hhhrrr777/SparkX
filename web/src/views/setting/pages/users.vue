@@ -54,7 +54,7 @@
 			<el-form-item label="昵称" prop="nickname">
 				<el-input v-model="form.nickname" maxlength="30" show-word-limit></el-input>
 			</el-form-item>
-			<el-form-item label="密码" prop="password" v-if="title == '添加用户'">
+			<el-form-item label="密码" prop="password" v-if="title === '添加用户'">
 				<el-input v-model="form.password" placeholder="请输入密码"></el-input>
 			</el-form-item>
 			<el-form-item label="密码" v-else>
@@ -72,13 +72,16 @@
 			</div>
 		</template>
 	</el-dialog>
+
+	<notice-dialog v-if="noticeVisible" ref="noticeDialog"></notice-dialog>
 </template>
 
 <script>
-import Pages from "@/components/pages/index.vue";
+import Pages from "@/components/pages/index.vue"
+import noticeDialog from "@/components/notice/index.vue"
 
 export default {
-	components: {Pages},
+	components: {Pages, noticeDialog},
 	data() {
 		return {
 			tableData: [],
@@ -93,6 +96,7 @@ export default {
 			},
 			title: '添加用户',
 			dialogVisible: false,
+			noticeVisible: false,
 			form: {
 				name: '',
 				nickname: '',
@@ -157,8 +161,8 @@ export default {
 				cancelButtonText: '取消',
 				type: 'warning'
 			}).then(async () => {
-				let res = await this.$API.label.del.get({userId: item.userId})
-				if (res.code == 0) {
+				let res = await this.$API.user.del.get({userId: item.userId})
+				if (res.code === 0) {
 					this.$message.success(res.msg)
 					this.getList()
 				} else {
@@ -184,11 +188,17 @@ export default {
 						res = await this.$API.users.add.post(this.form)
 					}
 					this.loading = false
-					if (res.code == 0) {
+					if (res.code === 0) {
 						this.dialogVisible = false
 						this.$message.success('操作成功')
 						this.initForm()
 						this.getList()
+					} else if (res.code === 403) {
+						this.dialogVisible = false
+						this.noticeVisible = true
+						this.$refs.noticeDialog.open().setData({
+							notice: res.msg
+						})
 					} else {
 						this.$message.error(res.msg)
 					}

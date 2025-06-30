@@ -64,7 +64,7 @@ export default {
 		}
 	},
 	methods: {
-		//显示
+		// 显示
 		open(mode = 'add') {
 			this.mode = mode
 			this.visible = true

@@ -27,13 +27,16 @@
 			</div>
 		</template>
 	</el-dialog>
+
+	<notice-dialog v-if="noticeVisible" ref="noticeDialog"></notice-dialog>
 </template>
 
 <script>
-import {Delete, Plus} from "@element-plus/icons-vue";
+import {Delete, Plus} from "@element-plus/icons-vue"
+import noticeDialog from "@/components/notice/index.vue"
 
 export default {
-	components: {Plus, Delete},
+	components: {Plus, Delete, noticeDialog},
 	emits: ['success', 'closed'],
 	data() {
 		return {
@@ -61,7 +64,9 @@ export default {
 				]
 			},
 			loading: false,
-			visible: false
+			visible: false,
+			noticeVisible: false,
+			notice: ""
 		}
 	},
 	methods: {
@@ -87,6 +92,12 @@ export default {
 					if (res.code === 0) {
 						this.$message.success('操作成功')
 						this.$emit('success', res.msg)
+					} else if (res.code === 403) {
+						this.dialogVisible = false
+						this.noticeVisible = true
+						this.$refs.noticeDialog.open().setData({
+							notice: res.msg
+						})
 					} else {
 						this.$message.error(res.msg)
 					}

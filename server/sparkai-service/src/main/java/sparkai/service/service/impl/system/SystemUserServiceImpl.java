@@ -25,6 +25,7 @@ import sparkai.common.utils.Tool;
 import sparkai.service.entity.system.SystemTeamEntity;
 import sparkai.service.entity.system.SystemTeamUserEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
+import sparkai.service.helper.LicenseHelper;
 import sparkai.service.mapper.system.SystemTeamMapper;
 import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
@@ -47,6 +48,9 @@ public class SystemUserServiceImpl implements ISystemUserService {
 
     @Autowired
     SystemTeamUserMapper systemTeamUserMapper;
+
+    @Autowired
+    LicenseHelper licenseHelper;
 
     /**
      * 获取用户列表
@@ -107,6 +111,12 @@ public class SystemUserServiceImpl implements ISystemUserService {
         SystemUsersEntity userRes = userMapper.selectOne(queryWrapper);
         if (userRes != null) {
             throw new BusinessException("该账号已经被使用");
+        }
+
+        // 查看授权信息
+        long totalUser = userMapper.selectCount(new QueryWrapper<>());
+        if (totalUser >= licenseHelper.getUserNum()) {
+            throw new BusinessException(403, "社区版本最多可添加" + licenseHelper.getUserNum() + "名用户，如需更多用户，请购买授权版本！");
         }
 
         SystemUsersEntity usersEntity = new SystemUsersEntity();
