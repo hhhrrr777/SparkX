@@ -35,7 +35,7 @@ import config from "@/config"
 export default {
 	components: {chatBox, Close, flowChat},
 	props: {
-		appId: {
+		accessToken: {
 			type: String,
 			default: "",
 		}
@@ -59,7 +59,7 @@ export default {
 	methods: {
 		// 获取应用聊天详情
 		async getChatInfo() {
-			let res = await this.$API.chat.getInfo.get({appId: this.appId, debug: true})
+			let res = await this.$API.chat.getInfo.get({accessToken: this.accessToken, debug: true})
 			if (res.code === 0) {
 				let appInfo = res.data
 				if (appInfo.prologue !== '') {

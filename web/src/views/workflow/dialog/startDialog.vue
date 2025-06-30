@@ -18,7 +18,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="set-content-box">
+		<!--<div class="set-content-box">
 			<div style="justify-content: space-between" class="flex-center">
 				<span>自定义变量</span>
 				<el-button
@@ -45,10 +45,10 @@
 					设置的变量可在工作流程中使用
 				</div>
 			</div>
-		</div>
+		</div>-->
 	</div>
 
-	<el-dialog title="添加变量" v-model="dialogVisible" width="400px" destroy-on-close :close-on-click-modal="false">
+	<!--<el-dialog title="添加变量" v-model="dialogVisible" width="400px" destroy-on-close :close-on-click-modal="false">
 		<el-form :model="form" :rules="rules" ref="ruleForm" label-width="80px">
 			<el-form-item label="变量字段" prop="field">
 				<el-input v-model="form.field" placeholder="例如 user.title"></el-input>
@@ -63,7 +63,7 @@
 				<el-button type="primary" @click="optSubmit('ruleForm')">确 定</el-button>
 			</div>
 		</template>
-	</el-dialog>
+	</el-dialog>-->
 </template>
 
 <script>

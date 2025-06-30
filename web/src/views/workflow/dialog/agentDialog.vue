@@ -67,7 +67,7 @@
 			destroy-on-close
 			:close-on-click-modal="false"
 			class="select-dataset">
-			<agent-dialog @success="handleSuccess" @doClose="dialogVisible=false" :type="1"></agent-dialog>
+			<agent-dialog @success="handleSuccess" @doClose="dialogVisible=false" :type="1" :exclude="form.appId"></agent-dialog>
 		</el-dialog>
 	</div>
 

@@ -18,10 +18,6 @@ import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.StreamingChatLanguageModel;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
-import dev.langchain4j.rag.DefaultRetrievalAugmentor;
-import dev.langchain4j.rag.RetrievalAugmentor;
-import dev.langchain4j.rag.query.transformer.CompressingQueryTransformer;
-import dev.langchain4j.rag.query.transformer.QueryTransformer;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.TokenStream;
 import lombok.Setter;
@@ -35,7 +31,6 @@ import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
-import sparkai.service.extend.SparkContentInjector;
 import sparkai.service.extend.workflow.IWorkflowNode;
 import sparkai.service.helper.*;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
@@ -47,7 +42,6 @@ import sparkai.service.vo.workflow.LlmAnswerVo;
 import sparkai.service.vo.workflow.NextAnswerNodeVo;
 import sparkai.service.vo.workflow.NodeRuntimeVo;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -227,7 +221,7 @@ public class LlmNode implements IWorkflowNode {
 
         ApplicationChatValidate validate = new ApplicationChatValidate();
 
-        String question = inputObject.getStr("node.question");
+        String question = inputObject.getStr("sys.question");
         validate.setContent(question);
         validate.setContextId(context.getId());
         validate.setSessionId(sessionId);

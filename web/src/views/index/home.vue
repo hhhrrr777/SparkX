@@ -123,6 +123,7 @@ export default{
 			searchForm: {
 				type: '0',
 				name: '',
+				exclude: "",
 				page: 1,
 				limit: 15
 			},

@@ -14,8 +14,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
+import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.workflow.ApplicationWorkflowMapper;
 import sparkai.service.service.interfaces.workflow.IWorkflowService;
@@ -31,6 +33,9 @@ public class WorkflowServiceImpl implements IWorkflowService {
 
     @Autowired
     ApplicationWorkflowMapper applicationWorkflowMapper;
+
+    @Autowired
+    ApplicationMapper applicationMapper;
 
     @Autowired
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
@@ -52,6 +57,9 @@ public class WorkflowServiceImpl implements IWorkflowService {
         }
 
         BeanUtils.copyProperties(info, vo);
+
+        ApplicationEntity appInfo = applicationMapper.selectById(appId);
+        vo.setAccessToken(appInfo.getAccessToken());
 
         return vo;
     }

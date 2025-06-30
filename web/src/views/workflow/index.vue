@@ -28,7 +28,7 @@
 		</el-dialog>
 		<!-- 调试聊天窗口 -->
 		<debug-chat
-			:app-id="appId"
+			:access-token="accessToken"
 			:key="debugKey"
 			@close-debug="chatVisible=false"
 			@show-detail="showDetailHandle"
@@ -125,6 +125,7 @@ export default {
 			flowData: null,
 			runtimeId: 173,
 			runtimeKey: Math.random(),
+			accessToken: ""
 		}
 	},
 	created() {
@@ -225,9 +226,10 @@ export default {
 				node.updateData({checked: true})
 
 				this.formData = node.getData()
+				this.formData.appId = this.appId
 				let nowPage = this.formData.pages
 				this.page = this.pages[nowPage]
-				if (['start', 'end'].indexOf(nowPage) === -1) {
+				if (['start'].indexOf(nowPage) === -1) {
 					// 计算节点前的数据
 					this.getNodeInputData()
 				}
@@ -382,6 +384,7 @@ export default {
 		// 获取流程信息
 		async getWorkflowInfo() {
 			let res = await this.$API.workflow.info.get({appId: this.appId})
+			this.accessToken = res.data.accessToken
 			if (res.data.flowData) {
 				this.flowData = JSON.parse(res.data.flowData)
 				this.graph.fromJSON(this.flowData)

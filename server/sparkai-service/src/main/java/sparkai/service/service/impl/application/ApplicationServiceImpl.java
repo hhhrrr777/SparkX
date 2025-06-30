@@ -122,6 +122,10 @@ public class ApplicationServiceImpl implements IApplicationService {
             queryWrapper.like("name", queryVo.getName());
         }
 
+        if (!queryVo.getExclude().isBlank()) {
+            queryWrapper.notIn("app_id", queryVo.getExclude());
+        }
+
         LocalUserVo userData = UserContextHelper.getUser();
         // 查出当前用户所在的团队
         List<SystemTeamUserEntity> teamListData = systemTeamUserMapper.selectList(
@@ -271,7 +275,7 @@ public class ApplicationServiceImpl implements IApplicationService {
     @Override
     public void saveApplication(ApplicationSaveValidate validate) {
 
-        if (validate.getSaveType().equals(2)) {
+        if (validate.getSaveType().equals(2) && validate.getType().equals(1)) {
 
             if (validate.getTemperature() <= 0) {
                 throw new BusinessException("温度数值应该大于0");

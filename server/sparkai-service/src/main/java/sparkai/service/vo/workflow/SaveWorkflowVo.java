@@ -26,6 +26,11 @@ public class SaveWorkflowVo implements Serializable {
     private String appId;
 
     /**
+     * 访问access_token
+     */
+    private String accessToken;
+
+    /**
      * 流程设计JSON
      */
     private String flowData;

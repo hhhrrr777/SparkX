@@ -29,6 +29,10 @@ export default {
 		type: {
 			type: Number,
 			default: 0
+		},
+		exclude: {
+			type: String,
+			default: ""
 		}
 	},
 	data() {
@@ -45,7 +49,13 @@ export default {
 	methods: {
 		// 获取应用列表
 		async getAppList() {
-			let res = await this.$API.application.list.get({page: 1, limit: 1000, name: '', type: this.type})
+			let res = await this.$API.application.list.get({
+				page: 1,
+				limit: 1000,
+				name: '',
+				type: this.type,
+				exclude: this.exclude
+			})
 			this.appList = res.data.data
 		},
 		// 保存

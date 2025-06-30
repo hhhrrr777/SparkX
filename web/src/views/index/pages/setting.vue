@@ -41,7 +41,7 @@
 					<el-form-item label="应用描述" prop="description">
 						<el-input type="textarea" v-model="form.description" rows="3" maxlength="255" show-word-limit></el-input>
 					</el-form-item>
-					<el-form-item>
+					<el-form-item v-if="form.type === 1">
 						<template #label>
 							<div class="flex-center">
 								<div><span style="color: var(--el-color-danger);">*</span> AI模型</div>
@@ -67,7 +67,7 @@
 							clearable>
 						</el-cascader>
 					</el-form-item>
-					<el-form-item>
+					<el-form-item v-if="form.type === 1">
 						<template #label>
 							设定角色
 							<el-tooltip effect="dark" content="例如: 你是一位资深的数据分析专员，请根据用户提出的数据,给出最专业的解答,要求回答言简意赅" placement="top-start">
@@ -76,7 +76,7 @@
 						</template>
 						<el-input type="textarea" v-model="form.prompt" rows="4" maxlength="1000" show-word-limit></el-input>
 					</el-form-item>
-					<el-form-item>
+					<el-form-item v-if="form.type === 1">
 						<template #label>
 							<div class="flex-center" style="width: 100%">
 								<div>关联知识库</div>
@@ -395,7 +395,7 @@ export default {
 			// 如果是保存并发布的话，则需要校验参数
 			if (type === 2) {
 
-				if (this.modelId[0] === '' || this.modelId[1] === '') {
+				if (this.form.type === 1 && (this.modelId[0] === '' || this.modelId[1] === '')) {
 					this.$message.error('请设置AI模型')
 					return
 				}
