@@ -30,10 +30,15 @@
 			</div>
 		</template>
 	</el-dialog>
+
+	<notice-dialog v-if="noticeVisible" ref="noticeBoxDialog"></notice-dialog>
 </template>
 
 <script>
+import noticeDialog from "@/components/notice/index.vue"
+
 export default {
+	components: {noticeDialog},
 	emits: ['success', 'closed'],
 	data() {
 		return {
@@ -60,6 +65,7 @@ export default {
 			},
 			loading: false,
 			visible: false,
+			noticeVisible: false,
 			modelOptions: [], // 模型列表
 		}
 	},
@@ -110,6 +116,15 @@ export default {
 					if (res.code === 0) {
 						this.$message.success(res.msg)
 						this.$emit('success')
+					} else if (res.code === 403) {
+
+						this.noticeVisible = true
+
+						this.$nextTick(() => {
+							this.$refs.noticeBoxDialog.open().setData({
+								notice: res.msg
+							})
+						})
 					} else {
 						this.$message.error(res.msg)
 					}

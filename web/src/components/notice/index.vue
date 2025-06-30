@@ -1,5 +1,5 @@
 <template>
-	<el-dialog title="友情提示" v-model="visible" :width="500" destroy-on-close @closed="$emit('closed')">
+	<el-dialog title="友情提示" v-model="visible" :width="350" destroy-on-close @closed="$emit('closed')">
 		<span>{{ notice }}</span>
 		<template #footer>
 			<div class="dialog-footer">

@@ -28,7 +28,7 @@
 		</template>
 	</el-dialog>
 
-	<notice-dialog v-if="noticeVisible" ref="noticesDialog"></notice-dialog>
+	<notice-dialog v-if="noticeVisible" ref="noticeBoxDialog"></notice-dialog>
 </template>
 
 <script>
@@ -93,11 +93,10 @@ export default {
 						this.$message.success('操作成功')
 						this.$emit('success', res.msg)
 					} else if (res.code === 403) {
-						this.dialogVisible = false
 						this.noticeVisible = true
 
 						this.$nextTick(() => {
-							this.$refs.noticesDialog.open().setData({
+							this.$refs.noticeBoxDialog.open().setData({
 								notice: res.msg
 							})
 						})

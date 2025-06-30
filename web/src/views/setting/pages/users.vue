@@ -73,7 +73,7 @@
 		</template>
 	</el-dialog>
 
-	<notice-dialog v-if="noticeVisible" ref="noticeDialog"></notice-dialog>
+	<notice-dialog v-if="noticeVisible" ref="noticeBoxDialog"></notice-dialog>
 </template>
 
 <script>
@@ -196,9 +196,13 @@ export default {
 					} else if (res.code === 403) {
 						this.dialogVisible = false
 						this.noticeVisible = true
-						this.$refs.noticeDialog.open().setData({
-							notice: res.msg
+
+						this.$nextTick(() => {
+							this.$refs.noticeBoxDialog.open().setData({
+								notice: res.msg
+							})
 						})
+
 					} else {
 						this.$message.error(res.msg)
 					}
