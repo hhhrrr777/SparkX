@@ -31,11 +31,11 @@
         <pagehelper.version>3.5.10.1</pagehelper.version>
         <validator.version>9.0.0.CR1</validator.version>
         <jackson.version>2.18.2</jackson.version>
-        <langchain4j.version>1.0.0-beta1</langchain4j.version>
+        <langchain4j.version>1.1.0</langchain4j.version>
+        <langchain4j-community.version>1.1.0-beta7</langchain4j-community.version>
         <markdown.version>0.64.8</markdown.version>
         <hanlp.version>portable-1.8.6</hanlp.version>
         <mapdb.version>3.1.0</mapdb.version>
-        <openai.version>1.1.0-beta7</openai.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -126,49 +126,49 @@
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-document-parser-apache-pdfbox</artifactId>
-                <version>${langchain4j.version}</version>
+                <version>${langchain4j-community.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-document-parser-apache-poi</artifactId>
-                <version>${langchain4j.version}</version>
+                <version>${langchain4j-community.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-pgvector</artifactId>
-                <version>${langchain4j.version}</version>
+                <version>${langchain4j-community.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
-                <version>${langchain4j.version}</version>
+                <version>${langchain4j-community.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-community-qianfan</artifactId>
-                <version>${langchain4j.version}</version>
+                <version>${langchain4j-community.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-community-zhipu-ai</artifactId>
-                <version>${langchain4j.version}</version>
+                <version>${langchain4j-community.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-community-dashscope</artifactId>
-                <version>${langchain4j.version}</version>
+                <version>${langchain4j-community.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>dev.langchain4j</groupId>
                 <artifactId>langchain4j-open-ai-official</artifactId>
-                <version>${openai.version}</version>
+                <version>${langchain4j-community.version}</version>
             </dependency>
 
             <!-- markdown -->

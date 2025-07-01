@@ -9,8 +9,8 @@
 // +----------------------------------------------------------------------
 package sparkai.service.extend.chat;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.service.TokenStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,11 +58,11 @@ public class AgentChat implements IChat {
         validate.setDatasetList(applicationHelper.getRelationDatasetList(validate.getAppId()));
 
         // step 1 构建模型流式应答对象
-        StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);
+        StreamingChatModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);
         // step 2 构建模型普通对象，用于问题优化下使用
-        ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
+        ChatModel chatModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
         // step 3 构建 IAiService
-        IAiService assistant = assistantBuildHelper.build(applicationInfo, validate, streamingChatModel, chatLanguageModel);
+        IAiService assistant = assistantBuildHelper.build(applicationInfo, validate, streamingChatModel, chatModel);
 
         TokenStream tokenStream;
         if (applicationInfo.getPrompt().isBlank()) {

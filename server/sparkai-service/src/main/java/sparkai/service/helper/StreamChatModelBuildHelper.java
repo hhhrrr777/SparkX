@@ -14,7 +14,7 @@ import cn.hutool.json.JSONUtil;
 import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.community.model.qianfan.QianfanStreamingChatModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiStreamingChatModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.system.ModelsEntity;
@@ -28,9 +28,9 @@ public class StreamChatModelBuildHelper {
      * 构建流输出model
      * @param modelInfo ModelsEntity
      * @param applicationInfo ApplicationEntity
-     * @return StreamingChatLanguageModel
+     * @return StreamingChatModel
      */
-    public StreamingChatLanguageModel build(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    public StreamingChatModel build(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
         return switch (modelInfo.getModelFlag()) {
             // 百度千帆
@@ -49,7 +49,7 @@ public class StreamChatModelBuildHelper {
      * @param applicationInfo ApplicationEntity
      * @return StreamingChatLanguageModel
      */
-    private StreamingChatLanguageModel buildQianfan(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private StreamingChatModel buildQianfan(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -67,9 +67,9 @@ public class StreamChatModelBuildHelper {
      * 构建智普
      * @param modelInfo ModelsEntity
      * @param applicationInfo ApplicationEntity
-     * @return StreamingChatLanguageModel
+     * @return StreamingChatModel
      */
-    private StreamingChatLanguageModel buildZhiPu(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private StreamingChatModel buildZhiPu(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -78,9 +78,7 @@ public class StreamChatModelBuildHelper {
                 .apiKey(key)
                 .temperature(applicationInfo.getTemperature()) // 温度
                 .model(applicationInfo.getModelName())
-                .callTimeout(Duration.ofSeconds(60))
                 .connectTimeout(Duration.ofSeconds(60))
-                .writeTimeout(Duration.ofSeconds(60))
                 .readTimeout(Duration.ofSeconds(60))
                 .build();
     }
@@ -89,9 +87,9 @@ public class StreamChatModelBuildHelper {
      * 构建千问
      * @param modelInfo ModelsEntity
      * @param applicationInfo ApplicationEntity
-     * @return StreamingChatLanguageModel
+     * @return StreamingChatModel
      */
-    private StreamingChatLanguageModel buildQwen(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private StreamingChatModel buildQwen(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");

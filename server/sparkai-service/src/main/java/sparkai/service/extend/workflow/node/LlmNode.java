@@ -14,8 +14,8 @@ import cn.hutool.json.JSONUtil;
 import dev.langchain4j.data.message.TextContent;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.input.Prompt;
 import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.service.AiServices;
@@ -70,9 +70,6 @@ public class LlmNode implements IWorkflowNode {
 
     @Autowired
     ModelsMapper modelsMapper;
-
-    @Autowired
-    AssistantBuildHelper assistantBuildHelper;
 
     @Autowired
     StreamChatModelBuildHelper streamChatModelBuildHelper;
@@ -214,10 +211,10 @@ public class LlmNode implements IWorkflowNode {
         applicationInfo.setModelName(modelDataInfo.getStr("modelName"));
         applicationInfo.setPrompt(modelObject.getStr("systemMsg"));
         applicationInfo.setUserId(userId);
-        StreamingChatLanguageModel streamingChatModel = streamChatModelBuildHelper.build(modelResInfo, applicationInfo);
+        StreamingChatModel streamingChatModel = streamChatModelBuildHelper.build(modelResInfo, applicationInfo);
 
         // step 2 构建模型普通对象，用于问题优化下使用
-        ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelResInfo, applicationInfo);
+        ChatModel chatModel = chatModelBuildHelper.build(modelResInfo, applicationInfo);
 
         ApplicationChatValidate validate = new ApplicationChatValidate();
 
@@ -284,14 +281,14 @@ public class LlmNode implements IWorkflowNode {
 
         // 构建AIService
         IAiService assistant = AiServices.builder(IAiService.class)
-                .streamingChatLanguageModel(streamingChatModel)
+                .streamingChatModel(streamingChatModel)
                 .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
                 .build();
 
         llmAnswerVo.setApplication(applicationInfo);
         llmAnswerVo.setValidate(validate);
         llmAnswerVo.setStreamingChatModel(streamingChatModel);
-        llmAnswerVo.setChatLanguageModel(chatLanguageModel);
+        llmAnswerVo.setChatLanguageModel(chatModel);
         llmAnswerVo.setAssistant(assistant);
 
         return llmAnswerVo;

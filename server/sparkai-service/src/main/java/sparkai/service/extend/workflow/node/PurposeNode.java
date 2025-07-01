@@ -14,7 +14,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.data.message.TextContent;
 import dev.langchain4j.data.message.UserMessage;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +76,7 @@ public class PurposeNode implements IWorkflowNode {
         ApplicationEntity applicationInfo = new ApplicationEntity();
         applicationInfo.setTemperature(Double.parseDouble(modeData.get("temperature").toString()));
         applicationInfo.setModelName(modeData.get("modelName").toString());
-        ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
+        ChatModel chatModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
 
         // 读取设置的问题分类
         JSONArray cateList = nodeObject.getJSONArray("cateList");
@@ -104,7 +104,7 @@ public class PurposeNode implements IWorkflowNode {
         String question = "已知问题分类：\n" + cateListStr + "\n请根据问题：" + preOutput.get(inputData).toString()
                 + "。\n判断出所属的分类并仅给出问题前的编号,例如：1";
         UserMessage userMessage = UserMessage.from(TextContent.from(question));
-        ChatResponse chatResponse = chatLanguageModel.chat(userMessage);
+        ChatResponse chatResponse = chatModel.chat(userMessage);
         String answer = chatResponse.aiMessage().text();
 
         // 记录运行时数据

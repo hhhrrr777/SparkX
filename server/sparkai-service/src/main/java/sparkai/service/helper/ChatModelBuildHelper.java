@@ -14,7 +14,7 @@ import cn.hutool.json.JSONUtil;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.qianfan.QianfanChatModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiChatModel;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.system.ModelsEntity;
@@ -28,9 +28,9 @@ public class ChatModelBuildHelper {
      * 构建model
      * @param modelInfo ModelsEntity
      * @param applicationInfo ApplicationEntity
-     * @return ChatLanguageModel
+     * @return ChatModel
      */
-    public ChatLanguageModel build(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    public ChatModel build(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
         return switch (modelInfo.getModelFlag()) {
             // 百度千帆
@@ -47,9 +47,9 @@ public class ChatModelBuildHelper {
      * 构建千帆
      * @param modelInfo ModelsEntity
      * @param applicationInfo ApplicationEntity
-     * @return ChatLanguageModel
+     * @return ChatModel
      */
-    private ChatLanguageModel buildQianfan(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private ChatModel buildQianfan(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -70,9 +70,9 @@ public class ChatModelBuildHelper {
      * 构建智普
      * @param modelInfo ModelsEntity
      * @param applicationInfo ApplicationEntity
-     * @return ChatLanguageModel
+     * @return ChatModel
      */
-    private ChatLanguageModel buildZhiPu(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private ChatModel buildZhiPu(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -84,9 +84,7 @@ public class ChatModelBuildHelper {
                 .temperature(applicationInfo.getTemperature()) // 温度
                 .maxToken(maxOutputTokens)
                 .model(applicationInfo.getModelName())
-                .callTimeout(Duration.ofSeconds(60))
                 .connectTimeout(Duration.ofSeconds(60))
-                .writeTimeout(Duration.ofSeconds(60))
                 .readTimeout(Duration.ofSeconds(60))
                 .build();
     }
@@ -95,9 +93,9 @@ public class ChatModelBuildHelper {
      * 构建千问
      * @param modelInfo ModelsEntity
      * @param applicationInfo ApplicationEntity
-     * @return ChatLanguageModel
+     * @return ChatModel
      */
-    private ChatLanguageModel buildQwen(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private ChatModel buildQwen(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");

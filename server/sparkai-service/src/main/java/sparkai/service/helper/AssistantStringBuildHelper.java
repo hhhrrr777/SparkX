@@ -13,7 +13,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
@@ -60,10 +60,10 @@ public class AssistantStringBuildHelper {
     /**
      * 构建 assistant
      * @param validate ApplicationSaveValidate
-     * @param chatLanguageModel ChatLanguageModel
+     * @param chatModel ChatModel
      * @return IAiService
      */
-    public IAiService build(ApplicationEntity applicationInfo, ApplicationChatValidate validate, ChatLanguageModel chatLanguageModel) {
+    public IAiService build(ApplicationEntity applicationInfo, ApplicationChatValidate validate, ChatModel chatModel) {
 
         // 自定义构建上下文记忆
         String memoryKey = validate.getSessionId() + applicationInfo.getUserId() + validate.getCell();
@@ -87,7 +87,7 @@ public class AssistantStringBuildHelper {
         if (validate.getDatasetList().isEmpty()) {
 
             return AiServices.builder(IAiService.class)
-                    .chatLanguageModel(chatLanguageModel)
+                    .chatModel(chatModel)
                     .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
                     .build();
         }
@@ -98,7 +98,7 @@ public class AssistantStringBuildHelper {
         QueryTransformer queryTransformer = null;
         // 开启问题优化
         if (applicationInfo.getCompressingQuery().equals(1)) {
-            queryTransformer = new CompressingQueryTransformer(chatLanguageModel);
+            queryTransformer = new CompressingQueryTransformer(chatModel);
         }
 
         // 构建交互数据
@@ -135,7 +135,7 @@ public class AssistantStringBuildHelper {
         }
 
         return AiServices.builder(IAiService.class)
-                .chatLanguageModel(chatLanguageModel)
+                .chatModel(chatModel)
                 .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
                 .retrievalAugmentor(retrievalAugmentor)
                 .build();

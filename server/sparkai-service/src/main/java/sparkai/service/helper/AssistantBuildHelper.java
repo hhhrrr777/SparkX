@@ -13,8 +13,8 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
@@ -61,12 +61,12 @@ public class AssistantBuildHelper {
     /**
      * 构建 assistant
      * @param validate ApplicationSaveValidate
-     * @param streamingChatLanguageModel StreamingChatLanguageModel
-     * @param chatLanguageModel ChatLanguageModel
+     * @param streamingModel StreamingChatModel
+     * @param chatModel ChatModel
      * @return IAiService
      */
     public IAiService build(ApplicationEntity applicationInfo, ApplicationChatValidate validate,
-                            StreamingChatLanguageModel streamingChatLanguageModel, ChatLanguageModel chatLanguageModel) {
+                            StreamingChatModel streamingModel, ChatModel chatModel) {
 
         // 自定义构建上下文记忆
         String memoryKey = validate.getSessionId() + applicationInfo.getUserId() + validate.getCell();
@@ -90,7 +90,7 @@ public class AssistantBuildHelper {
         if (validate.getDatasetList().isEmpty()) {
 
             return AiServices.builder(IAiService.class)
-                    .streamingChatLanguageModel(streamingChatLanguageModel)
+                    .streamingChatModel(streamingModel)
                     .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
                     .build();
         }
@@ -101,7 +101,7 @@ public class AssistantBuildHelper {
         QueryTransformer queryTransformer = null;
         // 开启问题优化
         if (applicationInfo.getCompressingQuery().equals(1)) {
-            queryTransformer = new CompressingQueryTransformer(chatLanguageModel);
+            queryTransformer = new CompressingQueryTransformer(chatModel);
         }
 
         // 构建交互数据
@@ -138,7 +138,7 @@ public class AssistantBuildHelper {
         }
 
         return AiServices.builder(IAiService.class)
-                .streamingChatLanguageModel(streamingChatLanguageModel)
+                .streamingChatModel(streamingModel)
                 .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
                 .retrievalAugmentor(retrievalAugmentor)
                 .build();

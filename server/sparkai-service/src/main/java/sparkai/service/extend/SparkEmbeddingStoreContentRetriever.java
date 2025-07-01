@@ -9,7 +9,9 @@
 // +----------------------------------------------------------------------
 package sparkai.service.extend;
 
+import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.TextContent;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.content.Content;
@@ -21,6 +23,7 @@ import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.filter.Filter;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.vo.dataset.DatasetSearchVo;
 import sparkai.service.vo.dataset.SearchVo;
@@ -182,7 +185,8 @@ public class SparkEmbeddingStoreContentRetriever implements ContentRetriever {
     @Override
     public List<Content> retrieve(Query query) {
 
-        searchDataVo.setKeyword(((TextContent)query.metadata().userMessage().contents().get(0)).text()); // 原输入语句
+        UserMessage userMessage = (UserMessage) query.metadata().chatMessage();
+        searchDataVo.setKeyword(((TextContent) userMessage.contents().get(0)).text()); // 原输入语句
         searchDataVo.setSimilarity(minScoreProvider.apply(query)); // 相似度
         searchDataVo.setTopRank(maxResultsProvider.apply(query)); // 召回数量
 

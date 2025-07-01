@@ -11,7 +11,7 @@ package sparkai.service.task;
 
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import org.jsoup.Jsoup;
@@ -127,7 +127,7 @@ public class EmbeddingDocumentTask {
         ApplicationEntity applicationInfo = new ApplicationEntity();
         applicationInfo.setTemperature(0.95);
         applicationInfo.setModelName(modelSetData.get(1));
-        ChatLanguageModel chatLanguageModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
+        ChatModel chatModel = chatModelBuildHelper.build(modelInfo, applicationInfo);
 
         for (String documentId : documentIds) {
 
@@ -142,7 +142,7 @@ public class EmbeddingDocumentTask {
             for (KnowledgeParagraphEntity paragraph : paragraphList) {
 
                 String question = questionVo.getPrompt().replace("{data}", paragraph.getContent());
-                String answer = chatLanguageModel.chat(question);
+                String answer = chatModel.chat(question);
 
                 Document doc = Jsoup.parse(answer);
                 Elements questions = doc.select("question");

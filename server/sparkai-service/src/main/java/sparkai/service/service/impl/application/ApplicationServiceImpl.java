@@ -127,7 +127,7 @@ public class ApplicationServiceImpl implements IApplicationService {
             queryWrapper.like("name", queryVo.getName());
         }
 
-        if (!queryVo.getExclude().isBlank()) {
+        if (queryVo.getExclude() != null && !queryVo.getExclude().isBlank()) {
             queryWrapper.notIn("app_id", queryVo.getExclude());
         }
 

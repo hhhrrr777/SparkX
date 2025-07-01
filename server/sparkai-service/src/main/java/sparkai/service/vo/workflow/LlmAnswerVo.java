@@ -9,8 +9,8 @@
 // +----------------------------------------------------------------------
 package sparkai.service.vo.workflow;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.StreamingChatModel;
 import lombok.Data;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.service.interfaces.application.IAiService;
@@ -38,12 +38,12 @@ public class LlmAnswerVo implements Serializable {
     /**
      * 流式输出模型
      */
-    private StreamingChatLanguageModel streamingChatModel;
+    private StreamingChatModel streamingChatModel;
 
     /**
      * 阻塞输出模型
      */
-    private ChatLanguageModel chatLanguageModel;
+    private ChatModel chatLanguageModel;
 
     /**
      * AI服务对象
