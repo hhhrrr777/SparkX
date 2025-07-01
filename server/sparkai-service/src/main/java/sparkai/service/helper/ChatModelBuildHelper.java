@@ -12,10 +12,13 @@ package sparkai.service.helper;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.community.model.qianfan.QianfanChatModel;
+import dev.langchain4j.community.model.zhipu.ZhipuAiChatModel;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.system.ModelsEntity;
+
+import java.time.Duration;
 
 @Component
 public class ChatModelBuildHelper {
@@ -28,9 +31,10 @@ public class ChatModelBuildHelper {
      */
     public ChatLanguageModel build(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
-        // 百度千帆
-        if (modelInfo.getModelFlag().equals("qianfan")) {
+        if (modelInfo.getModelFlag().equals("qianfan")) { // 百度千帆
             return buildQianfan(modelInfo, applicationInfo);
+        } else if (modelInfo.getModelFlag().equals("zhipu")) { // 清华智普
+            return buildZhiPu(modelInfo, applicationInfo);
         }
 
         return null;
@@ -56,6 +60,31 @@ public class ChatModelBuildHelper {
                 .temperature(applicationInfo.getTemperature()) // 温度
                 .maxOutputTokens(maxOutputTokens)
                 .modelName(applicationInfo.getModelName())
+                .build();
+    }
+
+    /**
+     * 构建智普
+     * @param modelInfo ModelsEntity
+     * @param applicationInfo ApplicationEntity
+     * @return ChatLanguageModel
+     */
+    private ChatLanguageModel buildZhiPu(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+
+        JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
+        String key = jsonConfig.getJSONObject(0).getStr("value");
+
+        Integer maxOutputTokens = applicationInfo.getMaxReplyToken() == null ? 4096 : applicationInfo.getMaxReplyToken();
+
+        return ZhipuAiChatModel.builder()
+                .apiKey(key)
+                .temperature(applicationInfo.getTemperature()) // 温度
+                .maxToken(maxOutputTokens)
+                .model(applicationInfo.getModelName())
+                .callTimeout(Duration.ofSeconds(60))
+                .connectTimeout(Duration.ofSeconds(60))
+                .writeTimeout(Duration.ofSeconds(60))
+                .readTimeout(Duration.ofSeconds(60))
                 .build();
     }
 }

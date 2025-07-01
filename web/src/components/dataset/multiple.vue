@@ -46,7 +46,7 @@ export default {
 	methods: {
 		// 获取知识库列表
 		async getDatasetList() {
-			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: ''})
+			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: '', type: 0})
 			this.datasetList = res.data.data
 		},
 		// 保存
@@ -78,7 +78,6 @@ export default {
 	flex-wrap: wrap;
 	padding: 0 10px;
 	justify-content: space-between;
-	margin-top: -20px;
 }
 .radio-item {
 	margin-top: 20px;
@@ -97,10 +96,9 @@ export default {
 	margin-top: 20px;
 }
 .notice {
-	color: #646a73;
 	font-size: 13px;
-	top: -20px;
 	position: relative;
 	left: 10px;
+	color: #E6A23C;
 }
 </style>

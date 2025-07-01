@@ -444,6 +444,7 @@ export default {
 <style>
 .no-border .el-textarea__inner {
 	box-shadow: none !important; /* 使用 !important 来确保覆盖默认样式 */
+	padding: 13px !important;
 }
 .md-editor-preview {
 	font-size: 14px !important;
@@ -465,7 +466,7 @@ export default {
 
 		.panel {
 			background: #fff;
-			padding: 10px;
+			padding: 20px;
 			border-radius: 5px;
 
 			.flex-x-between {
@@ -525,7 +526,7 @@ export default {
 
 .chat-area {
 	width: 100%;
-	height: 73px;
+	height: 88px;
 	border-radius: 5px;
 	border: 1px solid var(--color-border-3);
 	background: #fff;
