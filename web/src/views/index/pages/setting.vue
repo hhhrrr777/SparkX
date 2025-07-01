@@ -441,6 +441,10 @@ export default {
 		},
 		// 选择了模型
 		async handleChange(row) {
+			if (!row) {
+				return
+			}
+
 			let res = await this.$API.models.info.get({modelId: row[0]})
 			let options = JSON.parse(res.data.options)
 
