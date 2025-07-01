@@ -11,6 +11,7 @@ package sparkai.service.helper;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
+import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.qianfan.QianfanChatModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiChatModel;
 import dev.langchain4j.model.chat.ChatLanguageModel;
@@ -31,13 +32,15 @@ public class ChatModelBuildHelper {
      */
     public ChatLanguageModel build(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
-        if (modelInfo.getModelFlag().equals("qianfan")) { // 百度千帆
-            return buildQianfan(modelInfo, applicationInfo);
-        } else if (modelInfo.getModelFlag().equals("zhipu")) { // 清华智普
-            return buildZhiPu(modelInfo, applicationInfo);
-        }
-
-        return null;
+        return switch (modelInfo.getModelFlag()) {
+            // 百度千帆
+            case "qianfan" -> buildQianfan(modelInfo, applicationInfo);
+            // 清华智普
+            case "zhipu" -> buildZhiPu(modelInfo, applicationInfo);
+            // 千问
+            case "qwen" -> buildQwen(modelInfo, applicationInfo);
+            default -> null;
+        };
     }
 
     /**
@@ -85,6 +88,27 @@ public class ChatModelBuildHelper {
                 .connectTimeout(Duration.ofSeconds(60))
                 .writeTimeout(Duration.ofSeconds(60))
                 .readTimeout(Duration.ofSeconds(60))
+                .build();
+    }
+
+    /**
+     * 构建千问
+     * @param modelInfo ModelsEntity
+     * @param applicationInfo ApplicationEntity
+     * @return ChatLanguageModel
+     */
+    private ChatLanguageModel buildQwen(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+
+        JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
+        String key = jsonConfig.getJSONObject(0).getStr("value");
+
+        Integer maxOutputTokens = applicationInfo.getMaxReplyToken() == null ? 4096 : applicationInfo.getMaxReplyToken();
+
+        return QwenChatModel.builder()
+                .apiKey(key)
+                .temperature((float) applicationInfo.getTemperature()) // 温度
+                .maxTokens(maxOutputTokens)
+                .modelName(applicationInfo.getModelName())
                 .build();
     }
 }
