@@ -335,7 +335,7 @@ export default {
 								has = true
 								that.chatLogList[that.nowIndex].content[index] = {
 									nodeId: resData.nodeId,
-									content: item.content + resData.content.replace("-_-_wrap_-_-", "\r\n")
+									content: item.content + resData.content.replace("-_-_wrap_-_-", "\n")
 								}
 							}
 						})
@@ -344,7 +344,7 @@ export default {
 							that.chatLogList[that.nowIndex].runtimeId = resData.runtimeId
 							that.chatLogList[that.nowIndex].content.push({
 								nodeId: resData.nodeId,
-								content: resData.content.replace("-_-_wrap_-_-", "\r\n")
+								content: resData.content.replace("-_-_wrap_-_-", "\n")
 							})
 						}
 

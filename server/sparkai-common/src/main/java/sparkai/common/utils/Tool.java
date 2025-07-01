@@ -119,7 +119,7 @@ public class Tool {
 
         Map<String, String> returnData = new HashMap<>();
         returnData.put("runtimeId", String.valueOf(runtimeId));
-        returnData.put("content", " " + content);
+        returnData.put("content", content);
         returnData.put("nodeId", nodeId);
 
         return JSONUtil.toJsonStr(returnData);

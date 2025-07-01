@@ -64,10 +64,10 @@ public class SseEmitterHelper {
                     // 见https://github.com/Azure/fetch-event-source/blob/45ac3cfffd30b05b79fbf95c21e67d4ef59aa56a/src/parse.ts#L129-L133
                     try {
 
-                        String[] lines = content.split("[\\r\\n]", -1);
+                        String[] lines = content.split("[\\n]", -1);
                         if (lines.length > 1) {
 
-                            emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + lines[0]));
+                            emitter.send(Tool.buildSendData(runtimeId, nodeId, lines[0]));
 
                             for (int i = 1; i < lines.length; i++) {
                                 /**
@@ -76,11 +76,11 @@ public class SseEmitterHelper {
                                  * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
                                  */
                                 emitter.send(Tool.buildSendData(runtimeId, nodeId, "-_-_wrap_-_-"));
-                                emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + lines[i]));
+                                emitter.send(Tool.buildSendData(runtimeId, nodeId, lines[i]));
                             }
                         } else {
 
-                            emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + content));
+                            emitter.send(Tool.buildSendData(runtimeId, nodeId, content));
                         }
 
                     } catch (IOException e) {
@@ -129,10 +129,10 @@ public class SseEmitterHelper {
                     if (needSend) {
                         try {
 
-                            String[] lines = content.split("[\\r\\n]", -1);
+                            String[] lines = content.split("[\\n]", -1);
                             if (lines.length > 1) {
 
-                                emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + lines[0]));
+                                emitter.send(Tool.buildSendData(runtimeId, nodeId, lines[0]));
                                 for (int i = 1; i < lines.length; i++) {
                                     /**
                                      * 当响应结果的content中包含有多行文本时，
@@ -140,10 +140,10 @@ public class SseEmitterHelper {
                                      * 故需要先将换行符与后面的内容拆分并转成，前端碰到换行标志时转成换行符处理
                                      */
                                     emitter.send(Tool.buildSendData(runtimeId, nodeId, "-_-_wrap_-_-"));
-                                    emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + lines[i]));
+                                    emitter.send(Tool.buildSendData(runtimeId, nodeId, lines[i]));
                                 }
                             } else {
-                                emitter.send(Tool.buildSendData(runtimeId, nodeId, " " + content));
+                                emitter.send(Tool.buildSendData(runtimeId, nodeId, content));
                             }
 
                         } catch (IOException e) {
