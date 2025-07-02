@@ -8,7 +8,11 @@
 				<el-input v-model="form.description" type="textarea" maxlength="255" show-word-limit :rows="5"></el-input>
 			</el-form-item>
 			<el-form-item label="向量模型" v-if="mode === 'add'">
-				<el-select v-model="form.embedding_mode_id" placeholder="请选择" style="width:100%" clearable>
+				<el-select
+					@change="modelChange"
+					v-model="form.embedding_model"
+					placeholder="请选择"
+					style="width:100%" clearable>
 					<el-option-group
 						v-for="group in modelOptions"
 						:key="group.label"
@@ -17,7 +21,7 @@
 							v-for="item in group.options"
 							:key="item.value"
 							:label="item.label"
-							:value="item.value">
+							:value="item">
 						</el-option>
 					</el-option-group>
 				</el-select>
@@ -90,10 +94,10 @@ export default {
 					options: []
 				}
 				let option = []
-				item.models.split(",").forEach(item => {
+				item.models.split(",").forEach(item2 => {
 					option.push({
-						label: item,
-						value: item
+						label: item2,
+						value: item.modelId
 					})
 				})
 				info.options = option
@@ -103,10 +107,6 @@ export default {
 		},
 		// 表单提交方法
 		optSubmit(formName) {
-
-			console.log(this.form)
-			return false
-
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
 					this.loading = true
@@ -137,6 +137,11 @@ export default {
 					return false;
 				}
 			})
+		},
+		// 选择模型
+		modelChange(row) {
+			this.form.embedding_model_id = row.value
+			this.form.embedding_model = row.label
 		},
 		setData(row) {
 			this.form.datasetId = row.datasetId

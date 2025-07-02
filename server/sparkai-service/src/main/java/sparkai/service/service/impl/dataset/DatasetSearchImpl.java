@@ -96,18 +96,20 @@ public class DatasetSearchImpl implements IDatasetSearchService {
 
             Response<Embedding> response = embeddingModel.embed(datasetSearchVo.getKeyword());
             List<Float> vector = response.content().vectorAsList();
-            TokenUsage tokenUsage = response.tokenUsage();
 
-            // 记录token消耗
-            ModelsEntity modelInfo = modelsMapper.selectById(datasetInfo.getEmbeddingModelId());
-            SystemTokensEntity tokensEntity = new SystemTokensEntity();
-            tokensEntity.setSource("embedding");
-            tokensEntity.setPlatform(modelInfo.getName());
-            tokensEntity.setInputToken(tokenUsage.inputTokenCount());
-            tokensEntity.setOutputToken(tokenUsage.outputTokenCount());
-            tokensEntity.setTotalToken(tokenUsage.totalTokenCount());
-            tokensEntity.setCreateTime(Tool.nowDateTime());
-            systemTokensMapper.insert(tokensEntity);
+            if (!datasetInfo.getEmbeddingModel().equals("AllMiniLmL6V2Embedding")) {
+                // 记录token消耗
+                TokenUsage tokenUsage = response.tokenUsage();
+                ModelsEntity modelInfo = modelsMapper.selectById(datasetInfo.getEmbeddingModelId());
+                SystemTokensEntity tokensEntity = new SystemTokensEntity();
+                tokensEntity.setSource("embedding");
+                tokensEntity.setPlatform(modelInfo.getName());
+                tokensEntity.setInputToken(tokenUsage.inputTokenCount());
+                tokensEntity.setOutputToken(tokenUsage.outputTokenCount());
+                tokensEntity.setTotalToken(tokenUsage.totalTokenCount());
+                tokensEntity.setCreateTime(Tool.nowDateTime());
+                systemTokensMapper.insert(tokensEntity);
+            }
 
             // 向量检索
             if (datasetSearchVo.getType().equals("embedding")) {
