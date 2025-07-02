@@ -53,7 +53,8 @@ export default {
 				title: '',
 				description: '',
 				type: 1,
-				embedding_mode_id: ''
+				embedding_model_id: '',
+				embedding_model: ''
 			},
 			rules: {
 				title: [
@@ -102,14 +103,18 @@ export default {
 		},
 		// 表单提交方法
 		optSubmit(formName) {
+
+			console.log(this.form)
+			return false
+
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
 					this.loading = true
-					let res;
+					let res
 					if (this.mode === "add") {
-						res = await this.$API.dataset.add.post(this.form);
+						res = await this.$API.dataset.add.post(this.form)
 					} else {
-						res = await this.$API.dataset.edit.post(this.form);
+						res = await this.$API.dataset.edit.post(this.form)
 					}
 
 					this.loading = false
