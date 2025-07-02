@@ -78,7 +78,7 @@ public class EmbeddingModelBuildHelper {
      */
     private EmbeddingModel buildQianfan() {
 
-        return  QianfanEmbeddingModel.builder()
+        return QianfanEmbeddingModel.builder()
                 .apiKey(modelConfig.get("key"))
                 .secretKey(modelConfig.get("secret"))
                 .endpoint(modelConfig.get("model"))
