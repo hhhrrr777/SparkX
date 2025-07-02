@@ -216,7 +216,7 @@ public class ApplicationHelper {
     public void writeTokensLog(KnowledgeDatasetEntity datasetInfo, Response<Embedding> response, String type) {
 
         if (!datasetInfo.getEmbeddingModel().equals("AllMiniLmL6V2Embedding")) {
-            // 记录token消耗
+
             TokenUsage tokenUsage = response.tokenUsage();
             ModelsEntity modelInfo = modelsMapper.selectById(datasetInfo.getEmbeddingModelId());
             SystemTokensEntity tokensEntity = new SystemTokensEntity();
