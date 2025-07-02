@@ -239,6 +239,8 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
         List<KnowledgeDocumentEntity> documentList = knowledgeDocumentMapper.selectList(
                 new QueryWrapper<KnowledgeDocumentEntity>().eq("dataset_id", datasetId));
 
+        KnowledgeDatasetEntity datasetInfo = datasetMapper.selectById(datasetId);
+
         if (!CollectionUtils.isEmpty(documentList)) {
 
             for (KnowledgeDocumentEntity documentEntity : documentList) {
@@ -254,7 +256,7 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
                     knowledgeDocumentMapper.updateById(updateEntity);
 
                     // 执行向量化
-                    task.executeAsyncTask(documentId);
+                    task.executeAsyncTask(documentId, datasetInfo);
                 }
             }
         }

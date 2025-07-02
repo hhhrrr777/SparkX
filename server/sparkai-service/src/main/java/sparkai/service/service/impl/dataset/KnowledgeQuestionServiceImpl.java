@@ -22,14 +22,8 @@ import sparkai.common.core.PageResult;
 import sparkai.common.enums.SourceType;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
-import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
-import sparkai.service.entity.dataset.KnowledgeQuestionEntity;
-import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
-import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
-import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
-import sparkai.service.mapper.dataset.KnowledgeQuestionMapper;
-import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
+import sparkai.service.entity.dataset.*;
+import sparkai.service.mapper.dataset.*;
 import sparkai.service.service.interfaces.dataset.IKnowledgeQuestionService;
 import sparkai.service.task.EmbeddingQuestionTask;
 import sparkai.service.vo.question.*;
@@ -53,8 +47,12 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
 
     @Autowired
     EmbeddingQuestionTask questionTask;
+
     @Autowired
     private KnowledgeParagraphMapper knowledgeParagraphMapper;
+
+    @Autowired
+    KnowledgeDatasetMapper datasetMapper;
 
     @Override
     public PageResult<QuestionListVo> getQuestionList(QuestionQueryVo queryVo) {
@@ -157,6 +155,8 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
 
         String[] questionList = relationVo.getQuestionIds().split(",");
 
+        KnowledgeDatasetEntity datasetInfo = datasetMapper.selectById(relationVo.getDatasetId());
+
         for (String questionId : questionList) {
             // 新增段落关联
             if (relationVo.getType().equals(1)) {
@@ -178,7 +178,7 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
                     knowledgeQuestionParagraphMapper.insert(questionParagraph);
 
                     // 向量化问题
-                    questionTask.executeAsyncTask(questionId, relationVo.getParagraphId(), relationVo.getDocumentId());
+                    questionTask.executeAsyncTask(questionId, relationVo, datasetInfo);
                 }
             } else { // 删除关联
 
@@ -244,17 +244,21 @@ public class KnowledgeQuestionServiceImpl implements IKnowledgeQuestionService {
         KnowledgeQuestionEntity questionEntity = knowledgeQuestionMapper.selectById(questionContentVo.getQuestionId());
         questionEntity.setContent(questionContentVo.getContent());
         questionEntity.setUpdateTime(Tool.nowDateTime());
-
         knowledgeQuestionMapper.updateById(questionEntity);
 
         // 查询是否关联了段落
         List<KnowledgeQuestionParagraphEntity> relationList = knowledgeQuestionParagraphMapper.selectList(
                 new QueryWrapper<KnowledgeQuestionParagraphEntity>().eq("question_id", questionContentVo.getQuestionId()));
 
+        KnowledgeDatasetEntity datasetInfo = datasetMapper.selectById(questionEntity.getDatasetId());
+
         if (!CollectionUtils.isEmpty(relationList)) {
             for (KnowledgeQuestionParagraphEntity entity : relationList) {
                 // 向量化问题
-                questionTask.executeAsyncTask(entity.getQuestionId(), entity.getParagraphId(), entity.getDocumentId());
+                QuestionRelationVo questionRelationVo = new QuestionRelationVo();
+                questionRelationVo.setParagraphId(entity.getParagraphId());
+                questionRelationVo.setDocumentId(entity.getDocumentId());
+                questionTask.executeAsyncTask(entity.getQuestionId(), questionRelationVo, datasetInfo);
             }
         }
     }

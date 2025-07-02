@@ -13,25 +13,20 @@ import cn.hutool.json.JSONUtil;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.output.Response;
-import dev.langchain4j.model.output.TokenUsage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import sparkai.common.exception.BusinessException;
-import sparkai.common.utils.Tool;
 import sparkai.common.utils.TsVectorGenerator;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
 import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
-import sparkai.service.entity.system.ModelsEntity;
-import sparkai.service.entity.system.SystemTokensEntity;
+import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.helper.EmbeddingModelBuildHelper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.dataset.KnowledgeDocumentMapper;
 import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeParagraphMapper;
-import sparkai.service.mapper.system.ModelsMapper;
-import sparkai.service.mapper.system.SystemTokensMapper;
 import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.vo.dataset.DatasetSearchVo;
 import sparkai.service.vo.dataset.SearchVo;
@@ -57,10 +52,7 @@ public class DatasetSearchImpl implements IDatasetSearchService {
     EmbeddingModelBuildHelper embeddingModelBuildHelper;
 
     @Autowired
-    SystemTokensMapper systemTokensMapper;
-
-    @Autowired
-    ModelsMapper modelsMapper;
+    ApplicationHelper applicationHelper;
 
     /**
      * 命中测试
@@ -96,20 +88,8 @@ public class DatasetSearchImpl implements IDatasetSearchService {
 
             Response<Embedding> response = embeddingModel.embed(datasetSearchVo.getKeyword());
             List<Float> vector = response.content().vectorAsList();
-
-            if (!datasetInfo.getEmbeddingModel().equals("AllMiniLmL6V2Embedding")) {
-                // 记录token消耗
-                TokenUsage tokenUsage = response.tokenUsage();
-                ModelsEntity modelInfo = modelsMapper.selectById(datasetInfo.getEmbeddingModelId());
-                SystemTokensEntity tokensEntity = new SystemTokensEntity();
-                tokensEntity.setSource("embedding");
-                tokensEntity.setPlatform(modelInfo.getName());
-                tokensEntity.setInputToken(tokenUsage.inputTokenCount());
-                tokensEntity.setOutputToken(tokenUsage.outputTokenCount());
-                tokensEntity.setTotalToken(tokenUsage.totalTokenCount());
-                tokensEntity.setCreateTime(Tool.nowDateTime());
-                systemTokensMapper.insert(tokensEntity);
-            }
+            // 记录token消耗记录
+            applicationHelper.writeTokensLog(datasetInfo, response, "embedding");
 
             // 向量检索
             if (datasetSearchVo.getType().equals("embedding")) {

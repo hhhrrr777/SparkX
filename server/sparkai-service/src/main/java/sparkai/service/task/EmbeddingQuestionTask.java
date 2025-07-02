@@ -20,12 +20,12 @@ import sparkai.common.enums.SourceType;
 import sparkai.common.enums.StatusEnum;
 import sparkai.common.utils.Tool;
 import sparkai.common.utils.TsVectorGenerator;
+import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
 import sparkai.service.entity.dataset.KnowledgeQuestionEntity;
-import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
 import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeQuestionMapper;
-import sparkai.service.mapper.dataset.KnowledgeQuestionParagraphMapper;
+import sparkai.service.vo.question.QuestionRelationVo;
 
 @Component
 public class EmbeddingQuestionTask {
@@ -39,11 +39,11 @@ public class EmbeddingQuestionTask {
     /**
      * 向量化 问题-段落
      * @param questionId String 问题id
-     * @param paragraphId String 段落id
-     * @param documentId String 文档id
+     * @param relationVo QuestionRelationVo
+     * @param datasetInfo KnowledgeDatasetEntity
      */
     @Async
-    public void executeAsyncTask(String questionId, String paragraphId, String documentId) {
+    public void executeAsyncTask(String questionId, QuestionRelationVo relationVo, KnowledgeDatasetEntity datasetInfo) {
 
         // 默认的内存型的embedding模型
         EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
@@ -55,14 +55,14 @@ public class EmbeddingQuestionTask {
             knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>()
                     .eq("source_type", SourceType.QUESTION.getCode())
                     .eq("source_id", questionId)
-                    .eq("paragraph_id", paragraphId));
+                    .eq("paragraph_id", relationVo.getParagraphId()));
 
             // 开始向量化，并入库
             KnowledgeEmbeddingEntity embeddingEntity = new KnowledgeEmbeddingEntity();
             embeddingEntity.setEmbeddingId(IdUtil.randomUUID());
             embeddingEntity.setDatasetId(questionInfo.getDatasetId());
-            embeddingEntity.setDocumentId(documentId);
-            embeddingEntity.setParagraphId(paragraphId);
+            embeddingEntity.setDocumentId(relationVo.getDocumentId());
+            embeddingEntity.setParagraphId(relationVo.getParagraphId());
             embeddingEntity.setEmbedding(embeddingModel.embed(questionInfo.getContent()).content().vectorAsList()); // 向量化文本
             embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(questionInfo.getContent())); // 全文检索文本
             embeddingEntity.setActive(StatusEnum.YES.getCode());

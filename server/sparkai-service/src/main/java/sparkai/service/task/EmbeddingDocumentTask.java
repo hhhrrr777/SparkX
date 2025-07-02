@@ -32,6 +32,7 @@ import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.*;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.helper.ChatModelBuildHelper;
+import sparkai.service.helper.EmbeddingModelBuildHelper;
 import sparkai.service.mapper.dataset.*;
 import sparkai.service.vo.document.QuestionVo;
 
@@ -63,14 +64,18 @@ public class EmbeddingDocumentTask {
     @Autowired
     ChatModelBuildHelper chatModelBuildHelper;
 
+    @Autowired
+    EmbeddingModelBuildHelper embeddingModelBuildHelper;
+
     private EmbeddingModel embeddingModel;
 
     /**
      * 向量化文本
      * @param documentId String
+     * @param datasetInfo KnowledgeDatasetEntity
      */
     @Async
-    public void executeAsyncTask(String documentId) {
+    public void executeAsyncTask(String documentId, KnowledgeDatasetEntity datasetInfo) {
 
         // 查询文档所属的段落
         List<KnowledgeParagraphEntity> paragraphEntityList = knowledgeParagraphMapper.selectList(
@@ -81,8 +86,8 @@ public class EmbeddingDocumentTask {
             // 删除已经向量化的数据
             knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>().eq("document_id", documentId));
 
-            // 默认的内存型的embedding模型
-            embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+            // 选择embedding模型
+            embeddingModel = embeddingModelBuildHelper.build(datasetInfo);
 
             for (KnowledgeParagraphEntity paragraph : paragraphEntityList) {
                 this.embeddingSingleParagraph(paragraph);

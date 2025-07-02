@@ -13,6 +13,9 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.model.output.Response;
+import dev.langchain4j.model.output.TokenUsage;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +23,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import sparkai.common.constant.SparkAIConstant;
+import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
+import sparkai.service.entity.system.ModelsEntity;
+import sparkai.service.entity.system.SystemTokensEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
+import sparkai.service.mapper.system.ModelsMapper;
+import sparkai.service.mapper.system.SystemTokensMapper;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.system.LocalUserVo;
 import sparkai.service.vo.workflow.EdgeVo;
@@ -50,6 +58,12 @@ public class ApplicationHelper {
 
     @Autowired
     KnowledgeDatasetMapper knowledgeDatasetMapper;
+
+    @Autowired
+    SystemTokensMapper systemTokensMapper;
+
+    @Autowired
+    ModelsMapper modelsMapper;
 
     /**
      * 获取关联的知识库
@@ -191,5 +205,28 @@ public class ApplicationHelper {
         }
 
         return localUser;
+    }
+
+    /**
+     * 记录token使用日志
+     * @param datasetInfo KnowledgeDatasetEntity
+     * @param response Response<Embedding>
+     * @param type String
+     */
+    public void writeTokensLog(KnowledgeDatasetEntity datasetInfo, Response<Embedding> response, String type) {
+
+        if (!datasetInfo.getEmbeddingModel().equals("AllMiniLmL6V2Embedding")) {
+            // 记录token消耗
+            TokenUsage tokenUsage = response.tokenUsage();
+            ModelsEntity modelInfo = modelsMapper.selectById(datasetInfo.getEmbeddingModelId());
+            SystemTokensEntity tokensEntity = new SystemTokensEntity();
+            tokensEntity.setSource(type);
+            tokensEntity.setPlatform(modelInfo.getName());
+            tokensEntity.setInputToken(tokenUsage.inputTokenCount());
+            tokensEntity.setOutputToken(tokenUsage.outputTokenCount());
+            tokensEntity.setTotalToken(tokenUsage.totalTokenCount());
+            tokensEntity.setCreateTime(Tool.nowDateTime());
+            systemTokensMapper.insert(tokensEntity);
+        }
     }
 }
