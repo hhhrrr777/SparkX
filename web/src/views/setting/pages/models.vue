@@ -1,5 +1,5 @@
 <template>
-	<div style="background: #fff;border-radius: 10px;padding: 10px">
+	<div style="background: #fff;border-radius: 10px;padding: 20px">
 		<el-tabs v-model="activeName" @tab-click="handleClick">
 			<el-tab-pane label="语言模型" :name="1">
 				<model-list-page :key="randomKey" :models-list="modelsList" @success="getModelList"></model-list-page>
@@ -7,9 +7,9 @@
 			<el-tab-pane label="向量模型" :name="2">
 				<model-list-page :key="randomKey" :models-list="modelsList" @success="getModelList"></model-list-page>
 			</el-tab-pane>
-			<el-tab-pane label="重排模型" :name="3">
+			<!--<el-tab-pane label="重排模型" :name="3">
 				<model-list-page :key="randomKey" :models-list="modelsList" @success="getModelList"></model-list-page>
-			</el-tab-pane>
+			</el-tab-pane>-->
 		</el-tabs>
 	</div>
 </template>
