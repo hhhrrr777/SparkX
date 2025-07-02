@@ -5,25 +5,24 @@ SET client_encoding = 'UTF8';
 CREATE SCHEMA public;
 
 CREATE TABLE "public"."knowledge_dataset" (
-    "dataset_id" varchar(64) COLLATE "pg_catalog"."default",
-    "title" varchar(155) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "description" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "user_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT 0,
-    "type" int2 DEFAULT 1,
-    "embedding_mode_id" varchar(64) COLLATE "pg_catalog"."default",
-    "create_time" timestamp(6),
-    "update_time" timestamp(6)
+    "dataset_id" VARCHAR (64) COLLATE "pg_catalog"."default",
+    "title" VARCHAR (155) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "description" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "user_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT 0,
+    "type" INT2 DEFAULT 1,
+    "embedding_model_id" VARCHAR (64) COLLATE "pg_catalog"."default",
+    "embedding_model" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6)
 );
-
-ALTER TABLE "public"."knowledge_dataset"
-    OWNER TO "postgres";
-
+ALTER TABLE "public"."knowledge_dataset" OWNER TO "postgres";
 COMMENT ON COLUMN "public"."knowledge_dataset"."dataset_id" IS '唯一标识';
 COMMENT ON COLUMN "public"."knowledge_dataset"."title" IS '知识库标题';
 COMMENT ON COLUMN "public"."knowledge_dataset"."description" IS '知识库描述';
 COMMENT ON COLUMN "public"."knowledge_dataset"."user_id" IS '创建人id';
 COMMENT ON COLUMN "public"."knowledge_dataset"."type" IS '类型 1:通用 2:web站点';
-COMMENT ON COLUMN "public"."knowledge_dataset"."embedding_mode_id" IS '模型的uuid';
+COMMENT ON COLUMN "public"."knowledge_dataset"."embedding_model_id" IS '模型的uuid';
+COMMENT ON COLUMN "public"."knowledge_dataset"."embedding_model" IS '模型名称';
 COMMENT ON COLUMN "public"."knowledge_dataset"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."knowledge_dataset"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."knowledge_dataset" IS '知识库表';

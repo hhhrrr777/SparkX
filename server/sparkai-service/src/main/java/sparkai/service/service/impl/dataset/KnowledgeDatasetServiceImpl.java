@@ -207,7 +207,8 @@ public class KnowledgeDatasetServiceImpl implements IKnowledgeDatasetService {
         datasetEntity.setType(1); // 写死通用类型
         datasetEntity.setUserId(userData.getUserId());
         datasetEntity.setDatasetId(IdUtil.randomUUID());
-        datasetEntity.setEmbeddingModeId(validate.getEmbedding_mode_id());
+        datasetEntity.setEmbeddingModelId(validate.getEmbedding_model_id());
+        datasetEntity.setEmbeddingModel(validate.getEmbedding_model());
         datasetEntity.setCreateTime(Tool.nowDateTime());
 
         datasetMapper.insert(datasetEntity);

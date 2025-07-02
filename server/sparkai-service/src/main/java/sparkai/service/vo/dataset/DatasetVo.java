@@ -44,8 +44,14 @@ public class DatasetVo implements Serializable {
     /**
     * 模型的uuid
     */
-    @JsonProperty(value = "embedding_mode_id")
-    private String embeddingModeId;
+    @JsonProperty(value = "embedding_model_id")
+    private String embeddingModelId;
+
+    /**
+     * 模型的uuid
+     */
+    @JsonProperty(value = "embedding_model")
+    private String embeddingModel;
 
     /**
      * 创建人

@@ -9,27 +9,105 @@
 // +----------------------------------------------------------------------
 package sparkai.service.helper;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
+import dev.langchain4j.community.model.qianfan.QianfanEmbeddingModel;
+import dev.langchain4j.community.model.zhipu.ZhipuAiEmbeddingModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
+import sparkai.service.entity.system.ModelsEntity;
+import sparkai.service.mapper.system.ModelsMapper;
 
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class EmbeddingModelBuildHelper {
 
+    @Autowired
+    ModelsMapper modelsMapper;
+
+    private final Map<String, String> modelConfig = new HashMap<>();
+
     /**
      * 构建向量模型
-     * @param modelId String
+     * @param datasetInfo KnowledgeDatasetEntity
      * @return EmbeddingModel
      */
-    public EmbeddingModel build(String modelId) {
+    public EmbeddingModel build(KnowledgeDatasetEntity datasetInfo) {
         // 默认内存型的模型
-        if (Objects.equals(modelId, "AllMiniLmL6V2Embedding")) {
+        if (datasetInfo.getEmbeddingModel().equals("AllMiniLmL6V2Embedding")) {
 
             return new AllMiniLmL6V2EmbeddingModel();
         }
 
-        return null;
+        // 查询模型信息
+        ModelsEntity modelInfo = modelsMapper.selectById(datasetInfo.getEmbeddingModelId());
+
+        JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
+        modelConfig.put("key", jsonConfig.getJSONObject(0).getStr("value"));
+        if (jsonConfig.size() == 2) {
+            modelConfig.put("secret", jsonConfig.getJSONObject(1).getStr("value"));
+        }
+        modelConfig.put("model", datasetInfo.getEmbeddingModel());
+
+        JSONArray jsonOptions = JSONUtil.parseArray(modelInfo.getOptions());
+        if (jsonOptions.size() == 2) {
+            String url = jsonOptions.getJSONObject(1).getStr("value");
+            modelConfig.put("baseUrl", url);
+        }
+
+        return switch (modelInfo.getModelFlag()) {
+            // 百度千帆
+            case "qianfan" -> buildQianfan();
+            // 清华智普
+            case "zhipu" -> buildZhiPu();
+            // GPT
+            case "gpt" -> buildOpenAI();
+            default -> null;
+        };
+    }
+
+    /**
+     * 构建千帆
+     * @return EmbeddingModel
+     */
+    private EmbeddingModel buildQianfan() {
+
+        return  QianfanEmbeddingModel.builder()
+                .apiKey(modelConfig.get("key"))
+                .secretKey(modelConfig.get("secret"))
+                .endpoint(modelConfig.get("model"))
+                .build();
+    }
+
+    /**
+     * 构建智普
+     * @return EmbeddingModel
+     */
+    private EmbeddingModel buildZhiPu() {
+
+        return ZhipuAiEmbeddingModel.builder()
+                .model(modelConfig.get("model"))
+                .apiKey(modelConfig.get("secret"))
+                .maxRetries(1)
+                .build();
+    }
+
+    /**
+     * 通过标准openai结构构建对象
+     * @return EmbeddingModel
+     */
+    private EmbeddingModel buildOpenAI() {
+
+        return OpenAiEmbeddingModel.builder()
+                .baseUrl(modelConfig.get("baseUrl"))
+                .apiKey(modelConfig.get("key"))
+                .modelName(modelConfig.get("model"))
+                .build();
     }
 }

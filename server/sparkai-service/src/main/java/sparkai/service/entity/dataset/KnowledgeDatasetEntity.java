@@ -58,8 +58,14 @@ public class KnowledgeDatasetEntity implements Serializable {
     /**
     * 模型的uuid
     */
-    @TableField(value = "embedding_mode_id")
-    private String embeddingModeId;
+    @TableField(value = "embedding_model_id")
+    private String embeddingModelId;
+
+    /**
+     * 模型名
+     */
+    @TableField(value = "embedding_model")
+    private String embeddingModel;
 
     /**
     * 创建时间

@@ -110,7 +110,7 @@ public class AssistantStringBuildHelper {
         // 取第一条知识库的embedding模型当做全应用的embedding模型
         KnowledgeDatasetEntity datasetInfo = knowledgeDatasetMapper.selectById(datasetIds[0]);
         // embedding模型
-        EmbeddingModel embeddingModel = embeddingModelBuildHelper.build(datasetInfo.getEmbeddingModeId());
+        EmbeddingModel embeddingModel = embeddingModelBuildHelper.build(datasetInfo);
 
         // 内容检索
         ContentRetriever contentRetriever = SparkEmbeddingStoreContentRetriever.builder()

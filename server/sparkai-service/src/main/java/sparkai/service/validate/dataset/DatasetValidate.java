@@ -45,5 +45,11 @@ public class DatasetValidate implements Serializable {
      * 模型id
      */
     @NotEmpty(message = "embeding模型不能为空")
-    private String embedding_mode_id;
+    private String embedding_model_id;
+
+    /**
+     * 模型id
+     */
+    @NotEmpty(message = "embeding模型不能为空")
+    private String embedding_model;
 }

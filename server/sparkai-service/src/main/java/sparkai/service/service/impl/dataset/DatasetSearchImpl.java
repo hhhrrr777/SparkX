@@ -72,7 +72,7 @@ public class DatasetSearchImpl implements IDatasetSearchService {
         // 取对应的embedding模型
         String datasetId = datasetSearchVo.getDatasetIds().split(",")[0];
         KnowledgeDatasetEntity datasetInfo = knowledgeDatasetMapper.selectById(datasetId);
-        EmbeddingModel embeddingModel = embeddingModelBuildHelper.build(datasetInfo.getEmbeddingModeId());
+        EmbeddingModel embeddingModel = embeddingModelBuildHelper.build(datasetInfo);
         if (datasetSearchVo.getType().equals("embedding")) {
 
             List<Float> vector = embeddingModel.embed(datasetSearchVo.getKeyword()).content().vectorAsList();
