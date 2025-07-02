@@ -15,6 +15,7 @@ import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.community.model.qianfan.QianfanStreamingChatModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiStreamingChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.system.ModelsEntity;
@@ -24,6 +25,10 @@ import java.time.Duration;
 @Component
 public class StreamChatModelBuildHelper {
 
+    private ModelsEntity modelInfo;
+
+    private ApplicationEntity applicationInfo;
+
     /**
      * 构建流输出model
      * @param modelInfo ModelsEntity
@@ -32,24 +37,27 @@ public class StreamChatModelBuildHelper {
      */
     public StreamingChatModel build(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
+        this.modelInfo = modelInfo;
+        this.applicationInfo = applicationInfo;
+
         return switch (modelInfo.getModelFlag()) {
             // 百度千帆
-            case "qianfan" -> buildQianfan(modelInfo, applicationInfo);
+            case "qianfan" -> buildQianfan();
             // 清华智普
-            case "zhipu" -> buildZhiPu(modelInfo, applicationInfo);
+            case "zhipu" -> buildZhiPu();
             // 千问
-            case "qwen" -> buildQwen(modelInfo, applicationInfo);
+            case "qwen" -> buildQwen();
+            // 豆包
+            case "doubao" -> buildOpenAIOfficial();
             default -> null;
         };
     }
 
     /**
      * 构建千帆
-     * @param modelInfo ModelsEntity
-     * @param applicationInfo ApplicationEntity
      * @return StreamingChatLanguageModel
      */
-    private StreamingChatModel buildQianfan(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private StreamingChatModel buildQianfan() {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -65,11 +73,9 @@ public class StreamChatModelBuildHelper {
 
     /**
      * 构建智普
-     * @param modelInfo ModelsEntity
-     * @param applicationInfo ApplicationEntity
      * @return StreamingChatModel
      */
-    private StreamingChatModel buildZhiPu(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private StreamingChatModel buildZhiPu() {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -85,11 +91,9 @@ public class StreamChatModelBuildHelper {
 
     /**
      * 构建千问
-     * @param modelInfo ModelsEntity
-     * @param applicationInfo ApplicationEntity
      * @return StreamingChatModel
      */
-    private StreamingChatModel buildQwen(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private StreamingChatModel buildQwen() {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -97,6 +101,25 @@ public class StreamChatModelBuildHelper {
         return QwenStreamingChatModel.builder()
                 .apiKey(key)
                 .temperature((float) applicationInfo.getTemperature()) // 温度
+                .modelName(applicationInfo.getModelName())
+                .build();
+    }
+
+    /**
+     * 通过标准openai结构构建对象
+     * @return StreamingChatModel
+     */
+    private StreamingChatModel buildOpenAIOfficial() {
+
+        JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
+        String key = jsonConfig.getJSONObject(0).getStr("value");
+
+        JSONArray jsonOptions = JSONUtil.parseArray(modelInfo.getOptions());
+        String url = jsonOptions.getJSONObject(1).getStr("value");
+
+        return OpenAiStreamingChatModel.builder()
+                .baseUrl(url)
+                .apiKey(key)
                 .modelName(applicationInfo.getModelName())
                 .build();
     }

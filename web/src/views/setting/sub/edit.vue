@@ -21,6 +21,12 @@
 				</template>
 				<el-input v-model="item.value"></el-input>
 			</el-form-item>
+			<el-form-item v-if="url">
+				<template #label>
+					<span style="margin-right: 3px;color: var(--el-color-danger)">*</span> 模型地址
+				</template>
+				<el-input v-model="url.value"></el-input>
+			</el-form-item>
 			<el-form-item label="可用模型" prop="models">
 				<el-select v-model="modelsArr" multiple placeholder="请选择" style="width: 100%">
 					<el-option
@@ -86,6 +92,7 @@ export default {
 			visible: false,
 			modelsArr: [],
 			modelsOptions: [],
+			url: '',
 			credential: [],
 			temperature: null, // 温度
 			maxOutputTokens: null // 最大输出
@@ -115,6 +122,10 @@ export default {
 
 				if (item.field === 'maxOutputTokens') {
 					this.maxOutputTokens = item
+				}
+
+				if (item.field === 'url') {
+					this.url = item
 				}
 			})
 

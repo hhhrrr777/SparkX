@@ -15,6 +15,7 @@ import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.qianfan.QianfanChatModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiChatModel;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.system.ModelsEntity;
@@ -24,6 +25,10 @@ import java.time.Duration;
 @Component
 public class ChatModelBuildHelper {
 
+    private ModelsEntity modelInfo;
+
+    private ApplicationEntity applicationInfo;
+
     /**
      * 构建model
      * @param modelInfo ModelsEntity
@@ -32,24 +37,27 @@ public class ChatModelBuildHelper {
      */
     public ChatModel build(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
 
+        this.modelInfo = modelInfo;
+        this.applicationInfo = applicationInfo;
+
         return switch (modelInfo.getModelFlag()) {
             // 百度千帆
-            case "qianfan" -> buildQianfan(modelInfo, applicationInfo);
+            case "qianfan" -> buildQianfan();
             // 清华智普
-            case "zhipu" -> buildZhiPu(modelInfo, applicationInfo);
+            case "zhipu" -> buildZhiPu();
             // 千问
-            case "qwen" -> buildQwen(modelInfo, applicationInfo);
+            case "qwen" -> buildQwen();
+            // 豆包
+            case "doubao" -> buildOpenAIOfficial();
             default -> null;
         };
     }
 
     /**
      * 构建千帆
-     * @param modelInfo ModelsEntity
-     * @param applicationInfo ApplicationEntity
      * @return ChatModel
      */
-    private ChatModel buildQianfan(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private ChatModel buildQianfan() {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -68,11 +76,9 @@ public class ChatModelBuildHelper {
 
     /**
      * 构建智普
-     * @param modelInfo ModelsEntity
-     * @param applicationInfo ApplicationEntity
      * @return ChatModel
      */
-    private ChatModel buildZhiPu(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private ChatModel buildZhiPu() {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -91,11 +97,9 @@ public class ChatModelBuildHelper {
 
     /**
      * 构建千问
-     * @param modelInfo ModelsEntity
-     * @param applicationInfo ApplicationEntity
      * @return ChatModel
      */
-    private ChatModel buildQwen(ModelsEntity modelInfo, ApplicationEntity applicationInfo) {
+    private ChatModel buildQwen() {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
@@ -106,6 +110,25 @@ public class ChatModelBuildHelper {
                 .apiKey(key)
                 .temperature((float) applicationInfo.getTemperature()) // 温度
                 .maxTokens(maxOutputTokens)
+                .modelName(applicationInfo.getModelName())
+                .build();
+    }
+
+    /**
+     * 通过标准openai结构构建对象
+     * @return ChatModel
+     */
+    private ChatModel buildOpenAIOfficial() {
+
+        JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
+        String key = jsonConfig.getJSONObject(0).getStr("value");
+
+        JSONArray jsonOptions = JSONUtil.parseArray(modelInfo.getOptions());
+        String url = jsonOptions.getJSONObject(1).getStr("value");
+
+        return OpenAiChatModel.builder()
+                .baseUrl(url)
+                .apiKey(key)
                 .modelName(applicationInfo.getModelName())
                 .build();
     }
