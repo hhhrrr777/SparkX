@@ -26,10 +26,7 @@ import sparkai.common.enums.DocumentStatusEnum;
 import sparkai.common.enums.StatusEnum;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.dataset.KnowledgeDocumentEntity;
-import sparkai.service.entity.dataset.KnowledgeParagraphEntity;
-import sparkai.service.entity.dataset.KnowledgeQuestionEntity;
-import sparkai.service.entity.dataset.KnowledgeQuestionParagraphEntity;
+import sparkai.service.entity.dataset.*;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.fileSplitter.FileHandleFactory;
 import sparkai.service.fileSplitter.FileHandleInterface;
@@ -66,6 +63,9 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
 
     @Autowired
     private KnowledgeQuestionMapper knowledgeQuestionMapper;
+
+    @Autowired
+    KnowledgeDatasetMapper knowledgeDatasetMapper;
 
     /**
      * 知识库下文档列表
@@ -314,6 +314,8 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
         for (String documentId : documentMap) {
             // 检测应答模式
             KnowledgeDocumentEntity documentInfo = knowledgeDocumentMapper.selectById(documentId);
+            KnowledgeDatasetEntity datasetInfo = knowledgeDatasetMapper.selectById(documentInfo.getDatasetId());
+
             if (documentInfo.getAnswerType().equals("model")) {
 
                 // 标记开始向量化
@@ -323,7 +325,7 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
                 knowledgeDocumentMapper.updateById(updateEntity);
 
                 // 执行向量化
-                task.executeAsyncTask(documentId);
+                task.executeAsyncTask(documentId, datasetInfo);
             }
         }
     }

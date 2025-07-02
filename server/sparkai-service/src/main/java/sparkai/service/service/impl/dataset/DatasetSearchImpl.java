@@ -89,7 +89,7 @@ public class DatasetSearchImpl implements IDatasetSearchService {
             Response<Embedding> response = embeddingModel.embed(datasetSearchVo.getKeyword());
             List<Float> vector = response.content().vectorAsList();
             // 记录token消耗记录
-            applicationHelper.writeTokensLog(datasetInfo, response, "embedding");
+            applicationHelper.writeEmbeddingTokensLog(datasetInfo, response, "embedding");
 
             // 向量检索
             if (datasetSearchVo.getType().equals("embedding")) {

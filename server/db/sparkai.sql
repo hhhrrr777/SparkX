@@ -550,7 +550,7 @@ COMMENT ON TABLE "public"."application_customer" IS '应用访客';
 CREATE TABLE "public"."system_tokens" (
     "id" INT4 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1),
     "source" VARCHAR (55) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
-    "platform" VARCHAR (55) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "platform" VARCHAR (155) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
     "input_token" INT4 DEFAULT 0,
     "output_token" INT4 DEFAULT 0,
     "total_token" INT4,

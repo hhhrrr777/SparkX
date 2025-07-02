@@ -14,6 +14,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.service.TokenStream;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -27,6 +28,9 @@ import java.util.*;
 @Slf4j
 @Component
 public class SseEmitterHelper {
+
+    @Autowired
+    ApplicationHelper applicationHelper;
 
     /**
      * 异步发送给客户端
@@ -99,7 +103,9 @@ public class SseEmitterHelper {
 
                     // 发送结束信号
                     Map<String, Object> resMap = new HashMap<>();
-                    resMap.put("tokens", inputTokenCount + outputTokenCount);
+                    resMap.put("inputTokens", inputTokenCount);
+                    resMap.put("outputTokens", outputTokenCount);
+                    resMap.put("totalTokens", response.tokenUsage().totalTokenCount());
                     resMap.put("time", second);
                     sendEndSse(emitter, JSONUtil.toJsonStr(resMap));
 
@@ -120,7 +126,8 @@ public class SseEmitterHelper {
      * @param sendEndCallback SendEndCallback
      */
     @Async
-    public void asyncSend2Client(TokenStream tokenStream, SseEmitter emitter, long runtimeId, String nodeId, boolean needSend, SendEndCallback sendEndCallback) {
+    public void asyncSend2Client(TokenStream tokenStream, SseEmitter emitter, long runtimeId, String nodeId,
+                                 boolean needSend, SendEndCallback sendEndCallback) {
 
         tokenStream
                 .onPartialResponse((content) -> {
@@ -162,7 +169,7 @@ public class SseEmitterHelper {
                     Map<String, Object> resMap = new HashMap<>();
                     resMap.put("inputTokenCount", inputTokenCount);
                     resMap.put("outputTokenCount", outputTokenCount);
-                    resMap.put("totalTokenCount", inputTokenCount + outputTokenCount);
+                    resMap.put("totalTokenCount", response.tokenUsage().totalTokenCount());
                     resMap.put("content", response.aiMessage().text());
 
                     sendEndCallback.accept(JSONUtil.toJsonStr(resMap));

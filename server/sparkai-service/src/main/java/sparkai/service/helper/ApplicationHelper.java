@@ -213,7 +213,7 @@ public class ApplicationHelper {
      * @param response Response<Embedding>
      * @param type String
      */
-    public void writeTokensLog(KnowledgeDatasetEntity datasetInfo, Response<Embedding> response, String type) {
+    public void writeEmbeddingTokensLog(KnowledgeDatasetEntity datasetInfo, Response<Embedding> response, String type) {
 
         if (!datasetInfo.getEmbeddingModel().equals("AllMiniLmL6V2Embedding")) {
 
@@ -228,5 +228,23 @@ public class ApplicationHelper {
             tokensEntity.setCreateTime(Tool.nowDateTime());
             systemTokensMapper.insert(tokensEntity);
         }
+    }
+
+    /**
+     * 记录token日志
+     * @param source String
+     * @param platform String
+     * @param tokenUsage TokenUsage
+     */
+    public void writeTokenLog(String source, String platform, TokenUsage tokenUsage) {
+
+        SystemTokensEntity tokensEntity = new SystemTokensEntity();
+        tokensEntity.setSource(source);
+        tokensEntity.setPlatform(platform);
+        tokensEntity.setInputToken(tokenUsage.inputTokenCount());
+        tokensEntity.setOutputToken(tokenUsage.outputTokenCount());
+        tokensEntity.setTotalToken(tokenUsage.totalTokenCount());
+        tokensEntity.setCreateTime(Tool.nowDateTime());
+        systemTokensMapper.insert(tokensEntity);
     }
 }

@@ -12,6 +12,7 @@ package sparkai.service.service.impl.application;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import dev.langchain4j.model.output.TokenUsage;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -177,11 +178,21 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         entity.setQuestion(logVo.getQuestion());
         entity.setContent(JSONUtil.toJsonStr(logVo.getAnswer()));
         entity.setTime(logVo.getTime());
-        entity.setTokens(logVo.getTokens());
+        entity.setTokens(logVo.getTotalTokens());
         entity.setRetrievedList(logVo.getRetrievedList());
         entity.setCreateTime(Tool.nowDateTime());
 
         applicationChatLogMapper.insert(entity);
+
+        // 应用信息
+        ApplicationEntity appInfo = applicationMapper.selectById(logVo.getAppId());
+        // 记录token使用情况
+        TokenUsage tokenUsage = new TokenUsage(logVo.getInputTokens(), logVo.getOutputTokens(), logVo.getTotalTokens());
+        if (appInfo.getType().equals(1)) {
+            applicationHelper.writeTokenLog("chat", appInfo.getModelName(), tokenUsage);
+        } else {
+            applicationHelper.writeTokenLog("chat", "APPID:" + appInfo.getAppId(), tokenUsage);
+        }
 
         return entity.getLogId();
     }

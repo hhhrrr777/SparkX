@@ -49,9 +49,6 @@ public class AnswerNode implements IWorkflowNode {
     public SseEmitter emitter;
 
     @Autowired
-    IDatasetSearchService searchService;
-
-    @Autowired
     ApplicationHelper applicationHelper;
 
     @Override

@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.extend.workflow;
 
+import cn.hutool.core.date.TimeInterval;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import sparkai.common.exception.BusinessException;
+import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
@@ -57,6 +59,8 @@ public class FlowNodeParser {
     @Autowired
     SseEmitterHelper sseEmitterHelper;
 
+    private TimeInterval timer;
+
     // 运行时id
     @Setter
     public Long runtimeId;
@@ -72,6 +76,7 @@ public class FlowNodeParser {
         // 重新初始化
         this.edges = new HashMap<>();
         this.nodes = new HashMap<>();
+        this.timer = new TimeInterval();
 
         // 构建执行流
         this.buildData(flowData);
@@ -137,7 +142,33 @@ public class FlowNodeParser {
                     execute(nodeData, nodeId, userId, sessionId);
                 });
             } else { // 流程结束
-                sseEmitterHelper.sendEndSse(emitter, "");
+                // 计算耗时
+                long second = this.timer.intervalSecond();
+                // 统计全部的消耗，返回
+                List<ApplicationWorkflowRuntimeContextEntity> contextList = applicationWorkflowRuntimeContextMapper
+                        .selectList(new QueryWrapper<ApplicationWorkflowRuntimeContextEntity>().eq("runtime_id", this.runtimeId));
+
+                Map<String, Object> resMap = new HashMap<>();
+                int totalTokens = 0;
+                int inputTokens = 0;
+                int outputTokens = 0;
+                for (ApplicationWorkflowRuntimeContextEntity contextEntity : contextList) {
+                    if (contextEntity.getModelData() != null) {
+                        JSONObject jsonData = JSONUtil.parseObj(contextEntity.getModelData());
+
+                        inputTokens += jsonData.getInt("inputTokenCount");
+                        outputTokens += jsonData.getInt("outputTokenCount");
+                        totalTokens += jsonData.getInt("totalTokenCount");
+                    }
+
+                }
+
+                resMap.put("inputTokens", inputTokens);
+                resMap.put("outputTokens", outputTokens);
+                resMap.put("totalTokens", totalTokens);
+                resMap.put("time", second);
+
+                sseEmitterHelper.sendEndSse(emitter, JSONUtil.toJsonStr(resMap));
             }
 
         } catch (InterruptedException e) {

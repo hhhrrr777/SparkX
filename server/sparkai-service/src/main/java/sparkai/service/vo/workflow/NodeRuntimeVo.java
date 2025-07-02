@@ -10,6 +10,7 @@
 package sparkai.service.vo.workflow;
 
 import lombok.Data;
+import sparkai.service.entity.application.ApplicationEntity;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -56,4 +57,9 @@ public class NodeRuntimeVo implements Serializable {
      * 会话id
      */
     private String sessionId;
+
+    /**
+     * 应用信息
+     */
+    private ApplicationEntity applicationInfo;
 }

@@ -47,9 +47,19 @@ public class ApplicationLogVo implements Serializable {
     private Integer time;
 
     /**
+     * 输入token数
+     */
+    private Integer inputTokens;
+
+    /**
+     * 输出token数
+     */
+    private Integer outputTokens;
+
+    /**
      * 消耗token数
      */
-    private Integer tokens;
+    private Integer totalTokens;
 
     /**
      * 召回的

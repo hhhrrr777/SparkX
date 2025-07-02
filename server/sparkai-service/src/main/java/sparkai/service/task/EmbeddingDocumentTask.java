@@ -11,9 +11,14 @@ package sparkai.service.task;
 
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.model.output.Response;
+import dev.langchain4j.model.output.TokenUsage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,9 +36,11 @@ import sparkai.common.utils.TsVectorGenerator;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.*;
 import sparkai.service.entity.system.ModelsEntity;
+import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.helper.EmbeddingModelBuildHelper;
 import sparkai.service.mapper.dataset.*;
+import sparkai.service.mapper.system.SystemTokensMapper;
 import sparkai.service.vo.document.QuestionVo;
 
 import java.util.HashMap;
@@ -66,6 +73,12 @@ public class EmbeddingDocumentTask {
 
     @Autowired
     EmbeddingModelBuildHelper embeddingModelBuildHelper;
+
+    @Autowired
+    KnowledgeDatasetMapper knowledgeDatasetMapper;
+
+    @Autowired
+    ApplicationHelper applicationHelper;
 
     private EmbeddingModel embeddingModel;
 
@@ -147,9 +160,12 @@ public class EmbeddingDocumentTask {
             for (KnowledgeParagraphEntity paragraph : paragraphList) {
 
                 String question = questionVo.getPrompt().replace("{data}", paragraph.getContent());
-                String answer = chatModel.chat(question);
+                ChatResponse chatResponse = chatModel.chat(UserMessage.from(question));
 
-                Document doc = Jsoup.parse(answer);
+                // 记录token使用情况
+                applicationHelper.writeTokenLog("question", modelInfo.getName(), chatResponse.tokenUsage());
+
+                Document doc = Jsoup.parse(chatResponse.aiMessage().text());
                 Elements questions = doc.select("question");
 
                 for (Element questionMatch : questions) {
@@ -195,6 +211,8 @@ public class EmbeddingDocumentTask {
             subParagraph.add(paragraphStr);
         }
 
+        KnowledgeDatasetEntity datasetInfo = knowledgeDatasetMapper.selectById(paragraph.getDatasetId());
+
         for (String content : subParagraph) {
 
             // 开始向量化，并入库
@@ -203,7 +221,13 @@ public class EmbeddingDocumentTask {
             embeddingEntity.setDatasetId(paragraph.getDatasetId());
             embeddingEntity.setDocumentId(paragraph.getDocumentId());
             embeddingEntity.setParagraphId(paragraph.getParagraphId());
-            embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
+
+            Response<Embedding> response = embeddingModel.embed(content);
+            List<Float> vector = response.content().vectorAsList();
+            embeddingEntity.setEmbedding(vector); // 向量化文本
+            // 记录token消耗记录
+            applicationHelper.writeEmbeddingTokensLog(datasetInfo, response, "embedding");
+
             embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
             embeddingEntity.setActive(StatusEnum.YES.getCode());
             embeddingEntity.setSourceType(SourceType.DOCUMENT.getCode()); // 来源文本
@@ -237,8 +261,14 @@ public class EmbeddingDocumentTask {
                 embeddingEntity.setDatasetId(relation.getDatasetId());
                 embeddingEntity.setDocumentId(relation.getDocumentId());
                 embeddingEntity.setParagraphId(relation.getParagraphId());
+
                 String content = questionId2Info.get(relation.getQuestionId()).getContent();
-                embeddingEntity.setEmbedding(embeddingModel.embed(content).content().vectorAsList()); // 向量化文本
+                Response<Embedding> response = embeddingModel.embed(content);
+                List<Float> vector = response.content().vectorAsList();
+                embeddingEntity.setEmbedding(vector); // 向量化文本
+                // 记录token消耗记录
+                applicationHelper.writeEmbeddingTokensLog(datasetInfo, response, "embedding");
+
                 embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(content)); // 全文检索文本
                 embeddingEntity.setActive(StatusEnum.YES.getCode());
                 embeddingEntity.setSourceType(SourceType.QUESTION.getCode()); // 来源问题

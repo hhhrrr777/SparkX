@@ -60,7 +60,7 @@
 										{{ item.retrievedList ? item.retrievedList.length : 0 }} 条引用
 									</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">{{ item.meta.time }} s</el-tag>
-									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">{{ item.meta.tokens }} tokens</el-tag>
+									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">{{ item.meta.totalTokens }} tokens</el-tag>
 								</div>
 								<div class="menu-right-side">
 									<el-tooltip
@@ -322,7 +322,9 @@ export default {
 								question: data.content,
 								answer: nowLog.content,
 								time: meta.time,
-								tokens: meta.tokens,
+								inputTokens: meta.inputTokens,
+								outputTokens: meta.outputTokens,
+								totalTokens: meta.totalTokens,
 								retrieved_list: nowLog.retrievedList
 							}
 
