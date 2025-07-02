@@ -48,7 +48,9 @@ public class ChatModelBuildHelper {
             // 千问
             case "qwen" -> buildQwen();
             // 豆包
-            case "doubao" -> buildOpenAIOfficial();
+            case "doubao" -> buildOpenAI();
+            // GPT
+            case "gpt" -> buildOpenAI();
             default -> null;
         };
     }
@@ -118,7 +120,7 @@ public class ChatModelBuildHelper {
      * 通过标准openai结构构建对象
      * @return ChatModel
      */
-    private ChatModel buildOpenAIOfficial() {
+    private ChatModel buildOpenAI() {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
