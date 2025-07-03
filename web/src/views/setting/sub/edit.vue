@@ -37,7 +37,7 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item label="函数调用">
+			<el-form-item label="函数调用" v-if="form.type === 1">
 				<el-select v-model="functionArr" multiple placeholder="请选择" style="width: 100%">
 					<el-option
 						v-for="item in functionOptions"
@@ -165,6 +165,7 @@ export default {
 		},
 		// 表单提交方法
 		optSubmit(formName) {
+
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
 					this.loading = true
@@ -178,6 +179,10 @@ export default {
 
 					if (this.maxOutputTokens) {
 						options.push(this.maxOutputTokens)
+					}
+
+					if (this.url) {
+						options.push(this.url)
 					}
 
 					this.form.options = JSON.stringify(options)

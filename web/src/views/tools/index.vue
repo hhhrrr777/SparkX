@@ -1,70 +1,192 @@
 <template>
-	<div id="container" class="container"></div>
+	<el-container style="padding: 20px" class='store-div-box'>
+		<el-card style="height: 900px" shadow="never">
+			<div class="title">工具箱</div>
+
+			<el-tabs v-model="activeName" style="padding: 20px;">
+				<el-tab-pane label="自定义插件" name="first">
+					<el-row class="store-list">
+						<el-col :span="4" class="store-item">
+							<el-card class="add-box" shadow="never" @click="addTools(1)">
+								<div class="add-item-box">
+									<div class="add-icon">
+										<el-icon class="icon-color">
+											<Plus />
+										</el-icon>
+									</div>
+									<div class="add-store-name"> 创建插件</div>
+								</div>
+							</el-card>
+						</el-col>
+
+						<el-col :span="4" class="store-item" v-for="item in commonToolsList" :key="item.id">
+							<el-card style="height: 170px;" shadow="never">
+								<div class="title-box">
+									<div class="title-left">
+										<div class="title-label">{{ item.title.substring(0, 1) }}</div>
+										<div class="title-info">
+											<div class="line1 knowledge-title">{{ item.title }}</div>
+										</div>
+									</div>
+								</div>
+								<div class="description">{{ item.description }}</div>
+								<div class="add-time">创建时间: {{ item.create_time }}</div>
+							</el-card>
+						</el-col>
+					</el-row>
+				</el-tab-pane>
+				<el-tab-pane label="MCP插件" name="second">
+
+				</el-tab-pane>
+			</el-tabs>
+		</el-card>
+
+		<Pages :form="searchForm" :page-obj="page" @pageChange="handlePageChange" @pageJump="getList"></Pages>
+	</el-container>
 </template>
 
 <script>
-import { Graph } from '@antv/x6';
+import Pages from "@/components/pages/index.vue";
+import {Plus} from "@element-plus/icons-vue";
+
 export default {
+	components: {Plus, Pages},
 	data() {
 		return {
-
+			searchForm: {
+				title: '',
+				type: '0',
+				page: 1,
+				limit: 14
+			},
+			page: {
+				total: 0
+			},
+			activeName: 'first',
+			commonToolsList: [
+				{
+					id: 1,
+					title: '查询商品信息',
+					description: "给出商品的名称，",
+					create_time: "2024-07-08 23:23:21"
+				}
+			],
+			mcpToolsList: []
 		}
 	},
 	mounted() {
-		this.init()
+		this.getList()
 	},
 	methods: {
+		// 获取列表
+		getList() {
 
-		init() {
-			const data = {
-				// 节点
-				nodes: [
-					{
-						id: 'node1', // String，可选，节点的唯一标识
-						x: 40,       // Number，必选，节点位置的 x 值
-						y: 40,       // Number，必选，节点位置的 y 值
-						width: 80,   // Number，可选，节点大小的 width 值
-						height: 40,  // Number，可选，节点大小的 height 值
-						label: 'hello', // String，节点标签
-					},
-					{
-						id: 'node2', // String，节点的唯一标识
-						x: 160,      // Number，必选，节点位置的 x 值
-						y: 180,      // Number，必选，节点位置的 y 值
-						width: 80,   // Number，可选，节点大小的 width 值
-						height: 40,  // Number，可选，节点大小的 height 值
-						label: 'world', // String，节点标签
-					},
-				],
-				// 边
-				edges: [
-					{
-						source: 'node1', // String，必须，起始节点 id
-						target: 'node2', // String，必须，目标节点 id
-					},
-				],
-			};
+		},
+		// 分页
+		handlePageChange(page) {
+			this.searchForm.page = page
+			this.getList()
+		},
+		// 创建插件
+		addTools(type) {
 
-			const graph = new Graph({
-				container: document.getElementById('container'),
-				background: {
-					color: '#f4f4f4', // 设置画布背景颜色
-				},
-				grid: {
-					size: 10,      // 网格大小 10px
-					visible: true, // 渲染网格背景
-				},
-			});
-
-			graph.fromJSON(data)
 		}
 	}
 }
 </script>
 
 <style scoped>
-.container {
+.title {
+	font-size: 18px;
+	font-weight: bold;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #f4f4f4;
+}
+.store-list {
 	width: 100%;
-	height: 100vh;
+}
+.store-item {
+	height: 100%;
+	margin-top: 20px;
+	cursor: pointer;
+	margin-right: 20px;
+}
+.add-box {
+	height: 170px;
+	background: #eff0f1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.add-icon {
+	height: 25px;
+	width: 25px;
+	background: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.add-box:hover {
+	border: 1px dashed var(--el-color-theme);
+	background: #fff;
+}
+.add-box:hover .add-store-name {
+	color: var(--el-color-theme);
+}
+.add-box:hover .add-icon {
+	border: 1px solid var(--el-color-theme);
+}
+.add-box:hover .icon-color {
+	color: var(--el-color-theme);
+}
+.add-item-box {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 170px;
+}
+.add-store-name {
+	font-size: 16px;margin-left: 10px
+}
+.title-box {
+	width: 100%;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.title-left {
+	display: flex;
+	height: 40px;
+	align-items: center;
+	color: #1f2329;
+}
+.knowledge-title {
+	margin-left: 10px;
+	width: 250px;
+}
+.title-label {
+	background: var(--el-color-theme);
+	color: #fff;
+	border-radius: 10px;
+	height: 40px;
+	width: 40px;
+	line-height: 40px;
+	text-align: center;
+	font-weight: bold;
+}
+.description {
+	margin-top: 15px;
+	color: #606266;
+	height: 55px;
+	width: 100%;
+	overflow: hidden;
+}
+.add-time {
+	width: 100%;
+	border-top: 1px solid #e2e2e2;
+	padding-top: 10px;
+	font-size: 12px;
+	color: #606266;
 }
 </style>
