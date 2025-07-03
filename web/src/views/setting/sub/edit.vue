@@ -37,6 +37,16 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			<el-form-item label="函数调用">
+				<el-select v-model="functionArr" multiple placeholder="请选择" style="width: 100%">
+					<el-option
+						v-for="item in functionOptions"
+						:key="item.value"
+						:label="item.label"
+						:value="item.value">
+					</el-option>
+				</el-select>
+			</el-form-item>
 			<el-form-item :label="temperature.name" v-if="temperature">
 				<el-slider
 					v-model="temperature.value"
@@ -92,6 +102,8 @@ export default {
 			visible: false,
 			modelsArr: [],
 			modelsOptions: [],
+			functionArr: [],
+			functionOptions: [],
 			url: '',
 			credential: [],
 			temperature: null, // 温度
@@ -138,6 +150,17 @@ export default {
 				})
 
 				this.modelsArr.push(item)
+			})
+
+			this.functionArr = []
+			this.functionOptions = []
+			res.data.functionCalling.split(",").forEach(item => {
+				this.functionOptions.push({
+					label: item,
+					value: item
+				})
+
+				this.functionArr.push(item)
 			})
 		},
 		// 表单提交方法

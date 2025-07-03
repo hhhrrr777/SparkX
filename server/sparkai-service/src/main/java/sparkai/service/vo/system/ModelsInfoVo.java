@@ -59,4 +59,9 @@ public class ModelsInfoVo implements Serializable {
      * 图标
      */
     private String icon;
+
+    /**
+     * 支持函数调用的模型
+     */
+    private String functionCalling;
 }
