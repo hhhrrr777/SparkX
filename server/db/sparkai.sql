@@ -567,3 +567,34 @@ COMMENT ON COLUMN "public"."system_tokens"."total_token" IS '累计消耗数';
 COMMENT ON COLUMN "public"."system_tokens"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."system_tokens"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."system_tokens" IS '系统消耗token表';
+
+
+CREATE TABLE "public"."tools" (
+    "id" INT4 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1),
+    "name" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "title" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "description" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "api_url" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "auth_type" INT2 DEFAULT 1,
+    "auth_way" INT2 DEFAULT 1,
+    "api_key_name" VARCHAR (155) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "api_key_value" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "post_params" VARCHAR (2000) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6),
+    CONSTRAINT "tools_pkey" PRIMARY KEY ("id")
+);
+ALTER TABLE "public"."tools" OWNER TO "postgres";
+COMMENT ON COLUMN "public"."tools"."id" IS 'id';
+COMMENT ON COLUMN "public"."tools"."name" IS '插件标识';
+COMMENT ON COLUMN "public"."tools"."title" IS '插件名称';
+COMMENT ON COLUMN "public"."tools"."description" IS '插件描述';
+COMMENT ON COLUMN "public"."tools"."api_url" IS '接口地址';
+COMMENT ON COLUMN "public"."tools"."auth_type" IS '鉴权类型 1:无鉴权 2:api key';
+COMMENT ON COLUMN "public"."tools"."auth_way" IS '秘钥位置 1:header 2:body';
+COMMENT ON COLUMN "public"."tools"."api_key_name" IS '秘钥名称';
+COMMENT ON COLUMN "public"."tools"."api_key_value" IS '秘钥值';
+COMMENT ON COLUMN "public"."tools"."post_params" IS '请求参数';
+COMMENT ON COLUMN "public"."tools"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."tools"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."tools" IS '插件表';
