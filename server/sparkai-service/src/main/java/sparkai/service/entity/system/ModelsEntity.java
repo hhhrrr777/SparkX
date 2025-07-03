@@ -81,6 +81,12 @@ public class ModelsEntity implements Serializable {
     private String icon;
 
     /**
+     * 支持函数调用的模型
+     */
+    @TableField(value = "function_calling")
+    private String functionCalling;
+
+    /**
      * 创建时间
      */
     @TableField(value = "create_time")

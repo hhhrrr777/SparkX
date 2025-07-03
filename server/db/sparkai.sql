@@ -395,23 +395,21 @@ COMMENT ON TABLE "public"."application_chat_session" IS '应用会话表';
 
 
 CREATE TABLE "public"."models" (
-    "model_id" varchar(64) COLLATE "pg_catalog"."default" NOT NULL DEFAULT ''::character varying,
-    "name" varchar(255) COLLATE "pg_catalog"."default",
-    "model_flag" varchar(255) COLLATE "pg_catalog"."default",
-    "type" int2 DEFAULT 0,
-    "credential" varchar(500) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "options" varchar(500) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "status" int2 DEFAULT 1,
-    "models" varchar(1000) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "icon" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "create_time" timestamp(6),
-    "update_time" timestamp(6),
+    "model_id" VARCHAR (64) COLLATE "pg_catalog"."default" NOT NULL DEFAULT '' :: CHARACTER VARYING,
+    "name" VARCHAR (255) COLLATE "pg_catalog"."default",
+    "model_flag" VARCHAR (255) COLLATE "pg_catalog"."default",
+    "type" INT2 DEFAULT 0,
+    "credential" VARCHAR (500) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "options" VARCHAR (500) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "status" INT2 DEFAULT 1,
+    "models" VARCHAR (1000) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "icon" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "function_calling" VARCHAR (1000) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6),
     CONSTRAINT "models_pkey" PRIMARY KEY ("model_id")
 );
-
-ALTER TABLE "public"."models"
-    OWNER TO "postgres";
-
+ALTER TABLE "public"."models" OWNER TO "postgres";
 COMMENT ON COLUMN "public"."models"."model_id" IS '模型id';
 COMMENT ON COLUMN "public"."models"."name" IS '模型名称';
 COMMENT ON COLUMN "public"."models"."model_flag" IS '模型标识';
@@ -421,19 +419,20 @@ COMMENT ON COLUMN "public"."models"."options" IS '配置项';
 COMMENT ON COLUMN "public"."models"."status" IS '状态1:正常 2:禁用';
 COMMENT ON COLUMN "public"."models"."models" IS '可使用的模型';
 COMMENT ON COLUMN "public"."models"."icon" IS '图标';
+COMMENT ON COLUMN "public"."models"."function_calling" IS '支持函数调用的模型';
 COMMENT ON COLUMN "public"."models"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."models"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."models" IS '模型表';
 
-INSERT INTO "public"."models" VALUES ('a4bc4132-d274-411d-89e2-ba7d98778754', 'SparkAI', 'sparkai', 2, '[]', '[]', 1, 'AllMiniLmL6V2Embedding', '/icons/sparkai.png', '2025-03-31 14:58:46', NULL);
-INSERT INTO "public"."models" VALUES ('5f4f2e11-df8b-408d-a54b-ed271b6cf5c4', '百度千帆', 'qianfan', 1, '[{"field":"apiKey","value":""},{"field":"secretKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95}]', 1, 'ERNIE-Bot,ERNIE-Bot 4.0,ERNIE-Bot-8K,ERNIE-Bot-turbo,ERNIE-Speed-128K,EB-turbo-AppBuilder,Yi-34B-Chat,BLOOMZ-7B,Qianfan-BLOOMZ-7B-compressed,Mixtral-8x7B-Instruct,Llama-2-7b-chat,Llama-2-13b-chat,Llama-2-70b-chat,Qianfan-Chinese-Llama-2-7B,ChatGLM2-6B-32K,AquilaChat-7B', '/icons/baidu.png', '2025-03-30 21:22:35', '2025-04-01 10:53:15');
-INSERT INTO "public"."models" VALUES ('5f6f2e21-df9b-418d-a54b-ed271g6cf6c5', '智普AI', 'zhipu', 1, '[{"field":"apiKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95}]', 1, 'glm-4,glm-4v,glm-4-0520,glm-4-air,glm-4-airx,glm-4-flash,glm-3-turbo,chatglm_turbo', '/icons/zhipu.png', '2025-07-01 10:36:08', NULL);
-INSERT INTO "public"."models" VALUES ('5f6f2e31-df9b-418d-a56b-ed271g8cf7c6', '通义千问', 'qwen', 1, '[{"field":"apiKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95}]', 1, 'qwen-plus,qwen-turbo,qwen-max,qwen-long', '/icons/qwen.png', '2025-07-01 13:56:11', NULL);
-INSERT INTO "public"."models" VALUES ('5f7f2e32-df7b-428d-a56b-ed272f9cf7c8', '字节豆包', 'doubao', 1, '[{"field":"apiKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95}, {"field":"url","name":"模型地址","value": "https://ark.cn-beijing.volces.com/api/v3"}]', 1, 'doubao-1-5-pro-32k-250115,doubao-1-5-pro-256k-250115', '/icons/doubao.png', '2025-07-02 10:40:08', NULL);
-INSERT INTO "public"."models" VALUES ('5f6f2e31-df9b-419d-a56b-ed281g6cf8c9', 'GPT', 'gpt', 1, '[{"field":"apiKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95},{"field":"url","name":"模型地址","value": "https://api.fireaigc.cn/v1"}]', 1, 'gpt-3.5-turbo,gpt-4o', '/icons/gpt.png', '2025-07-02 13:48:13', NULL);
-INSERT INTO "public"."models" VALUES ('a4bc5132-d374-411d-89e2-ba8d98778865', '智普AI', 'zhipu', 2, '[{"field":"apiKey","value":""}]', '[]', 1, 'embedding-2,embedding-3', '/icons/zhipu.png', '2025-03-31 14:58:46', NULL);
-INSERT INTO "public"."models" VALUES ('5f6f2e33-df9c-429d-a57b-ed282g6cf9c9', 'GPT', 'gpt', 2, '[{"field":"apiKey","value":""}]', '[{"field":"url","name":"模型地址","value": "https://api.fireaigc.cn/v1"}]', 1, 'text-embedding-3-large,text-embedding-3-small,text-embedding-ada-002,text-embedding-v1', '/icons/gpt.png', '2025-07-02 13:48:13', NULL);
-INSERT INTO "public"."models" VALUES ('5f6f2e36-df9d-429d-a58c-ed282g6cf8d2', '百度千帆', 'qianfan', 2, '[{"field":"apiKey","value":""},{"field":"secretKey","value":""}]', '[]', 1, 'embedding-v1', '/icons/baidu.png', '2025-03-30 21:22:35', '2025-04-01 10:53:15');
+INSERT INTO "public"."models" VALUES ('a4bc4132-d274-411d-89e2-ba7d98778754', 'SparkAI', 'sparkai', 2, '[]', '[]', 1, 'AllMiniLmL6V2Embedding', '/icons/sparkai.png', '', '2025-03-31 14:58:46', NULL);
+INSERT INTO "public"."models" VALUES ('5f4f2e11-df8b-408d-a54b-ed271b6cf5c4', '百度千帆', 'qianfan', 1, '[{"field":"apiKey","value":""},{"field":"secretKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95}]', 1, 'ERNIE-Bot,ERNIE-Bot 4.0,ERNIE-Bot-8K,ERNIE-Bot-turbo,ERNIE-Speed-128K,EB-turbo-AppBuilder,Yi-34B-Chat,BLOOMZ-7B,Qianfan-BLOOMZ-7B-compressed,Mixtral-8x7B-Instruct,Llama-2-7b-chat,Llama-2-13b-chat,Llama-2-70b-chat,Qianfan-Chinese-Llama-2-7B,ChatGLM2-6B-32K,AquilaChat-7B', '/icons/baidu.png', '', '2025-03-30 21:22:35', '2025-04-01 10:53:15');
+INSERT INTO "public"."models" VALUES ('5f6f2e21-df9b-418d-a54b-ed271g6cf6c5', '智普AI', 'zhipu', 1, '[{"field":"apiKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95}]', 1, 'glm-4,glm-4v,glm-4-0520,glm-4-air,glm-4-airx,glm-4-flash,glm-3-turbo,chatglm_turbo', '/icons/zhipu.png', '', '2025-07-01 10:36:08', NULL);
+INSERT INTO "public"."models" VALUES ('5f6f2e31-df9b-418d-a56b-ed271g8cf7c6', '通义千问', 'qwen', 1, '[{"field":"apiKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95}]', 1, 'qwen-plus,qwen-turbo,qwen-max,qwen-long', '/icons/qwen.png', '', '2025-07-01 13:56:11', NULL);
+INSERT INTO "public"."models" VALUES ('5f7f2e32-df7b-428d-a56b-ed272f9cf7c8', '字节豆包', 'doubao', 1, '[{"field":"apiKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95}, {"field":"url","name":"模型地址","value": "https://ark.cn-beijing.volces.com/api/v3"}]', 1, 'doubao-1-5-pro-32k-250115,doubao-1-5-pro-256k-250115', '/icons/doubao.png', '', '2025-07-02 10:40:08', NULL);
+INSERT INTO "public"."models" VALUES ('5f6f2e31-df9b-419d-a56b-ed281g6cf8c9', 'GPT', 'gpt', 1, '[{"field":"apiKey","value":""}]', '[{"field":"temperature","name":"温度","range":[0.01,1],"value":0.95},{"field":"url","name":"模型地址","value": "https://api.fireaigc.cn/v1"}]', 1, 'gpt-3.5-turbo,gpt-4o', '/icons/gpt.png', '', '2025-07-02 13:48:13', NULL);
+INSERT INTO "public"."models" VALUES ('a4bc5132-d374-411d-89e2-ba8d98778865', '智普AI', 'zhipu', 2, '[{"field":"apiKey","value":""}]', '[]', 1, 'embedding-2,embedding-3', '/icons/zhipu.png', '', '2025-03-31 14:58:46', NULL);
+INSERT INTO "public"."models" VALUES ('5f6f2e33-df9c-429d-a57b-ed282g6cf9c9', 'GPT', 'gpt', 2, '[{"field":"apiKey","value":""}]', '[{"field":"url","name":"模型地址","value": "https://api.fireaigc.cn/v1"}]', 1, 'text-embedding-3-large,text-embedding-3-small,text-embedding-ada-002,text-embedding-v1', '/icons/gpt.png', '', '2025-07-02 13:48:13', NULL);
+INSERT INTO "public"."models" VALUES ('5f6f2e36-df9d-429d-a58c-ed282g6cf8d2', '百度千帆', 'qianfan', 2, '[{"field":"apiKey","value":""},{"field":"secretKey","value":""}]', '[]', 1, 'embedding-v1', '/icons/baidu.png', '', '2025-03-30 21:22:35', '2025-04-01 10:53:15');
 
 CREATE TABLE "public"."application_workflow" (
     "id" INT8 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1 CACHE 1),

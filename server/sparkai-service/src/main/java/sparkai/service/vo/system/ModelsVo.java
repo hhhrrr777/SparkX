@@ -44,4 +44,9 @@ public class ModelsVo implements Serializable {
      * 模型
      */
     private String models;
+
+    /**
+     * 支持函数调用的模型
+     */
+    private String functionCalling;
 }
