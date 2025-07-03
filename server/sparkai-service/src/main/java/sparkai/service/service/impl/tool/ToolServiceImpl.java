@@ -7,10 +7,10 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.service.impl.application;
+package sparkai.service.service.impl.tool;
 
 import org.springframework.stereotype.Service;
-import sparkai.service.service.interfaces.application.IToolService;
+import sparkai.service.service.interfaces.tool.IToolService;
 
 @Service
 public class ToolServiceImpl implements IToolService {

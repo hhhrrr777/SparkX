@@ -7,7 +7,7 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.service.interfaces.application;
+package sparkai.service.service.interfaces.tool;
 
 public interface IToolService {
 

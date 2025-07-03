@@ -7,24 +7,18 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.sparkaiweb.controller.application;
+package sparkai.sparkaiweb.controller.tool;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sparkai.service.service.interfaces.application.IToolService;
 
-@RequestMapping("/api/tools")
+@RequestMapping("api/tool")
 @RestController
 public class ToolsController {
 
-    @Autowired
-    IToolService iToolService;
-
-    @GetMapping("/list")
+    @GetMapping("/index")
     public void index() {
 
-        iToolService.getToolList();
     }
 }
