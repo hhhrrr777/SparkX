@@ -93,7 +93,7 @@ public class EmbeddingModelBuildHelper {
 
         return ZhipuAiEmbeddingModel.builder()
                 .model(modelConfig.get("model"))
-                .apiKey(modelConfig.get("secret"))
+                .apiKey(modelConfig.get("key"))
                 .maxRetries(1)
                 .build();
     }

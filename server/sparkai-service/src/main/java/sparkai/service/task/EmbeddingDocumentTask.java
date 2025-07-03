@@ -16,9 +16,7 @@ import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.model.output.Response;
-import dev.langchain4j.model.output.TokenUsage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -40,7 +38,6 @@ import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.helper.ChatModelBuildHelper;
 import sparkai.service.helper.EmbeddingModelBuildHelper;
 import sparkai.service.mapper.dataset.*;
-import sparkai.service.mapper.system.SystemTokensMapper;
 import sparkai.service.vo.document.QuestionVo;
 
 import java.util.HashMap;
@@ -126,8 +123,10 @@ public class EmbeddingDocumentTask {
         // 删除已经向量化的数据
         knowledgeEmbeddingMapper.delete(new QueryWrapper<KnowledgeEmbeddingEntity>().eq("paragraph_id", paragraphId));
 
-        // 默认的内存型的embedding模型
-        embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+        // 选择embedding模型
+        KnowledgeDatasetEntity datasetInfo = knowledgeDatasetMapper.selectById(paragraphInfo.getDatasetId());
+        embeddingModel = embeddingModelBuildHelper.build(datasetInfo);
+
         this.embeddingSingleParagraph(paragraphInfo);
     }
 

@@ -11,8 +11,9 @@ package sparkai.service.task;
 
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.model.output.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -23,9 +24,13 @@ import sparkai.common.utils.TsVectorGenerator;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.dataset.KnowledgeEmbeddingEntity;
 import sparkai.service.entity.dataset.KnowledgeQuestionEntity;
+import sparkai.service.helper.ApplicationHelper;
+import sparkai.service.helper.EmbeddingModelBuildHelper;
 import sparkai.service.mapper.dataset.KnowledgeEmbeddingMapper;
 import sparkai.service.mapper.dataset.KnowledgeQuestionMapper;
 import sparkai.service.vo.question.QuestionRelationVo;
+
+import java.util.List;
 
 @Component
 public class EmbeddingQuestionTask {
@@ -36,6 +41,12 @@ public class EmbeddingQuestionTask {
     @Autowired
     KnowledgeEmbeddingMapper knowledgeEmbeddingMapper;
 
+    @Autowired
+    EmbeddingModelBuildHelper embeddingModelBuildHelper;
+
+    @Autowired
+    ApplicationHelper applicationHelper;
+
     /**
      * 向量化 问题-段落
      * @param questionId String 问题id
@@ -45,8 +56,8 @@ public class EmbeddingQuestionTask {
     @Async
     public void executeAsyncTask(String questionId, QuestionRelationVo relationVo, KnowledgeDatasetEntity datasetInfo) {
 
-        // 默认的内存型的embedding模型
-        EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+        // 选择embedding模型
+        EmbeddingModel embeddingModel = embeddingModelBuildHelper.build(datasetInfo);
 
         KnowledgeQuestionEntity questionInfo = knowledgeQuestionMapper.selectById(questionId);
         if (questionInfo != null) {
@@ -63,7 +74,13 @@ public class EmbeddingQuestionTask {
             embeddingEntity.setDatasetId(questionInfo.getDatasetId());
             embeddingEntity.setDocumentId(relationVo.getDocumentId());
             embeddingEntity.setParagraphId(relationVo.getParagraphId());
-            embeddingEntity.setEmbedding(embeddingModel.embed(questionInfo.getContent()).content().vectorAsList()); // 向量化文本
+
+            Response<Embedding> response = embeddingModel.embed(questionInfo.getContent());
+            List<Float> vector = response.content().vectorAsList();
+            embeddingEntity.setEmbedding(vector); // 向量化文本
+            // 记录token消耗记录
+            applicationHelper.writeEmbeddingTokensLog(datasetInfo, response, "embedding");
+
             embeddingEntity.setSearchVector(TsVectorGenerator.toTsVector(questionInfo.getContent())); // 全文检索文本
             embeddingEntity.setActive(StatusEnum.YES.getCode());
             embeddingEntity.setSourceType(SourceType.QUESTION.getCode()); // 来源问题
