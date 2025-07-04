@@ -152,8 +152,8 @@ export default {
 			})
 		},
 		// 删除字段
-		handleDel() {
-
+		handleDel(index) {
+			this.tableData.splice(index, 1)
 		},
 		// 添加参数
 		addParam() {
