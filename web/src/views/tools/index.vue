@@ -30,7 +30,27 @@
 									</div>
 								</div>
 								<div class="description">{{ item.description }}</div>
-								<div class="add-time">创建时间: {{ item.create_time }}</div>
+								<div class="tool-bar">
+									<div class="tool-time">创建时间: {{ item.create_time }}</div>
+									<el-dropdown trigger="click" @command="handleClick($event, item)">
+										<el-icon>
+											<MoreFilled />
+										</el-icon>
+										<template #dropdown>
+											<el-dropdown-menu>
+												<el-dropdown-item command="setting">
+													<el-icon>
+														<Edit />
+													</el-icon> 编辑
+												</el-dropdown-item>
+												<el-dropdown-item command="delete">
+													<el-icon>
+														<Delete />
+													</el-icon> 删除</el-dropdown-item>
+											</el-dropdown-menu>
+										</template>
+									</el-dropdown>
+								</div>
 							</el-card>
 						</el-col>
 					</el-row>
@@ -57,11 +77,11 @@
 
 <script>
 import Pages from "@/components/pages/index.vue"
-import {Plus} from "@element-plus/icons-vue"
+import {Delete, MoreFilled, Plus, Edit} from "@element-plus/icons-vue"
 import SaveDialog from "./save.vue"
 
 export default {
-	components: {Plus, Pages, SaveDialog},
+	components: {Delete, MoreFilled, Plus, Edit, Pages, SaveDialog},
 	data() {
 		return {
 			searchForm: {
@@ -110,6 +130,10 @@ export default {
 		handleSuccess() {
 			this.drawer = false
 			this.getList()
+		},
+		// 操作菜单
+		handleClick() {
+
 		}
 	}
 }
@@ -202,10 +226,14 @@ export default {
 	width: 100%;
 	overflow: hidden;
 }
-.add-time {
+.tool-bar {
 	width: 100%;
 	border-top: 1px solid #e2e2e2;
 	padding-top: 10px;
+	display: flex;
+	justify-content: space-between;
+}
+.tool-time {
 	font-size: 12px;
 	color: #606266;
 }
