@@ -9,16 +9,35 @@
 // +----------------------------------------------------------------------
 package sparkai.sparkaiweb.controller.tool;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import sparkai.common.core.AjaxResult;
+import sparkai.common.core.PageResult;
+import sparkai.service.service.interfaces.tool.IToolService;
+import sparkai.service.validate.tool.AddToolsValidate;
+import sparkai.service.vo.common.QueryVo;
+import sparkai.service.vo.tool.ToolsListVo;
 
 @RequestMapping("api/tool")
 @RestController
 public class ToolsController {
 
-    @GetMapping("/index")
-    public void index() {
+    @Autowired
+    IToolService iToolService;
 
+    @GetMapping("/list")
+    public AjaxResult<PageResult<ToolsListVo>> index(QueryVo queryVo) {
+
+        return AjaxResult.success(iToolService.getToolList(queryVo));
+    }
+
+    /**
+     * 创建插件
+     */
+    @PostMapping("/add")
+    public AjaxResult<Object> add(@RequestBody AddToolsValidate validate) {
+
+        iToolService.addTools(validate);
+        return AjaxResult.success();
     }
 }

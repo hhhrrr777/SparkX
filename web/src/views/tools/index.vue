@@ -43,19 +43,29 @@
 
 		<Pages :form="searchForm" :page-obj="page" @pageChange="handlePageChange" @pageJump="getList"></Pages>
 	</el-container>
+
+	<el-drawer
+		:size="1000"
+		v-model="drawer"
+		:title="title"
+		append-to-body
+		destroy-on-close>
+		<save-dialog ref="saveDialog" @closed="drawer = false" @success="handleSuccess"></save-dialog>
+	</el-drawer>
+
 </template>
 
 <script>
-import Pages from "@/components/pages/index.vue";
-import {Plus} from "@element-plus/icons-vue";
+import Pages from "@/components/pages/index.vue"
+import {Plus} from "@element-plus/icons-vue"
+import SaveDialog from "./save.vue"
 
 export default {
-	components: {Plus, Pages},
+	components: {Plus, Pages, SaveDialog},
 	data() {
 		return {
 			searchForm: {
 				title: '',
-				type: '0',
 				page: 1,
 				limit: 14
 			},
@@ -63,15 +73,10 @@ export default {
 				total: 0
 			},
 			activeName: 'first',
-			commonToolsList: [
-				{
-					id: 1,
-					title: '查询商品信息',
-					description: "给出商品的名称，",
-					create_time: "2024-07-08 23:23:21"
-				}
-			],
-			mcpToolsList: []
+			commonToolsList: [],
+			mcpToolsList: [],
+			drawer: false,
+			title: "创建插件"
 		}
 	},
 	mounted() {
@@ -79,8 +84,12 @@ export default {
 	},
 	methods: {
 		// 获取列表
-		getList() {
-
+		async getList() {
+			let res = await this.$API.tool.list.get(this.searchForm)
+			if (res.code === 0) {
+				this.commonToolsList = res.data.data
+				this.page.total = res.data.total
+			}
 		},
 		// 分页
 		handlePageChange(page) {
@@ -89,7 +98,18 @@ export default {
 		},
 		// 创建插件
 		addTools(type) {
-
+			if (type === 1) {
+				this.drawer = true
+				this.title = "创建插件"
+				this.$nextTick(() => {
+					this.$refs.saveDialog.open()
+				})
+			}
+		},
+		// 添加插件成功
+		handleSuccess() {
+			this.drawer = false
+			this.getList()
 		}
 	}
 }

@@ -7,24 +7,39 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.service.interfaces.tool;
+package sparkai.service.vo.tool;
 
-import sparkai.common.core.PageResult;
-import sparkai.service.validate.tool.AddToolsValidate;
-import sparkai.service.vo.common.QueryVo;
-import sparkai.service.vo.tool.ToolsListVo;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-public interface IToolService {
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+@Data
+public class ToolsListVo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 获取工具列表
-     * @param queryVo QueryVo
+     * 插件标识
      */
-    PageResult<ToolsListVo> getToolList(QueryVo queryVo);
+    private String name;
 
     /**
-     * 添加插件
-     * @param validate AddToolsValidate
+     * 插件名称
      */
-    void addTools(AddToolsValidate validate);
+    private String title;
+
+    /**
+     * 插件描述
+     */
+    private String description;
+
+    /**
+     * 创建时间
+     */
+    @JsonProperty(value = "create_time")
+    private LocalDateTime createTime;
 }
