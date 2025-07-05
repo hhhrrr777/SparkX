@@ -67,6 +67,39 @@
 							clearable>
 						</el-cascader>
 					</el-form-item>
+					<el-form-item v-if="showTools">
+						<template #label>
+							<div class="flex-center" style="width: 100%">
+								<div>使用的插件</div>
+								<div class="flex-center setting-btn">
+									<div class="flex-center setting-btn" style="margin-left: 10px">
+										<el-button
+											icon="el-icon-Plus"
+											type="primary"
+											link
+											@click="datasetVisible = true"
+										>
+											添加
+										</el-button>
+									</div>
+								</div>
+							</div>
+						</template>
+						<div class="dataset-list" v-if="relationToolList.length > 0">
+							<div class="dataset-item" v-for="(item, index) in relationToolList" :key="index">
+								<div class="dataset-item-div">
+									<el-icon size="20" color="var(--el-color-theme)" style="margin-right: 5px">
+										<ElementPlus />
+									</el-icon>
+									<div class="line1">{{ item.title }}</div>
+								</div>
+								<el-icon style="margin-left: 5px" @click="delDataset(index)">
+									<Delete />
+								</el-icon>
+							</div>
+						</div>
+						<div class="notice-dataset" v-else>请选择使用的插件</div>
+					</el-form-item>
 					<el-form-item v-if="form.type === 1">
 						<template #label>
 							设定角色
@@ -257,14 +290,14 @@
 
 <script>
 import chatBox from '@/components/chatContent/index.vue'
-import {Plus, Setting, Document, Delete, InfoFilled} from "@element-plus/icons-vue"
+import {Plus, Setting, Document, Delete, InfoFilled, ElementPlus} from "@element-plus/icons-vue"
 import datasetDialog from "@/components/dataset/multiple.vue"
 import saveDialog from "@/views/index/dialog/params.vue"
 import config from "@/config"
 import tool from "@/utils/tool"
 
 export default {
-	components: {saveDialog, datasetDialog, InfoFilled, Document, Plus, chatBox, Setting, Delete},
+	components: {ElementPlus, saveDialog, datasetDialog, InfoFilled, Document, Plus, chatBox, Setting, Delete},
 	props: {
 		accessToken: {
 			type: String,
@@ -303,11 +336,15 @@ export default {
 				Authorization:
 					config.TOKEN_PREFIX + tool.cookie.get("TOKEN"),
 			},
+			showTools: false,
+			toolsList: [],
+			relationToolList: []
 		}
 	},
 	mounted() {
 		this.getInfo()
 		this.getModelsList()
+		this.getToolList()
 	},
 	methods: {
 		// 获取应用详情
@@ -389,6 +426,11 @@ export default {
 				this.options.push(info)
 			})
 		},
+		// 获取插件列表
+		async getToolList() {
+			let res = await this.$API.tool.toolList.get()
+			this.toolsList = res.data
+		},
 		// 保存应用
 		async saveApp(type) {
 
@@ -457,6 +499,14 @@ export default {
 					this.form.maxReplyToken = item.value
 				}
 			})
+
+			// 该模型是否支持插件
+			this.relationToolList = []
+			if (res.data.functionCalling !== '') {
+				this.showTools = true
+			} else {
+				this.showTools = false
+			}
 		},
 		// 删除logo
 		delImg() {

@@ -26,7 +26,7 @@ public class ToolsSimpleListVo implements Serializable {
     private Integer id;
 
     /**
-     * 插件标识
+     * 插件名换
      */
-    private String name;
+    private String title;
 }
