@@ -10,6 +10,14 @@ export default {
 			return await http.get(this.url, data);
 		}
 	},
+	toolList: {
+		url: `${config.API_URL}/tool/toolList`,
+		name: "获取可用的插件列表",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
+	},
 	add: {
 		url: `${config.API_URL}/tool/add`,
 		name: "创建插件",

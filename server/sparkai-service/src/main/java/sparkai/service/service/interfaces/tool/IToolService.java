@@ -14,6 +14,9 @@ import sparkai.service.validate.tool.AddToolsValidate;
 import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
+import sparkai.service.vo.tool.ToolsSimpleListVo;
+
+import java.util.List;
 
 public interface IToolService {
 
@@ -40,4 +43,10 @@ public interface IToolService {
      * @param id Integer
      */
     void delTool(Integer id);
+
+    /**
+     * 获取全部的插件列表
+     * @return List<ToolsSimpleListVo>
+     */
+    List<ToolsSimpleListVo> getAllToolList();
 }

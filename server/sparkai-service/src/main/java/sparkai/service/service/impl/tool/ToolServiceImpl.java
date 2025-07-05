@@ -28,6 +28,7 @@ import sparkai.service.validate.tool.AddToolsValidate;
 import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
+import sparkai.service.vo.tool.ToolsSimpleListVo;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -135,5 +136,24 @@ public class ToolServiceImpl implements IToolService {
 
         toolsMapper.deleteById(id);
         toolAppRelationMapper.delete(new QueryWrapper<ToolAppRelationEntity>().eq("tool_id", id));
+    }
+
+    /**
+     * 获取插件选择列表
+     * @return List<ToolsSimpleListVo>
+     */
+    @Override
+    public List<ToolsSimpleListVo> getAllToolList() {
+
+        List<ToolsEntity> toolList = toolsMapper.selectList(new QueryWrapper<ToolsEntity>().orderByDesc("id"));
+        List<ToolsSimpleListVo> toolsSimpleListVoList = new LinkedList<>();
+
+        for (ToolsEntity entity : toolList) {
+            ToolsSimpleListVo vo = new ToolsSimpleListVo();
+            BeanUtils.copyProperties(entity, vo);
+            toolsSimpleListVoList.add(vo);
+        }
+
+        return toolsSimpleListVoList;
     }
 }

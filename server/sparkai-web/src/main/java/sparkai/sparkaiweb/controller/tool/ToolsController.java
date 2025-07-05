@@ -18,6 +18,9 @@ import sparkai.service.validate.tool.AddToolsValidate;
 import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
+import sparkai.service.vo.tool.ToolsSimpleListVo;
+
+import java.util.List;
 
 @RequestMapping("api/tool")
 @RestController
@@ -60,5 +63,14 @@ public class ToolsController {
 
         iToolService.delTool(id);
         return AjaxResult.success();
+    }
+
+    /**
+     * 插件选择列表
+     */
+    @GetMapping("/toolList")
+    public AjaxResult<List<ToolsSimpleListVo>> toolsList() {
+
+        return AjaxResult.success(iToolService.getAllToolList());
     }
 }
