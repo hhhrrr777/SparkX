@@ -5,7 +5,7 @@
 				<el-input v-model="form.field" placeholder="只包含英文和下划线"></el-input>
 			</el-form-item>
 			<el-form-item label="字段类型" prop="type">
-				<el-select v-model="form.type">
+				<el-select v-model="form.type" style="width: 100%">
 					<el-option label="String" value="String" />
 					<el-option label="Int" value="Int" />
 					<el-option label="Array" value="Array" />
@@ -16,10 +16,8 @@
 				<el-input v-model="form.desc" type="textarea" :rows="3" placeholder="尽量描述的精确以便ai理解"></el-input>
 			</el-form-item>
 			<el-form-item label="是否必填" prop="required">
-				<el-radio-group v-model="form.required">
-					<el-radio :value="1">必填</el-radio>
-					<el-radio :value="2">非必填</el-radio>
-				</el-radio-group>
+				<el-radio :label="1" v-model="form.required">必填</el-radio>
+				<el-radio :label="2" v-model="form.required">非必填</el-radio>
 			</el-form-item>
 		</el-form>
 		<template #footer>

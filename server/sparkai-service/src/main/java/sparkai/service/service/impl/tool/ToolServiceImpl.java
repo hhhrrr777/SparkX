@@ -22,6 +22,7 @@ import sparkai.service.entity.tool.ToolsEntity;
 import sparkai.service.mapper.tool.ToolsMapper;
 import sparkai.service.service.interfaces.tool.IToolService;
 import sparkai.service.validate.tool.AddToolsValidate;
+import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
 
@@ -77,10 +78,44 @@ public class ToolServiceImpl implements IToolService {
             throw new BusinessException("秘钥信息不能为空");
         }
 
+        ToolsEntity info = toolsMapper.selectOne(new QueryWrapper<ToolsEntity>().eq("name", validate.getName()));
+        if (info != null) {
+            throw new BusinessException("该插件标识已经存在");
+        }
+
         ToolsEntity toolsEntity = new ToolsEntity();
         BeanUtils.copyProperties(validate, toolsEntity);
         toolsEntity.setCreateTime(Tool.nowDateTime());
 
         toolsMapper.insert(toolsEntity);
+    }
+
+    /**
+     * 编辑插件
+     * @param validate EditToolsValidate
+     */
+    @Override
+    public void editTools(EditToolsValidate validate) {
+
+        if (!validate.getName().matches("^[a-zA-Z_]+$")) {
+            throw new BusinessException("插件标识只包含英文字母和下划线");
+        }
+
+        if (validate.getAuthType().equals(2) &&
+                (validate.getApiKeyName().isBlank() || validate.getApiKeyValue().isBlank())) {
+            throw new BusinessException("秘钥信息不能为空");
+        }
+
+        ToolsEntity info = toolsMapper.selectOne(new QueryWrapper<ToolsEntity>()
+                .eq("name", validate.getName()).ne("id", validate.getId()));
+        if (info != null) {
+            throw new BusinessException("该插件标识已经存在");
+        }
+
+        ToolsEntity toolsEntity = new ToolsEntity();
+        BeanUtils.copyProperties(validate, toolsEntity);
+        toolsEntity.setUpdateTime(Tool.nowDateTime());
+
+        toolsMapper.updateById(toolsEntity);
     }
 }

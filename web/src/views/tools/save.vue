@@ -14,10 +14,8 @@
 				<el-input v-model="form.apiUrl"></el-input>
 			</el-form-item>
 			<el-form-item label="鉴权方式" prop="authType">
-				<el-radio-group v-model="form.authType">
-					<el-radio :value="1">无需鉴权</el-radio>
-					<el-radio :value="2">API KEY</el-radio>
-				</el-radio-group>
+				<el-radio :label="1" v-model="form.authType">无需鉴权</el-radio>
+				<el-radio :label="2" v-model="form.authType">API KEY</el-radio>
 			</el-form-item>
 			<el-form-item v-if="form.authType === 2">
 				<template #label>
@@ -141,9 +139,15 @@ export default {
 						return false
 					}
 
-					let res = await this.$API.tool.add.post(this.form)
+					let res
+					if (this.mode === 'add') {
+						res = await this.$API.tool.add.post(this.form)
+					} else {
+						res = await this.$API.tool.edit.post(this.form)
+					}
+
 					if (res.code === 0) {
-						this.$message.success('添加成功')
+						this.$message.success(res.msg)
 						this.$emit('success')
 					} else {
 						this.$message.error(res.msg)
@@ -166,6 +170,11 @@ export default {
 		handleSuccess(row) {
 			this.paramsVisible = false
 			this.tableData.push(row)
+		},
+		// 设置参数
+		setData(row) {
+			this.form = row
+			this.tableData = JSON.parse(row.postParams)
 		}
 	}
 }

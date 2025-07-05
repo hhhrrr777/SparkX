@@ -11,6 +11,7 @@ package sparkai.service.service.interfaces.tool;
 
 import sparkai.common.core.PageResult;
 import sparkai.service.validate.tool.AddToolsValidate;
+import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
 
@@ -27,4 +28,10 @@ public interface IToolService {
      * @param validate AddToolsValidate
      */
     void addTools(AddToolsValidate validate);
+
+    /**
+     * 编辑插件
+     * @param validate EditToolsValidate
+     */
+    void editTools(EditToolsValidate validate);
 }

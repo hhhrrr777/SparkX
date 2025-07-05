@@ -31,14 +31,14 @@
 								</div>
 								<div class="description">{{ item.description }}</div>
 								<div class="tool-bar">
-									<div class="tool-time">创建时间: {{ item.create_time }}</div>
+									<div class="tool-time">创建时间: {{ item.createTime }}</div>
 									<el-dropdown trigger="click" @command="handleClick($event, item)">
 										<el-icon>
 											<MoreFilled />
 										</el-icon>
 										<template #dropdown>
 											<el-dropdown-menu>
-												<el-dropdown-item command="setting">
+												<el-dropdown-item command="edit">
 													<el-icon>
 														<Edit />
 													</el-icon> 编辑
@@ -132,8 +132,17 @@ export default {
 			this.getList()
 		},
 		// 操作菜单
-		handleClick() {
+		handleClick(event, row) {
+			if (event === 'edit') {
+				if (this.activeName === 'first') {
+					this.drawer = true
+					this.title = "编辑插件"
+					this.$nextTick(() => {
+						this.$refs.saveDialog.open('edit').setData(row)
+					})
+				}
 
+			}
 		}
 	}
 }

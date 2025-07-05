@@ -7,54 +7,58 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.vo.tool;
+package sparkai.service.validate.tool;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Data
-public class ToolsListVo implements Serializable {
+public class EditToolsValidate implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 插件id
-     */
     private Integer id;
 
     /**
      * 插件标识
      */
+    @NotEmpty(message = "插件标识不能为空")
+    @Length(min = 1, max = 155, message = "插件标识必须在1到155个字符")
     private String name;
 
     /**
      * 插件名称
      */
+    @NotEmpty(message = "插件名称不能为空")
+    @Length(min = 1, max = 155, message = "插件名称必须在1到155个字符")
     private String title;
 
     /**
      * 插件描述
      */
+    @NotEmpty(message = "插件描述不能为空")
+    @Length(min = 1, max = 155, message = "插件描述必须在1到155个字符")
     private String description;
 
     /**
      * 接口地址
      */
+    @NotEmpty(message = "接口地址不能为空")
     private String apiUrl;
 
     /**
-     * 鉴权类型 1:无鉴权 2:api key
+     * 鉴权类型
      */
+    @NotEmpty(message = "鉴权类型不能为空")
     private Integer authType;
 
     /**
-     * 秘钥位置 1:header 2:body
+     * 秘钥放置位置 1:header 2:body
      */
     private Integer authWay;
 
@@ -69,12 +73,8 @@ public class ToolsListVo implements Serializable {
     private String apiKeyValue;
 
     /**
-     * 请求参数
+     * 接口参数
      */
+    @NotEmpty(message = "接口参数不能为空")
     private String postParams;
-
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
 }

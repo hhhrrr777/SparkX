@@ -17,5 +17,13 @@ export default {
 
 			return await http.post(this.url, data);
 		}
+	},
+	edit: {
+		url: `${config.API_URL}/tool/edit`,
+		name: "编辑插件",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
 	}
 }

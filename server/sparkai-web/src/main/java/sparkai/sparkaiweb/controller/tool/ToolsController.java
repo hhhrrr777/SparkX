@@ -15,6 +15,7 @@ import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.tool.IToolService;
 import sparkai.service.validate.tool.AddToolsValidate;
+import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
 
@@ -38,6 +39,16 @@ public class ToolsController {
     public AjaxResult<Object> add(@RequestBody AddToolsValidate validate) {
 
         iToolService.addTools(validate);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 编辑插件
+     */
+    @PostMapping("/edit")
+    public AjaxResult<Object> edit(@RequestBody EditToolsValidate validate) {
+
+        iToolService.editTools(validate);
         return AjaxResult.success();
     }
 }
