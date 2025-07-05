@@ -77,7 +77,7 @@
 											icon="el-icon-Plus"
 											type="primary"
 											link
-											@click="datasetVisible = true"
+											@click="toolsVisible = true"
 										>
 											添加
 										</el-button>
@@ -285,7 +285,17 @@
 		<dataset-dialog @success="handleSuccess" @doClose="datasetVisible=false" :dataset-ids="relationDataIds"></dataset-dialog>
 	</el-dialog>
 	<!-- 参数设置 -->
-	<save-dialog v-if="paramsVisible" ref="paramsDialog" @success="handleDatasetSuccess" @closed="paramsVisible=false" :close-on-click-modal="false"></save-dialog>
+	<save-dialog
+		v-if="paramsVisible"
+		ref="paramsDialog"
+		@success="handleDatasetSuccess"
+		@closed="paramsVisible=false"
+		:close-on-click-modal="false">
+	</save-dialog>
+	<!-- 关联插件 -->
+	<el-dialog title="关联插件" v-model="toolsVisible" width="800px" destroy-on-close :close-on-click-modal="false" class="select-dataset">
+		<tools-dialog @success="handleToolsSuccess" @doClose="toolsVisible=false" :tools-list="toolsList" :tool-ids="relationToolIds"></tools-dialog>
+	</el-dialog>
 </template>
 
 <script>
@@ -293,11 +303,12 @@ import chatBox from '@/components/chatContent/index.vue'
 import {Plus, Setting, Document, Delete, InfoFilled, ElementPlus} from "@element-plus/icons-vue"
 import datasetDialog from "@/components/dataset/multiple.vue"
 import saveDialog from "@/views/index/dialog/params.vue"
+import toolsDialog from "@/components/tools/index.vue"
 import config from "@/config"
 import tool from "@/utils/tool"
 
 export default {
-	components: {ElementPlus, saveDialog, datasetDialog, InfoFilled, Document, Plus, chatBox, Setting, Delete},
+	components: {ElementPlus, saveDialog, datasetDialog, InfoFilled, Document, Plus, chatBox, Setting, Delete, toolsDialog},
 	props: {
 		accessToken: {
 			type: String,
@@ -336,8 +347,11 @@ export default {
 				Authorization:
 					config.TOKEN_PREFIX + tool.cookie.get("TOKEN"),
 			},
+			toolsVisible: false,
 			showTools: false,
+			toolKey: Math.random(),
 			toolsList: [],
+			relationToolIds: [],
 			relationToolList: []
 		}
 	},
@@ -430,6 +444,7 @@ export default {
 		async getToolList() {
 			let res = await this.$API.tool.toolList.get()
 			this.toolsList = res.data
+			this.toolKey = Math.random()
 		},
 		// 保存应用
 		async saveApp(type) {
@@ -507,6 +522,15 @@ export default {
 			} else {
 				this.showTools = false
 			}
+		},
+		// 选择了插件
+		handleToolsSuccess(row) {
+			this.relationToolList = row
+			this.relationToolIds = []
+			row.forEach(item => {
+				this.relationToolIds.push(item.id)
+			})
+			this.toolsVisible = false
 		},
 		// 删除logo
 		delImg() {

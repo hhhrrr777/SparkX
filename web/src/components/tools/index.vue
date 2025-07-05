@@ -1,7 +1,7 @@
 <template>
 	<div class="tools-list" v-if="toolsList.length > 0">
 		<el-checkbox-group v-model="selectedToolsIds" class="too-radio-list">
-			<el-checkbox :label="item.datasetId" border class="radio-item" v-for="item in toolsList" :key="item.id">
+			<el-checkbox :label="item.id" border class="radio-item" v-for="item in toolsList" :key="item.id">
 				<div style="display: flex;align-items: center;">
 					<el-icon size="26" color="var(--el-color-theme)"><ElementPlus /></el-icon>
 					<div class="line1 name">{{ item.title }}</div>
@@ -29,6 +29,10 @@ export default {
 		toolsList: {
 			type: Array,
 			default: []
+		},
+		toolIds: {
+			type: Array,
+			default: []
 		}
 	},
 	components: {ElementPlus},
@@ -36,6 +40,9 @@ export default {
 		return {
 			selectedToolsIds: []
 		}
+	},
+	mounted() {
+		this.selectedToolsIds = this.toolIds
 	},
 	methods: {
 		goTo() {
@@ -46,13 +53,13 @@ export default {
 		// 选择插件
 		optSubmit() {
 			let selectedTools = []
-			this.toolsList.forEach(item => {
 
+			this.toolsList.forEach(item => {
 				if (this.selectedToolsIds.indexOf(item.id) !== -1) {
 					selectedTools.push(item)
 				}
 			})
-
+			console.log(242, selectedTools)
 			this.$emit('success', selectedTools)
 		}
 	}
