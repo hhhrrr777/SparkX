@@ -15,10 +15,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sparkai.common.core.PageResult;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
+import sparkai.service.entity.tool.ToolAppRelationEntity;
 import sparkai.service.entity.tool.ToolsEntity;
+import sparkai.service.mapper.tool.ToolAppRelationMapper;
 import sparkai.service.mapper.tool.ToolsMapper;
 import sparkai.service.service.interfaces.tool.IToolService;
 import sparkai.service.validate.tool.AddToolsValidate;
@@ -34,6 +37,9 @@ public class ToolServiceImpl implements IToolService {
 
     @Autowired
     ToolsMapper toolsMapper;
+
+    @Autowired
+    ToolAppRelationMapper toolAppRelationMapper;
 
     /**
      * 获取工具列表
@@ -117,5 +123,17 @@ public class ToolServiceImpl implements IToolService {
         toolsEntity.setUpdateTime(Tool.nowDateTime());
 
         toolsMapper.updateById(toolsEntity);
+    }
+
+    /**
+     * 删除插件
+     * @param id Integer
+     */
+    @Override
+    @Transactional
+    public void delTool(Integer id) {
+
+        toolsMapper.deleteById(id);
+        toolAppRelationMapper.delete(new QueryWrapper<ToolAppRelationEntity>().eq("tool_id", id));
     }
 }

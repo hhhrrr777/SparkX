@@ -25,5 +25,13 @@ export default {
 
 			return await http.post(this.url, data);
 		}
-	}
+	},
+	del: {
+		url: `${config.API_URL}/tool/del`,
+		name: "删除插件",
+		get: async function(data={}){
+
+			return await http.get(this.url, data);
+		}
+	},
 }

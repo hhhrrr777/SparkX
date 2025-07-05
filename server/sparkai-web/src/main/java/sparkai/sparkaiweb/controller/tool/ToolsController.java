@@ -51,4 +51,14 @@ public class ToolsController {
         iToolService.editTools(validate);
         return AjaxResult.success();
     }
+
+    /**
+     * 删除插件
+     */
+    @GetMapping("/del")
+    public AjaxResult<Object> del(@RequestParam("id") Integer id) {
+
+        iToolService.delTool(id);
+        return AjaxResult.success();
+    }
 }

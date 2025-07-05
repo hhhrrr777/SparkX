@@ -133,15 +133,29 @@ export default {
 		},
 		// 操作菜单
 		handleClick(event, row) {
-			if (event === 'edit') {
-				if (this.activeName === 'first') {
+			if (this.activeName === 'first') {
+
+				if (event === 'edit') {
 					this.drawer = true
 					this.title = "编辑插件"
 					this.$nextTick(() => {
 						this.$refs.saveDialog.open('edit').setData(row)
 					})
+				} else if (event === 'delete') {
+					this.$confirm('此操作将永久删除该插件 是否继续?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(async () => {
+						let res = await this.$API.tool.del.get({id: row.id})
+						if (res.code === 0) {
+							this.$message.success(res.msg)
+							this.getList()
+						} else {
+							this.$message.error(res.msg)
+						}
+					}).catch(() => {})
 				}
-
 			}
 		}
 	}

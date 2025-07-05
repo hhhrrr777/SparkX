@@ -34,4 +34,10 @@ public interface IToolService {
      * @param validate EditToolsValidate
      */
     void editTools(EditToolsValidate validate);
+
+    /**
+     * 删除插件
+     * @param id Integer
+     */
+    void delTool(Integer id);
 }

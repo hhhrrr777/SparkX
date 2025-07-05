@@ -187,7 +187,7 @@ export default{
 				} else {
 					this.$message.error(res.msg)
 				}
-			}).catch(() => {});
+			}).catch(() => {})
 		},
 		// 操作知识库
 		handleClick(event, row) {

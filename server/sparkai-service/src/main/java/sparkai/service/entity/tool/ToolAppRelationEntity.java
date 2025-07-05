@@ -7,8 +7,12 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.vo.tool;
+package sparkai.service.entity.tool;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serial;
@@ -16,63 +20,40 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class ToolsListVo implements Serializable {
+@TableName("public.tool_app_relation")
+public class ToolAppRelationEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 插件id
-     */
+    * id
+    */
+    @TableId(value="id", type= IdType.AUTO)
+    @TableField(value = "id")
     private Integer id;
 
     /**
-     * 插件标识
-     */
-    private String name;
+    * 工具id
+    */
+    @TableField(value = "tool_id")
+    private Integer toolId;
 
     /**
-     * 插件名称
+     * 应用id
      */
-    private String title;
+    @TableField(value = "app_id")
+    private Integer appId;
 
     /**
-     * 插件描述
-     */
-    private String description;
-
-    /**
-     * 接口地址
-     */
-    private String apiUrl;
-
-    /**
-     * 鉴权类型 1:无鉴权 2:api key
-     */
-    private Integer authType;
-
-    /**
-     * 秘钥位置 1:header 2:body
-     */
-    private Integer authWay;
-
-    /**
-     * 秘钥名称
-     */
-    private String apiKeyName;
-
-    /**
-     * 秘钥值
-     */
-    private String apiKeyValue;
-
-    /**
-     * 请求参数
-     */
-    private String postParams;
-
-    /**
-     * 创建时间
-     */
+    * 创建时间
+    */
+    @TableField(value = "create_time")
     private LocalDateTime createTime;
+
+    /**
+    * 更新时间
+    */
+    @TableField(value = "update_time")
+    private LocalDateTime updateTime;
 }
