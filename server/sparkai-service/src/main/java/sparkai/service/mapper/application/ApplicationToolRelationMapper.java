@@ -7,16 +7,16 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.mapper.tool;
+package sparkai.service.mapper.application;
 
 import org.apache.ibatis.annotations.Mapper;
 import sparkai.common.core.IBaseMapper;
-import sparkai.service.entity.tool.ToolAppRelationEntity;
+import sparkai.service.entity.application.ApplicationToolRelationEntity;
 
 /**
- * 插件应用关联表 Mapper
+ * 应用插件关联表 Mapper
  */
 @Mapper
-public interface ToolAppRelationMapper extends IBaseMapper<ToolAppRelationEntity> {
+public interface ApplicationToolRelationMapper extends IBaseMapper<ApplicationToolRelationEntity> {
 
 }

@@ -7,11 +7,9 @@
 // +----------------------------------------------------------------------
 // | Author: NickBai  <1902822973@qq.com>
 // +----------------------------------------------------------------------
-package sparkai.service.entity.tool;
+package sparkai.service.entity.application;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -20,30 +18,23 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("public.tool_app_relation")
-public class ToolAppRelationEntity implements Serializable {
+@TableName("public.application_tool_relation")
+public class ApplicationToolRelationEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-    * id
+    * 应用id
     */
-    @TableId(value="id", type= IdType.AUTO)
-    @TableField(value = "id")
-    private Integer id;
+    @TableField(value = "app_id")
+    private String appId;
 
     /**
-    * 工具id
+    * 插件id
     */
     @TableField(value = "tool_id")
     private Integer toolId;
-
-    /**
-     * 应用id
-     */
-    @TableField(value = "app_id")
-    private Integer appId;
 
     /**
     * 创建时间

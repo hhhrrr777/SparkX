@@ -33,6 +33,7 @@ import sparkai.service.entity.application.ApplicationChatLogEntity;
 import sparkai.service.entity.application.ApplicationChatSessionEntity;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
 import sparkai.service.entity.application.ApplicationEntity;
+import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.entity.system.SystemTeamUserEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
 import sparkai.service.extend.chat.AgentChat;
@@ -46,6 +47,7 @@ import sparkai.service.mapper.application.ApplicationChatSessionMapper;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
 import sparkai.service.mapper.application.ApplicationMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
+import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.mapper.system.SystemTeamMapper;
 import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
@@ -81,9 +83,6 @@ public class ApplicationServiceImpl implements IApplicationService {
     SystemUserMapper systemUserMapper;
 
     @Autowired
-    KnowledgeDatasetMapper knowledgeDatasetMapper;
-
-    @Autowired
     SseEmitterHelper sseEmitterHelper;
 
     @Autowired
@@ -105,10 +104,10 @@ public class ApplicationServiceImpl implements IApplicationService {
     SystemTeamUserMapper systemTeamUserMapper;
 
     @Autowired
-    SystemTeamMapper systemTeamMapper;
+    LicenseHelper licenseHelper;
 
     @Autowired
-    LicenseHelper licenseHelper;
+    ModelsMapper modelsMapper;
 
     /**
      * 应用列表
@@ -251,6 +250,14 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         // 查询关联的知识库信息
         applicationVo.setDatasetList(applicationHelper.getRelationDatasetList(appId));
+        // 查询关联的插件信息
+        applicationVo.setToolList(applicationHelper.getRelationToolList(appId));
+        // 查询当前模型是否要显示插件引用
+        ModelsEntity modelInfo = modelsMapper.selectById(info.getModelId());
+        applicationVo.setShowTools(false);
+        if (modelInfo.getFunctionCalling().contains(info.getModelName())) {
+            applicationVo.setShowTools(true);
+        }
 
         return applicationVo;
     }
@@ -274,6 +281,14 @@ public class ApplicationServiceImpl implements IApplicationService {
 
         // 查询关联的知识库信息
         applicationVo.setDatasetList(applicationHelper.getRelationDatasetList(info.getAppId()));
+        // 查询关联的插件信息
+        applicationVo.setToolList(applicationHelper.getRelationToolList(info.getAppId()));
+        // 查询当前模型是否要显示插件引用
+        ModelsEntity modelInfo = modelsMapper.selectById(info.getModelId());
+        applicationVo.setShowTools(false);
+        if (modelInfo.getFunctionCalling().contains(info.getModelName())) {
+            applicationVo.setShowTools(true);
+        }
 
         return applicationVo;
     }

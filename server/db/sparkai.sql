@@ -600,18 +600,15 @@ COMMENT ON COLUMN "public"."tools"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."tools" IS '插件表';
 
 
-CREATE TABLE "public"."tool_app_relation" (
-    "id" INT4 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1),
+CREATE TABLE "public"."application_tool_relation" (
+    "app_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
     "tool_id" INT4 DEFAULT 0,
-    "app_id" INT4 DEFAULT 0,
     "create_time" TIMESTAMP (6),
-    "update_time" TIMESTAMP (6),
-    CONSTRAINT "tool_app_relation_pkey" PRIMARY KEY ("id")
+    "update_time" TIMESTAMP (6)
 );
-ALTER TABLE "public"."tool_app_relation" OWNER TO "postgres";
-COMMENT ON COLUMN "public"."tool_app_relation"."id" IS 'id';
-COMMENT ON COLUMN "public"."tool_app_relation"."tool_id" IS '插件的id';
-COMMENT ON COLUMN "public"."tool_app_relation"."app_id" IS '应用id';
-COMMENT ON COLUMN "public"."tool_app_relation"."create_time" IS '创建时间';
-COMMENT ON COLUMN "public"."tool_app_relation"."update_time" IS '更新时间';
-COMMENT ON TABLE "public"."tool_app_relation" IS '应用工具关联表';
+ALTER TABLE "public"."application_tool_relation" OWNER TO "postgres";
+COMMENT ON COLUMN "public"."application_tool_relation"."app_id" IS '应用id';
+COMMENT ON COLUMN "public"."application_tool_relation"."tool_id" IS '插件id';
+COMMENT ON COLUMN "public"."application_tool_relation"."create_time" IS '创建时间';
+COMMENT ON COLUMN "public"."application_tool_relation"."update_time" IS '更新时间';
+COMMENT ON TABLE "public"."application_tool_relation" IS '应用插件关联表';

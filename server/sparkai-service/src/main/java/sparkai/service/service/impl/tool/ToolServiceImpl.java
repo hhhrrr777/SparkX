@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import sparkai.common.core.PageResult;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.tool.ToolAppRelationEntity;
+import sparkai.service.entity.application.ApplicationToolRelationEntity;
 import sparkai.service.entity.tool.ToolsEntity;
-import sparkai.service.mapper.tool.ToolAppRelationMapper;
+import sparkai.service.mapper.application.ApplicationToolRelationMapper;
 import sparkai.service.mapper.tool.ToolsMapper;
 import sparkai.service.service.interfaces.tool.IToolService;
 import sparkai.service.validate.tool.AddToolsValidate;
@@ -40,7 +40,7 @@ public class ToolServiceImpl implements IToolService {
     ToolsMapper toolsMapper;
 
     @Autowired
-    ToolAppRelationMapper toolAppRelationMapper;
+    ApplicationToolRelationMapper applicationToolRelationMapper;
 
     /**
      * 获取工具列表
@@ -135,7 +135,7 @@ public class ToolServiceImpl implements IToolService {
     public void delTool(Integer id) {
 
         toolsMapper.deleteById(id);
-        toolAppRelationMapper.delete(new QueryWrapper<ToolAppRelationEntity>().eq("tool_id", id));
+        applicationToolRelationMapper.delete(new QueryWrapper<ApplicationToolRelationEntity>().eq("tool_id", id));
     }
 
     /**

@@ -14,6 +14,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import sparkai.service.vo.application.PrologueVo;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
+import sparkai.service.vo.tool.ToolsSimpleListVo;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -170,6 +171,11 @@ public class ApplicationSaveValidate implements Serializable {
      * 知识库列表
      */
     private List<DatasetSimpleVo> datasetList;
+
+    /**
+     * 工具列表
+     */
+    private List<ToolsSimpleListVo> toolList;
 
     /**
      * 保存类型 1:仅保存 2:保存并发布

@@ -11,6 +11,7 @@ package sparkai.service.vo.application;
 
 import lombok.Data;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
+import sparkai.service.vo.tool.ToolsSimpleListVo;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -167,6 +168,16 @@ public class ApplicationVo implements Serializable {
      * 知识库列表
      */
     private List<DatasetSimpleVo> datasetList;
+
+    /**
+     * 插件列表
+     */
+    private List<ToolsSimpleListVo> toolList;
+
+    /**
+     * 显示插件引用
+     */
+    private boolean showTools;
 
     /**
      * 问题优化 1:开启 2:关闭

@@ -93,7 +93,7 @@
 									</el-icon>
 									<div class="line1">{{ item.title }}</div>
 								</div>
-								<el-icon style="margin-left: 5px" @click="delDataset(index)">
+								<el-icon style="margin-left: 5px" @click="delTool(index)">
 									<Delete />
 								</el-icon>
 							</div>
@@ -377,6 +377,16 @@ export default {
 				})
 			}
 
+			if (res.data.toolList && res.data.toolList.length > 0) {
+				this.relationToolList = res.data.toolList
+				this.relationToolIds = []
+				this.relationToolList.forEach(item => {
+					this.relationToolIds.push(item.id)
+				})
+			}
+			this.showTools = res.data.showTools
+			console.log(22, this.showTools, res.data.showTools, res)
+
 			this.modelId = [res.data.modelId, res.data.modelName]
 		},
 		// 删除关联的知识库
@@ -385,6 +395,14 @@ export default {
 			this.relationDataIds = []
 			this.relationDataList.forEach(item => {
 				this.relationDataIds.push(item.datasetId)
+			})
+		},
+		// 删除插件
+		delTool(index) {
+			this.relationToolList.splice(index, 1)
+			this.relationToolIds = []
+			this.relationToolList.forEach(item => {
+				this.relationToolIds.push(item.id)
 			})
 		},
 		// 删除问题
@@ -482,6 +500,13 @@ export default {
 				})
 			})
 			this.form.datasetList = relationData
+
+			// 组装关联的插件
+			let relationToolData = []
+			this.relationToolList.forEach(item => {
+				relationToolData.push(item)
+			})
+			this.form.toolList = relationToolData
 
 			// 组装开场白
 			this.form.prologue = this.welcomeList

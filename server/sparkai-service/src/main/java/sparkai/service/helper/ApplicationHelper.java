@@ -25,17 +25,22 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import sparkai.common.constant.SparkAIConstant;
 import sparkai.common.utils.Tool;
 import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
+import sparkai.service.entity.application.ApplicationToolRelationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.entity.system.SystemTokensEntity;
+import sparkai.service.entity.tool.ToolsEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
+import sparkai.service.mapper.application.ApplicationToolRelationMapper;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.mapper.system.SystemTokensMapper;
+import sparkai.service.mapper.tool.ToolsMapper;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.system.LocalUserVo;
+import sparkai.service.vo.tool.ToolsSimpleListVo;
 import sparkai.service.vo.workflow.EdgeVo;
 import sparkai.service.vo.workflow.NextAnswerNodeVo;
 import sparkai.service.vo.workflow.NodeRuntimeVo;
@@ -54,6 +59,9 @@ public class ApplicationHelper {
     ApplicationDatasetRelationMapper applicationDatasetRelationMapper;
 
     @Autowired
+    ApplicationToolRelationMapper applicationToolRelationMapper;
+
+    @Autowired
     ApplicationWorkflowRuntimeContextMapper applicationWorkflowRuntimeContextMapper;
 
     @Autowired
@@ -64,6 +72,9 @@ public class ApplicationHelper {
 
     @Autowired
     ModelsMapper modelsMapper;
+
+    @Autowired
+    ToolsMapper toolsMapper;
 
     /**
      * 获取关联的知识库
@@ -91,6 +102,34 @@ public class ApplicationHelper {
         }
 
         return datasetSimpleVoList;
+    }
+
+    /**
+     * 获取关联的插件
+     * @param appId String
+     * @return List<ToolsSimpleListVo>
+     */
+    public List<ToolsSimpleListVo> getRelationToolList(String appId) {
+
+        List<ToolsSimpleListVo> toolsSimpleListVo = new LinkedList<>();
+
+        List<ApplicationToolRelationEntity> relationEntityList =
+                applicationToolRelationMapper.selectList(new QueryWrapper<ApplicationToolRelationEntity>()
+                        .eq("app_id", appId));
+        if (!CollectionUtils.isEmpty(relationEntityList)) {
+
+            List<Integer> toolIds = relationEntityList.stream().map(ApplicationToolRelationEntity::getToolId).toList();
+            List<ToolsEntity> toolsList = toolsMapper.selectByIds(toolIds);
+            for (ToolsEntity entity : toolsList) {
+
+                ToolsSimpleListVo vo = new ToolsSimpleListVo();
+                BeanUtils.copyProperties(entity, vo);
+
+                toolsSimpleListVo.add(vo);
+            }
+        }
+
+        return toolsSimpleListVo;
     }
 
     /**
