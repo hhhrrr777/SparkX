@@ -8,7 +8,7 @@
 				<el-select v-model="form.type" style="width: 100%">
 					<el-option label="String" value="String" />
 					<el-option label="Int" value="Int" />
-					<el-option label="Array" value="Array" />
+					<el-option label="Double" value="Double" />
 					<el-option label="Boolean" value="Boolean" />
 				</el-select>
 			</el-form-item>

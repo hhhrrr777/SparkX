@@ -12,10 +12,12 @@ package sparkai.service.helper;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
+import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.DefaultRetrievalAugmentor;
 import dev.langchain4j.rag.RetrievalAugmentor;
@@ -42,6 +44,10 @@ import sparkai.service.service.interfaces.dataset.IDatasetSearchService;
 import sparkai.service.validate.application.ApplicationChatValidate;
 import sparkai.service.vo.dataset.DatasetSearchVo;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
+import sparkai.service.vo.tool.ToolParamsVo;
+
+import java.util.List;
+import java.util.Map;
 
 import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
@@ -168,14 +174,15 @@ public class AssistantBuildHelper {
      * @param retrievalAugmentor RetrievalAugmentor
      * @return IAiService
      */
-    private IAiService buildToolAiService(ApplicationChatValidate validate,
-                                          StreamingChatModel streamingModel,
+    private IAiService buildToolAiService(ApplicationChatValidate validate, StreamingChatModel streamingModel,
                                           ChatMemoryProvider chatMemoryProvider, RetrievalAugmentor retrievalAugmentor) {
 
         // 插件执行器
         ToolExecutor toolExecutor = (toolExecutionRequest, memoryId) -> {
+            Map<String, Object> arguments = JSONUtil.parseObj(toolExecutionRequest.arguments());
+            log.error("调用的参数是, {}", arguments);
 
-            return "";
+            return "您查询的商品价格是 150元";
         };
 
         // 构建插件
@@ -189,6 +196,20 @@ public class AssistantBuildHelper {
                 specificationBuilder.name(entity.getName()); // 方法标识
                 specificationBuilder.description(entity.getDescription()); // 方法描述
                 // 构建字段
+                JsonObjectSchema.Builder paramsBuilder = JsonObjectSchema.builder();
+                List<ToolParamsVo> paramsList = JSONUtil.toList(entity.getPostParams(), ToolParamsVo.class);
+
+                for (ToolParamsVo params : paramsList) {
+                    if (params.getType().equals("String")) {
+                        paramsBuilder.addStringProperty(params.getField(), params.getDesc());
+                    } else if (params.getType().equals("Int")) {
+                        paramsBuilder.addIntegerProperty(params.getField(), params.getDesc());
+                    } else if (params.getType().equals("Double")) {
+                        paramsBuilder.addNumberProperty(params.getField(), params.getDesc());
+                    }
+                }
+
+                specificationBuilder.parameters(paramsBuilder.build());
 
                 ToolSpecification toolSpecification = specificationBuilder.build();
                 builder.add(toolSpecification, toolExecutor);
