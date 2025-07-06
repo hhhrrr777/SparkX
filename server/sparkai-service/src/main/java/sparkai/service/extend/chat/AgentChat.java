@@ -56,6 +56,8 @@ public class AgentChat implements IChat {
 
         // 查询关联的知识库信息
         validate.setDatasetList(applicationHelper.getRelationDatasetList(validate.getAppId()));
+        // 查询关联的插件信息
+        validate.setToolsList(applicationHelper.getRelationFullToolList(validate.getAppId()));
 
         // step 1 构建模型流式应答对象
         StreamingChatModel streamingChatModel = streamChatModelBuildHelper.build(modelInfo, applicationInfo);

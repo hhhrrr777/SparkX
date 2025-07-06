@@ -385,7 +385,6 @@ export default {
 				})
 			}
 			this.showTools = res.data.showTools
-			console.log(22, this.showTools, res.data.showTools, res)
 
 			this.modelId = [res.data.modelId, res.data.modelName]
 		},

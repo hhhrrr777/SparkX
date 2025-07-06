@@ -133,6 +133,25 @@ public class ApplicationHelper {
     }
 
     /**
+     * 查询关联的插件
+     * @param appId String
+     * @return List<ToolsEntity>
+     */
+    public List<ToolsEntity> getRelationFullToolList(String appId) {
+
+        List<ApplicationToolRelationEntity> relationEntityList =
+                applicationToolRelationMapper.selectList(new QueryWrapper<ApplicationToolRelationEntity>()
+                        .eq("app_id", appId));
+        if (!CollectionUtils.isEmpty(relationEntityList)) {
+
+            List<Integer> toolIds = relationEntityList.stream().map(ApplicationToolRelationEntity::getToolId).toList();
+            return toolsMapper.selectByIds(toolIds);
+        }
+
+        return null;
+    }
+
+    /**
      * 获取运行时上下文节点
      * @param runtimeId long
      * @param sourceId String

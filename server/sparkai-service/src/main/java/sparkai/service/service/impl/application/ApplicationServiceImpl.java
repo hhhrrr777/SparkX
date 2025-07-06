@@ -29,10 +29,7 @@ import sparkai.common.core.PageResult;
 import sparkai.common.enums.AppType;
 import sparkai.common.exception.BusinessException;
 import sparkai.common.utils.Tool;
-import sparkai.service.entity.application.ApplicationChatLogEntity;
-import sparkai.service.entity.application.ApplicationChatSessionEntity;
-import sparkai.service.entity.application.ApplicationDatasetRelationEntity;
-import sparkai.service.entity.application.ApplicationEntity;
+import sparkai.service.entity.application.*;
 import sparkai.service.entity.system.ModelsEntity;
 import sparkai.service.entity.system.SystemTeamUserEntity;
 import sparkai.service.entity.system.SystemUsersEntity;
@@ -42,10 +39,7 @@ import sparkai.service.helper.ApplicationHelper;
 import sparkai.service.helper.LicenseHelper;
 import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.helper.UserContextHelper;
-import sparkai.service.mapper.application.ApplicationChatLogMapper;
-import sparkai.service.mapper.application.ApplicationChatSessionMapper;
-import sparkai.service.mapper.application.ApplicationDatasetRelationMapper;
-import sparkai.service.mapper.application.ApplicationMapper;
+import sparkai.service.mapper.application.*;
 import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.system.ModelsMapper;
 import sparkai.service.mapper.system.SystemTeamMapper;
@@ -78,6 +72,9 @@ public class ApplicationServiceImpl implements IApplicationService {
 
     @Autowired
     ApplicationDatasetRelationMapper applicationDatasetRelationMapper;
+
+    @Autowired
+    ApplicationToolRelationMapper applicationToolRelationMapper;
 
     @Autowired
     SystemUserMapper systemUserMapper;
@@ -350,6 +347,19 @@ public class ApplicationServiceImpl implements IApplicationService {
             entity.setCreateTime(Tool.nowDateTime());
 
             applicationDatasetRelationMapper.insert(entity);
+        });
+
+        // 记录关联的插件
+        applicationToolRelationMapper.delete(new QueryWrapper<ApplicationToolRelationEntity>()
+                .eq("app_id", applicationInfo.getAppId()));
+
+        validate.getToolList().forEach(item -> {
+            ApplicationToolRelationEntity entity = new ApplicationToolRelationEntity();
+            entity.setAppId(applicationInfo.getAppId());
+            entity.setToolId(item.getId());
+            entity.setCreateTime(Tool.nowDateTime());
+
+            applicationToolRelationMapper.insert(entity);
         });
     }
 

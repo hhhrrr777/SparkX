@@ -11,6 +11,7 @@ package sparkai.service.helper;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
@@ -22,11 +23,16 @@ import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.query.transformer.CompressingQueryTransformer;
 import dev.langchain4j.rag.query.transformer.QueryTransformer;
 import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.tool.ToolExecutor;
+import dev.langchain4j.service.tool.ToolProvider;
+import dev.langchain4j.service.tool.ToolProviderResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.dataset.KnowledgeDatasetEntity;
+import sparkai.service.entity.tool.ToolsEntity;
 import sparkai.service.entity.workflow.ApplicationWorkflowRuntimeContextEntity;
 import sparkai.service.extend.SparkEmbeddingStoreContentRetriever;
 import sparkai.service.mapper.application.ApplicationWorkflowRuntimeContextMapper;
@@ -86,13 +92,20 @@ public class AssistantBuildHelper {
             applicationWorkflowRuntimeContextMapper.updateById(runtimeContextEntity);
         }
 
+        // 构建服务
+        AiServices<IAiService> builder =
+                        AiServices.builder(IAiService.class)
+                        .streamingChatModel(streamingModel)
+                        .chatMemoryProvider(chatMemoryProvider);
         // 未关联知识库
         if (validate.getDatasetList().isEmpty()) {
 
-            return AiServices.builder(IAiService.class)
-                    .streamingChatModel(streamingModel)
-                    .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
-                    .build();
+            // 检测是否使用了插件
+            if (!CollectionUtils.isEmpty(validate.getToolsList())) {
+                return buildToolAiService(validate, streamingModel, chatMemoryProvider, null);
+            }
+
+            return builder.build();
         }
 
         // TODO 空召回策略
@@ -137,9 +150,65 @@ public class AssistantBuildHelper {
                     .build();
         }
 
-        return AiServices.builder(IAiService.class)
+        // 检测是否使用了插件
+        if (!CollectionUtils.isEmpty(validate.getToolsList())) {
+            return buildToolAiService(validate, streamingModel, chatMemoryProvider, retrievalAugmentor);
+        }
+
+        return builder
+                .retrievalAugmentor(retrievalAugmentor)
+                .build();
+    }
+
+    /**
+     * 构建ai调用服务
+     * @param validate ApplicationChatValidate
+     * @param streamingModel StreamingChatModel
+     * @param chatMemoryProvider ChatMemoryProvider
+     * @param retrievalAugmentor RetrievalAugmentor
+     * @return IAiService
+     */
+    private IAiService buildToolAiService(ApplicationChatValidate validate,
+                                          StreamingChatModel streamingModel,
+                                          ChatMemoryProvider chatMemoryProvider, RetrievalAugmentor retrievalAugmentor) {
+
+        // 插件执行器
+        ToolExecutor toolExecutor = (toolExecutionRequest, memoryId) -> {
+
+            return "";
+        };
+
+        // 构建插件
+        ToolProvider toolProvider = (toolProviderRequest) -> {
+
+            ToolProviderResult.Builder builder = ToolProviderResult.builder();
+
+            for (ToolsEntity entity : validate.getToolsList()) {
+
+                ToolSpecification.Builder specificationBuilder = ToolSpecification.builder();
+                specificationBuilder.name(entity.getName()); // 方法标识
+                specificationBuilder.description(entity.getDescription()); // 方法描述
+                // 构建字段
+
+                ToolSpecification toolSpecification = specificationBuilder.build();
+                builder.add(toolSpecification, toolExecutor);
+            }
+
+            return builder.build();
+        };
+
+        // 构建服务
+        AiServices<IAiService> builder =
+                AiServices.builder(IAiService.class)
                 .streamingChatModel(streamingModel)
-                .chatMemoryProvider(chatMemoryProvider) // 聊天上下文
+                .chatMemoryProvider(chatMemoryProvider)
+                .toolProvider(toolProvider);
+
+        if (retrievalAugmentor == null) {
+            return builder.build();
+        }
+
+        return builder
                 .retrievalAugmentor(retrievalAugmentor)
                 .build();
     }

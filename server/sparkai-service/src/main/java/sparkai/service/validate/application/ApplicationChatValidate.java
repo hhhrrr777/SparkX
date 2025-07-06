@@ -11,7 +11,9 @@ package sparkai.service.validate.application;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import sparkai.service.entity.tool.ToolsEntity;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
+import sparkai.service.vo.tool.ToolsSimpleListVo;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -43,6 +45,11 @@ public class ApplicationChatValidate implements Serializable {
      * 知识库列表
      */
     private List<DatasetSimpleVo> datasetList;
+
+    /**
+     * 插件列表
+     */
+    private List<ToolsEntity> toolsList;
 
     /**
      * 运行时上下文id
