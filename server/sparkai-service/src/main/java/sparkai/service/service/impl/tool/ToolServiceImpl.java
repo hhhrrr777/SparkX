@@ -53,6 +53,7 @@ public class ToolServiceImpl implements IToolService {
         long pageSize = queryVo.getLimit();
 
         QueryWrapper<ToolsEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", 1);
         queryWrapper.orderByDesc("id");
 
         IPage<ToolsEntity> toolsListRes = toolsMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);

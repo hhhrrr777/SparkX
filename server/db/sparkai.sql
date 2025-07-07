@@ -573,6 +573,7 @@ CREATE TABLE "public"."tools" (
     "api_key_name" VARCHAR (155) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
     "api_key_value" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
     "post_params" VARCHAR (2000) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "type" INT2 DEFAULT 1,
     "create_time" TIMESTAMP (6),
     "update_time" TIMESTAMP (6),
     CONSTRAINT "tools_pkey" PRIMARY KEY ("id")
@@ -588,6 +589,7 @@ COMMENT ON COLUMN "public"."tools"."auth_way" IS '秘钥位置 1:header 2:body';
 COMMENT ON COLUMN "public"."tools"."api_key_name" IS '秘钥名称';
 COMMENT ON COLUMN "public"."tools"."api_key_value" IS '秘钥值';
 COMMENT ON COLUMN "public"."tools"."post_params" IS '请求参数';
+COMMENT ON COLUMN "public"."tools"."type" IS '插件类型 1:自定义 2:MCP';
 COMMENT ON COLUMN "public"."tools"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."tools"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."tools" IS '插件表';

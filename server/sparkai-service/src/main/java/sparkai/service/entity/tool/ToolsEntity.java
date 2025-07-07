@@ -88,6 +88,12 @@ public class ToolsEntity implements Serializable {
     private String postParams;
 
     /**
+     * 插件类型 1:自定义 2:MCP
+     */
+    @TableField(value = "type")
+    private Integer type;
+
+    /**
     * 创建时间
     */
     @TableField(value = "create_time")

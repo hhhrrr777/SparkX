@@ -89,7 +89,8 @@ export default {
 				authWay: 1,
 				apiKeyName: '',
 				apiKeyValue: '',
-				postParams: ''
+				postParams: '',
+				type: this.type
 			},
 			rules: {
 				title: [
