@@ -29,6 +29,7 @@ import sparkai.service.validate.tool.AddToolsValidate;
 import sparkai.service.validate.tool.EditMcpToolsValidate;
 import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
+import sparkai.service.vo.tool.ToolQueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
 import sparkai.service.vo.tool.ToolsSimpleListVo;
 
@@ -49,13 +50,13 @@ public class ToolServiceImpl implements IToolService {
      * @param queryVo QueryVo
      */
     @Override
-    public PageResult<ToolsListVo> getToolList(QueryVo queryVo) {
+    public PageResult<ToolsListVo> getToolList(ToolQueryVo queryVo) {
 
         long pageNo   = queryVo.getPage();
         long pageSize = queryVo.getLimit();
 
         QueryWrapper<ToolsEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("type", 1);
+        queryWrapper.eq("type", queryVo.getType());
         queryWrapper.orderByDesc("id");
 
         IPage<ToolsEntity> toolsListRes = toolsMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
@@ -95,6 +96,7 @@ public class ToolServiceImpl implements IToolService {
 
         ToolsEntity toolsEntity = new ToolsEntity();
         BeanUtils.copyProperties(validate, toolsEntity);
+        toolsEntity.setType(1);
         toolsEntity.setCreateTime(Tool.nowDateTime());
 
         toolsMapper.insert(toolsEntity);
@@ -118,6 +120,7 @@ public class ToolServiceImpl implements IToolService {
 
         ToolsEntity toolsEntity = new ToolsEntity();
         BeanUtils.copyProperties(validate, toolsEntity);
+        toolsEntity.setType(2);
         toolsEntity.setCreateTime(Tool.nowDateTime());
 
         toolsMapper.insert(toolsEntity);

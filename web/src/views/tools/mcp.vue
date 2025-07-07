@@ -13,7 +13,7 @@
 			<el-form-item label="SSE地址" prop="apiUrl">
 				<el-input v-model="form.apiUrl"></el-input>
 			</el-form-item>
-			<el-form-item label="使用函数" prop="postParams">
+			<el-form-item label="使用函数">
 				<el-input v-model="form.postParams"></el-input>
 			</el-form-item>
 		</el-form>
@@ -60,9 +60,6 @@ export default {
 				],
 				apiUrl: [
 					{required: true, message: '接口地址不能为空', trigger: 'blur'}
-				],
-				postParams: [
-					{required: true, message: '可用函数不能为空', trigger: 'blur'}
 				]
 			}
 		}
@@ -100,7 +97,8 @@ export default {
 			})
 		},
 		setData(row) {
-
+			this.form = row
+			console.log(22, row)
 		}
 	}
 }

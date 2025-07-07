@@ -15,6 +15,7 @@ import sparkai.service.validate.tool.AddToolsValidate;
 import sparkai.service.validate.tool.EditMcpToolsValidate;
 import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
+import sparkai.service.vo.tool.ToolQueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
 import sparkai.service.vo.tool.ToolsSimpleListVo;
 
@@ -24,9 +25,9 @@ public interface IToolService {
 
     /**
      * 获取工具列表
-     * @param queryVo QueryVo
+     * @param queryVo ToolQueryVo
      */
-    PageResult<ToolsListVo> getToolList(QueryVo queryVo);
+    PageResult<ToolsListVo> getToolList(ToolQueryVo queryVo);
 
     /**
      * 添加插件

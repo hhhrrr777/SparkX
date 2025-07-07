@@ -19,6 +19,7 @@ import sparkai.service.validate.tool.AddToolsValidate;
 import sparkai.service.validate.tool.EditMcpToolsValidate;
 import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
+import sparkai.service.vo.tool.ToolQueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
 import sparkai.service.vo.tool.ToolsSimpleListVo;
 
@@ -32,7 +33,7 @@ public class ToolsController {
     IToolService iToolService;
 
     @GetMapping("/list")
-    public AjaxResult<PageResult<ToolsListVo>> index(QueryVo queryVo) {
+    public AjaxResult<PageResult<ToolsListVo>> index(ToolQueryVo queryVo) {
 
         return AjaxResult.success(iToolService.getToolList(queryVo));
     }
