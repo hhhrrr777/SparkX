@@ -11,7 +11,6 @@ package sparkai.service.helper;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
-import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.community.model.qianfan.QianfanStreamingChatModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiStreamingChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
@@ -45,12 +44,8 @@ public class StreamChatModelBuildHelper {
             case "qianfan" -> buildQianfan();
             // 清华智普
             case "zhipu" -> buildZhiPu();
-            // 千问
-            case "qwen" -> buildQwen();
-            // 豆包
-            case "doubao" -> buildOpenAI();
-            // GPT
-            case "gpt" -> buildOpenAI();
+            // 千问、豆包、GPT
+            case "qwen", "doubao", "gpt" -> buildOpenAI();
             default -> null;
         };
     }
@@ -88,22 +83,6 @@ public class StreamChatModelBuildHelper {
                 .model(applicationInfo.getModelName())
                 .connectTimeout(Duration.ofSeconds(60))
                 .readTimeout(Duration.ofSeconds(60))
-                .build();
-    }
-
-    /**
-     * 构建千问
-     * @return StreamingChatModel
-     */
-    private StreamingChatModel buildQwen() {
-
-        JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
-        String key = jsonConfig.getJSONObject(0).getStr("value");
-
-        return QwenStreamingChatModel.builder()
-                .apiKey(key)
-                .temperature((float) applicationInfo.getTemperature()) // 温度
-                .modelName(applicationInfo.getModelName())
                 .build();
     }
 

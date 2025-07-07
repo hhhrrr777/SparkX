@@ -11,7 +11,6 @@ package sparkai.service.helper;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
-import dev.langchain4j.community.model.dashscope.QwenChatModel;
 import dev.langchain4j.community.model.qianfan.QianfanChatModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiChatModel;
 import dev.langchain4j.model.chat.ChatModel;
@@ -45,12 +44,8 @@ public class ChatModelBuildHelper {
             case "qianfan" -> buildQianfan();
             // 清华智普
             case "zhipu" -> buildZhiPu();
-            // 千问
-            case "qwen" -> buildQwen();
-            // 豆包
-            case "doubao" -> buildOpenAI();
-            // GPT
-            case "gpt" -> buildOpenAI();
+            // 千问、豆包、GPT
+            case "qwen", "doubao", "gpt" -> buildOpenAI();
             default -> null;
         };
     }
@@ -94,25 +89,6 @@ public class ChatModelBuildHelper {
                 .model(applicationInfo.getModelName())
                 .connectTimeout(Duration.ofSeconds(60))
                 .readTimeout(Duration.ofSeconds(60))
-                .build();
-    }
-
-    /**
-     * 构建千问
-     * @return ChatModel
-     */
-    private ChatModel buildQwen() {
-
-        JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
-        String key = jsonConfig.getJSONObject(0).getStr("value");
-
-        Integer maxOutputTokens = applicationInfo.getMaxReplyToken() == null ? 4096 : applicationInfo.getMaxReplyToken();
-
-        return QwenChatModel.builder()
-                .apiKey(key)
-                .temperature((float) applicationInfo.getTemperature()) // 温度
-                .maxTokens(maxOutputTokens)
-                .modelName(applicationInfo.getModelName())
                 .build();
     }
 

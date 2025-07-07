@@ -12,7 +12,6 @@ package sparkai.service.helper;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.agent.tool.ToolSpecification;
-import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
@@ -47,7 +46,6 @@ import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.tool.ToolParamsVo;
 
 import java.util.List;
-import java.util.Map;
 
 import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
@@ -179,8 +177,7 @@ public class AssistantBuildHelper {
 
         // 插件执行器
         ToolExecutor toolExecutor = (toolExecutionRequest, memoryId) -> {
-            Map<String, Object> arguments = JSONUtil.parseObj(toolExecutionRequest.arguments());
-            log.error("调用的参数是, {}", arguments);
+            //Map<String, Object> arguments = JSONUtil.parseObj(toolExecutionRequest.arguments());
 
             return "您查询的商品价格是 150元";
         };

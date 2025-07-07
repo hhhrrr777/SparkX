@@ -40,9 +40,7 @@ import sparkai.service.helper.LicenseHelper;
 import sparkai.service.helper.SseEmitterHelper;
 import sparkai.service.helper.UserContextHelper;
 import sparkai.service.mapper.application.*;
-import sparkai.service.mapper.dataset.KnowledgeDatasetMapper;
 import sparkai.service.mapper.system.ModelsMapper;
-import sparkai.service.mapper.system.SystemTeamMapper;
 import sparkai.service.mapper.system.SystemTeamUserMapper;
 import sparkai.service.mapper.system.SystemUserMapper;
 import sparkai.service.service.interfaces.application.IApplicationService;
@@ -252,7 +250,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         // 查询当前模型是否要显示插件引用
         ModelsEntity modelInfo = modelsMapper.selectById(info.getModelId());
         applicationVo.setShowTools(false);
-        if (modelInfo.getFunctionCalling().contains(info.getModelName())) {
+        if (modelInfo != null && modelInfo.getFunctionCalling().contains(info.getModelName())) {
             applicationVo.setShowTools(true);
         }
 
@@ -283,7 +281,7 @@ public class ApplicationServiceImpl implements IApplicationService {
         // 查询当前模型是否要显示插件引用
         ModelsEntity modelInfo = modelsMapper.selectById(info.getModelId());
         applicationVo.setShowTools(false);
-        if (modelInfo.getFunctionCalling().contains(info.getModelName())) {
+        if (modelInfo != null && modelInfo.getFunctionCalling().contains(info.getModelName())) {
             applicationVo.setShowTools(true);
         }
 
