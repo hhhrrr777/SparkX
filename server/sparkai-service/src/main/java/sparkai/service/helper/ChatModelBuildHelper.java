@@ -73,19 +73,16 @@ public class ChatModelBuildHelper {
 
     /**
      * 构建智普
-     * @return ChatModel
+     * @return StreamingChatModel
      */
     private ChatModel buildZhiPu() {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         String key = jsonConfig.getJSONObject(0).getStr("value");
 
-        Integer maxOutputTokens = applicationInfo.getMaxReplyToken() == null ? 4096 : applicationInfo.getMaxReplyToken();
-
         return ZhipuAiChatModel.builder()
                 .apiKey(key)
                 .temperature(applicationInfo.getTemperature()) // 温度
-                .maxToken(maxOutputTokens)
                 .model(applicationInfo.getModelName())
                 .connectTimeout(Duration.ofSeconds(60))
                 .readTimeout(Duration.ofSeconds(60))
