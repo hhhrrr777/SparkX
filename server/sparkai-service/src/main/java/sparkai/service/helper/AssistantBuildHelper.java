@@ -289,9 +289,11 @@ public class AssistantBuildHelper {
 
             mcpToolBuilder.mcpClients(mcpClient);
             // 增加过滤的函数
-            List<String> tools = Arrays.stream(entity.getPostParams().split(",")).toList();
-            for (String tool : tools) {
-                mcpToolBuilder.filterToolNames(tool);
+            if (!entity.getPostParams().isBlank()) {
+                List<String> tools = Arrays.stream(entity.getPostParams().split(",")).toList();
+                for (String tool : tools) {
+                    mcpToolBuilder.filterToolNames(tool);
+                }
             }
         }
 

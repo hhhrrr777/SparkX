@@ -332,7 +332,7 @@ export default {
 								outputTokens: meta.outputTokens,
 								totalTokens: meta.totalTokens,
 								retrievedList: JSON.stringify(nowLog.retrievedList),
-								toolUse: nowLog.toolUse.join(",")
+								toolUse: (nowLog.toolUse !== '') ? nowLog.toolUse.join(",") : []
 							}
 
 							let logRes = that.$API.chat.writeLog.post(row)

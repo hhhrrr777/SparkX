@@ -15,11 +15,13 @@ import dev.langchain4j.community.model.qianfan.QianfanStreamingChatModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiStreamingChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import sparkai.service.entity.application.ApplicationEntity;
 import sparkai.service.entity.system.ModelsEntity;
 
 import java.time.Duration;
+import java.util.List;
 
 @Component
 public class StreamChatModelBuildHelper {
@@ -27,6 +29,9 @@ public class StreamChatModelBuildHelper {
     private ModelsEntity modelInfo;
 
     private ApplicationEntity applicationInfo;
+
+    @Autowired
+    ApplicationHelper applicationHelper;
 
     /**
      * 构建流输出model
@@ -102,7 +107,7 @@ public class StreamChatModelBuildHelper {
                 .baseUrl(url)
                 .apiKey(key)
                 .modelName(applicationInfo.getModelName())
-                //.listeners(List.of(applicationHelper.observability()))
+                .listeners(List.of(applicationHelper.observability()))
                 .build();
     }
 }

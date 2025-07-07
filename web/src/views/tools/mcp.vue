@@ -98,7 +98,6 @@ export default {
 		},
 		setData(row) {
 			this.form = row
-			console.log(22, row)
 		}
 	}
 }
