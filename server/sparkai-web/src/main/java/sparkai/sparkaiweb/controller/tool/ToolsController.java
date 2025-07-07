@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import sparkai.common.core.AjaxResult;
 import sparkai.common.core.PageResult;
 import sparkai.service.service.interfaces.tool.IToolService;
+import sparkai.service.validate.tool.AddMcpToolsValidate;
 import sparkai.service.validate.tool.AddToolsValidate;
+import sparkai.service.validate.tool.EditMcpToolsValidate;
 import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
@@ -46,12 +48,32 @@ public class ToolsController {
     }
 
     /**
+     * 创建MCP插件
+     */
+    @PostMapping("/addMcp")
+    public AjaxResult<Object> addMcp(@RequestBody AddMcpToolsValidate validate) {
+
+        iToolService.addMcpTools(validate);
+        return AjaxResult.success();
+    }
+
+    /**
      * 编辑插件
      */
     @PostMapping("/edit")
     public AjaxResult<Object> edit(@RequestBody EditToolsValidate validate) {
 
         iToolService.editTools(validate);
+        return AjaxResult.success();
+    }
+
+    /**
+     * 编辑MCP插件
+     */
+    @PostMapping("/editMcp")
+    public AjaxResult<Object> editMcp(@RequestBody EditMcpToolsValidate validate) {
+
+        iToolService.editMcpTools(validate);
         return AjaxResult.success();
     }
 

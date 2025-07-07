@@ -24,7 +24,9 @@ import sparkai.service.entity.tool.ToolsEntity;
 import sparkai.service.mapper.application.ApplicationToolRelationMapper;
 import sparkai.service.mapper.tool.ToolsMapper;
 import sparkai.service.service.interfaces.tool.IToolService;
+import sparkai.service.validate.tool.AddMcpToolsValidate;
 import sparkai.service.validate.tool.AddToolsValidate;
+import sparkai.service.validate.tool.EditMcpToolsValidate;
 import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
@@ -96,6 +98,53 @@ public class ToolServiceImpl implements IToolService {
         toolsEntity.setCreateTime(Tool.nowDateTime());
 
         toolsMapper.insert(toolsEntity);
+    }
+
+    /**
+     * 添加mcp插件
+     * @param validate AddMcpToolsValidate
+     */
+    @Override
+    public void addMcpTools(AddMcpToolsValidate validate) {
+
+        if (!validate.getName().matches("^[a-zA-Z_]+$")) {
+            throw new BusinessException("插件标识只包含英文字母和下划线");
+        }
+
+        ToolsEntity info = toolsMapper.selectOne(new QueryWrapper<ToolsEntity>().eq("name", validate.getName()));
+        if (info != null) {
+            throw new BusinessException("该插件标识已经存在");
+        }
+
+        ToolsEntity toolsEntity = new ToolsEntity();
+        BeanUtils.copyProperties(validate, toolsEntity);
+        toolsEntity.setCreateTime(Tool.nowDateTime());
+
+        toolsMapper.insert(toolsEntity);
+    }
+
+    /**
+     * 编辑mcp插件
+     * @param validate AddMcpToolsValidate
+     */
+    @Override
+    public void editMcpTools(EditMcpToolsValidate validate) {
+
+        if (!validate.getName().matches("^[a-zA-Z_]+$")) {
+            throw new BusinessException("插件标识只包含英文字母和下划线");
+        }
+
+        ToolsEntity info = toolsMapper.selectOne(new QueryWrapper<ToolsEntity>()
+                .eq("name", validate.getName()).ne("id", validate.getId()));
+        if (info != null) {
+            throw new BusinessException("该插件标识已经存在");
+        }
+
+        ToolsEntity toolsEntity = new ToolsEntity();
+        BeanUtils.copyProperties(validate, toolsEntity);
+        toolsEntity.setUpdateTime(Tool.nowDateTime());
+
+        toolsMapper.updateById(toolsEntity);
     }
 
     /**

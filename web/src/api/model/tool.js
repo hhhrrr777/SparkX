@@ -26,6 +26,22 @@ export default {
 			return await http.post(this.url, data);
 		}
 	},
+	addMcp: {
+		url: `${config.API_URL}/tool/addMcp`,
+		name: "创建MCP插件",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
+	},
+	editMcp: {
+		url: `${config.API_URL}/tool/editMcp`,
+		name: "编辑MCP插件",
+		post: async function(data={}){
+
+			return await http.post(this.url, data);
+		}
+	},
 	edit: {
 		url: `${config.API_URL}/tool/edit`,
 		name: "编辑插件",

@@ -90,7 +90,7 @@ export default {
 				apiKeyName: '',
 				apiKeyValue: '',
 				postParams: '',
-				type: this.type
+				type: 1
 			},
 			rules: {
 				title: [

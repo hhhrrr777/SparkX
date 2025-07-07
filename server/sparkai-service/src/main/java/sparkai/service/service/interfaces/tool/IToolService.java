@@ -10,7 +10,9 @@
 package sparkai.service.service.interfaces.tool;
 
 import sparkai.common.core.PageResult;
+import sparkai.service.validate.tool.AddMcpToolsValidate;
 import sparkai.service.validate.tool.AddToolsValidate;
+import sparkai.service.validate.tool.EditMcpToolsValidate;
 import sparkai.service.validate.tool.EditToolsValidate;
 import sparkai.service.vo.common.QueryVo;
 import sparkai.service.vo.tool.ToolsListVo;
@@ -33,10 +35,22 @@ public interface IToolService {
     void addTools(AddToolsValidate validate);
 
     /**
+     * 添加mcp插件
+     * @param validate AddMcpToolsValidate
+     */
+    void addMcpTools(AddMcpToolsValidate validate);
+
+    /**
      * 编辑插件
      * @param validate EditToolsValidate
      */
     void editTools(EditToolsValidate validate);
+
+    /**
+     * 编辑MCP插件
+     * @param validate EditMcpToolsValidate
+     */
+    void editMcpTools(EditMcpToolsValidate validate);
 
     /**
      * 删除插件
