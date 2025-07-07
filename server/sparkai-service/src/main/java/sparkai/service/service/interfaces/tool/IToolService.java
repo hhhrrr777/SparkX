@@ -61,7 +61,8 @@ public interface IToolService {
 
     /**
      * 获取全部的插件列表
+     * @param type Integer
      * @return List<ToolsSimpleListVo>
      */
-    List<ToolsSimpleListVo> getAllToolList();
+    List<ToolsSimpleListVo> getAllToolList(Integer type);
 }

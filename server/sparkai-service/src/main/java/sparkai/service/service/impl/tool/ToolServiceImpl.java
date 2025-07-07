@@ -193,12 +193,13 @@ public class ToolServiceImpl implements IToolService {
 
     /**
      * 获取插件选择列表
+     * @param type Integer
      * @return List<ToolsSimpleListVo>
      */
     @Override
-    public List<ToolsSimpleListVo> getAllToolList() {
+    public List<ToolsSimpleListVo> getAllToolList(Integer type) {
 
-        List<ToolsEntity> toolList = toolsMapper.selectList(new QueryWrapper<ToolsEntity>().orderByDesc("id"));
+        List<ToolsEntity> toolList = toolsMapper.selectList(new QueryWrapper<ToolsEntity>().eq("type", type).orderByDesc("id"));
         List<ToolsSimpleListVo> toolsSimpleListVoList = new LinkedList<>();
 
         for (ToolsEntity entity : toolList) {

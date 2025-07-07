@@ -1,13 +1,28 @@
 <template>
 	<div class="tools-list" v-if="toolsList.length > 0">
-		<el-radio-group v-model="selectedToolsIds" class="too-radio-list">
-			<el-radio :label="item.id" border class="radio-item" v-for="item in toolsList" :key="item.id">
-				<div style="display: flex;align-items: center;">
-					<el-icon size="26" color="var(--el-color-theme)"><ElementPlus /></el-icon>
-					<div class="line1 name">{{ item.title }}</div>
-				</div>
-			</el-radio>
-		</el-radio-group>
+		<el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+			<el-tab-pane label="自定义插件" name="first">
+				<el-radio-group v-model="selectedToolsIds" class="too-radio-list">
+					<el-radio :label="item.id" border class="radio-item" v-for="item in toolsList" :key="item.id">
+						<div style="display: flex;align-items: center;">
+							<el-icon size="26" color="var(--el-color-theme)"><ElementPlus /></el-icon>
+							<div class="line1 name">{{ item.title }}</div>
+						</div>
+					</el-radio>
+				</el-radio-group>
+			</el-tab-pane>
+			<el-tab-pane label="MCP插件" name="second">
+				<el-radio-group v-model="selectedToolsIds" class="too-radio-list">
+					<el-radio :label="item.id" border class="radio-item" v-for="item in toolsList" :key="item.id">
+						<div style="display: flex;align-items: center;">
+							<el-icon size="26" color="var(--el-color-theme)"><ElementPlus /></el-icon>
+							<div class="line1 name">{{ item.title }}</div>
+						</div>
+					</el-radio>
+				</el-radio-group>
+			</el-tab-pane>
+		</el-tabs>
+
 	</div>
 	<div v-else>
 		<div class="flex-center-all" style="padding: 20px 10px;background: #f4f4f4">
@@ -26,10 +41,6 @@ import {ElementPlus} from "@element-plus/icons-vue";
 
 export default {
 	props: {
-		toolsList: {
-			type: Array,
-			default: []
-		},
 		toolIds: {
 			type: Array,
 			default: []
@@ -38,13 +49,21 @@ export default {
 	components: {ElementPlus},
 	data() {
 		return {
-			selectedToolsIds: []
+			selectedToolsIds: [],
+			activeName: 'first',
+			toolsList: []
 		}
 	},
 	mounted() {
 		this.selectedToolsIds = this.toolIds[0]
+		this.getToolList(1)
 	},
 	methods: {
+		// 获取插件列表
+		async getToolList(type) {
+			let res = await this.$API.tool.toolList.get({type: type})
+			this.toolsList = res.data
+		},
 		goTo() {
 			this.$router.push({
 				path: '/tools/index'
@@ -61,6 +80,10 @@ export default {
 			})
 
 			this.$emit('success', selectedTools)
+		},
+		handleClick() {
+			let type = this.activeName === 'first' ? 2 : 1
+			this.getToolList(type)
 		}
 	}
 }
@@ -68,12 +91,7 @@ export default {
 
 <style scoped>
 .tools-list {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	flex-wrap: wrap;
 	padding: 0 10px;
-	justify-content: space-between;
 }
 .radio-item {
 	margin-top: 20px;

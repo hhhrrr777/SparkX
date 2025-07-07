@@ -21,7 +21,7 @@
 				<template #label>
 					<span style="color: var(--el-color-danger);margin-right: 5px;">*</span> 秘钥位置
 				</template>
-				<el-select v-model="form.authWay">
+				<el-select v-model="form.authWay" style="width: 100%">
 					<el-option label="header" :value="1" />
 					<el-option label="body" :value="2" />
 				</el-select>

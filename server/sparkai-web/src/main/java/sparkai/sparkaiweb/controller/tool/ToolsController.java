@@ -92,8 +92,8 @@ public class ToolsController {
      * 插件选择列表
      */
     @GetMapping("/toolList")
-    public AjaxResult<List<ToolsSimpleListVo>> toolsList() {
+    public AjaxResult<List<ToolsSimpleListVo>> toolsList(@RequestParam("type") Integer type) {
 
-        return AjaxResult.success(iToolService.getAllToolList());
+        return AjaxResult.success(iToolService.getAllToolList(type));
     }
 }

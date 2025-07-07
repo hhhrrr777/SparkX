@@ -294,7 +294,7 @@
 	</save-dialog>
 	<!-- 关联插件 -->
 	<el-dialog title="关联插件" v-model="toolsVisible" width="800px" destroy-on-close :close-on-click-modal="false" class="select-dataset">
-		<tools-dialog @success="handleToolsSuccess" @doClose="toolsVisible=false" :tools-list="toolsList" :tool-ids="relationToolIds"></tools-dialog>
+		<tools-dialog @success="handleToolsSuccess" @doClose="toolsVisible=false" :tool-ids="relationToolIds"></tools-dialog>
 	</el-dialog>
 </template>
 
@@ -349,8 +349,6 @@ export default {
 			},
 			toolsVisible: false,
 			showTools: false,
-			toolKey: Math.random(),
-			toolsList: [],
 			relationToolIds: [],
 			relationToolList: []
 		}
@@ -358,7 +356,6 @@ export default {
 	mounted() {
 		this.getInfo()
 		this.getModelsList()
-		this.getToolList()
 	},
 	methods: {
 		// 获取应用详情
@@ -456,12 +453,6 @@ export default {
 
 				this.options.push(info)
 			})
-		},
-		// 获取插件列表
-		async getToolList() {
-			let res = await this.$API.tool.toolList.get()
-			this.toolsList = res.data
-			this.toolKey = Math.random()
 		},
 		// 保存应用
 		async saveApp(type) {
