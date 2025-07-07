@@ -13,6 +13,11 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.mcp.McpToolProvider;
+import dev.langchain4j.mcp.client.DefaultMcpClient;
+import dev.langchain4j.mcp.client.McpClient;
+import dev.langchain4j.mcp.client.transport.McpTransport;
+import dev.langchain4j.mcp.client.transport.http.HttpMcpTransport;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
@@ -45,6 +50,7 @@ import sparkai.service.vo.dataset.DatasetSearchVo;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.tool.ToolParamsVo;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -177,7 +183,37 @@ public class AssistantBuildHelper {
                                           ChatMemoryProvider chatMemoryProvider, RetrievalAugmentor retrievalAugmentor) {
 
         // 构建插件
-        ToolProvider toolProvider = (toolProviderRequest) -> {
+        ToolProvider toolProvider;
+        if (validate.getToolsList().get(0).getType().equals(1)) {
+            toolProvider = makeDiyToolProvider(validate);
+        } else {
+            toolProvider = makeMcpToolProvider(validate);
+        }
+
+        // 构建服务
+        AiServices<IAiService> builder =
+                AiServices.builder(IAiService.class)
+                .streamingChatModel(streamingModel)
+                .chatMemoryProvider(chatMemoryProvider)
+                .toolProvider(toolProvider);
+
+        if (retrievalAugmentor == null) {
+            return builder.build();
+        }
+
+        return builder
+                .retrievalAugmentor(retrievalAugmentor)
+                .build();
+    }
+
+    /**
+     * 构建自定义插件
+     * @param validate ApplicationChatValidate
+     * @return ToolProvider
+     */
+    private ToolProvider makeDiyToolProvider(ApplicationChatValidate validate) {
+
+        return (toolProviderRequest) -> {
 
             ToolProviderResult.Builder builder = ToolProviderResult.builder();
 
@@ -228,20 +264,37 @@ public class AssistantBuildHelper {
 
             return builder.build();
         };
+    }
 
-        // 构建服务
-        AiServices<IAiService> builder =
-                AiServices.builder(IAiService.class)
-                .streamingChatModel(streamingModel)
-                .chatMemoryProvider(chatMemoryProvider)
-                .toolProvider(toolProvider);
+    /**
+     * 构建mcp provider
+     * @param validate ApplicationChatValidate
+     * @return ToolProvider
+     */
+    private ToolProvider makeMcpToolProvider(ApplicationChatValidate validate) {
 
-        if (retrievalAugmentor == null) {
-            return builder.build();
+        McpToolProvider.Builder mcpToolBuilder = McpToolProvider.builder();
+
+        for (ToolsEntity entity : validate.getToolsList()) {
+
+            // 构建协议
+            McpTransport transport = new HttpMcpTransport.Builder()
+                    .sseUrl(entity.getApiUrl())
+                    .build();
+            // 构建客户端
+            McpClient mcpClient = new DefaultMcpClient.Builder()
+                    .key(entity.getName())
+                    .transport(transport)
+                    .build();
+
+            mcpToolBuilder.mcpClients(mcpClient);
+            // 增加过滤的函数
+            List<String> tools = Arrays.stream(entity.getPostParams().split(",")).toList();
+            for (String tool : tools) {
+                mcpToolBuilder.filterToolNames(tool);
+            }
         }
 
-        return builder
-                .retrievalAugmentor(retrievalAugmentor)
-                .build();
+        return mcpToolBuilder.build();
     }
 }
