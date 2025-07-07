@@ -70,4 +70,9 @@ public class ApplicationLogVo implements Serializable {
      * 评价信息
      */
     private Integer appraise;
+
+    /**
+     * 使用的工具
+     */
+    private String toolUse;
 }

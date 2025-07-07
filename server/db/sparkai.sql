@@ -329,30 +329,22 @@ COMMENT ON TABLE "public"."application_dataset_relation" IS '应用知识库关�
 
 
 CREATE TABLE "public"."application_chat_log" (
-    "log_id" int4 NOT NULL GENERATED ALWAYS AS IDENTITY (
-    INCREMENT 1
-    MINVALUE  1
-    MAXVALUE 2147483647
-    START 1
-    CACHE 1
-    ),
-    "app_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "user_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "session_id" varchar(64) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "question" varchar(255) COLLATE "pg_catalog"."default" DEFAULT ''::character varying,
-    "content" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
-    "time" int4 DEFAULT 0,
-    "tokens" int4 DEFAULT 0,
-    "retrieved_list" text COLLATE "pg_catalog"."default" DEFAULT ''::text,
-    "appraise" int4 DEFAULT 0,
-    "create_time" timestamp(6),
-    "update_time" timestamp(6),
+    "log_id" INT4 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1),
+    "app_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "user_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "session_id" VARCHAR (64) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "question" VARCHAR (255) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "content" TEXT COLLATE "pg_catalog"."default" DEFAULT '' :: TEXT,
+    "time" INT4 DEFAULT 0,
+    "tokens" INT4 DEFAULT 0,
+    "retrieved_list" TEXT COLLATE "pg_catalog"."default" DEFAULT '' :: TEXT,
+    "appraise" INT4 DEFAULT 0,
+    "tool_use" VARCHAR (500) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
+    "create_time" TIMESTAMP (6),
+    "update_time" TIMESTAMP (6),
     CONSTRAINT "application_chat_log_pkey" PRIMARY KEY ("log_id")
 );
-
-ALTER TABLE "public"."application_chat_log"
-    OWNER TO "postgres";
-
+ALTER TABLE "public"."application_chat_log" OWNER TO "postgres";
 COMMENT ON COLUMN "public"."application_chat_log"."log_id" IS 'id';
 COMMENT ON COLUMN "public"."application_chat_log"."app_id" IS '所属应用id';
 COMMENT ON COLUMN "public"."application_chat_log"."user_id" IS '聊天的用户id';
@@ -363,6 +355,7 @@ COMMENT ON COLUMN "public"."application_chat_log"."time" IS '消耗时间';
 COMMENT ON COLUMN "public"."application_chat_log"."tokens" IS '消耗的token';
 COMMENT ON COLUMN "public"."application_chat_log"."retrieved_list" IS '引用的知识库';
 COMMENT ON COLUMN "public"."application_chat_log"."appraise" IS '评价 1:好评 2:差评';
+COMMENT ON COLUMN "public"."application_chat_log"."tool_use" IS '使用的插件';
 COMMENT ON COLUMN "public"."application_chat_log"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."application_chat_log"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."application_chat_log" IS '聊天日志表';

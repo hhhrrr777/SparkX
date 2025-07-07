@@ -323,6 +323,12 @@ export default {
 						that.chatLogList[that.nowIndex].source = 'ai'
 						that.chatLogList[that.nowIndex].content = '登录过期，请重新登录'
 						that.stopAnswer()
+					} else if (event === '[TOOL]') {
+						if (!that.chatLogList[that.nowIndex].toolUse) {
+							that.chatLogList[that.nowIndex].toolUse = [ev.data]
+						} else {
+							that.chatLogList[that.nowIndex].toolUse.push(ev.data)
+						}
 					} else {
 						if (!that.startReceive) {
 							that.chatLogList[that.nowIndex].content = [] // 清理默认思考中... 提示

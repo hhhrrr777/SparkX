@@ -64,6 +64,7 @@ public class SseEmitterHelper {
                     // 召回知识库片段
                     sendMetaSse(emitter, retiredMapList);
                 })
+                .onToolExecuted((ToolExecution toolExecution) -> sendToolSse(emitter, toolExecution.request().name()))
                 .onPartialResponse((content) -> {
                     // 加空格配合前端的fetchEventSource进行解析，
                     // 见https://github.com/Azure/fetch-event-source/blob/45ac3cfffd30b05b79fbf95c21e67d4ef59aa56a/src/parse.ts#L129-L133
@@ -160,6 +161,7 @@ public class SseEmitterHelper {
                         }
                     }
                 })
+                .onToolExecuted((ToolExecution toolExecution) -> sendToolSse(emitter, toolExecution.request().name()))
                 .onCompleteResponse((response) -> {
                     // 输入的token
                     int inputTokenCount = response.tokenUsage().totalTokenCount();
@@ -177,6 +179,23 @@ public class SseEmitterHelper {
                 })
                 .onError(Throwable::printStackTrace)
                 .start();
+    }
+
+    /**
+     * 发送sse函数调用信号
+     * @param sseEmitter SseEmitter
+     * @param resVo String
+     */
+    public void sendToolSse(SseEmitter sseEmitter, String resVo) {
+
+        try {
+
+            sseEmitter.send(SseEmitter.event().name(SparkAIConstant.SSEEventName.TOOL)
+                    .data(resVo));
+        } catch (IOException e) {
+            //log.error("startSse error", e);
+            sseEmitter.completeWithError(e);
+        }
     }
 
     /**

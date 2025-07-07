@@ -7,6 +7,7 @@ public class SparkAIConstant {
         public static final String DONE = "[DONE]";
         public static final String ERROR = "[ERROR]";
         public static final String META = "[META]";
+        public static final String TOOL = "[TOOL]";
     }
 
     public static class CommonData {

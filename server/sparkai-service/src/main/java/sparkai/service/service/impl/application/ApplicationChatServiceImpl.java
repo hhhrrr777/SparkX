@@ -180,6 +180,7 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
         entity.setTime(logVo.getTime());
         entity.setTokens(logVo.getTotalTokens());
         entity.setRetrievedList(logVo.getRetrievedList());
+        entity.setToolUse(logVo.getToolUse());
         entity.setCreateTime(Tool.nowDateTime());
 
         applicationChatLogMapper.insert(entity);

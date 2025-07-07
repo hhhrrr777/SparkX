@@ -88,6 +88,12 @@ public class ApplicationChatLogEntity implements Serializable {
     private Integer appraise;
 
     /**
+     * 工具使用
+     */
+    @TableField(value = "tool_use")
+    private String toolUse;
+
+    /**
     * 创建时间
     */
     @TableField(value = "create_time")

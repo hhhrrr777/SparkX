@@ -318,6 +318,7 @@ export default {
 							let meta = JSON.parse(ev.data)
 
 							let row = {
+								appId: data.appId,
 								sessionId: data.sessionId,
 								question: data.content,
 								answer: nowLog.content,
@@ -325,12 +326,9 @@ export default {
 								inputTokens: meta.inputTokens,
 								outputTokens: meta.outputTokens,
 								totalTokens: meta.totalTokens,
-								retrieved_list: nowLog.retrievedList
+								retrievedList: JSON.stringify(nowLog.retrievedList),
+								toolUse: nowLog.toolUse.join(",")
 							}
-
-							row.retrievedList = JSON.stringify(row.retrieved_list)
-							delete row.retrieved_list
-							row.appId = data.appId
 
 							let logRes = that.$API.chat.writeLog.post(row)
 							logRes.then(result => {
@@ -351,6 +349,14 @@ export default {
 						that.chatLogList[that.nowIndex].source = 'ai'
 						that.chatLogList[that.nowIndex].content = '登录过期，请重新登录'
 						that.stopAnswer()
+					} else if (event === '[TOOL]') {
+						if (!that.chatLogList[that.nowIndex].toolUse) {
+							that.chatLogList[that.nowIndex].toolUse = [ev.data]
+						} else {
+							that.chatLogList[that.nowIndex].toolUse.push(ev.data)
+						}
+
+						console.log('22', that.chatLogList[that.nowIndex].toolUse)
 					} else {
 						let resData = JSON.parse(ev.data)
 						let has = false

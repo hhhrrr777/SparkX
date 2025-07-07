@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkai.service.helper;
 
+import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import dev.langchain4j.agent.tool.ToolSpecification;
@@ -24,7 +25,6 @@ import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.query.transformer.CompressingQueryTransformer;
 import dev.langchain4j.rag.query.transformer.QueryTransformer;
 import dev.langchain4j.service.AiServices;
-import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderResult;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +46,7 @@ import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.tool.ToolParamsVo;
 
 import java.util.List;
+import java.util.Map;
 
 import static dev.langchain4j.data.message.ChatMessageSerializer.messagesToJson;
 
@@ -175,13 +176,6 @@ public class AssistantBuildHelper {
     private IAiService buildToolAiService(ApplicationChatValidate validate, StreamingChatModel streamingModel,
                                           ChatMemoryProvider chatMemoryProvider, RetrievalAugmentor retrievalAugmentor) {
 
-        // 插件执行器
-        ToolExecutor toolExecutor = (toolExecutionRequest, memoryId) -> {
-            //Map<String, Object> arguments = JSONUtil.parseObj(toolExecutionRequest.arguments());
-
-            return "您查询的商品价格是 150元";
-        };
-
         // 构建插件
         ToolProvider toolProvider = (toolProviderRequest) -> {
 
@@ -204,12 +198,32 @@ public class AssistantBuildHelper {
                     } else if (params.getType().equals("Double")) {
                         paramsBuilder.addNumberProperty(params.getField(), params.getDesc());
                     }
+
+                    // 必填字段
+                    if (params.getRequired().equals(1)) {
+                        paramsBuilder.required(params.getField());
+                    }
                 }
 
                 specificationBuilder.parameters(paramsBuilder.build());
 
                 ToolSpecification toolSpecification = specificationBuilder.build();
-                builder.add(toolSpecification, toolExecutor);
+                builder.add(toolSpecification, (toolExecutionRequest, memoryId) -> {
+                    Map<String, Object> arguments = JSONUtil.parseObj(toolExecutionRequest.arguments());
+                    // 请求设定的接口
+                    HttpRequest httpRequest = HttpRequest.post(entity.getApiUrl());
+                    if (entity.getAuthType().equals(2)) {
+
+                        // 秘钥在header中
+                        if (entity.getAuthWay().equals(1)) {
+                            httpRequest.header(entity.getApiKeyName(), entity.getApiKeyValue());
+                        } else { // 秘钥放在body中
+                            arguments.put(entity.getApiKeyName(), entity.getApiKeyValue());
+                        }
+                    }
+
+                    return httpRequest.form(arguments).execute().body();
+                });
             }
 
             return builder.build();
