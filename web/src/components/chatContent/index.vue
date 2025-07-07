@@ -61,6 +61,7 @@
 									</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">{{ item.meta.time }} s</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">{{ item.meta.totalTokens }} tokens</el-tag>
+									<el-tag bordered style="margin-left: 10px" type="success">已使用 {{ item.toolUse }}</el-tag>
 								</div>
 								<div class="menu-right-side">
 									<el-tooltip
@@ -256,7 +257,11 @@ export default {
 
 			let that = this
 			let data = this.setting
-			data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
+			if (this.chatMsg.charAt(this.chatMsg.length - 1) === '\n') {
+				data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
+			} else {
+				data.content = this.chatMsg
+			}
 
 			if (data.content.length === 0) {
 				this.$message.error('请输入问题')
@@ -355,8 +360,6 @@ export default {
 						} else {
 							that.chatLogList[that.nowIndex].toolUse.push(ev.data)
 						}
-
-						console.log('22', that.chatLogList[that.nowIndex].toolUse)
 					} else {
 						let resData = JSON.parse(ev.data)
 						let has = false

@@ -14,9 +14,15 @@ import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.model.chat.listener.ChatModelListener;
+import dev.langchain4j.model.chat.listener.ChatModelRequestContext;
+import dev.langchain4j.model.chat.request.ChatRequest;
+import dev.langchain4j.model.chat.request.ChatRequestParameters;
 import dev.langchain4j.model.output.Response;
 import dev.langchain4j.model.output.TokenUsage;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,6 +59,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
+@Slf4j
 public class ApplicationHelper {
 
     @Autowired
@@ -304,5 +311,25 @@ public class ApplicationHelper {
         tokensEntity.setTotalToken(tokenUsage.totalTokenCount());
         tokensEntity.setCreateTime(Tool.nowDateTime());
         systemTokensMapper.insert(tokensEntity);
+    }
+
+    /**
+     * 构建调用可见性
+     * @return ChatModelListener
+     */
+    public ChatModelListener observability() {
+
+        return new ChatModelListener() {
+
+            @Override
+            public void onRequest(ChatModelRequestContext requestContext) {
+
+                ChatRequest chatRequest = requestContext.chatRequest();
+                List<ChatMessage> messages = chatRequest.messages();
+                log.error("调用的消息: message {}", messages);
+                ChatRequestParameters parameters = chatRequest.parameters();
+                log.error("调用的参数: parameters {}", parameters);
+            }
+        };
     }
 }

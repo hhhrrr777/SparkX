@@ -79,7 +79,7 @@
 											link
 											@click="toolsVisible = true"
 										>
-											添加
+											选择
 										</el-button>
 									</div>
 								</div>

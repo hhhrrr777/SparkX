@@ -230,7 +230,11 @@ export default {
 		async send() {
 			let that = this
 			let data = this.setting
-			data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
+			if (this.chatMsg.charAt(this.chatMsg.length - 1) === '\n') {
+				data.content = this.chatMsg.slice(0, -1) // 移除最后的回车符号
+			} else {
+				data.content = this.chatMsg
+			}
 
 			if (data.content.length === 0) {
 				this.$message.error('请输入问题')

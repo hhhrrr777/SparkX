@@ -1,13 +1,13 @@
 <template>
 	<div class="tools-list" v-if="toolsList.length > 0">
-		<el-checkbox-group v-model="selectedToolsIds" class="too-radio-list">
-			<el-checkbox :label="item.id" border class="radio-item" v-for="item in toolsList" :key="item.id">
+		<el-radio-group v-model="selectedToolsIds" class="too-radio-list">
+			<el-radio :label="item.id" border class="radio-item" v-for="item in toolsList" :key="item.id">
 				<div style="display: flex;align-items: center;">
 					<el-icon size="26" color="var(--el-color-theme)"><ElementPlus /></el-icon>
 					<div class="line1 name">{{ item.title }}</div>
 				</div>
-			</el-checkbox>
-		</el-checkbox-group>
+			</el-radio>
+		</el-radio-group>
 	</div>
 	<div v-else>
 		<div class="flex-center-all" style="padding: 20px 10px;background: #f4f4f4">
@@ -42,7 +42,7 @@ export default {
 		}
 	},
 	mounted() {
-		this.selectedToolsIds = this.toolIds
+		this.selectedToolsIds = this.toolIds[0]
 	},
 	methods: {
 		goTo() {
@@ -55,11 +55,11 @@ export default {
 			let selectedTools = []
 
 			this.toolsList.forEach(item => {
-				if (this.selectedToolsIds.indexOf(item.id) !== -1) {
+				if (item.id === this.selectedToolsIds) {
 					selectedTools.push(item)
 				}
 			})
-			console.log(242, selectedTools)
+
 			this.$emit('success', selectedTools)
 		}
 	}

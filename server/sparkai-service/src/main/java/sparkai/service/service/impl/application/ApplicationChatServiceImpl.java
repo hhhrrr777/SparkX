@@ -253,7 +253,9 @@ public class ApplicationChatServiceImpl implements IApplicationChatService {
 
             ApplicationLogVo vo = new ApplicationLogVo();
             BeanUtils.copyProperties(entity, vo);
+            vo.setTotalTokens(entity.getTokens());
             vo.setAnswer(JSONUtil.toList(entity.getContent(), AnswerVo.class));
+            vo.setToolUse(entity.getToolUse());
 
             voList.add(vo);
         }

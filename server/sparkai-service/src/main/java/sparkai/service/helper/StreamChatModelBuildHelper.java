@@ -102,6 +102,7 @@ public class StreamChatModelBuildHelper {
                 .baseUrl(url)
                 .apiKey(key)
                 .modelName(applicationInfo.getModelName())
+                //.listeners(List.of(applicationHelper.observability()))
                 .build();
     }
 }

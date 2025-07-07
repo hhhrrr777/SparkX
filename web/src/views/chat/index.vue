@@ -183,10 +183,11 @@ export default {
 						appraise: item.appraise,
 						meta: {
 							time: item.time,
-							tokens: item.tokens,
+							totalTokens: item.totalTokens,
 						},
 						retrievedList: item.retrievedList !== '' ? JSON.parse(item.retrievedList) : '',
-						answerIng: 3
+						answerIng: 3,
+						toolUse: item.toolUse
 					})
 				})
 
