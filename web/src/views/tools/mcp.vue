@@ -13,9 +13,6 @@
 			<el-form-item label="SSE地址" prop="apiUrl">
 				<el-input v-model="form.apiUrl"></el-input>
 			</el-form-item>
-			<el-form-item label="使用函数">
-				<el-input v-model="form.postParams"></el-input>
-			</el-form-item>
 		</el-form>
 		<template #footer>
 			<div class="dialog-footer">
@@ -45,7 +42,6 @@ export default {
 				title: '',
 				description: '',
 				apiUrl: '',
-				postParams: '',
 				type: 2
 			},
 			rules: {

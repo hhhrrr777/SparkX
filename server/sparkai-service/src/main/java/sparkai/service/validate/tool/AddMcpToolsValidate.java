@@ -48,9 +48,4 @@ public class AddMcpToolsValidate implements Serializable {
      */
     @NotEmpty(message = "接口地址不能为空")
     private String apiUrl;
-
-    /**
-     * 可用函数
-     */
-    private String postParams;
 }
