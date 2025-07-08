@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+
 CREATE TABLE "public"."knowledge_dataset" (
     "dataset_id" VARCHAR (64) COLLATE "pg_catalog"."default",
     "title" VARCHAR (155) COLLATE "pg_catalog"."default" DEFAULT '' :: CHARACTER VARYING,
@@ -9,7 +11,7 @@ CREATE TABLE "public"."knowledge_dataset" (
     "create_time" TIMESTAMP (6),
     "update_time" TIMESTAMP (6)
 );
-ALTER TABLE "public"."knowledge_dataset" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."knowledge_dataset"."dataset_id" IS '唯一标识';
 COMMENT ON COLUMN "public"."knowledge_dataset"."title" IS '知识库标题';
 COMMENT ON COLUMN "public"."knowledge_dataset"."description" IS '知识库描述';
@@ -39,12 +41,9 @@ CREATE TABLE "public"."knowledge_document" (
     "update_time" timestamp(6)
 );
 
-ALTER TABLE "public"."knowledge_document"
-    OWNER TO "sparkai";
-
 CREATE INDEX "idx_dataset" ON "public"."knowledge_document" USING btree (
     "dataset_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
-    );
+);
 
 COMMENT ON COLUMN "public"."knowledge_document"."document_id" IS '唯一标识';
 COMMENT ON COLUMN "public"."knowledge_document"."name" IS '文件名称';
@@ -76,9 +75,6 @@ CREATE TABLE "public"."knowledge_embedding" (
     "create_time" timestamp(6),
     "update_time" timestamp(6)
 );
-
-ALTER TABLE "public"."knowledge_embedding"
-    OWNER TO "sparkai";
 
 CREATE INDEX "idx_dataset_y" ON "public"."knowledge_embedding" USING btree (
     "dataset_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
@@ -118,9 +114,6 @@ CREATE TABLE "public"."knowledge_paragraph" (
     "update_time" timestamp(6)
 );
 
-ALTER TABLE "public"."knowledge_paragraph"
-    OWNER TO "sparkai";
-
 CREATE INDEX "idx_dataset_x" ON "public"."knowledge_paragraph" USING btree (
     "dataset_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
     );
@@ -150,9 +143,6 @@ CREATE TABLE "public"."knowledge_question" (
     "update_time" timestamp(6)
 );
 
-ALTER TABLE "public"."knowledge_question"
-    OWNER TO "sparkai";
-
 CREATE INDEX "idx_dataset_z" ON "public"."knowledge_question" USING btree (
     "dataset_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
     );
@@ -175,9 +165,6 @@ CREATE TABLE "public"."knowledge_question_paragraph" (
     "update_time" timestamp(6),
     "uuid" varchar(64) COLLATE "pg_catalog"."default"
 );
-
-ALTER TABLE "public"."knowledge_question_paragraph"
-    OWNER TO "sparkai";
 
 CREATE INDEX "idx_dataset_k" ON "public"."knowledge_question_paragraph" USING btree (
     "dataset_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
@@ -217,9 +204,6 @@ CREATE TABLE "public"."system_users" (
     "create_time" timestamp(6),
     "update_time" timestamp(0)
 );
-
-ALTER TABLE "public"."system_users"
-    OWNER TO "sparkai";
 
 COMMENT ON COLUMN "public"."system_users"."user_id" IS '唯一编码';
 COMMENT ON COLUMN "public"."system_users"."name" IS '登录账号';
@@ -269,7 +253,7 @@ CREATE TABLE "public"."application" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "application_pkey" PRIMARY KEY ("app_id")
 );
-ALTER TABLE "public"."application" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."application"."app_id" IS 'id';
 COMMENT ON COLUMN "public"."application"."access_token" IS '访问token';
 COMMENT ON COLUMN "public"."application"."name" IS '应用名称';
@@ -312,9 +296,6 @@ CREATE TABLE "public"."application_dataset_relation" (
     "update_time" timestamp(6)
 );
 
-ALTER TABLE "public"."application_dataset_relation"
-    OWNER TO "sparkai";
-
 COMMENT ON COLUMN "public"."application_dataset_relation"."app_id" IS '应用id';
 COMMENT ON COLUMN "public"."application_dataset_relation"."dataset_id" IS '知识库id';
 COMMENT ON COLUMN "public"."application_dataset_relation"."create_time" IS '创建时间';
@@ -338,7 +319,7 @@ CREATE TABLE "public"."application_chat_log" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "application_chat_log_pkey" PRIMARY KEY ("log_id")
 );
-ALTER TABLE "public"."application_chat_log" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."application_chat_log"."log_id" IS 'id';
 COMMENT ON COLUMN "public"."application_chat_log"."app_id" IS '所属应用id';
 COMMENT ON COLUMN "public"."application_chat_log"."user_id" IS '聊天的用户id';
@@ -363,9 +344,6 @@ CREATE TABLE "public"."application_chat_session" (
     "create_time" timestamp(6),
     "update_time" timestamp(6)
 );
-
-ALTER TABLE "public"."application_chat_session"
-    OWNER TO "sparkai";
 
 CREATE INDEX "idx_user_log" ON "public"."application_chat_session" USING btree (
     "app_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST,
@@ -396,7 +374,7 @@ CREATE TABLE "public"."models" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "models_pkey" PRIMARY KEY ("model_id")
 );
-ALTER TABLE "public"."models" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."models"."model_id" IS '模型id';
 COMMENT ON COLUMN "public"."models"."name" IS '模型名称';
 COMMENT ON COLUMN "public"."models"."model_flag" IS '模型标识';
@@ -429,7 +407,7 @@ CREATE TABLE "public"."application_workflow" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "application_workflow_pkey" PRIMARY KEY ("id")
 );
-ALTER TABLE "public"."application_workflow" OWNER TO "sparkai";
+
 CREATE INDEX "idx_app" ON "public"."application_workflow" USING btree ("app_id" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST);
 COMMENT ON COLUMN "public"."application_workflow"."id" IS 'id';
 COMMENT ON COLUMN "public"."application_workflow"."app_id" IS '应用id';
@@ -447,7 +425,7 @@ CREATE TABLE "public"."application_workflow_runtime" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "application_workflow_runtime_pkey" PRIMARY KEY ("id")
 );
-ALTER TABLE "public"."application_workflow_runtime" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."application_workflow_runtime"."id" IS '主键';
 COMMENT ON COLUMN "public"."application_workflow_runtime"."user_id" IS '用户id';
 COMMENT ON COLUMN "public"."application_workflow_runtime"."flow_id" IS '关联的流程id';
@@ -468,7 +446,7 @@ CREATE TABLE "public"."application_workflow_runtime_context" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "application_workflow_runtime_context_pkey" PRIMARY KEY ("id")
 );
-ALTER TABLE "public"."application_workflow_runtime_context" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."id" IS '主键';
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."runtime_id" IS '运行时id';
 COMMENT ON COLUMN "public"."application_workflow_runtime_context"."node_type" IS '节点类型';
@@ -488,7 +466,7 @@ CREATE TABLE "public"."system_team" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "system_team_pkey" PRIMARY KEY ("team_id")
 );
-ALTER TABLE "public"."system_team" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."system_team"."team_id" IS '团队id';
 COMMENT ON COLUMN "public"."system_team"."team_code" IS '团队编码';
 COMMENT ON COLUMN "public"."system_team"."user_id" IS '团队管理员';
@@ -506,7 +484,7 @@ CREATE TABLE "public"."system_team_user" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "system_team_user_pkey" PRIMARY KEY ("id")
 );
-ALTER TABLE "public"."system_team_user" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."system_team_user"."id" IS 'id';
 COMMENT ON COLUMN "public"."system_team_user"."team_id" IS '团队id';
 COMMENT ON COLUMN "public"."system_team_user"."user_id" IS '用户id';
@@ -524,7 +502,7 @@ CREATE TABLE "public"."application_customer" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "application_customer_pkey" PRIMARY KEY ("customer_id")
 );
-ALTER TABLE "public"."application_customer" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."application_customer"."customer_id" IS '访客标识';
 COMMENT ON COLUMN "public"."application_customer"."customer_ip" IS '访客的ip';
 COMMENT ON COLUMN "public"."application_customer"."app_token" IS '关联的应用token';
@@ -544,7 +522,7 @@ CREATE TABLE "public"."system_tokens" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "system_tokens_pkey" PRIMARY KEY ("id")
 );
-ALTER TABLE "public"."system_tokens" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."system_tokens"."id" IS 'id';
 COMMENT ON COLUMN "public"."system_tokens"."source" IS '消耗来源';
 COMMENT ON COLUMN "public"."system_tokens"."platform" IS '模型平台';
@@ -572,7 +550,7 @@ CREATE TABLE "public"."tools" (
     "update_time" TIMESTAMP (6),
     CONSTRAINT "tools_pkey" PRIMARY KEY ("id")
 );
-ALTER TABLE "public"."tools" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."tools"."id" IS 'id';
 COMMENT ON COLUMN "public"."tools"."name" IS '插件标识';
 COMMENT ON COLUMN "public"."tools"."title" IS '插件名称';
@@ -595,7 +573,7 @@ CREATE TABLE "public"."application_tool_relation" (
     "create_time" TIMESTAMP (6),
     "update_time" TIMESTAMP (6)
 );
-ALTER TABLE "public"."application_tool_relation" OWNER TO "sparkai";
+
 COMMENT ON COLUMN "public"."application_tool_relation"."app_id" IS '应用id';
 COMMENT ON COLUMN "public"."application_tool_relation"."tool_id" IS '插件id';
 COMMENT ON COLUMN "public"."application_tool_relation"."create_time" IS '创建时间';
