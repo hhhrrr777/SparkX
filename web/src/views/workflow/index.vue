@@ -440,7 +440,7 @@ export default {
 		},
 		// 返回列表
 		backHandle() {
-			this.$router.push('/index/home')
+			this.$router.push('/index/detail?appId=' + this.appId)
 		},
 		// 删除节点
 		delNodeHandle() {

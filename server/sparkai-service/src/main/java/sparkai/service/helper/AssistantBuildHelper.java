@@ -50,7 +50,6 @@ import sparkai.service.vo.dataset.DatasetSearchVo;
 import sparkai.service.vo.dataset.DatasetSimpleVo;
 import sparkai.service.vo.tool.ToolParamsVo;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -280,6 +279,8 @@ public class AssistantBuildHelper {
             // 构建协议
             McpTransport transport = new HttpMcpTransport.Builder()
                     .sseUrl(entity.getApiUrl())
+                    .logRequests(true)
+                    .logResponses(true)
                     .build();
             // 构建客户端
             McpClient mcpClient = new DefaultMcpClient.Builder()

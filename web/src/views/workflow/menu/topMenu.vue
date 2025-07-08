@@ -9,9 +9,9 @@
 		<div class="menu-btn flex-center" @click="$emit('save')">
 			<el-icon size="21" style="margin-right: 5px" color="#6172f3"><Document /></el-icon> 保存
 		</div>
-		<div class="menu-btn flex-center" @click="$emit('publish')">
+		<!--<div class="menu-btn flex-center" @click="$emit('publish')">
 			<el-icon size="22" style="margin-right: 5px" color="#6172f3"><Promotion /></el-icon> 发布
-		</div>
+		</div>-->
 	</div>
 </template>
 

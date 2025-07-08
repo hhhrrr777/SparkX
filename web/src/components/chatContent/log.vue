@@ -161,7 +161,7 @@ export default {
 		width: 100%;
 		overflow-y: scroll;
 		overflow-x: hidden;
-		padding-bottom: 50px;
+		padding-bottom: 20px;
 
 		.panel {
 			background: #fff;
@@ -229,7 +229,6 @@ export default {
 	border-radius: 5px;
 	border: 1px solid var(--color-border-3);
 	background: #fff;
-	margin-top: 10px;
 	display: flex;
 	.input-box {
 		width: 95%;
