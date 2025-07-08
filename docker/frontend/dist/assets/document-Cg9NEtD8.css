@@ -1,0 +1,1 @@
+.search-box{border-radius:10px;margin-bottom:20px;padding-top:20px;padding-left:20px;display:flex;align-items:center;justify-content:space-between}.custom-loading-icon{animation:spin 1s linear infinite;margin-right:5px}@keyframes spin{0%{transform:rotate(0)}to{transform:rotate(360deg)}}.el-table .cell{font-size:13px;color:#172329}
