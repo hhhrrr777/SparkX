@@ -264,9 +264,14 @@ public class KnowledgeDocumentServiceImpl implements IKnowledgeDocumentService{
      * @param documentSaveVo DocumentSaveVo
      */
     @Override
+    @Transactional
     public void saveDocument(DocumentSaveVo documentSaveVo) {
 
         for (DocumentSplitVo document : documentSaveVo.getDocumentList()) {
+
+            if (document.getContent().isEmpty()) {
+                throw new BusinessException("文档内容为空");
+            }
 
             // 写入文档
             KnowledgeDocumentEntity knowledgeDocument = new KnowledgeDocumentEntity();

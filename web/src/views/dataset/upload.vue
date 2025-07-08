@@ -123,8 +123,10 @@
 							</el-radio>
 						</el-radio-group>
 
-						<el-checkbox v-model="diyForm.addTitle" style="margin-left: 13px;margin-top: 20px"> 导入时添加分段标题为关联问题（适用于标题为问题的问答对） </el-checkbox>
-						<el-button class="preview-btn" @click="preview">重新预览</el-button>
+						<!--<el-checkbox v-model="diyForm.addTitle" style="margin-left: 13px;margin-top: 20px"> 导入时添加分段标题为关联问题（适用于标题为问题的问答对） </el-checkbox>-->
+						<div style="width: 560px;height: 40px;text-align: right;padding-top: 20px;">
+							<el-button class="preview-btn" @click="preview">重新预览</el-button>
+						</div>
 					</div>
 				</div>
 				<div class="document-preview">
@@ -149,10 +151,10 @@
 							<div class="too-bar">
 								<div class="item-no">#{{ index + 1 }}</div>
 								<div class="tool-box">
-									<el-icon size="16">
+									<el-icon size="16" @click="editSegment(index)">
 										<Edit />
 									</el-icon>
-									<el-icon size="16" style="margin-left: 10px">
+									<el-icon size="16" style="margin-left: 10px" @click="delSegment(index)">
 										<Delete />
 									</el-icon>
 								</div>
@@ -178,9 +180,20 @@
 		<div class="tool-bar">
 			<el-button>取消</el-button>
 			<el-button type="primary" @click="preStep" v-if="active > 0">上一步</el-button>
-			<el-button type="primary" @click="nextStep">下一步</el-button>
+			<el-button type="primary" @click="nextStep" :loading="loading">下一步</el-button>
 		</div>
 	</el-container>
+
+	<el-dialog title="编辑片段" v-model="editorVisible" width="1000px" ref="saveDialog" :close-on-click-modal="false">
+		<el-form :model="editForm" label-width="10px">
+			<el-form-item>
+				<el-input v-model="editForm.title" placeholder="标题" maxlength="255" show-word-limit></el-input>
+			</el-form-item>
+			<el-form-item>
+				<el-input type="textarea" :rows="8" placeholder="内容" v-model="editForm.content" style="width: 100%" maxlength="8000" show-word-limit></el-input>
+			</el-form-item>
+		</el-form>
+	</el-dialog>
 </template>
 
 <script>
@@ -213,6 +226,12 @@ export default {
 			acceptConfig: '.txt,.md,.pdf,.docx,.html,.xls,.xlsx,.csv',
 			excelTpl: './tpl/excel表格模版.xlsx',
 			qaTpl: './tpl/qa模板.xlsx',
+			loading: false,
+			editorVisible: false,
+			editForm: {
+				title: '',
+				content: '',
+			}
 		}
 	},
 	mounted() {
@@ -244,14 +263,16 @@ export default {
 			})
 			formData.append('pattern', this.diyForm.pattern)
 			formData.append('splitLen', this.diyForm.splitLen)
-			formData.append('addTitle', this.diyForm.addTitle)
+			//formData.append('addTitle', this.diyForm.addTitle)
 			formData.append('splitType', this.diyForm.splitType)
 			formData.append('autoClean', this.diyForm.autoClean)
 			formData.append('fileType', this.fileType) // 上传的文件类型
 
 			let res;
+			this.loading = true
 			if (this.fileType === 'txt') {
 				res = await this.$API.document.preview.post(formData)
+				this.loading = false
 				this.documentList = res.data
 				this.nowFileIndex = 0
 				this.segmentTitle = []
@@ -267,6 +288,7 @@ export default {
 			} else {
 				formData.append('datasetId', this.datasetId) // 上传的文件类型
 				res = await this.$API.document.uploadFile.post(formData)
+				this.loading = false
 				if (res.code === 0) {
 					this.$message.success('操作成功')
 					setTimeout(() => {
@@ -297,7 +319,9 @@ export default {
 		},
 		// 上传文件
 		async uploadDocument() {
+			this.loading = true
 			let res = await this.$API.document.save.post({documentList: this.documentList, datasetId: this.datasetId})
+			this.loading = false
 			if (res.code === 0) {
 				this.$message.success('上传成功')
 				this.$router.push('/dataset/detail?datasetId=' + this.datasetId)
@@ -312,6 +336,17 @@ export default {
 			} else {
 				this.acceptConfig = '.xlsx'
 			}
+		},
+		// 编辑分段
+		editSegment(index) {
+			this.editForm.title = this.segmentData[this.nowFileIndex][index].title
+			this.editForm.content = this.segmentData[this.nowFileIndex][index].content
+
+			this.editorVisible = true
+		},
+		// 删除分段
+		delSegment(index) {
+			this.segmentData[this.nowFileIndex].splice(index, 1)
 		}
 	}
 }
