@@ -476,7 +476,7 @@ COMMENT ON COLUMN "public"."system_team"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."system_team"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."system_team" IS '团队表';
 
-INSERT INTO "public"."system_team" VALUES (1, '4d9d304e8616', 'b6c67084-ad55-4ced-82c4-4d9d304e8616', '2025-05-28 21:04:48', NULL);
+INSERT INTO "public"."system_team" ("team_code", "user_id", "create_time", "update_time") VALUES ('4d9d304e8616', 'b6c67084-ad55-4ced-82c4-4d9d304e8616', '2025-05-28 21:04:48', NULL);
 
 CREATE TABLE "public"."system_team_user" (
     "id" INT4 NOT NULL GENERATED ALWAYS AS IDENTITY (INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1),
@@ -498,7 +498,7 @@ COMMENT ON COLUMN "public"."system_team_user"."create_time" IS '创建时间';
 COMMENT ON COLUMN "public"."system_team_user"."update_time" IS '更新时间';
 COMMENT ON TABLE "public"."system_team_user" IS '团队用户表';
 
-INSERT INTO "public"."system_team_user" VALUES (1, 1, 'b6c67084-ad55-4ced-82c4-4d9d304e8616', '', '', '2025-05-28 21:05:19', NULL);
+INSERT INTO "public"."system_team_user" ("team_id", "user_id", "dataset_permission", "app_permission", "create_time", "update_time") VALUES (1, 'b6c67084-ad55-4ced-82c4-4d9d304e8616', '', '', '2025-05-28 21:05:19', NULL);
 
 CREATE TABLE "public"."application_customer" (
     "customer_id" VARCHAR (64) COLLATE "pg_catalog"."default" NOT NULL DEFAULT '' :: CHARACTER VARYING,
