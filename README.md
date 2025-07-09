@@ -2,8 +2,6 @@
 <img src="screenshot/logo.png" width="286" />
 </p>
 
-#### 介绍
-
 🚀SparkX 是采用 Springboot3 + PgSQL + Vue3 开发的，采用大语言模型 和 RAG 的知识库问答系统。开箱即用、模型任选、灵活编排，支持快速嵌入到第三方业务系统。
 
 #### 软件特点
