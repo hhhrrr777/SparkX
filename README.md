@@ -1,4 +1,6 @@
-<span style="font-size: 28px;font-weight: bold;background-image: linear-gradient(to right, #3072EB, #5E17EB);background-clip: text;-webkit-text-fill-color: transparent;">SparkX</span>
+<p align="center">
+<img src="screenshot/logo.png" width="286" />
+</p>
 
 #### 介绍
 
