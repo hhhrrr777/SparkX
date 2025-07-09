@@ -4,8 +4,7 @@
 
 const APP_CONFIG = {
 	//标题
-	//APP_NAME: "SCUI",
-
+	APP_NAME: "SparkX 开源AI知识库系统",
 	//接口地址，如遇跨域需使用nginx代理
-	API_URL: "http://localhost:8991",
+	API_URL: "http://localhost:8989",
 }

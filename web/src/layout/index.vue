@@ -30,7 +30,7 @@
 				</el-dropdown>
 
 				<div class="adminui-side-bottom" @click="showLicense">
-					<span>{{ license.companyName }}</span>
+					<span>{{ decodeUnicode(license.companyName) }}</span>
 				</div>
 				<!--<div class="adminui-side-bottom" @click="globalStore.TOGGLE_menuIsCollapse()">
 					<el-icon>
@@ -231,7 +231,7 @@
 	<el-dialog v-model="showLicenseDialog" width="250px" :close-on-click-modal="false">
 		<div class="license-box">
 			<span class="logo-txt">SparkX</span>
-			<div class="license-item" style="margin-top: 20px">授权公司：{{ license.companyName }}</div>
+			<div class="license-item" style="margin-top: 20px">授权公司：{{ decodeUnicode(license.companyName) }}</div>
 			<div class="license-item" style="margin-top: 10px">授权码：{{ license.licenseId }}</div>
 			<div class="license-item" style="margin-top: 10px">当前版本：{{ license.version }}</div>
 			<div class="license-item" style="margin-top: 10px">应用数量：{{ license.appNum }}</div>
@@ -389,6 +389,11 @@ const onSubmit = () => {
 
 const showLicense = () => {
 	showLicenseDialog.value = true
+}
+
+function decodeUnicode(str) {
+	str = str.replace(/\\/g, "%");
+	return unescape(str);
 }
 </script>
 
