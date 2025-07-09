@@ -34,3 +34,4 @@ build/
 /logs/
 /upload/
 /multi-user-chat-memory.db
+/multi-user-chat-memory.db.*
