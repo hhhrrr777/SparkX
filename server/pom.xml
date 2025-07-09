@@ -3,17 +3,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.sparkshop.sparkai</groupId>
+    <groupId>cn.sparkshop.ai</groupId>
     <artifactId>cn.sparkshop</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-    <name>SparkAI</name>
+    <name>SparkX</name>
     <description>基于大语言模型和 RAG 的知识库问答系统。开箱即用、模型中立、灵活编排，支持快速嵌入到第三方业务系统。</description>
 
     <modules>
-        <module>sparkai-common</module>
-        <module>sparkai-service</module>
-        <module>sparkai-web</module>
+        <module>sparkx-common</module>
+        <module>sparkx-service</module>
+        <module>sparkx-web</module>
     </modules>
 
     <properties>
@@ -49,14 +49,14 @@
 
             <!-- 全局工具 -->
             <dependency>
-                <groupId>cn.sparkshop.sparkai</groupId>
-                <artifactId>sparkai-common</artifactId>
+                <groupId>cn.sparkshop.ai</groupId>
+                <artifactId>sparkx-common</artifactId>
                 <version>${spark.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>cn.sparkshop.sparkai</groupId>
-                <artifactId>sparkai-service</artifactId>
+                <groupId>cn.sparkshop.ai</groupId>
+                <artifactId>sparkx-service</artifactId>
                 <version>${spark.version}</version>
             </dependency>
 
