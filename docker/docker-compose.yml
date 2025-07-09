@@ -36,7 +36,7 @@ services:
     build: ./frontend
     container_name: sparkx-frontend
     ports:
-      - "80:80"
+      - "8189:80"
     depends_on:
       - backend
 
