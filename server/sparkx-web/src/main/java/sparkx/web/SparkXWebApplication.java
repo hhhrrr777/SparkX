@@ -14,11 +14,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "ai")
+@ComponentScan(basePackages = "sparkx")
 public class SparkXWebApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SparkXWebApplication.class, args);
     }
-
 }
