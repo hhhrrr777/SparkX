@@ -9,7 +9,8 @@ services:
       POSTGRES_PASSWORD: 123123
       POSTGRES_DB: sparkai
     volumes:
-      - pg-data:/var/lib/postgresql/data
+      - ./pg-data:/var/lib/postgresql/data
+      - ./postgres/sparkai.sql:/docker-entrypoint-initdb.d/sparkai.sql
     ports:
       - "6432:5432"
     healthcheck:
