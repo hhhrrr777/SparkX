@@ -1,6 +1,6 @@
 package sparkx.service;
 
-class SparkaiServiceApplicationTests {
+class SparkXServiceApplicationTests {
 
     void contextLoads() {
     }

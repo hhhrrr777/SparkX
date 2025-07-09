@@ -178,7 +178,7 @@ public class SparkEmbeddingStoreContentRetriever implements ContentRetriever {
     }
 
     /**
-     * SparkAI 对这里进行了改造
+     * SparkX 对这里进行了改造
      */
     @Override
     public List<Content> retrieve(Query query) {

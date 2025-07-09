@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "sparkai")
+@ComponentScan(basePackages = "ai")
 public class SparkXWebApplication {
 
     public static void main(String[] args) {

@@ -108,7 +108,7 @@ public class FlowNodeParser {
 
             NodeVo nodeInfo = this.nodes.get(targetId);
             // log.info("本次解析的节点是 ： {}", nodeInfo);
-            // 获取node处理方法 所有的节点对应的指定方法在 sparkai.service.extend.workflow.node 下
+            // 获取node处理方法 所有的节点对应的指定方法在 sparkx.service.extend.workflow.node 下
             IWorkflowNode flowNode = nodeProvider.handle(nodeInfo.getShape());
             flowNode.setEmitter(this.emitter);
             flowNode.setLatch(latch);

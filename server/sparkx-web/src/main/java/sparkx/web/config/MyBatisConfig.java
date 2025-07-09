@@ -20,7 +20,7 @@ import sparkx.service.task.TsVectorTypeHandler;
 import sparkx.service.task.VectorTypeHandler;
 
 @Configuration
-@MapperScan(basePackages = {"sparkai.service.mapper"})
+@MapperScan(basePackages = {"sparkx.service.mapper"})
 public class MyBatisConfig {
 
     /**

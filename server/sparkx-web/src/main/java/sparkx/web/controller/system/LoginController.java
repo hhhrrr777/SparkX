@@ -21,7 +21,7 @@ import sparkx.service.vo.system.LoginVo;
 
 import java.util.Map;
 
-@RequestMapping("api/login")
+@RequestMapping("/api/login")
 @RestController
 public class LoginController {
 
