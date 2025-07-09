@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: sparkx
     volumes:
       - ./pg-data:/var/lib/postgresql/data
-      - ./postgres/sparkx.sql:/docker-entrypoint-initdb.d/sparkx.sql
+      - ./sql/sparkx.sql:/docker-entrypoint-initdb.d/sparkx.sql
     ports:
       - "5432:5432"
     healthcheck:
@@ -20,7 +20,7 @@ services:
       retries: 10
 
   backend:
-    build: ./backend
+    build: ../server
     container_name: sparkx-backend
     depends_on:
       postgres:
