@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 package sparkx.service.service.impl.system;
 
+import cn.hutool.json.JSONUtil;
 import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import sparkx.common.utils.Tool;
 import sparkx.service.entity.application.ApplicationCustomerEntity;
 import sparkx.service.entity.system.SystemTeamEntity;
 import sparkx.service.entity.system.SystemUsersEntity;
+import sparkx.service.helper.LicenseHelper;
 import sparkx.service.mapper.application.ApplicationCustomerMapper;
 import sparkx.service.mapper.system.SystemTeamMapper;
 import sparkx.service.mapper.system.SystemUserMapper;
@@ -43,6 +45,9 @@ public class LoginServiceImpl implements ILoginService {
 
     @Autowired
     ApplicationCustomerMapper applicationCustomerMapper;
+
+    @Autowired
+    LicenseHelper licenseHelper;
 
     /**
      * 登录操作
@@ -82,6 +87,7 @@ public class LoginServiceImpl implements ILoginService {
                 .sign());
         returnData.put("name", userInfo.getNickname());
         returnData.put("customerId", userInfo.getUserId());
+        returnData.put("license", JSONUtil.toJsonStr(licenseHelper.getLicense()));
 
         return returnData;
     }

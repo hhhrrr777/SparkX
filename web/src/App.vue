@@ -104,5 +104,12 @@ body {
 	border-radius: 5px;
 	margin-left: 10px;
 }
+.logo-txt {
+	font-size: 28px;
+	font-weight: bold;
+	background-image: linear-gradient(to right, #3072EB, #5E17EB);
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
 @import '@/style/style.scss';
 </style>

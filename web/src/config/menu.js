@@ -1,7 +1,7 @@
 const menu = [{
 	"id": 1,
 	"pid": 0,
-	"name": "SparkAI",
+	"name": "SparkX",
 	"auth": "",
 	"path": "/home",
 	"icon": "el-icon-chat-dot-square",

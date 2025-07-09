@@ -1,25 +1,31 @@
 <template>
 	<div class="page-div">
-		<div class="page-jump">
-			<div>共 {{ page.total }} 条</div>
+		<div>
+			<span class="logo-txt" style="font-size: 18px;margin-top: 5px;">SparkX</span>
+			<span style="font-size: 12px;margin-left: 5px;margin-top: 5px;">开源AI知识库系统</span>
 		</div>
-		<el-pagination
-			background
-			layout="->,prev, pager, next"
-			:page-size="searchForm.limit"
-			@current-change="pageChangeHandle"
-			:total="page.total"
-		>
-		</el-pagination>
-		<div class="page-jump">
-			<div>每页 &nbsp;</div>
-			<div><el-input v-model="searchForm.limit" placeholder="请输入内容" type="number" style="width: 60px" @blur="jump"></el-input></div>
-			<div>&nbsp;条</div>
-		</div>
-		<div class="page-jump">
-			<div>前往 &nbsp;</div>
-			<div><el-input v-model="searchForm.page" placeholder="请输入内容" type="number" style="width: 60px" @blur="jump"></el-input></div>
-			<div>&nbsp;页</div>
+		<div style="display: flex; justify-content: center;">
+			<div class="page-jump">
+				<div>共 {{ page.total }} 条</div>
+			</div>
+			<el-pagination
+				background
+				layout="->,prev, pager, next"
+				:page-size="searchForm.limit"
+				@current-change="pageChangeHandle"
+				:total="page.total"
+			>
+			</el-pagination>
+			<div class="page-jump">
+				<div>每页 &nbsp;</div>
+				<div><el-input v-model="searchForm.limit" placeholder="请输入内容" type="number" style="width: 60px" @blur="jump"></el-input></div>
+				<div>&nbsp;条</div>
+			</div>
+			<div class="page-jump">
+				<div>前往 &nbsp;</div>
+				<div><el-input v-model="searchForm.page" placeholder="请输入内容" type="number" style="width: 60px" @blur="jump"></el-input></div>
+				<div>&nbsp;页</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -64,7 +70,7 @@ export default {
 .page-div {
 	margin-top: 20px;
 	display: flex;
-	justify-content: right;
+	justify-content: space-between;
 	background: #fff;
 	padding: 10px 20px;
 	border-radius: 10px;

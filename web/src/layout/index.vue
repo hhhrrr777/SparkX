@@ -29,8 +29,8 @@
 					</template>
 				</el-dropdown>
 
-				<div class="adminui-side-bottom">
-					<span>社区版</span>
+				<div class="adminui-side-bottom" @click="showLicense">
+					<span>{{ license.companyName }}</span>
 				</div>
 				<!--<div class="adminui-side-bottom" @click="globalStore.TOGGLE_menuIsCollapse()">
 					<el-icon>
@@ -202,11 +202,11 @@
 		</el-icon>
 	</div>
 
-	<div class="layout-setting" @click="openSetting">
+	<!--<div class="layout-setting" @click="openSetting">
 		<el-icon>
 			<el-icon-brush-filled/>
 		</el-icon>
-	</div>
+	</div>-->
 
 	<el-drawer title="布局实时演示" v-model="settingDialog" :size="400" append-to-body destroy-on-close>
 		<setting></setting>
@@ -226,6 +226,18 @@
 				<el-button type="primary" @click="onSubmit">确认提交</el-button>
 			</el-form-item>
 		</el-form>
+	</el-dialog>
+
+	<el-dialog v-model="showLicenseDialog" width="250px" :close-on-click-modal="false">
+		<div class="license-box">
+			<span class="logo-txt">SparkX</span>
+			<div class="license-item" style="margin-top: 20px">授权公司：{{ license.companyName }}</div>
+			<div class="license-item" style="margin-top: 10px">授权码：{{ license.licenseId }}</div>
+			<div class="license-item" style="margin-top: 10px">当前版本：{{ license.version }}</div>
+			<div class="license-item" style="margin-top: 10px">应用数量：{{ license.appNum }}</div>
+			<div class="license-item" style="margin-top: 10px">知识库数量：{{ license.datasetNum }}</div>
+			<div class="license-item" style="margin-top: 10px">用户数量：{{ license.userNum }}</div>
+		</div>
 	</el-dialog>
 </template>
 
@@ -265,6 +277,8 @@ const passwordForm = ref({
 	oldPwd: "",
 	newPwd: "",
 })
+const license = ref(JSON.parse(localStorage.getItem("license")))
+const showLicenseDialog = ref(false)
 const ruleForm = ref()
 
 const rules = ref({
@@ -372,6 +386,10 @@ const onSubmit = () => {
 		}
 	})
 }
+
+const showLicense = () => {
+	showLicenseDialog.value = true
+}
 </script>
 
 <style scoped>
@@ -379,5 +397,15 @@ const onSubmit = () => {
 	overflow: hidden;
 	text-overflow:ellipsis;
 	white-space: nowrap;
+}
+.license-box {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	height: 250px;
+	padding: 20px;
+}
+.license-item {
+	font-size: 13px;
 }
 </style>
