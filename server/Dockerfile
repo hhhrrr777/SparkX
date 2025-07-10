@@ -23,8 +23,8 @@ COPY . .
 # 构建特定子模块（sparkx-web）
 RUN mvn clean package -pl sparkx-web -am -DskipTests
 
-# 使用国内推荐的镜像源
-FROM anolis-registry.cn-zhangjiakou.cr.aliyuncs.com/openanolis/openjdk:17-8.6
+# 使用简化版
+FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
 # 从构建阶段复制生成的JAR包（根据实际路径调整）
