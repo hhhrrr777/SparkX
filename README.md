@@ -54,7 +54,7 @@ http://localhost:8189
 
 #### 使用手册
 
-https://k48rm6jpq3.k.topthink.com/@ogr8jqdkpe/jieshao.html
+https://x.sparkshop.cn/
 
 #### UI 概览
 
