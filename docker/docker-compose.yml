@@ -20,7 +20,7 @@ services:
       retries: 10
 
   backend:
-    build: ../server
+    image: nickbai/sparkx-backend:1.0.0
     container_name: sparkx-backend
     depends_on:
       postgres:
@@ -33,7 +33,7 @@ services:
       - "8989:8989"
 
   frontend:
-    build: ./frontend
+    image: nickbai/sparkx-frontend:1.0.0
     container_name: sparkx-frontend
     ports:
       - "8189:80"
