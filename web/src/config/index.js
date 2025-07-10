@@ -12,7 +12,7 @@ const DEFAULT_CONFIG = {
 	CORE_VER: "1.0.1",
 
 	//接口地址
-	API_URL: import.meta.env.NODE_ENV === 'development' ? import.meta.env.VITE_VUE_APP_API_BASEURL : "http://localhost:9191/api",
+	API_URL: import.meta.env.NODE_ENV === 'development' ? import.meta.env.VITE_VUE_APP_API_BASEURL : "http://localhost:8989/api",
 
 	//请求超时
 	TIMEOUT: 10000,

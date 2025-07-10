@@ -214,7 +214,7 @@ export default {
 }
 
 .login-header {
-	margin-bottom: 40px;
+	margin-bottom: 20px;
 }
 
 .login-header .logo {
