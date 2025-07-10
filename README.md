@@ -14,17 +14,40 @@
 
 - **嵌入简单**：系统支持 2 种部署方式，`单页面` 和 `弹层嵌入` 方式，可以瞬间提升被嵌入系统的服务能力，让被嵌入系统无需任何修改，就可以轻松接入 AI。
 
-#### 安装教程
+#### 快速开始
 
-> 本处讲解采用官方 `docker镜像` 的方式，更多的安装脚本，参考手册。
+1、下载源码
+
+```
+git clone https://gitee.com/shop-sparker/spark-x.git
+```
+
+2、进入 docker 目录安装
+
+```
+docker compose up -d
+```
+
+3、访问
+
+```
+http://localhost:8189
+```
+
+账号 `admin`  
+密码 `admin`
 
 #### 使用手册
 
 #### UI 概览
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+![应用](screenshot/1.png)
+![知识库](screenshot/2.png)
+![工具](screenshot/3.png)
+![设置](screenshot/4.png)
+![模型](screenshot/5.png)
+![编排](screenshot/6.png)
+![文档](screenshot/7.png)
 
 #### 交流群
 

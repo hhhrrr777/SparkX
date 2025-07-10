@@ -152,7 +152,8 @@ public class SystemUserServiceImpl implements ISystemUserService {
     @Override
     public void editUser(UserValidate validate) {
 
-        SystemUsersEntity usersEntity = new SystemUsersEntity();
+        SystemUsersEntity usersEntity = userMapper.selectById(validate.getUserId());
+        String password = usersEntity.getPassword();
         BeanUtils.copyProperties(validate, usersEntity);
 
         // 检测账号
@@ -175,6 +176,8 @@ public class SystemUserServiceImpl implements ISystemUserService {
             String salt = ObjectId.next();
             usersEntity.setPassword(Tool.makePassword(validate.getPassword(), salt));
             usersEntity.setSalt(salt);
+        } else {
+            usersEntity.setPassword(password);
         }
 
         usersEntity.setUpdateTime(Tool.nowDateTime());
