@@ -16,8 +16,8 @@
 
 #### 技术架构
 
-语言： Java + JavaScript + Node.js  
-框架工具：Springboot + Langchain4j + Vue.js + ElementUI PLUS + NPM + Maven  
+语言： Java17 + JavaScript + Node.js  
+框架工具：Springboot3 + Langchain4j + Vue.js + ElementUI PLUS + NPM + Maven  
 数据库：PgSQL (vector 扩展) + MapDB  
 开发工具：IntelliJ IDEA + WebStorm + Navicat
 
