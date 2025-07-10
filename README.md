@@ -14,6 +14,19 @@
 
 - **嵌入简单**：系统支持 2 种部署方式，`单页面` 和 `弹层嵌入` 方式，可以瞬间提升被嵌入系统的服务能力，让被嵌入系统无需任何修改，就可以轻松接入 AI。
 
+#### 技术架构
+
+语言： Java + JavaScript + Node.js  
+框架工具：Springboot + Langchain4j + Vue.js + ElementUI PLUS + NPM + Maven  
+数据库：PgSQL (vector 扩展) + MapDB  
+开发工具：IntelliJ IDEA + WebStorm + Navicat
+
+```
+本地开发建议版本
+Java17、Node.js v22.17.0 、NPM 10.9.2 、PgSQL 15、Navicat Premium Lite 17
+未提及的，可以使用任意版本或者项目中已经约定了版本。
+```
+
 #### 快速开始
 
 1、下载源码
