@@ -18,17 +18,6 @@
 					</el-icon>
 					<template #dropdown>
 						<el-dropdown-menu>
-							<el-dropdown-item command="question">
-								<el-icon>
-									<QuestionFilled />
-								</el-icon>
-								生成问题
-							</el-dropdown-item>
-							<el-dropdown-item command="transfer">
-								<el-icon>
-									<Switch />
-								</el-icon> 迁移
-							</el-dropdown-item>
 							<el-dropdown-item command="del">
 								<el-icon>
 									<Delete />
@@ -181,9 +170,6 @@ export default {
 			switch (event) {
 				case 'del':
 					this.handleDel(row)
-					break;
-				case 'transfer':
-					this.datasetVisible = true
 					break;
 			}
 		},
