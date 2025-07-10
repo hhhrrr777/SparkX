@@ -126,20 +126,22 @@ export default {
 			this.credential = JSON.parse(res.data.credential)
 
 			// 基础配置项
-			let options = JSON.parse(res.data.options)
-			options.forEach((item) => {
-				if (item.field === 'temperature') {
-					this.temperature = item
-				}
+			if (res.data.options !== '') {
+				let options = JSON.parse(res.data.options)
+				options.forEach((item) => {
+					if (item.field === 'temperature') {
+						this.temperature = item
+					}
 
-				if (item.field === 'maxOutputTokens') {
-					this.maxOutputTokens = item
-				}
+					if (item.field === 'maxOutputTokens') {
+						this.maxOutputTokens = item
+					}
 
-				if (item.field === 'url') {
-					this.url = item
-				}
-			})
+					if (item.field === 'url') {
+						this.url = item
+					}
+				})
+			}
 
 			this.modelsArr = []
 			this.modelsOptions = []
