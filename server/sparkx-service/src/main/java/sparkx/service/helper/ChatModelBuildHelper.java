@@ -11,7 +11,6 @@ package sparkx.service.helper;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
-import dev.langchain4j.community.model.qianfan.QianfanChatModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiChatModel;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
@@ -39,36 +38,13 @@ public class ChatModelBuildHelper {
         this.modelInfo = modelInfo;
         this.applicationInfo = applicationInfo;
 
-        return switch (modelInfo.getModelFlag()) {
-            // 百度千帆
-            case "qianfan" -> buildQianfan();
-            // 清华智普
-            case "zhipu" -> buildZhiPu();
-            // 千问、豆包、GPT
-            case "qwen", "doubao", "gpt" -> buildOpenAI();
-            default -> null;
-        };
-    }
+        // 清华智普
+        if (modelInfo.getModelFlag().equals("zhipu")) {
+            return buildZhiPu();
+        }
 
-    /**
-     * 构建千帆
-     * @return ChatModel
-     */
-    private ChatModel buildQianfan() {
-
-        JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
-        String key = jsonConfig.getJSONObject(0).getStr("value");
-        String secret = jsonConfig.getJSONObject(1).getStr("value");
-
-        Integer maxOutputTokens = applicationInfo.getMaxReplyToken() == null ? 4096 : applicationInfo.getMaxReplyToken();
-
-        return QianfanChatModel.builder()
-                .apiKey(key)
-                .secretKey(secret)
-                .temperature(applicationInfo.getTemperature()) // 温度
-                .maxOutputTokens(maxOutputTokens)
-                .modelName(applicationInfo.getModelName())
-                .build();
+        // 千帆、千问、豆包、GPT
+        return buildOpenAI();
     }
 
     /**

@@ -61,7 +61,7 @@
 									</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTime === 1">{{ item.meta.time }} s</el-tag>
 									<el-tag bordered style="margin-left: 10px" v-if="setting.showTokens === 1">{{ item.meta.totalTokens }} tokens</el-tag>
-									<el-tag bordered style="margin-left: 10px" type="success">已使用 {{ item.toolUse }}</el-tag>
+									<el-tag bordered style="margin-left: 10px" type="success" v-if="item.toolUse && item.toolUse.length > 0">已使用 {{ item.toolUse }}</el-tag>
 								</div>
 								<div class="menu-right-side">
 									<el-tooltip
@@ -332,7 +332,7 @@ export default {
 								outputTokens: meta.outputTokens,
 								totalTokens: meta.totalTokens,
 								retrievedList: JSON.stringify(nowLog.retrievedList),
-								toolUse: (nowLog.toolUse !== '') ? nowLog.toolUse.join(",") : []
+								toolUse: ((nowLog.toolUse !== '') && (nowLog.toolUse !== undefined)) ? nowLog.toolUse.join(",") : ""
 							}
 
 							let logRes = that.$API.chat.writeLog.post(row)

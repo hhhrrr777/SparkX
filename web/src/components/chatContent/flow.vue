@@ -302,7 +302,7 @@ export default {
 								outputTokens: meta.outputTokens,
 								totalTokens: meta.totalTokens,
 								retrieved_list: nowLog.retrievedList,
-								toolUse: (nowLog.toolUse !== '') ? nowLog.toolUse.join(",") : []
+								toolUse: ((nowLog.toolUse !== '') && (nowLog.toolUse !== undefined)) ? nowLog.toolUse.join(",") : ""
 							}
 
 							row.retrievedList = JSON.stringify(row.retrieved_list)

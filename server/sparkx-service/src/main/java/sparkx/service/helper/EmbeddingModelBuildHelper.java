@@ -11,7 +11,6 @@ package sparkx.service.helper;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
-import dev.langchain4j.community.model.qianfan.QianfanEmbeddingModel;
 import dev.langchain4j.community.model.zhipu.ZhipuAiEmbeddingModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
@@ -50,9 +49,6 @@ public class EmbeddingModelBuildHelper {
 
         JSONArray jsonConfig = JSONUtil.parseArray(modelInfo.getCredential());
         modelConfig.put("key", jsonConfig.getJSONObject(0).getStr("value"));
-        if (jsonConfig.size() == 2) {
-            modelConfig.put("secret", jsonConfig.getJSONObject(1).getStr("value"));
-        }
         modelConfig.put("model", datasetInfo.getEmbeddingModel());
 
         JSONArray jsonOptions = JSONUtil.parseArray(modelInfo.getOptions());
@@ -61,28 +57,13 @@ public class EmbeddingModelBuildHelper {
             modelConfig.put("baseUrl", url);
         }
 
-        return switch (modelInfo.getModelFlag()) {
-            // 百度千帆
-            case "qianfan" -> buildQianfan();
-            // 清华智普
-            case "zhipu" -> buildZhiPu();
-            // GPT
-            case "gpt" -> buildOpenAI();
-            default -> null;
-        };
-    }
+        // 清华智普
+        if (modelInfo.getModelFlag().equals("zhipu")) {
+            return buildZhiPu();
+        }
 
-    /**
-     * 构建千帆
-     * @return EmbeddingModel
-     */
-    private EmbeddingModel buildQianfan() {
-
-        return QianfanEmbeddingModel.builder()
-                .apiKey(modelConfig.get("key"))
-                .secretKey(modelConfig.get("secret"))
-                .endpoint(modelConfig.get("model"))
-                .build();
+        // 百度千帆、GPT
+        return buildOpenAI();
     }
 
     /**
