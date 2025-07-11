@@ -12,7 +12,7 @@
 								<el-icon>
 									<component :is="userIcon"/>
 								</el-icon>
-								<span>用户设置</span>
+								<span>用户管理</span>
 							</el-menu-item>
 							<el-menu-item index="2" @click="handleClick(2)">
 								<el-icon>

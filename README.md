@@ -40,6 +40,7 @@ git clone https://gitee.com/shop-sparker/spark-x.git
 2、进入 docker 目录安装
 
 ```
+cd spark-x/docker
 docker compose up -d
 ```
 
