@@ -3,7 +3,9 @@
 		<el-radio-group v-model="appIndex" class="too-radio-list">
 			<el-radio :label="index" border class="radio-item" v-for="(item, index) in appList" :key="item.appId">
 				<div style="display: flex;align-items: center;">
-					<img :src="domain + item.icon" style="width: 45px;height: 45px;" />
+					<img :src="domain + item.icon" style="width: 45px;height: 45px;"
+						 v-if="item.icon === '/icons/default_logo.png'"/>
+					<img :src="item.icon" style="width: 45px;height: 45px;" v-else/>
 					<div class="line1 name">{{ item.name }}</div>
 				</div>
 			</el-radio>

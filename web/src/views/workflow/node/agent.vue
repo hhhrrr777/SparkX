@@ -9,7 +9,9 @@
 
 		<div class="flex-center tips-text">
 			<div style="font-size: 13px;margin-left: 5px" class="flex-center line1" v-if="nodeInnerData.agentLogo !== ''">
-				<img :src="domain + nodeInnerData.agentLogo" alt="" style="width: 22px;height: 22px;margin-right: 10px" />
+				<img :src="domain + nodeInnerData.agentLogo" style="width: 22px;height: 22px;margin-right: 10px"
+					 v-if="nodeInnerData.agentLogo === '/icons/default_logo.png'"/>
+				<img :src="nodeInnerData.agentLogo" style="width: 22px;height: 22px;margin-right: 10px" v-else/>
 				{{ nodeInnerData.agentName }}
 			</div>
 			<span style="font-size: 13px;margin-left: 5px" class="line1" v-else>请设置代理</span>

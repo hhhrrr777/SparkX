@@ -92,7 +92,11 @@ export default {
 				this.appId = appInfo.appId
 				this.randomKey = Math.random()
 				this.title = appInfo.name
-				this.logo = this.domain + appInfo.icon
+				if (appInfo.icon === '/icons/default_logo.png') {
+					this.logo = this.domain + appInfo.icon
+				} else {
+					this.logo = appInfo.icon
+				}
 
 				// 非调试模式的部署模式
 				if (!this.debug) {

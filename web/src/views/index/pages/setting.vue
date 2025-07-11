@@ -12,7 +12,7 @@
 							<el-input v-model="form.name" maxlength="25" show-word-limit style="width: calc(100% - 80px)"></el-input>
 							<ul class="img-list" style="margin-left: 10px">
 								<li v-if="form.icon">
-									<img :src="domain + form.icon" alt="图片" style="width: 58px;height: 58px">
+									<img :src="form.icon" alt="图片" style="width: 58px;height: 58px">
 									<div class="img-tools" @click="delImg">
 										<el-icon color="#fff">
 											<Delete />
@@ -231,6 +231,7 @@
 					:welcome-word="welcomeList"
 					:key="chatBoxKey"
 					:setting="form"
+					:logo="form.icon"
 					:chat-session-id="Math.random()"
 					api-url="/application/sseChat">
 				</chat-box>
@@ -241,14 +242,6 @@
 	<!-- 模型设置 -->
 	<el-dialog title="AI参数设置" v-model="dialogVisible" width="500px" destroy-on-close :close-on-click-modal="false">
 		<el-form :model="form" ref="ruleForm" label-width="120px">
-			<el-form-item label="回复上限">
-				<el-slider
-					v-model="form.maxReplyToken"
-					:min="20"
-					:max="4096"
-					show-input>
-				</el-slider>
-			</el-form-item>
 			<el-form-item>
 				<template #label>
 					温度
@@ -364,6 +357,10 @@ export default {
 			this.form = res.data
 			if (res.data.prologue !== '') {
 				this.welcomeList = this.form.prologue = JSON.parse(res.data.prologue)
+			}
+
+			if (this.form.icon === '/icons/default_logo.png') {
+				this.form.icon = this.domain + '/icons/default_logo.png'
 			}
 
 			if (res.data.datasetList && res.data.datasetList.length > 0) {

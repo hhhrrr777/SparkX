@@ -51,7 +51,7 @@
 			append-to-body
 			destroy-on-close>
 			<div class="pages">
-				<el-button type="text" @click="delNodeHandle" style="font-size: 12px;float: right;margin-right: 30px;margin-top: 20px;">删除节点</el-button>
+				<el-button type="text" @click="delNodeHandle" style="font-size: 12px;float: right;margin-right: 30px;margin-top: 20px;" v-if="nowNode.shape !== 'start-node'">删除节点</el-button>
 				<component
 					:key="componentsKey"
 					:form-data="formData"
@@ -429,7 +429,12 @@ export default {
 			}
 
 			// 更新节点计数并添加节点
-			this.nodeNoData[type] += 1
+			if (isNaN(this.nodeNoData[type])) {
+				this.nodeNoData[type] = 1
+			} else {
+				this.nodeNoData[type] += 1
+			}
+
 			this.graph.addNode(JSON.parse(JSON.stringify(
 				defaultNodeConfig[type + 'Node'](
 					getRandomInt(300, 600),

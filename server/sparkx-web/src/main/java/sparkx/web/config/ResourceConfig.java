@@ -35,6 +35,6 @@ public class ResourceConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 登录不拦截
         registry.addInterceptor(loginInterceptor)
-                .excludePathPatterns("/api/login/doLogin", "/api/login/authLogin", "/icons/**", "/api/chat/**", "/api/application/sseChat");
+                .excludePathPatterns("/upload/**", "/api/login/doLogin", "/api/login/authLogin", "/icons/**", "/api/chat/**", "/api/application/sseChat");
     }
 }

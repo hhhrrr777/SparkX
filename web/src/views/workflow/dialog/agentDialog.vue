@@ -45,7 +45,9 @@
 			<div class="param-data">
 				<div class="flex-center" v-if="form.agentId !== ''">
 					<div class="flex-center app-item">
-						<img :src="domain + form.agentLogo" style="width: 45px;height: 45px;" />
+						<img :src="domain + form.agentLogo" style="width: 45px;height: 45px;"
+							 v-if="form.agentLogo === '/icons/default_logo.png'"/>
+						<img :src="form.agentLogo" style="width: 45px;height: 45px;" v-else/>
 						<span class="node-name">{{ form.agentName }}</span>
 					</div>
 				</div>

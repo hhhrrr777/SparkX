@@ -65,7 +65,11 @@ export default {
 				this.setting = appInfo
 				this.randomKey = Math.random()
 				this.title = appInfo.name
-				this.logo = this.domain + appInfo.icon
+				if (appInfo.icon === '/icons/default_logo.png') {
+					this.logo = this.domain + appInfo.icon
+				} else {
+					this.logo = appInfo.icon
+				}
 			}
 		},
 		closeChat() {

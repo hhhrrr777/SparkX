@@ -36,7 +36,9 @@
 						<div class="title-box" @click="goDetail(item.appId, item.manage)">
 							<div class="title-left">
 								<div class="title-label">
-									<img :src="domain + item.icon" style="width: 45px;height: 45px"/>
+									<img :src="domain + item.icon" style="width: 45px;height: 45px"
+										 v-if="item.icon === '/icons/default_logo.png'"/>
+									<img :src="item.icon" style="width: 45px;height: 45px" v-else/>
 								</div>
 								<div class="title-info">
 									<div class="line1 knowledge-title">{{ item.name }}</div>

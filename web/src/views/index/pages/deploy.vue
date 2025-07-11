@@ -13,8 +13,7 @@
 						<el-switch
 							style="margin-left: 10px"
 							v-model="appInfo.status"
-							:active-value="2"
-							:inactive-value="1"
+							disabled
 						>
 						</el-switch>
 					</div>
@@ -264,11 +263,13 @@ export default {
 		// 显示三方部署
 		showDeploy() {
 
+			let location = window.location
 			this.deployVisible = true
 			this.$nextTick(() => {
 				this.$refs.deployDialog.open({
 					url1: this.domain + '/#/chat/' + this.accessToken,
-					url2: this.domain + '/#/dialog/' + this.accessToken
+					url2: this.domain + '/script.js?protocol=' + location.protocol +
+						'&host=' + location.host + '&token=' + this.accessToken
 				})
 			})
 		}
