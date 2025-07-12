@@ -139,7 +139,7 @@ export default {
 		},
 		// 获取知识库列表
 		async getDatabaseList() {
-			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: ''})
+			let res = await this.$API.dataset.list.get({page: 1, limit: 1000, title: '', type: 0})
 			this.datasetTableData = res.data.data
 			this.datasetKey = Math.random()
 		},
