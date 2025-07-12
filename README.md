@@ -72,6 +72,7 @@ https://x.sparkshop.cn/
 ![文档](screenshot/7.png)
 
 #### 交流群
+![应用](screenshot/qun.jpg)
 
 #### 版权信息
 
