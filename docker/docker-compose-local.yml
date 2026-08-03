@@ -160,4 +160,4 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend/config.js:/usr/share/nginx/html/config.js
+      - ./frontend/app.config.js:/usr/share/nginx/html/app.config.js
