@@ -86,6 +86,10 @@
 
           <!-- 操作区 -->
           <div class="user-panel-section">
+            <div class="user-panel-item" @click="openUserManual()">
+              <n-icon size="16" class="user-panel-item-icon"><BookOutlined /></n-icon>
+              <span class="user-panel-item-label">使用手册</span>
+            </div>
             <div class="user-panel-item" @click="restartGuide()">
               <n-icon size="16" class="user-panel-item-icon"><QuestionCircleOutlined /></n-icon>
               <span class="user-panel-item-label">新手引导</span>
@@ -212,7 +216,7 @@
   import { Logo } from './components/Logo';
   import { MainView } from './components/Main';
   import { AsideMenu } from './components/Menu';
-  import { MenuFoldOutlined, MenuUnfoldOutlined, RightOutlined, RobotOutlined, ApartmentOutlined, ToolOutlined, ApiOutlined, SearchOutlined, ShareAltOutlined, LockOutlined, ExportOutlined, QuestionCircleOutlined } from '@vicons/antd';
+  import { MenuFoldOutlined, MenuUnfoldOutlined, RightOutlined, RobotOutlined, ApartmentOutlined, ToolOutlined, ApiOutlined, SearchOutlined, ShareAltOutlined, LockOutlined, ExportOutlined, QuestionCircleOutlined, BookOutlined } from '@vicons/antd';
   import { Moon, Sunny } from '@vicons/ionicons5';
   import { useProjectSetting } from '@/hooks/setting/useProjectSetting';
   import { useDesignSettingStore } from '@/store/modules/designSetting';
@@ -419,6 +423,11 @@
     showGuide.value = true;
     guideStep.value = 0;
     startGuide();
+  }
+
+  // 打开使用手册
+  function openUserManual() {
+    window.open('https://x.sparkshop.cn', '_blank');
   }
 
   // 第一步引导中：左下角面板里的「配置模型」项高亮（配合 driver 聚光）
