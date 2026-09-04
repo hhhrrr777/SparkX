@@ -22,7 +22,9 @@
     "lint:eslint": "eslint \"{src,mock}/**/*.{vue,ts,tsx}\" --fix",
     "lint:prettier": "prettier --write --loglevel warn \"src/**/*.{js,json,tsx,css,less,scss,vue,html,md}\"",
     "lint:stylelint": "stylelint --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/",
-    "lint:pretty": "pretty-quick --staged"
+    "lint:pretty": "pretty-quick --staged",
+    "prototype": "vite --config vite.prototype.config.ts",
+    "prototype:build": "vite build --config vite.prototype.config.ts"
   },
   "dependencies": {
     "@alova/mock": "^2.0.17",
