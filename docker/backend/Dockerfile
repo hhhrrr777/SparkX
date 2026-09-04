@@ -1,5 +1,5 @@
-# 使用简化版
-FROM crpi-35xwxmfks2ouwnqn.cn-shanghai.personal.cr.aliyuncs.com/sparkx/jdk17:1.0
+# 官方 Temurin JDK17 JRE（Ubuntu jammy 底，走下方 apt-get 分支安装中文字体）
+FROM eclipse-temurin:17-jre-jammy
 
 # 安装开源中文字体，避免汉字点选验证码在容器内显示为方块
 # 兼容 Debian/Ubuntu (apt-get) 与 Alpine (apk) 基础镜像

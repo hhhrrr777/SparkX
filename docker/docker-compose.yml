@@ -7,13 +7,13 @@
 #   1) 用云端 MinerU（后台「知识库 → 外部服务配置」新增 category=mineru_cloud），跳过本服务；
 #   2) 或临时注释下方 mineru 服务块。
 #
-# 国内拉取：MinerU/MinIO 均走 docker.1ms.run 加速源，避免 Docker Hub 直连超时。
-# 如已有本地镜像或自建 registry，把 image 改回 opendatalab/mineru:latest / minio/minio 即可。
+# 全部使用官方 Docker Hub 镜像；国内直连超时时，可在 image 前加 docker.1ms.run/ 前缀走加速源
+# （pgvector 不能换成官方 postgres:15 —— sparkx.sql 需要 vector 扩展）
 name: sparkx-app
 
 services:
   postgres:
-    image: crpi-35xwxmfks2ouwnqn.cn-shanghai.personal.cr.aliyuncs.com/sparkx/pgvector:15
+    image: pgvector/pgvector:pg15
     container_name: sparkx-postgres
     environment:
       POSTGRES_USER: sparkx
@@ -34,8 +34,8 @@ services:
   # 与 application.yml 的 sparkx.minio.* 对齐：
   #   endpoint  http://127.0.0.1:9000   access/secret  minioadmin   bucket  sparkx-drive
   minio:
-    # 国内镜像加速源 docker.1ms.run（绕开 Docker Hub 直连超时 + mirror 配置不生效问题）
-    image: docker.1ms.run/minio/minio
+    # 官方镜像；国内拉取超时可改为 docker.1ms.run/minio/minio
+    image: minio/minio
     container_name: sparkx-minio
     environment:
       MINIO_ROOT_USER: minioadmin
@@ -57,8 +57,8 @@ services:
   #   uri = bolt://127.0.0.1:7687   username = neo4j   password = neo4j123
   # （KnowledgeGraphConfig 启动时 verifyConnectivity，配了就必须连通，否则后端启动失败）
   neo4j:
-    # 国内镜像加速源；自建 registry 可改回 neo4j:5-community
-    image: docker.1ms.run/neo4j:5-community
+    # 官方镜像；国内拉取超时可改为 docker.1ms.run/neo4j:5-community
+    image: neo4j:5-community
     container_name: sparkx-neo4j
     environment:
       NEO4J_AUTH: neo4j/neo4j123          # 与 sparkx.sql 中 neo4j_self 的 password 对齐
@@ -82,7 +82,7 @@ services:
   # 与 application.yml 的 spring.data.redis.* 对齐：
   #   host=127.0.0.1  port=6379  database=0  无密码
   redis:
-    image: docker.1ms.run/redis:7-alpine
+    image: redis:7-alpine
     container_name: sparkx-redis
     volumes:
       - ./runtime_data/redis-data:/data
@@ -100,8 +100,8 @@ services:
   #   endpoint = http://127.0.0.1:8000   （MinerUConfig 的 SSRF 白名单对本机回环放行）
   # 镜像基于 vllm，需 NVIDIA GPU。无 GPU 改用云端 mineru_cloud。
   mineru:
-    # 官方镜像在国内拉取易超时，走加速源；自建 registry 可改回 opendatalab/mineru:latest
-    image: docker.1ms.run/opendatalab/mineru:latest
+    # 官方镜像；国内拉取超时可改为 docker.1ms.run/opendatalab/mineru:latest
+    image: opendatalab/mineru:latest
     container_name: sparkx-mineru
     profiles: ["api"]          # 用 profile 隔离：默认 docker compose up 不启动，需 --profile api
     ports:
